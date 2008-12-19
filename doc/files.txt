@@ -1,0 +1,37 @@
+Files and directories:
+========================
+
+application              the Muhkuh platform
+application\lua          commonly used auxiliary scripts
+application\lua_hilscher Hilscher/netX-specific auxiliary scripts
+wxLua-2.8.7.0-MSW-dll    standalone version of the wxLua library
+                         (used by the command line version)
+nxo_editor               Lua scripts executed by Muhkuh or wxLua
+
+
+Contents of the nxo_editor directory:
+
+test_description.xml     top-level file for Muhkuh
+nxo.lua                  header definitions and code to parse and
+                         assemble NXM files
+taglist.lua              definitions of tags and C structures, 
+                         code to parse and assemble them
+help                     HTML help pages
+
+makenxo.bat              script to build an NXO from the command line
+nxomaker.wx.lua          the actual script
+
+hexdump.lua              used by hex editor and to print hex dumps
+
+nxoeditor.lua            framework
+page_taglistedit.lua     tag list editor
+structedit.lua           editor for a single tag
+numedit.lua              editor for numbers
+stringedit.lua           editor for strings
+comboedit.lua            editor which allows selecting one of multiple values
+hexedit.lua              small hex editor for binary data
+rcxveredit.lua           editor for an RCX version
+ipv4edit.lua             editor for an IP address
+macedit.lua              editor for a MAC address
+
+

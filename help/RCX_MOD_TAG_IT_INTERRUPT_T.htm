@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBtdC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_MOD_TAG_IT_INTERRUPT_T</Title>
+</HEAD>
+<BODY>
+<h2>Interrupt Settings</h2>
+
+<p>
+Configure here the settings for this module's interrupts. 
+Using the Base parameter you can assign them to a specific
+priority band; this is especially important if you plan
+to use this module alongside another one which also uses
+interrupts. In that case you need to decide which one gets
+the higher priority.
+</p>
+
+<p>
+If the Task Range parameter is non-zero, then this module
+uses interrupts which execute as an rcX task. In this case
+you need to configure the Task Priority and Token Base.
+If the Task Range parameter is zero, the Task Priority and Token 
+Base are ignored.
+</p>
+
+<p>
+Note that, similar to the priority, each rcX task needs to
+have a unique token. If you always use identical base values
+for tokens and priorities, there should be no conflicts.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+<td>Priority Base</td><td>priority range used by interrupts tdst</td>
+</tr>
+<tr>
+<td>Range</td><td>range for interrupt priorities </td>
+</tr>
+<tr>
+<td>Task Priority Base</td><td>Priority range used by interrupts configuring tasks </td>
+</tr>
+<tr>
+<td>Task Token Base</td><td>Token range used by interrupts configuring tasks </td>
+</tr>
+<tr>
+<td>Task Range</td><td>Range for priority and token </td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

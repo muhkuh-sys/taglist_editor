@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_MOD_TAG_IT_GPIO_T</Title>
+</HEAD>
+<BODY>
+<h2>GPIO configuration</h2>
+<ul>
+<li>tIdentifier: name/instance of the PIO configuration<br></li>
+
+<li>ulGpioNum: Physical GPIO Port Number<br></li>
+
+<li>usType: GPIO type<br>
+  Possible settings:<br>
+  RX_GPIO_TYPE_INPUT: Define the GPIO as an input<br>
+  RX_GPIO_TYPE_OUTPUT: Defines the GPIO as an output<br>
+  RX_GPIO_TYPE_EXT0_MODE: Set GPIO to extended configuration mode 0 (UART)<br>
+  RX_GPIO_TYPE_EXT1_MODE: Set GPIO to extended configuration mode 1 (reserved)<br>
+</li>
+
+<li>usPolarity: GPIO polarity. 0=active high, 1=active low<br></li>
+
+<li>usMode: Enhanced GPIO Mode<br>
+Input Mode:<br>
+  RX_GPIO_INPUTMODE_STANDARD: GPIO is a standard input<br>
+  RX_GPIO_INPUTMODE_CAPTURED_CONTINUED: Captures the selected reference counter to the corresponding
+threshold register at every rising / falling edge (defined by ePol) on the GPIO pin.<br>
+  RX_GPIO_INPUTMODE_CAPTURED_ONCE: Captures the selected reference counter once to the corresponding 
+threshold register at a rising / falling edge (defined by ePol) on the GPIO pin.<br>
+  RX_GPIO_INPUTMODE_CAPTURED_LEVEL: Captures the selected reference counter to the corresponding 
+threshold register as long as the GPIO pin has the level defined by ePol. The pin is sampled using the IO clock frequency.<br>
+
+Output Mode:<br>
+  RX_GPIO_OUTPUTMODE_STANDARD_0: GPIO operates as a standard output. Default output value = 0.<br>
+  RX_GPIO_OUTPUTMODE_STANDARD_1: GPIO operates as standard output. Default output value = 1.<br>
+  RX_GPIO_OUTPUTMODE_LINE: Set the GPIO pin into line mode, so it can be driven via the GPIO line register.<br>
+  RX_GPIO_OUTPUTMODE_PWM: Set the GPIO into pulse width modulation mode.<br>
+</li>
+
+<li>usCntRef: <br>
+Capture Reference Counter.<br>
+
+Possible settings:<br>
+  RX_GPIO_COUNTER_0<br>
+  RX_GPIO_COUNTER_1<br>
+  RX_GPIO_COUNTER_2<br>
+  RX_GPIO_COUNTER_3<br>
+  RX_GPIO_COUNTER_4<br>
+  RX_GPIO_COUNTER_SYSTEMTIME:
+Use the system timer as the reference counter (100 Mhz)<br>
+  RX_GPIO_COUNTER_NONE: No counter referenced<br>
+</li>
+
+<li>fIrq: 
+Enable Interrupts on Capture Events.<br>
+
+TRUE = Interrupt generation enabled<br>
+FALSE = Interrupt generation disabled<br>
+</li>
+
+<li>ulThresholdCapture:  Threshold Configuration.<br>
+Defines the PWM threshold value.
+Only used in PWM (Pulse Width Modulation) mode.<br>
+</li>
+</ul>
+</BODY>
+</HTML>

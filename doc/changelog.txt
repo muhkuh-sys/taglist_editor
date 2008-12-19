@@ -1,0 +1,12 @@
+Changelog for NXO Editor/Modulator
+
+ * Adapted to new headers
+
+Modulator 1.0.3346
+
+ * Added RCX_MOD_TAG_IT_XC
+ * adapted for installer version
+ * added installer and icon
+ * fixed lua include path
+ * fixed: Task priority and token ranges are shown as plain numbers
+ * added option to make struct members invisible (mode="hidden")

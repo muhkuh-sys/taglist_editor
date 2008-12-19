@@ -1,0 +1,6 @@
+<TestDescription name="Taglist Editor" version="1">
+	<Code>
+		muhkuh.include("nxoeditor.lua", "nxoeditor")
+		nxoeditor.run()
+	</Code>
+</TestDescription>
