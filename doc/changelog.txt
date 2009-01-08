@@ -1,5 +1,11 @@
 Changelog for NXO Editor/Modulator
 
+NXO Editor 1.0.3817
+
+ * improved layout of edit controls
+ * disabled controls are now shown black on grey
+ * minor bugfixes
+ * inlined RCX_MOD_TAG_IDENTIFIER_T
  * Adapted to new headers
 
 Modulator 1.0.3346
