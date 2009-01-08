@@ -4,7 +4,7 @@ NXO Editor - an NXO build tool and taglist editor.
 NXO Editor allows you to construct and manipulate option module (.nxo) files
 and to edit the tag list included in the nxo file.
 
-(c) Hilscher GmbH 2008.
+(c) Hilscher GmbH 2009.
 Please send feedback, questions and bug reports to SLesch@hilscher.com
 
 
@@ -58,25 +58,20 @@ Editing the tag list
   If you change task priority or task token settings, always set both to 
   the same value.
 
-- Save the taglist or the NXO file
-
+- Save the taglist or the NXO file.
 
 
 
 Limitations:
 ===============
+The editor can only handle NXO files, not NXF files.
+
 The editor can only write NXO files with the default layout, which is 
 headers - ELF - taglist. Since the common header V3 contains offset and length
-of the ELF and the taglist, it is possible to build NXO files which contain
-additional data, or the taglist before the ELF. The editor will read these
-files, but will not write them back correctly.
-
-The editor can only handle NXO files, no NXF files.
-
-The editor does basic consistency checks when loading an NXO file (such
-as checking the common header version and checksums), but some additional
-checks should be implemented, e.g. consistency of the length and offset 
-values.
+information for both the ELF file and the taglist, an NXO file can be constructed 
+which contains additional data, or the taglist before the ELF file. 
+The editor will read such files, but silently discard the additional data, 
+and write them back in the default layout when saving.
 
 
 
@@ -85,6 +80,6 @@ Bug:
 If you load an empty taglist (or an NXO file with an empty taglist) and then
 load a non-empty taglist (or an NXO file with a non-empty taglist), the 
 GUI is not updated correctly. Click on the checkbox next to "display help" 
-to show the taglist.
+to trigger the update.
 
 
