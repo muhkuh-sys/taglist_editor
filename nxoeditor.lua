@@ -82,8 +82,8 @@ end
 -- debug
 local function OnDeleteTags()
 	taglistedit.destroyEditors()
-	m_nxo:setTaglistBin(nil)
-	m_fParamsLoaded = false
+	nxoeditor.m_nxo:setTaglistBin(nil)
+	nxoeditor.m_fParamsLoaded = false
 	nxoeditor.setButtons()
 end
 
@@ -105,7 +105,7 @@ function displayTags(abTags)
 	-- parse data, show message dialog in case of errors
 	local fOk, params, iLen, strMsg = taglist.binToParams(abTags, 0)
 	if not fOk then
-		errorDialog("Error parsing parameters", strMsg)
+		errorDialog("Error parsing taglist", strMsg)
 		return false
 	end
 	-- remove any old editors/controls

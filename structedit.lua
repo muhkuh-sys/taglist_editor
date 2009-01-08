@@ -138,14 +138,13 @@ function create(self, parent)
 	
 				if taglist.isReadOnly(member) then
 					-- print("disabling ", strMemberName)
-					editCtrl:Enable(false)
+					disableControl(editCtrl)
 				end
 		
 				-- put name and editor into sub-sizer, add to main sizer
 				local statictext = wx.wxStaticText(structPanel, wx.wxID_ANY, strMemberDesc)
-			
 				elements[strMemberName] = {staticText=statictext, editCtrl=editCtrl}
-				table.insert(elements, strMemberName)
+				table.insert(elements, strMemberName) -- order of elements, used for default layout
 				--{strMemberName=strMembername, staticText=statictext, editCtrl=editCtrl})
 			
 				-- store association: name->edit control
@@ -159,9 +158,7 @@ function create(self, parent)
 			end
 		end
 	end
-	local layout = tStructDef.layout
-	local structSizer = layout and doCustomLayout(structPanel, elements, layout) 
-			or combineWithGrid(structPanel, elements, elements)
+	local structSizer = doLayout(structPanel, elements, tStructDef.layout) 
 	structPanel:SetSizer(structSizer)
 	self.m_panel = structPanel
 	self.m_sizer = structSizer
@@ -170,17 +167,39 @@ function create(self, parent)
 end
 
 
---- Lays out elements according to a layout description.
+
+function isControl(object)
+	return object:IsKindOf(wx.wxClassInfo.FindClass("wxControl"))
+end
+
+function isTextCtrl(object)
+	return object:IsKindOf(wx.wxClassInfo.FindClass("wxTextCtrl"))
+end
+
+function disableControl(control)
+	if isTextCtrl(control) then
+		control:Connect(control:GetId(), wx.wxEVT_CHAR, function() end)
+		control:SetBackgroundColour(wx.wxLIGHT_GREY)
+	elseif isControl(control) then
+		control:Enable(false)
+	end
+end
+
+--- Lay out the structure elements.
 -- @param parent the parent window (used for static boxes)
 -- @param elements a list containing the elements to lay out,
 -- mapping member names to pairs of label and edit control
 -- e.g. elements["tMode"]={staticText=wxStaticText, editCtrl=wxTextCtrl}
--- @param layout the layout description
--- @return sizer
-function doCustomLayout(parent, elements, layout)
+-- @param layout the layout description: 
+--  "h" or "v" for a box sizer,
+--  "grid" for a grid sizer, 
+--  nil for a vertical default layout
+-- @return sizer a sizer with the laid out structure elements
+function doLayout(parent, elements, layout)
 	--print("custom layout")
-	local sizer
-	if layout.sizer == "h" or layout.sizer == "v" then
+	if layout == nil then
+		return doDefaultLayout(structPanel, elements)
+	elseif layout.sizer == "h" or layout.sizer == "v" then
 		return combineWithBoxSizer(parent, elements, layout)
 	elseif layout.sizer == "grid" then
 		return combineWithGrid(parent, elements, layout)
@@ -200,26 +219,26 @@ end
 --                     {sizer="h", "tSet", "tClear", "tInput"}}
 -- @return sizer
 function combineWithBoxSizer(parent, elements, layout)
-	local direction = layout.sizer=="v" and wx.wxVERTICAL or wx.wxHORIZONTAL
-	local sizer
+	local iOrientation = layout.sizer=="v" and wx.wxVERTICAL or wx.wxHORIZONTAL
+	local sizer, esizer, element
 	if type(layout.box)=="string" then
-		sizer = wx.wxStaticBoxSizer(direction, parent, layout.box)
+		sizer = wx.wxStaticBoxSizer(iOrientation, parent, layout.box)
 	else
-		sizer = wx.wxBoxSizer(direction)
+		sizer = wx.wxBoxSizer(iOrientation)
 	end
 	
-	local space = direction == wx.wxHORIZONTAL and wx.wxRIGHT or wx.wxBOTTOM
+	local iAlignment = (iOrientation == wx.wxHORIZONTAL and wx.wxRIGHT) or wx.wxBOTTOM
 	local x
 	for i = 1, #layout do
 		x = layout[i]
 		if type(x)=="string" then
-			local element = elements[x]
-			local esizer = wx.wxBoxSizer(wx.wxHORIZONTAL)
-			esizer:Add(element.staticText, 0, wx.wxRIGHT, 3)
+			element = elements[x]
+			esizer = wx.wxBoxSizer(wx.wxHORIZONTAL)
+			esizer:Add(element.staticText, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxRIGHT, 3)
 			esizer:Add(element.editCtrl)
-			sizer:Add(esizer, 0, space, 3)
+			sizer:Add(esizer, 0, iAlignment, 3)
 		elseif type(x)=="table" then
-			sizer:Add(doCustomLayout(parent, elements, x), 0, space, 3)
+			sizer:Add(doLayout(parent, elements, x), 0, iAlignment, 3)
 		elseif x==nil then
 			-- do nothing
 		end
@@ -246,15 +265,15 @@ function combineWithGrid(parent, elements, layout)
 	-- print("rows: ", rows, "cols: ", cols, "elements: ", #elements)
 	local hgap, vgap = layout.hgap or 3, layout.vgap or 3
 	local sizer = wx.wxFlexGridSizer(rows, cols, hgap, vgap)
-	local x
+	local x, element
 	for i = 1, #layout do
 		x = layout[i]
 		if type(x)=="string" then
-			local entry = elements[x]
-			sizer:Add(entry.staticText, 0, wx.wxALIGN_RIGHT)
-			sizer:Add(entry.editCtrl, 0, wx.wxALIGN_LEFT)
+			element = elements[x]
+			sizer:Add(element.staticText, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALIGN_RIGHT)
+			sizer:Add(element.editCtrl, 0, wx.wxALIGN_LEFT)
 		elseif type(x)=="table" then
-			sizer:Add(doCustomLayout(parent, elements, x))
+			sizer:Add(doLayout(parent, elements, x))
 		elseif x==nil then
 			-- print("nil")
 			sizer:AddSpacer(0)
@@ -269,6 +288,24 @@ function combineWithGrid(parent, elements, layout)
 	else
 		return sizer
 	end
+end
+
+
+function doDefaultLayout(parent, elements)
+	local sizer = wx.wxFlexGridSizer(0, 2, 3, 3)
+	local element
+	for _, strElementName in ipairs(elements) do
+		assert(type(strElementName)=="string", "non-string entry in default layout")
+		element = elements[strElementName]
+		if isControl(element.editCtrl) then
+			sizer:Add(element.staticText, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALIGN_RIGHT)
+			sizer:Add(element.editCtrl, 0, wx.wxEXPAND + wx.wxALIGN_LEFT)
+		else
+			sizer:Add(element.staticText, 0, wx.wxALIGN_RIGHT)
+			sizer:Add(element.editCtrl, 0, wx.wxALIGN_LEFT)
+		end
+	end
+	return sizer
 end
 
 --- construct a struct editor

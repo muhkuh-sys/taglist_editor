@@ -61,11 +61,13 @@ for i=2, 55 do
 	table.insert(COMBO_TASKTOKEN.values, {name="TSK_TOK_"..tonumber(i), value=i+7})
 end
 
+local RCX_MOD_TAG_IDENTIFIER_RO_T = {"STRING", "tIdentifier.abName", desc="Identifier", size=16, mode="read-only"}
+local RCX_MOD_TAG_IDENTIFIER_T = {"STRING", "tIdentifier.abName", desc="Identifier", size=16}
 
 structures = {
-RCX_MOD_TAG_IDENTIFIER_T = {
-  {"STRING", "abName", desc="Name", size=16}
-	},
+--RCX_MOD_TAG_IDENTIFIER_T = {
+--  {"STRING", "abName", desc="Name", size=16}
+--	},
 
 ----------------------------------------------------------------------------------------------
 -- Task priorities
@@ -89,8 +91,9 @@ RCX_MOD_TAG_IT_STATIC_TASKS_T = {
 -- Timer
 
 RCX_MOD_TAG_IT_TIMER_T = {
-  {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",
-  desc="Identifier", mode="read-only"},
+  RCX_MOD_TAG_IDENTIFIER_RO_T,
+  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",
+  -- desc="Identifier", mode="read-only"},
   -- following structure entries are compatible to RX_TIMER_SET_T
   {"UINT32",                                "ulTimNum", 
   desc="Timer Number", editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=4}},
@@ -134,7 +137,8 @@ RCX_MOD_TAG_IT_INTERRUPT_T = {
 
 RCX_MOD_TAG_IT_XC_T = 
 {
-  {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",   desc="Identifier", mode="read-only"},
+  RCX_MOD_TAG_IDENTIFIER_RO_T,
+  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",   desc="Identifier", mode="read-only"},
   -- Specifies which Xc unit to use 
   {"UINT32",                                "ulXcId",        desc="xC Unit", 
      editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=3}}
@@ -147,7 +151,8 @@ RCX_MOD_TAG_IT_XC_T =
 
 RCX_MOD_TAG_IT_LED_T=
 {
-  {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",   desc="Identifier", mode="read-only"},
+  RCX_MOD_TAG_IDENTIFIER_RO_T,
+  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",   desc="Identifier", mode="read-only"},
   
   {"UINT32",                                "ulUsesResourceType", desc="Resource Type",
     editor="comboedit", editorParam={nBits=32,
@@ -215,7 +220,8 @@ RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T = {
 
 RCX_MOD_TAG_IT_PIO_T = {
   -- following structure entries are compatible to RX_PIO_SET_T 
-  {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier"},
+  RCX_MOD_TAG_IDENTIFIER_T,
+  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier"},
   -- Optional Register to make PIO Pin to output at startup 
   {"RCX_MOD_TAG_IT_PIO_REGISTER_VALUE_T",   "tMode"},      
   -- Optional Register to make PIO Pin to output at startup 
@@ -226,19 +232,23 @@ RCX_MOD_TAG_IT_PIO_T = {
   {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tClear"},    
   -- Register to get current input value of the PIOs  
   {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tInput"},    
-  layout=  {sizer="grid", "tIdentifier",  
+  layout=  {sizer="grid", "tIdentifier.abName",  
                       "tMode", "tDirection",
                       "tSet", "tClear", "tInput"},
 },
+
+--[[
 RCX_MOD_TAG_IT_PIO_TAG_T = {
   {"RCX_MODULE_TAG_ENTRY_HEADER_T",         "tHeader"},
   {"RCX_MOD_TAG_IT_PIO_T",                  "tData"},
 },
+--]]
 
 ----------------------------------------------------------------------------------------------
 --        GPIO
 RCX_MOD_TAG_IT_GPIO_T = {
-  {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier"},
+  RCX_MOD_TAG_IDENTIFIER_T,
+  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier"},
   -- following structure entries are compatible to RX_GPIO_SET_T
   -- GPIO Number 
   {"UINT32",                                "ulGpioNum", editorParam={format="%u"}},
@@ -341,6 +351,7 @@ HELP_MAPPING = {
 	RCX_MOD_TAG_IT_XC                   = {name="xC Tag",        file="RCX_MOD_TAG_IT_XC_T.htm"},
 	RCX_MOD_TAG_IT_INTERRUPT            = {name="Interrupt Tag", file="RCX_MOD_TAG_IT_INTERRUPT_T.htm"},
 	memsize                             = {name="", file="misc_tags.htm"},
+	num_comm_channel                    = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
 	min_persistent_storage_size         = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
 	min_os_version                      = {name="", file="misc_tags.htm"}, --anchor="#min_os_version"},
 	max_os_version                      = {name="", file="misc_tags.htm"}, --anchor="#max_os_version"},
@@ -374,7 +385,7 @@ end
 
 
 ---------------------------------------------------------------------------
--- The elementary data types. Each entry may contain
+-- The elementary data types. Each entry may contain:
 -- size, if the size is constant for all instances of the type
 -- editor, the lua package name of the editor control
 -- editorParam, parameters to pass to the editor control at instantiation
@@ -622,10 +633,11 @@ function uint32tobin(u)
 end
 
 
---- Convert a list of parameters to binary data.
--- @param params a list of parameters. Each element is a list of 
+--- Convert a list representation of a taglist to binary.
+-- @param params a list of tags. Each element is a list of 
 --   ulTag, ulSize, abParVal.
--- @return the binary form
+-- @return the binary taglist. If params is empty, an empty taglist
+--   consisting only of the end marker is returned.
 function paramsToBin(params)
 	local abParblock = "" --parblock_cookie
 	for _, param in ipairs(params) do
@@ -692,7 +704,7 @@ function binToParams(abBin, iStartPos)
 		
 		-- get the value. the value size must not be larger than the remaining data
 		if iPos + ulSize > iLen then
-			strMsg = "tag value exceeds end of data: " .. ulSize
+			strMsg = "incorrect tag size or tag list truncated: size =" .. ulSize
 			break
 		end
 		local abValue = string.sub(abBin, iPos+1, iPos+ulSize)

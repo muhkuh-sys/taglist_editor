@@ -159,8 +159,14 @@ function enterPage(iPage)
 	editor:setValue(abValue)
 
 	if taglist.isReadOnly(tTagDesc) then
-		editCtrl:Enable(false)
+		structedit.disableControl(editCtrl)
+		--if editor.disable then
+		--	editor:disable()
+		--else
+		--	editCtrl:Enable(false)
+		--end
 	end
+	
 	m_editor = editor
 	m_editCtrl = editCtrl
 	m_tag = tTag
