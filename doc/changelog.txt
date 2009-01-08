@@ -2,6 +2,7 @@ Changelog for NXO Editor/Modulator
 
 NXO Editor 1.0.3817
 
+ * additional checks when opening an NXO file
  * tag list is word-aligned
  * improved layout of edit controls
  * disabled controls ar shown black on grey
