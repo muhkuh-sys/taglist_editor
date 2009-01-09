@@ -39,7 +39,6 @@ function showtypes(...)
 end
 
 function parseNxoBin(tNxo, abBin)
-	-- TODO
 	local fOk, astrErrors, abDefaultHeader, abCommonHeader, abOtherHeaders, abElf, abTaglist 
 		= netx_fileheader.parseNXO(abBin)
 	-- print(fOk, astrErrors, abDefaultHeader, abCommonHeader, abOtherHeaders, abElf, abTaglist )

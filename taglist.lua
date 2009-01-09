@@ -61,13 +61,10 @@ for i=2, 55 do
 	table.insert(COMBO_TASKTOKEN.values, {name="TSK_TOK_"..tonumber(i), value=i+7})
 end
 
-local RCX_MOD_TAG_IDENTIFIER_RO_T = {"STRING", "tIdentifier.abName", desc="Identifier", size=16, mode="read-only"}
-local RCX_MOD_TAG_IDENTIFIER_T = {"STRING", "tIdentifier.abName", desc="Identifier", size=16}
+-- 16-char name string
+local RCX_MOD_TAG_IDENTIFIER_T = {"STRING", "tIdentifier.abName", desc="Identifier", size=16, mode="read-only"}
 
 structures = {
---RCX_MOD_TAG_IDENTIFIER_T = {
---  {"STRING", "abName", desc="Name", size=16}
---	},
 
 ----------------------------------------------------------------------------------------------
 -- Task priorities
@@ -85,18 +82,18 @@ RCX_MOD_TAG_IT_STATIC_TASKS_T = {
   desc="Priority/Token Range",   editorParam={format="%u"}, mode="read-only"},
   -- task group reference id
   {"UINT32", "ulTaskGroupRef", desc="Task Group Reference Id", mode="read-only"},
+  nameField = "szTaskListName"
 	},
 	
 ----------------------------------------------------------------------------------------------
 -- Timer
 
 RCX_MOD_TAG_IT_TIMER_T = {
-  RCX_MOD_TAG_IDENTIFIER_RO_T,
-  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",
-  -- desc="Identifier", mode="read-only"},
+  RCX_MOD_TAG_IDENTIFIER_T,
   -- following structure entries are compatible to RX_TIMER_SET_T
   {"UINT32",                                "ulTimNum", 
   desc="Timer Number", editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=4}},
+  nameField = "tIdentifier.abName"
 	},
 
 ----------------------------------------------------------------------------------------------
@@ -129,6 +126,7 @@ RCX_MOD_TAG_IT_INTERRUPT_T = {
   -- task group reference id XXX MGr Reserved, soll nicht in die GUI!
   {"UINT32", "ulInterruptGroupRef",    desc="Interrupt group ref.",
   mode="hidden"}, 
+  nameField = "szInterruptListName"
 },
 
 
@@ -137,11 +135,12 @@ RCX_MOD_TAG_IT_INTERRUPT_T = {
 
 RCX_MOD_TAG_IT_XC_T = 
 {
-  RCX_MOD_TAG_IDENTIFIER_RO_T,
-  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",   desc="Identifier", mode="read-only"},
+  RCX_MOD_TAG_IDENTIFIER_T,
   -- Specifies which Xc unit to use 
   {"UINT32",                                "ulXcId",        desc="xC Unit", 
-     editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=3}}
+     editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=3}},
+  nameField = "tIdentifier.abName"
+
 },
 
 
@@ -151,8 +150,7 @@ RCX_MOD_TAG_IT_XC_T =
 
 RCX_MOD_TAG_IT_LED_T=
 {
-  RCX_MOD_TAG_IDENTIFIER_RO_T,
-  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",   desc="Identifier", mode="read-only"},
+  RCX_MOD_TAG_IDENTIFIER_T,
   
   {"UINT32",                                "ulUsesResourceType", desc="Resource Type",
     editor="comboedit", editorParam={nBits=32,
@@ -163,7 +161,8 @@ RCX_MOD_TAG_IT_LED_T=
     
   {"UINT32",                                "ulPolarity",    desc="Polarity",
     editor="comboedit", editorParam={nBits=32,
-    values={{name="normal", value=0},{name="inverted", value=1}}}}
+    values={{name="normal", value=0},{name="inverted", value=1}}}},
+  nameField = "tIdentifier.abName"
 },
 
 
@@ -221,7 +220,6 @@ RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T = {
 RCX_MOD_TAG_IT_PIO_T = {
   -- following structure entries are compatible to RX_PIO_SET_T 
   RCX_MOD_TAG_IDENTIFIER_T,
-  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier"},
   -- Optional Register to make PIO Pin to output at startup 
   {"RCX_MOD_TAG_IT_PIO_REGISTER_VALUE_T",   "tMode"},      
   -- Optional Register to make PIO Pin to output at startup 
@@ -231,24 +229,18 @@ RCX_MOD_TAG_IT_PIO_T = {
   -- PIO Register to clear PIOs 
   {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tClear"},    
   -- Register to get current input value of the PIOs  
-  {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tInput"},    
+  {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tInput"},  
+  nameField = "tIdentifier.abName",  
   layout=  {sizer="grid", "tIdentifier.abName",  
                       "tMode", "tDirection",
                       "tSet", "tClear", "tInput"},
 },
 
---[[
-RCX_MOD_TAG_IT_PIO_TAG_T = {
-  {"RCX_MODULE_TAG_ENTRY_HEADER_T",         "tHeader"},
-  {"RCX_MOD_TAG_IT_PIO_T",                  "tData"},
-},
---]]
 
 ----------------------------------------------------------------------------------------------
 --        GPIO
 RCX_MOD_TAG_IT_GPIO_T = {
   RCX_MOD_TAG_IDENTIFIER_T,
-  -- {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier"},
   -- following structure entries are compatible to RX_GPIO_SET_T
   -- GPIO Number 
   {"UINT32",                                "ulGpioNum", editorParam={format="%u"}},
@@ -264,8 +256,24 @@ RCX_MOD_TAG_IT_GPIO_T = {
   {"UINT32",                                "fIrq", editorParam={format="%u"}},                       
   -- Threshold / Capture value in PWM mode 
   {"UINT32",                                "ulThresholdCapture"},         
+  nameField = "tIdentifier.abName"
 },
-
+--
+memsize_t = 
+	{{"UINT32", "ulMemSize",        mode="read-only", desc="Memory Size"}},
+min_persistent_storage_size_t = 
+	{{"UINT32", "ulMinStorageSize", mode="read-only", desc="Min. Persistent Storage Size"}},
+min_os_version_t = 
+	{{"rcxver", "ulMinOsVer",       mode="read-only", desc="Min. OS Version"}},
+max_os_version_t = 
+	{{"rcxver", "ulMaxOsVer",       mode="read-only", desc="Max. OS Version"}},
+min_chip_rev_t = 
+	{{"UINT32", "ulMinChipRev",     mode="read-only", desc="Min. Chip Revision"}},
+max_chip_rev_t = 
+	{{"UINT32", "ulMaxChipRev",     mode="read-only", desc="Max. Chip Revision"}},
+num_comm_channel_t =
+	{{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of required comm channels"}},
+--
 }
 
 ---------------------------------------------------------------------------
@@ -284,6 +292,23 @@ TAG_IGNORE_FLAG = 0x80000000
 
 rcx_mod_tags = {
 -- elementary type tags -> read only
+--
+memsize = 
+	{paramtype = 0x800, datatype="memsize_t",          desc="Memory Size"},
+min_persistent_storage_size = 
+	{paramtype = 0x801, datatype="min_persistent_storage_size_t", desc="Min. Storage Size"},
+min_os_version = 
+	{paramtype = 0x802, datatype="min_os_version_t",   desc="Min. OS Version"},
+max_os_version = 
+	{paramtype = 0x803, datatype="max_os_version_t",   desc="Max. OS Version"},
+min_chip_rev = 
+	{paramtype = 0x804, datatype="min_chip_rev_t",     desc="Min. Chip Revision"},
+max_chip_rev = 
+	{paramtype = 0x805, datatype="max_chip_rev_t",     desc="Max. Chip Revision"},
+num_comm_channel =
+	{paramtype = 0x806, datatype="num_comm_channel_t", desc="Number of channels"},
+--
+--[[
 memsize = 
 	{paramtype = 0x800, datatype="UINT32", mode="read-only", desc="Memory Size"},
 min_persistent_storage_size = 
@@ -297,8 +322,8 @@ min_chip_rev =
 max_chip_rev = 
 	{paramtype = 0x805, datatype="UINT32", mode="read-only", desc="Max. Chip Revision"},
 num_comm_channel =
-	{paramtype = 0x806, datatype="UINT32", mode="read-only", "Number of required comm channels"},
---[[
+	{paramtype = 0x806, datatype="UINT32", mode="read-only", desc="Number of required comm channels"},
+--
 xc_alloc = 
 	{paramtype = 0x806, datatype="UINT32", desc="xC allocation"},
 irq_alloc= 
@@ -436,14 +461,30 @@ end
 -- name of the tag.
 -- @param ulTag a tag number
 -- @return strDesc the description/name string of the tag
--- @return tDesc the tag definition
 function getTagDescString(ulTag)
 	local strKey, tDesc = getParamTypeDesc(ulTag)
-	local strDesc
-	if tDesc then
-		strDesc = tDesc.desc or strKey
+	return (tDesc and tDesc.desc) or strKey
+end
+
+
+-- Extract the name string from a tag, if it has one.
+-- @param tTag the list representation of the tag
+-- (ulTag, ulSize, abValue)
+-- @return the name string, 
+--  or the empty string if the tag does not have a name
+function getTagInstanceName(tTag)
+	local strTagName, tTagDesc = taglist.getParamTypeDesc(tTag.ulTag)
+	assert(tTagDesc, "tag "..tTag.ulTag.." not found")
+	local strTypeName = tTagDesc.datatype
+	local tStructDef = getStructDef(strTypeName)
+	if tStructDef and tStructDef.nameField then
+		local tStruct = splitStructValue(strTypeName, tTag.abValue)
+		for _, field in pairs(tStruct) do
+			if field.strName==tStructDef.nameField then
+				return field.abValue
+			end
+		end
 	end
-	return strDesc, tDesc
 end
 
 ------------------  size operators
@@ -649,7 +690,8 @@ function paramsToBin(params)
 		abParblock = abParblock ..
 			uint32tobin(ulTag) ..
 			uint32tobin(iParamSize) ..
-			abParamVal
+			abParamVal ..
+			string.rep(string.char(0), (4 - iParamSize) %4) -- pad to dword size
 	end
 	abParblock = abParblock .. uint32tobin(TAG_END) .. uint32tobin(0)
 	return abParblock
@@ -662,12 +704,13 @@ end
 
 --- Tries to extract a parameter list from binary data.
 -- If a well-formed parameter block is found, the parameters are extracted.
+-- This routine does not require a size after the end tag
 --
 -- @param abBin binary data
 -- @param iStartPos 0-based offset of the parameter block in the data
 --
 -- @return fOk, paramlist, iLen, strError. fOk is true if a well-formed 
--- parameter list was efound, false otherwise. 
+-- parameter list was found, false otherwise. 
 -- paramlist contains whatver parameters could be extracted. Each entry is a 
 -- list with the keys ulTag = the 32 bit tag number, ulSize = the size of this
 -- parameter in the list (including padding), abValue = the binary value of
@@ -681,37 +724,43 @@ function binToParams(abBin, iStartPos)
 	local fOk = false
 	
 	local iLen, iPos = abBin:len(), iStartPos
+	local ulTag, ulSize, abValue
 	
-	while (iPos+4 <= iLen) do
-		-- tag
-		local ulTag = uint32(abBin, iPos)
+	while (iPos < iLen) do
+		-- get tag type
+		if (iPos+4 > iLen) then
+			strMsg = "tag list truncated (in tag field)"
+			break
+		end
+		
+		ulTag = uint32(abBin, iPos)
 		iPos = iPos+4
 
-		-- end of valid param block found
+		-- end tag? 
 		if ulTag == TAG_END then
 			fOk = true
 			break
 		end
-
-		-- size
+		
+		-- get size
 		if (iPos+4 > iLen) then
-			strMsg = "length field exceeds end of data"
+			strMsg = "tag list truncated (in size field)"
 			break
 		end
 		
-		local ulSize = uint32(abBin, iPos)
+		ulSize = uint32(abBin, iPos)
 		iPos = iPos + 4
+		
+		-- print position, size, type
+		print(string.format("pos: 0x%08x, tag: 0x%08x, size: 0x%08x", iPos-8, ulTag, ulSize))
 		
 		-- get the value. the value size must not be larger than the remaining data
 		if iPos + ulSize > iLen then
-			strMsg = "incorrect tag size or tag list truncated: size =" .. ulSize
+			strMsg = "incorrect tag size or tag list truncated: size = " .. ulSize
 			break
 		end
-		local abValue = string.sub(abBin, iPos+1, iPos+ulSize)
+		abValue = string.sub(abBin, iPos+1, iPos+ulSize)
 		iPos = iPos + ulSize
-		
-		-- print position, size, type
-		print(string.format("0x%08x, 0x%08x, 0x%08x", iPos, ulSize, ulTag))
 		
 		-- insert the param name and value
 		table.insert(params, {
@@ -719,10 +768,18 @@ function binToParams(abBin, iStartPos)
 			ulSize = ulSize, -- allows to reconstruct the binary
 			abValue = abValue,
 		})
+
+		-- skip padding
+		iPos = iPos + ((4 - iPos) % 4)
+		
+		if iPos > iLen then
+			strMsg = "tag list truncated (in padding)"
+			break
+		end
 	end
 	
-	if (iPos+4>=iLen) then
-		strMsg = "truncated param block?"
+	if strMsg=="" and ulTag ~= TAG_END then
+		strMsg = "end marker not found"
 	end
 	
 	return fOk, params, iPos - iStartPos, strMsg
@@ -741,7 +798,8 @@ function makeEmptyParblock()
 		abParblock = abParblock ..
 			uint32tobin(tPardesc.paramtype) ..
 			uint32tobin(ulSize) ..
-			string.rep(string.char(0), ulSize)
+			string.rep(string.char(0), ulSize + (4 - ulSize) % 4)
+
 	end
 	
 	--abParblock = abParblock .. uint32tobin(42) .. uint32tobin(10) .. "0123456789"

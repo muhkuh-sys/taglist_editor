@@ -96,8 +96,12 @@ function createEditors(tagList)
 	m_pages = {}
 	for i, tTag in ipairs(tagList) do
 		-- print(i, tTag)
-		local strDesc = taglist.getTagDescString(tTag.ulTag) --or "??"
-		-- print(strDesc)
+		local strDesc = taglist.getTagDescString(tTag.ulTag)
+		local strInstName = taglist.getTagInstanceName(tTag)
+		print(strDesc, strInstName)
+		if strDesc and strInstName then
+			strDesc = strDesc .. ": " .. strInstName
+		end
 		if strDesc then
 			table.insert(m_pages, {desc=strDesc, tag=tTag})
 			m_book:AddPage(m_bookPanel, strDesc)
@@ -105,9 +109,12 @@ function createEditors(tagList)
 	end
 	m_book:Connect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING, OnPageChanging)
 	m_book:Connect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, OnPageChanged)
-	m_book:SetSelection(0)
-	m_book:Fit()
+	if #tagList > 0 then
+		m_book:SetSelection(0)
+		m_book:Fit()
+	end
 end
+
 
 --- Remove all pages from the notebook.
 function destroyEditors()
@@ -120,6 +127,8 @@ function destroyEditors()
 		-- print(m_book:GetPageCount())
 		m_book:RemovePage(0)
 	end
+	m_tagList = {}
+	m_pages = {}
 	-- print(m_book:GetPageCount())
 end
 

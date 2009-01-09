@@ -1,5 +1,11 @@
 Changelog for NXO Editor/Modulator
 
+ * fixed: GUI is not updated correctly after loading an empty taglist
+ * added sanity checks when loading headers, taglists and ELF files.
+ * the taglist parser now expects each tag to start at a dword-aligned address;
+   the write routine pads each tag up to the next dword boundary.
+ * the instance-specific name of a tag now appears in the selection list to the left.
+
 NXO Editor 1.0.3817
 
  * additional checks when opening an NXO file

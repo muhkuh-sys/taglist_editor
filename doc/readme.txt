@@ -73,13 +73,3 @@ which contains additional data, or the taglist before the ELF file.
 The editor will read such files, but silently discard the additional data, 
 and write them back in the default layout when saving.
 
-
-
-Bug:
-=====
-If you load an empty taglist (or an NXO file with an empty taglist) and then
-load a non-empty taglist (or an NXO file with a non-empty taglist), the 
-GUI is not updated correctly. Click on the checkbox next to "display help" 
-to trigger the update.
-
-

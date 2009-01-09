@@ -75,7 +75,11 @@ end
 
 -- debug
 local function OnCreateTags()
-	nxoeditor.createEmptyParams()
+	-- local bin = string.rep(string.char(0), 8) 
+	local bin = taglist.makeEmptyParblock()
+	nxoeditor.displayTags(bin)
+	nxoeditor.m_nxo:setTaglistBin(bin)
+	nxoeditor.m_fParamsLoaded = true
 	nxoeditor.setButtons()
 end
 
@@ -85,13 +89,6 @@ local function OnDeleteTags()
 	nxoeditor.m_nxo:setTaglistBin(nil)
 	nxoeditor.m_fParamsLoaded = false
 	nxoeditor.setButtons()
-end
-
--- debug
-function createEmptyParams()
-	local bin = taglist.makeEmptyParblock()
-	displayTags(bin)
-	setButtons()
 end
 
 
@@ -113,7 +110,9 @@ function displayTags(abTags)
 		taglistedit.destroyEditors()
 	end
 	-- create the new controls
-	taglistedit.createEditors(params)
+	if #params > 0 then
+		taglistedit.createEditors(params)
+	end
 	m_panel:Layout()
 	m_panel:Refresh()
 	m_panel:Update()
@@ -126,9 +125,9 @@ end
 ---------------------------------------------------------------------
 -- loading and saving
 ---------------------------------------------------------------------
-strHdrFilenameFilters = "BIN files (*.bin)|*.bin|All Files (*)|*"
+strHdrFilenameFilters = "Header files (*.bin)|*.bin|All Files (*)|*"
 strElfFilenameFilters = "ELF files (*.elf)|*.elf|All Files (*)|*"
-strTagFilenameFilters = "BIN files (*.bin)|*.bin|All Files (*)|*"
+strTagFilenameFilters = "Taglist files (*.bin)|*.bin|All Files (*)|*"
 strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|All Files (*)|*"
 
 function loadFileDialog(parent, strTitle, strFilters)
@@ -206,10 +205,17 @@ function loadHdr(filebar)
 	local strFilename = loadFileDialog(m_panel, "Select header file", strHdrFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
+	
+	
 	if iStatus==STATUS_OK then
-		m_nxo:setHeadersBin(abBin)
-		filebar:setFilename(strFilename)
-		setButtons()
+		local fOk, strMsg = netx_fileheader.isUnfilledHeadersBin(abBin)
+		if fOk then
+			m_nxo:setHeadersBin(abBin)
+			filebar:setFilename(strFilename)
+			setButtons()
+		else
+			errorDialog("Not a valid headers file", strMsg)
+		end
 	end
 end
 
@@ -219,14 +225,24 @@ function saveHdr(filebar, fSaveAs)
 end
 
 
+
+
+function isELF(abBin)
+	return abBin:byte(2)==0x45 and abBin:byte(3)==0x4c and abBin:byte(4)==0x46
+end
+
 function loadElf(filebar)
 	local strFilename = loadFileDialog(m_panel, "Select Elf file", strElfFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK then
-		m_nxo:setElf(abBin)
-		filebar:setFilename(strFilename)
-		setButtons()
+		if isELF(abBin) then
+			m_nxo:setElf(abBin)
+			filebar:setFilename(strFilename)
+			setButtons()
+		else
+			errorDialog("Not an ELF file", "The file does not have an ELF signature.")
+		end
 	end
 end
 
@@ -252,6 +268,8 @@ function saveTags(filebar, fSaveAs)
 	local abBin = taglistedit.getTagBin()
 	if abBin then
 		saveFile1(filebar, fSaveAs, "Save taglist as", strTagFilenameFilters, abBin)
+	else
+		errorDialog("Internal Error", "Could not reconstruct tag list from GUI")
 	end
 end
 
@@ -263,31 +281,26 @@ function loadNxo(filebar)
 	-- loaded successfully
 	if iStatus==STATUS_OK then
 		local fOk, astrErrors = m_nxo:parseNxoBin(abBin)
-		-- parsed successfully
 		if fOk then
+			-- parsed successfully
 			filebar:setFilename(strFilename)
-			setButtons()
 			local abTags = m_nxo:getTaglistBin()
-				-- has tags
 				if abTags then
-					local fOk = displayTags(abTags)
-					if not fOk then 
-						-- error parsing taglist
-						messageDialog("Error parsing taglist")
+					if not displayTags(abTags) then
+						errorDialog("Error parsing taglist")
 					end
 				else
-					-- has no tags
 					messageDialog("No taglist found", "No taglist found")
 				end
+			setButtons()
 		else
 			-- error parsing file
 			local strErrors = table.concat(astrErrors, "\n") 
 			if strErrors == "" then strErrors = "Unknown error" end
-			errorDialog("Error opening NXO file", strErrors)
+			errorDialog("Error parsing NXO file", strErrors)
 			
 		end
 	end
-	
 end
 
 
