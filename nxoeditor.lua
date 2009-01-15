@@ -102,7 +102,7 @@ function displayTags(abTags)
 	-- parse data, show message dialog in case of errors
 	local fOk, params, iLen, strMsg = taglist.binToParams(abTags, 0)
 	if not fOk then
-		errorDialog("Error parsing taglist", strMsg)
+		errorDialog("Error parsing tag list", strMsg)
 		return false
 	end
 	-- remove any old editors/controls
@@ -127,7 +127,7 @@ end
 ---------------------------------------------------------------------
 strHdrFilenameFilters = "Header files (*.bin)|*.bin|All Files (*)|*"
 strElfFilenameFilters = "ELF files (*.elf)|*.elf|All Files (*)|*"
-strTagFilenameFilters = "Taglist files (*.bin)|*.bin|All Files (*)|*"
+strTagFilenameFilters = "Tag list files (*.bin)|*.bin|All Files (*)|*"
 strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|All Files (*)|*"
 
 function loadFileDialog(parent, strTitle, strFilters)
@@ -186,12 +186,27 @@ function saveFile(strFilename, strBin)
 	end
 end
 
+function checkOverwrite(strFilename)
+	if not wx.wxFileExists(strFilename) then 
+		return true 
+	else
+		local iRes = wx.wxMessageBox(
+			"The file " .. strFilename .. "\nalready exists. Do you want to overwrite it?",
+			"Overwrite file?", 
+			wx.wxICON_EXCLAMATION + wx.wxYES_NO, 
+			m_panel);
+		return iRes == wx.wxYES
+	end
+end
+
 function saveFile1(filebar, fSaveAs, strTitle, strFilenameFilters, abBin)
 	local strFilename = filebar:getFilename()
 	if fSaveAs or strFilename:len()==0 then
 		strFilename = saveFileDialog(m_panel, strTitle, strFilenameFilters)
+		if not strFilename then return end
+	else
+		if not checkOverwrite(strFilename) then return end
 	end
-	if not strFilename then return end
 	
 	local iStatus = saveFile(strFilename, abBin)
 	if iStatus==STATUS_OK then
@@ -252,7 +267,7 @@ function saveElf(filebar, fSaveAs)
 end
 
 function loadTags(filebar)
-	local strFilename = loadFileDialog(m_panel, "Select Taglist file", strTagFilenameFilters)
+	local strFilename = loadFileDialog(m_panel, "Select Tag list file", strTagFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK and displayTags(abBin) then
@@ -267,7 +282,7 @@ function saveTags(filebar, fSaveAs)
 	-- get taglist
 	local abBin = taglistedit.getTagBin()
 	if abBin then
-		saveFile1(filebar, fSaveAs, "Save taglist as", strTagFilenameFilters, abBin)
+		saveFile1(filebar, fSaveAs, "Save tag list as", strTagFilenameFilters, abBin)
 	else
 		errorDialog("Internal Error", "Could not reconstruct tag list from GUI")
 	end
@@ -287,10 +302,10 @@ function loadNxo(filebar)
 			local abTags = m_nxo:getTaglistBin()
 				if abTags then
 					if not displayTags(abTags) then
-						errorDialog("Error parsing taglist")
+						errorDialog("Error parsing tag list")
 					end
 				else
-					messageDialog("No taglist found", "No taglist found")
+					messageDialog("No tag list found", "No tag list found")
 				end
 			setButtons()
 		else

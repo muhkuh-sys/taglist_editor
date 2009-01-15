@@ -33,16 +33,16 @@ for tokens and priorities, there should be no conflicts.
 
 <table border=1>
 <tr>
-<td>Priority Base</td><td>priority range used by interrupts tdst</td>
+<td>Priority Base</td><td>priority range used by interrupts tdst. <br>Must be less than or equal to 32 - Range</td>
 </tr>
 <tr>
 <td>Range</td><td>range for interrupt priorities </td>
 </tr>
 <tr>
-<td>Task Priority Base</td><td>Priority range used by interrupts configuring tasks </td>
+<td>Task Priority Base</td><td>Priority range used by interrupts configuring tasks. <br>Must be less than or equal to 56 - Task Range. </td>
 </tr>
 <tr>
-<td>Task Token Base</td><td>Token range used by interrupts configuring tasks </td>
+<td>Task Token Base</td><td>Token range used by interrupts configuring tasks. <br>Must be less than or equal to 56 - Task Range and should have the same value as the Task Priority Base. </td>
 </tr>
 <tr>
 <td>Task Range</td><td>Range for priority and token </td>

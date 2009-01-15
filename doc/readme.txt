@@ -1,4 +1,4 @@
-NXO Editor - an NXO build tool and taglist editor.
+NXO Editor - an NXO build tool and tag list editor.
 ==================================================
 
 NXO Editor allows you to construct and manipulate option module (.nxo) files
@@ -36,7 +36,7 @@ consists of the following three parts:
   device info block
   module info block
 - an ELF file containing the firmware (no headers or tag list)
-- a binary file containing the taglist
+- a binary file containing the tag list
 
 You can load these components into the editor and save them as an NXO,
 or use the command line script 'makenxo.bat'
@@ -45,7 +45,7 @@ or use the command line script 'makenxo.bat'
 
 Editing the tag list
 ====================
-- Load a binary taglist file or an NXO file.
+- Load a binary tag list file or an NXO file.
 
 - The list of tags contained in the file is shown on the left hand side. 
   Click on the tag names to view or edit their contents. On the right 
@@ -58,7 +58,7 @@ Editing the tag list
   If you change task priority or task token settings, always set both to 
   the same value.
 
-- Save the taglist or the NXO file.
+- Save the tag list or the NXO file.
 
 
 
@@ -67,9 +67,16 @@ Limitations:
 The editor can only handle NXO files, not NXF files.
 
 The editor can only write NXO files with the default layout, which is 
-headers - ELF - taglist. Since the common header V3 contains offset and length
-information for both the ELF file and the taglist, an NXO file can be constructed 
-which contains additional data, or the taglist before the ELF file. 
+headers - ELF - tag list. Since the common header V3 contains offset and length
+information for both the ELF file and the tag list, an NXO file can be constructed 
+which contains additional data, or the tag list before the ELF file. 
 The editor will read such files, but silently discard the additional data, 
 and write them back in the default layout when saving.
 
+A note on priority/token base and range:
+========================================
+The base and range values have to fulfill the following condition:
+base + range -  1 <= max. value
+For instance, if the task priority range is 2, the base priority must 
+be set to a value less than 55, since 55 is the highest value.
+The current tag list editor does not enforce this condition.

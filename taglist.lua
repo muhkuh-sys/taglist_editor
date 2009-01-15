@@ -61,6 +61,12 @@ for i=2, 55 do
 	table.insert(COMBO_TASKTOKEN.values, {name="TSK_TOK_"..tonumber(i), value=i+7})
 end
 
+-- for interrupt priorities
+local COMBO_IRQPRIO={nBits=32, values={}}
+for i=0, 31 do 
+	table.insert(COMBO_IRQPRIO.values, {name=string.format("%u", i), value=i})
+end
+
 -- 16-char name string
 local RCX_MOD_TAG_IDENTIFIER_T = {"STRING", "tIdentifier.abName", desc="Identifier", size=16, mode="read-only"}
 
@@ -105,7 +111,7 @@ RCX_MOD_TAG_IT_INTERRUPT_T = {
   
   -- priority range used by interrupts list 
   {"UINT32", "ulBaseIntPriority",      desc="Base Priority", 
-  editor="comboedit", editorParam=COMBO_TASKPRIO},
+  editor="comboedit", editorParam=COMBO_IRQPRIO},
 
   -- range for interrupt priorities 
   {"UINT32", "ulRangeInt",             desc="Priority Range",
