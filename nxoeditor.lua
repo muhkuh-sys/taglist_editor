@@ -64,6 +64,10 @@ STATUS_SAVE_ERROR = 2
 
 
 local function OnQuit()
+	if nxoeditor.m_fShowHelp then nxoeditor.getSplitRatio() end
+	nxoeditor.saveConfig()
+	--local t = os.time()
+	--while(os.difftime(os.time(), t)<3) do end
     muhkuh.TestHasFinished()
 end
 
@@ -432,7 +436,7 @@ end
 -- create GUI at startup
 ---------------------------------------------------------------------
 function createPanel()
-	m_splitterPanel = wx.wxSplitterWindow(m_panel, wx.wxID_ANY)--, wx.wxDefaultPosition ,wx.wxDefaultSize, wx.wxSP_3D + wx.wxSP_PERMIT_UNSPLIT)
+	m_splitterPanel = wx.wxSplitterWindow(m_panel, wx.wxID_ANY)
 	m_leftPanel = wx.wxPanel(m_splitterPanel, wx.wxID_ANY)
 
 	-- Tag editor
@@ -456,7 +460,7 @@ function createPanel()
 	
 	-- quit / create Params / delete params buttons
 	m_buttonQuit = createButton(m_panel, "Quit", OnQuit)
-	m_checkboxHelp = createCheckBox(m_panel, "Display Help", true, OnHelp)
+	m_checkboxHelp = createCheckBox(m_panel, "Display Help", m_fShowHelp, OnHelp)
 	
 	m_buttonState = false
 	m_buttonSizer = wx.wxBoxSizer(wx.wxHORIZONTAL)
@@ -498,32 +502,44 @@ end
 m_fShowHelp = true
 m_dSplitRatio = 0.5
 
+-- stores the last requested and the last displayed tag help
+-- used to ensure that the correct help page is shown when 
+-- help display is turned on
+m_tLastRequestedTagHelp = nil
+m_tLastDisplayedTagHelp = nil
+
+function getSplitRatio()
+	local iPos = m_splitterPanel:GetSashPosition()
+	local iWidth = m_splitterPanel:GetSize():GetWidth()
+	m_dSplitRatio = iPos/iWidth
+	-- print("iPos: ", iPos, "iWidth: ", iWidth, "sash rel pos:", m_dSplitRatio)
+end
+
 -- @param fShow hide or show help area
 function displayHelp(fShow)
 	-- print("displayHelp: ", fShow)
 	m_fShowHelp = fShow
 	if fShow then
-		m_splitterPanel:SetSashGravity(0.3)
-		m_splitterPanel:SetMinimumPaneSize(20)
 		local iWidth = m_splitterPanel:GetSize():GetWidth()
 		local iPos = iWidth * m_dSplitRatio
 		m_splitterPanel:SplitVertically(m_leftPanel, m_helpWindow)
 		m_splitterPanel:SetSashPosition(iPos)
 		-- print("iPos: ", iPos, "iWidth: ", iWidth, "sash rel pos:", m_dSplitRatio)
+		showTagHelp(m_tLastRequestedTagHelp)
 	else
-		local iPos = m_splitterPanel:GetSashPosition()
-		local iWidth = m_splitterPanel:GetSize():GetWidth()
-		m_dSplitRatio = iPos/iWidth
-		-- print("iPos: ", iPos, "iWidth: ", iWidth, "sash rel pos:", m_dSashRelPos)
+		getSplitRatio()
 		m_splitterPanel:Unsplit()
 	end
 	m_panel:Layout()
 	m_panel:Refresh()
 end
 
---- Show help for a tag description
 function showTagHelp(tTagDesc)
-	if not m_fShowHelp then
+	m_tLastRequestedTagHelp = tTagDesc
+	
+	if not tTagDesc or 
+		not m_fShowHelp or 
+		(m_tLastRequestedTagHelp == m_tLastDisplayedTagHelp) then
 		return
 	end
 	
@@ -539,10 +555,86 @@ function showTagHelp(tTagDesc)
 		if strAnchor then
 			m_helpWindow:LoadPage(strAnchor)
 		end
+		
+		m_tLastDisplayedTagHelp = tTagDesc
 	else
 		print("error loading help page: page = ", strPageFilename)
 	end
 end
+
+
+---------------------------------------------------------------------
+---------------------   load/save configuration
+---------------------------------------------------------------------
+
+-- the section name in the config file
+CONFIG_PATH = "/nxo_editor"
+-- key for the help flag
+KEY_HELP = "display_help"
+KEY_HELP_SPLIT_RATIO = "help_split_ratio"
+
+---------------------------------------------------------------------------
+-- read the configuration from Muhkuh.cfg
+-- (the m_fShowHelp flag)
+
+function loadConfig()
+	local config = wx.wxConfigBase.Get(true)
+	if not config then
+		print("Error accessing config.")
+		return
+	end
+	
+	if not config:HasGroup(CONFIG_PATH) then
+		print("Group " .. CONFIG_PATH .. " not found in config. Using default values.")
+		return
+	end
+	
+	print("reading config")
+	
+	config:SetPath(CONFIG_PATH)
+	
+	local fOK, strVal
+	fOK, strVal = config:Read(KEY_HELP)
+	if fOK then
+		m_fShowHelp = strVal == "true"
+	end
+	
+	fOK, strVal = config:Read(KEY_HELP_SPLIT_RATIO)
+	if fOK then
+		if tonumber(strVal) then
+			m_dSplitRatio = tonumber(strVal)
+			print("m_dSplitRatio=",m_dSplitRatio)
+		else
+			print("Error parsing " .. KEY_HELP_SPLIT_RATIO)
+		end
+	end
+end
+
+---------------------------------------------------------------------------
+-- save the configuration to Muhkuh.cfg
+-- (the m_fShowHelp flag)
+
+function saveConfig()
+	local config = wx.wxConfigBase.Get(true)
+	if not config then
+		print("Error opening config.")
+		return
+	end
+
+	print("writing config")
+	config:DeleteGroup(CONFIG_PATH)
+	config:SetPath(CONFIG_PATH)
+	
+	if config:Write(KEY_HELP, tostring(m_fShowHelp)) and
+		config:Write(KEY_HELP_SPLIT_RATIO, tostring(m_dSplitRatio)) then
+		print("OK")
+	else
+		print("Error writing config!")
+	end
+end
+
+
+
 ---------------------------------------------------------------------
 ------------------------------  test
 ---------------------------------------------------------------------
@@ -585,7 +677,12 @@ end
 
 function run()
 	m_nxo = nxo.new()
+	loadConfig()
+	
 	m_panel = __MUHKUH_PANEL
 	createPanel()
-	m_helpController = nil
+	local dSplitRatio = m_dSplitRatio
+	displayHelp(m_fShowHelp)
+	m_dSplitRatio = dSplitRatio
+	
 end
