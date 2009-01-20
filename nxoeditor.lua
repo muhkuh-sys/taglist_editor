@@ -203,13 +203,12 @@ function checkOverwrite(strFilename)
 	end
 end
 
-function saveFile1(filebar, fSaveAs, strTitle, strFilenameFilters, abBin)
-	local strFilename = filebar:getFilename()
-	if fSaveAs or strFilename:len()==0 then
+function saveFile1(filebar, strFilename, strTitle, strFilenameFilters, abBin)
+	if strFilename and strFilename:len()>0 then
+		if not checkOverwrite(strFilename) then return end
+	else
 		strFilename = saveFileDialog(m_panel, strTitle, strFilenameFilters)
 		if not strFilename then return end
-	else
-		if not checkOverwrite(strFilename) then return end
 	end
 	
 	local iStatus = saveFile(strFilename, abBin)
@@ -220,8 +219,8 @@ function saveFile1(filebar, fSaveAs, strTitle, strFilenameFilters, abBin)
 end
 
 
-function loadHdr(filebar)
-	local strFilename = loadFileDialog(m_panel, "Select header file", strHdrFilenameFilters)
+function loadHdr(strFilename)
+	local strFilename = strFilename or loadFileDialog(m_panel, "Select header file", strHdrFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	
@@ -230,7 +229,7 @@ function loadHdr(filebar)
 		local fOk, strMsg = netx_fileheader.isUnfilledHeadersBin(abBin)
 		if fOk then
 			m_nxo:setHeadersBin(abBin)
-			filebar:setFilename(strFilename)
+			m_headerFilebar:setFilename(strFilename)
 			setButtons()
 		else
 			errorDialog("Not a valid headers file", strMsg)
@@ -238,9 +237,9 @@ function loadHdr(filebar)
 	end
 end
 
-function saveHdr(filebar, fSaveAs)
+function saveHdr(strFilename)
 	local abBin = m_nxo:getHeadersBin()
-	saveFile1(filebar, fSaveAs, "Save headers as", strHdrFilenameFilters, abBin)
+	saveFile1(m_headerFilebar, strFilename, "Save headers as", strHdrFilenameFilters, abBin)
 end
 
 
@@ -250,14 +249,14 @@ function isELF(abBin)
 	return abBin:byte(2)==0x45 and abBin:byte(3)==0x4c and abBin:byte(4)==0x46
 end
 
-function loadElf(filebar)
-	local strFilename = loadFileDialog(m_panel, "Select Elf file", strElfFilenameFilters)
+function loadElf(strFilename)
+	local strFilename = strFilename or loadFileDialog(m_panel, "Select Elf file", strElfFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK then
 		if isELF(abBin) then
 			m_nxo:setElf(abBin)
-			filebar:setFilename(strFilename)
+			m_elfFilebar:setFilename(strFilename)
 			setButtons()
 		else
 			errorDialog("Not an ELF file", "The file does not have an ELF signature.")
@@ -265,36 +264,35 @@ function loadElf(filebar)
 	end
 end
 
-function saveElf(filebar, fSaveAs)
+function saveElf(strFilename)
 	local abBin = m_nxo:getElf()
-	saveFile1(filebar, fSaveAs, "Save Elf as", strElfFilenameFilters, abBin)
+	saveFile1(m_elfFilebar, strFilename, "Save Elf as", strElfFilenameFilters, abBin)
 end
 
-function loadTags(filebar)
-	local strFilename = loadFileDialog(m_panel, "Select Tag list file", strTagFilenameFilters)
+function loadTags(strFilename)
+	local strFilename = strFilename or loadFileDialog(m_panel, "Select Tag list file", strTagFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK and displayTags(abBin) then
 		m_nxo:setTaglistBin(abBin)
-		filebar:setFilename(strFilename)
+		m_tagsFilebar:setFilename(strFilename)
 		setButtons()
 	end
 end
 
 
-function saveTags(filebar, fSaveAs)
+function saveTags(strFilename)
 	-- get taglist
 	local abBin = taglistedit.getTagBin()
 	if abBin then
-		saveFile1(filebar, fSaveAs, "Save tag list as", strTagFilenameFilters, abBin)
+		saveFile1(m_tagsFilebar, strFilename, "Save tag list as", strTagFilenameFilters, abBin)
 	else
 		errorDialog("Internal Error", "Could not reconstruct tag list from GUI")
 	end
 end
 
--- todo: error handling, display tags if parsed correctly
-function loadNxo(filebar)
-	local strFilename = loadFileDialog(m_panel, "Select NXO file", strNxoFilenameFilters)
+function loadNxo(strFilename)
+	strFilename = strFilename or loadFileDialog(m_panel, "Select NXO file", strNxoFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	-- loaded successfully
@@ -302,7 +300,7 @@ function loadNxo(filebar)
 		local fOk, astrErrors = m_nxo:parseNxoBin(abBin)
 		if fOk then
 			-- parsed successfully
-			filebar:setFilename(strFilename)
+			m_nxoFilebar:setFilename(strFilename)
 			local abTags = m_nxo:getTaglistBin()
 				if abTags then
 					if not displayTags(abTags) then
@@ -323,7 +321,7 @@ function loadNxo(filebar)
 end
 
 
-function saveNxo(filebar, fSaveAs)
+function saveNxo(strFilename)
 	-- get taglist
 	local abTags = taglistedit.getTagBin()
 	if not abTags then
@@ -339,7 +337,7 @@ function saveNxo(filebar, fSaveAs)
 		return
 	end
 
-	saveFile1(filebar, fSaveAs, "Save NXO as", strNxoFilenameFilters, abNxoFile)
+	saveFile1(m_nxoFilebar, strFilename, "Save NXO as", strNxoFilenameFilters, abNxoFile)
 end
 
 --- Enable/disable load/save buttons depending on which data is in memory.
@@ -372,7 +370,7 @@ function filebar_setFilename(filebar, strFilename)
 	filebar.m_textctrl:SetValue(strFilename)
 end
 
-function filebar_getFilename(filebar, strFilename)
+function filebar_getFilename(filebar)
 	return filebar.m_textctrl:GetValue(strFilename)
 end
 
@@ -390,11 +388,11 @@ function insertFilebar(parent, sizer, strStaticText, fnLoad, fnSave)
 	textctrl:SetEditable(false)
 	local buttonLoad, buttonSaveAs, buttonSave
 	if fnLoad then
-		buttonLoad = createButton(parent, "Load", function() fnLoad(filebar) end)
+		buttonLoad = createButton(parent, "Load", function() fnLoad() end)
 	end
 	if fnSave then
-		buttonSaveAs = createButton(parent, "Save as", function() fnSave(filebar, true) end)
-		buttonSave = createButton(parent, "Save", function() fnSave(filebar, false) end)
+		buttonSaveAs = createButton(parent, "Save as", function() fnSave() end)
+		buttonSave = createButton(parent, "Save", function() fnSave(filebar:getFilename()) end)
 	end
 
 	-- add to sizer
@@ -428,7 +426,6 @@ function insertFilebar(parent, sizer, strStaticText, fnLoad, fnSave)
 	filebar.setFilename = filebar_setFilename
 	filebar.getFilename = filebar_getFilename
 	filebar.enableButtons = filebar_enableButtons
-	
 	return filebar
 end
 
@@ -605,7 +602,7 @@ function loadConfig()
 			m_dSplitRatio = tonumber(strVal)
 			print("m_dSplitRatio=",m_dSplitRatio)
 		else
-			print("Error parsing " .. KEY_HELP_SPLIT_RATIO)
+			print("Error parsing split_ratio value: " .. KEY_HELP_SPLIT_RATIO)
 		end
 	end
 end
@@ -676,6 +673,15 @@ end
 -- startup function, called by the code snippet in test_description.xml
 
 function run()
+	if not arg or #arg==0 then
+		print ("no command line args")
+	else
+		print("command line args: ")
+		for i, v in ipairs(arg) do
+			print(i, v)
+		end
+	end
+
 	m_nxo = nxo.new()
 	loadConfig()
 	
@@ -685,4 +691,7 @@ function run()
 	displayHelp(m_fShowHelp)
 	m_dSplitRatio = dSplitRatio
 	
+	if arg and arg[1] then
+		loadNxo(arg[1])
+	end
 end
