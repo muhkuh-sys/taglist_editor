@@ -191,11 +191,19 @@ Source: nxo_editor\help\RCX_MOD_TAG_IT_PIO_T.htm; DestDir: {app}\nxo_editor\help
 Source: nxo_editor\help\RCX_MOD_TAG_IT_STATIC_TASKS_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_TIMER_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_XC_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_HIF_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_MEDIUM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_SDMMC_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_SDRAM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_UART_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_USB_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 
 Source: nxo_editor\Modulator.cfg; DestDir: {app}\application; Components: modulator
 Source: nxo_editor\modulator.ico; DestDir: {app}\nxo_editor; Components: modulator
 
 Source: nxo_editor\comboedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\checkboxedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\hexdump.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\hexedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\ipv4edit.lua; DestDir: {app}\nxo_editor; Components: modulator
@@ -209,7 +217,7 @@ Source: nxo_editor\structedit.lua; DestDir: {app}\nxo_editor; Components: modula
 Source: nxo_editor\nxoeditor.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\test_description.xml; DestDir: {app}\nxo_editor; Components: modulator
 
-Source: nxo_editor\nxo.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\nxfile.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\taglist.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
@@ -217,7 +225,6 @@ Source: nxo_editor\doc\readme.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\readme_cmdline.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\files.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
-
 
 [Icons]
 Name: {app}\NXO_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"""; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator
