@@ -251,11 +251,34 @@ function loadHdr(strFilename)
 			m_nxfile:setHeadersBin(abBin)
 			m_headerFilebar:setFilename(strFilename)
 			setButtons()
+			checkTagListSizeMax()
 		else
 			errorDialog("Not a valid headers file", strMsg)
 		end
 	end
 end
+
+
+-- If both headers and tag list are present, check ulTagListMaxSize against
+-- the actual size of the tag list, and adapt the maximum size if necessary.
+function checkTagListSizeMax()
+	print("checkTagListSizeMax")
+	local tCH = m_nxfile:getCommonHeader()
+	print(tCH, m_nxfile:hasTaglist())
+	if tCH and m_nxfile:hasTaglist() then
+		local ulSizeMax = tCH.ulTagListSizeMax
+		local abTl = m_nxfile:getTaglistBin()
+		local ulSize = abTl:len()
+		print("taglist size: " .. ulSize .. "  max size: " .. ulSizeMax)
+		if ulSize > ulSizeMax then
+			tCH.ulTagListSizeMax = ulSize
+			messageDialog("Information", 
+			"The maximum tag list size was adapted.\n"..
+			"Old max. size: " .. ulSizeMax .. "  New max. size: " .. ulSize)
+		end
+	end
+end
+
 
 function saveHdr(strFilename)
 	local abBin = m_nxfile:getHeadersBin()
@@ -297,6 +320,7 @@ function loadTags(strFilename)
 		m_nxfile:setTaglistBin(abBin)
 		m_tagsFilebar:setFilename(strFilename)
 		setButtons()
+		checkTagListSizeMax()
 	end
 end
 
@@ -407,8 +431,8 @@ function setButtons() -- should be adapt_GUI or something
 	m_elfFilebar:show(fShow_Hdr_Elf)
 
 	-- Show the current file type
-	local strType = m_nxfile:getHeaderType() or "Unknown file type"
-	m_fileBox:SetLabel(string.format("Load/Save (%s)", strType))
+	local strType = m_nxfile:getHeaderType() or "unknown"
+	m_fileBox:SetLabel(string.format("Load/Save (Current file type: %s)", strType))
 
 	m_leftPanel:Layout()
 	m_leftPanel:Refresh()

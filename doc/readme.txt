@@ -1,8 +1,8 @@
 NXO Editor - an NXO build tool and tag list editor.
 ==================================================
 
-NXO Editor allows you to construct and manipulate option module (.nxo) files
-and to edit the tag list included in the nxo file.
+NXO Editor allows you to construct an option module (.nxo) file,
+and to edit the tag list in an NXO, NXF, NXD, NXL or NXB file.
 
 (c) Hilscher GmbH 2009.
 Please send feedback, questions and bug reports to SLesch@hilscher.com
@@ -12,22 +12,23 @@ Please send feedback, questions and bug reports to SLesch@hilscher.com
 Screen layout:
 ================
 
----------------------------------------
+ -------------------------------------
 |      |  Editing   |                 |
 | Tag  |  area for  |  Help for       |
 | List |  selected  |  selected tag   |
 |      |   Tag      |                 |
---------------------|                 |
+ -------------------|                 |
 |                   |                 |
 |   Load/Save       |                 |
 |                   |                 |
----------------------------------------
+ -------------------------------------
  Quit   (x) show help
  
  
  
 Building an NXO file using the editor:
 =======================================
+
 The standard layout of an NXO file according to "netX File Header Structure V3.0"
 consists of the following three parts:
 
@@ -43,9 +44,11 @@ or use the command line script 'makenxo.bat'
 
 
 
-Editing the tag list
-====================
-- Load a binary tag list file or an NXO file.
+
+Editing tag lists:
+==================
+
+- Load a binary tag list file or an NX* file.
 
 - The list of tags contained in the file is shown on the left hand side. 
   Click on the tag names to view or edit their contents. On the right 
@@ -58,23 +61,85 @@ Editing the tag list
   If you change task priority or task token settings, always set both to 
   the same value.
 
-- Save the tag list or the NXO file.
+- Save the tag list or the NX* file.
 
 
 
-Limitations:
-===============
-The editor can only handle NXO files, not NXF files.
 
-The editor can only write NXO files with the default layout, which is 
-headers - ELF - tag list. Since the common header V3 contains offset and length
-information for both the ELF file and the tag list, an NXO file can be constructed 
-which contains additional data, or the tag list before the ELF file. 
-The editor will read such files, but silently discard the additional data, 
-and write them back in the default layout when saving.
+Notes on file structure:
+==========================
 
+The default layout of an NX* file is as follows:
+
+Common Header V3
+fields:
+0                  +-------------------------+
+                   |                         |
+                   |        headers          |
+                   |                         |
+ulHeaderLength     +-------------------------+
+                   |                         |
+ulDataOffset       +-------------------------+
+                   |                         |
+                   |  Data/Executable/ELF    |
+                   |                         |
+ulDataOffset       +-------------------------+
+  +ulDataSize      |                         |
+ulTagListOffset    +-------------------------+
+                   |                         |
+                   |       Tag List          |
+                   |                         |
+ulTagListOffset    +-------------------------+
+  + ulTagListSize  |                         |
+end of file        +-------------------------+
+
+
+The gaps following the header, data and tag list are usually 
+0-3 alignment bytes. An NXO file built from these parts using 
+the editor will have this layout. 
+
+
+The common header v3, however, allows a more flexible structure:
+- The tag list portion may be placed before the data/ELF
+- There may be extra data in the gap areas.
+- There may be extra data between the end mark of the tag list and its
+  ending as indicated by ulTagListSize.
+
+The editor will preserve the gap data if you open an NXO/NXF file and
+only edit its tag list. If you load another header/elf/tag list, the gap
+data following this section is replaced by 0-3 alignment bytes.
+
+If the tag list is located in front of the data AND ulTagListMaxSize is
+different from 0, the tag list is padded to the maximum size.
+
+
+
+
+Consistency checks when loading an NX* file:
+=============================================
+
+The file will be rejected if:
+- the common header version is below 3
+- any of the offsets and sizes is outside of the file, or any of the 
+  sections overlap
+- the tag list can't be parsed
+- the tag list does not contain the end marker
+
+
+The editor will open a file and display a warning if:
+- the file type as indicated by the magic cookie at the start of the file 
+  is not a known type (NXF/NXO/NXD/NXL/NXB)
+- any of the checksums in the boot header/common header are incorrect
+- the common header version is above 3
+- the tag list contains extraneous data between the end marker and
+  ulTagListSize
+
+
+  
+  
 A note on priority/token base and range:
 ========================================
+
 The base and range values have to fulfill the following condition:
 base + range -  1 <= max. value
 For instance, if the task priority range is 2, the base priority must 

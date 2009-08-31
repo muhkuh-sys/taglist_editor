@@ -148,7 +148,9 @@ function hasHeaders(self)
 	return self.m_tCommonHeader and self.m_abOtherHeaders and self.m_abOtherHeaders:len()>0 
 end
 
-
+function getCommonHeader(self)
+	return self.m_tCommonHeader
+end
 
 
 

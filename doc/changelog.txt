@@ -1,5 +1,13 @@
 Changelog for NXO Editor/Modulator
 
+NXO Editor 1.0.5242
+
+ * Added 2nd stage loader tags
+ * Added ability to open and edit the taglist of nxf files
+ * Structure definitions in taglist.lua can handle fields at the
+   same offset with masks
+ * unknown tags are correctly skipped
+
 NXO Editor 1.0.3874
 
  * NXO files can be opened by dropping them on the NXO Editor icon
