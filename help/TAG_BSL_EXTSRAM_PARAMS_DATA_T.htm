@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_EXTSRAM_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>External Chipselect Configuration (EXT_SRAM)</h2>
+
+<p>
+Using this tag, it is possible to have the bootloader initialize the external netX chip selects (CS0-CS3).
+Each value has the form 0w0x0yzz according to the following table:
+</p>
+<p></p>
+<table border=1>
+<tr>
+	<td>w</td>
+	<td>0 = 8 bit <br> 1 = 16 bit <br> 2 = 32 bit</td>
+	<td>data path width</td>
+</tr>
+<tr>
+	<td>x</td>
+	<td>0-3</td>
+	<td>additional wait states after access</td>
+</tr>
+<tr>
+	<td>y</td>
+	<td>0-3</td>
+	<td>additional wait states for setup time <br>nCS, Aext to nOE,nWE</td>
+</tr>
+<tr>
+	<td>zz</td>
+	<td>00-3f</td>
+	<td>wait states</td>
+</tr>
+</table>
+
+<p>If the register value is set to 0, the corresponding register is not touched.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+	<td>MEM_SRAM0_CTRL<br>
+		MEM_SRAM1_CTRL<br>
+		MEM_SRAM2_CTRL<br>
+		MEM_SRAM3_CTRL
+	</td>
+	<td>Register values to set.
+	</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

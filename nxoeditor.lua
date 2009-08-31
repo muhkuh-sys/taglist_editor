@@ -2,6 +2,8 @@
 -- Stephan Lesch/Hilscher GmbH
 -- Send feedback to SLesch@hilscher.com
 ---------------------------------------------------------------------------
+-- setButtons -> adaptGUI ?
+-- m_fParamsLoaded in taglistedit schieben
 
 module("nxoeditor", package.seeall)
 
@@ -34,17 +36,18 @@ require("utils")
 
 muhkuh.include("taglist.lua", "taglist")
 muhkuh.include("page_taglistedit.lua", "taglistedit")
-muhkuh.include("nxo.lua", "nxo")
+muhkuh.include("nxfile.lua", "nxfile")
+--muhkuh.include("nxo.lua", "nxo")
 muhkuh.include("structedit.lua", "structedit")
 muhkuh.include("hexdump.lua", "hexdump")
 
 DEBUG = nil
-m_nxo = nil
+m_nxfile = nil
 
 m_headerFilebar = nil
 m_elfFilebar = nil
 m_tagsFilebar = nil
-m_nxoFilebar = nil
+m_nxFilebar = nil
 
 m_buttonCreateTags = nil
 m_buttonDeleteTags = nil
@@ -53,6 +56,9 @@ m_buttonSizer = nil
 -- the muhkuh panel for all gui objects
 m_panel = nil 
 m_paramPanel = nil
+-- static box around the load/save buttons
+m_fileBox = nil
+
 
 STATUS_OK = 0
 STATUS_LOAD_ERROR = 1
@@ -82,7 +88,7 @@ local function OnCreateTags()
 	-- local bin = string.rep(string.char(0), 8) 
 	local bin = taglist.makeEmptyParblock()
 	nxoeditor.displayTags(bin)
-	nxoeditor.m_nxo:setTaglistBin(bin)
+	nxoeditor.m_nxfile:setTaglistBin(bin)
 	nxoeditor.m_fParamsLoaded = true
 	nxoeditor.setButtons()
 end
@@ -90,11 +96,20 @@ end
 -- debug
 local function OnDeleteTags()
 	taglistedit.destroyEditors()
-	nxoeditor.m_nxo:setTaglistBin(nil)
+	nxoeditor.m_nxfile:setTaglistBin(nil)
 	nxoeditor.m_fParamsLoaded = false
 	nxoeditor.setButtons()
 end
 
+function clearTags()
+	if m_fParamsLoaded then
+		taglistedit.destroyEditors()
+		m_fParamsLoaded = nil
+	end
+	m_panel:Layout()
+	m_panel:Refresh()
+	m_panel:Update()
+end
 
 --- Display a taglist.
 -- Parses a taglist, displays an error dialog and exits if parsing fails.
@@ -103,11 +118,15 @@ end
 -- @param abTags a binary taglist.
 -- @return true if the list could be parsed and displayed, false otherwise.
 function displayTags(abTags)
+	print(string.format("taglist size: 0x%08x", abTags:len()))
 	-- parse data, show message dialog in case of errors
 	local fOk, params, iLen, strMsg = taglist.binToParams(abTags, 0)
 	if not fOk then
 		errorDialog("Error parsing tag list", strMsg)
 		return false
+	end
+	if fOk and strMsg:len()>0 then
+		messageDialog("Information", strMsg)
 	end
 	-- remove any old editors/controls
 	if m_fParamsLoaded then
@@ -125,14 +144,15 @@ function displayTags(abTags)
 	return true
 end
 
-
 ---------------------------------------------------------------------
 -- loading and saving
 ---------------------------------------------------------------------
 strHdrFilenameFilters = "Header files (*.bin)|*.bin|All Files (*)|*"
 strElfFilenameFilters = "ELF files (*.elf)|*.elf|All Files (*)|*"
 strTagFilenameFilters = "Tag list files (*.bin)|*.bin|All Files (*)|*"
-strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|All Files (*)|*"
+--strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
+strNxoFilenameFilters = "NXO/NXF/BIN files (*.nxo/*.nxf/*.bin)|*.nxo;*.nxf;*.bin|All Files (*)|*"
+
 
 function loadFileDialog(parent, strTitle, strFilters)
 	local fileDialog = wx.wxFileDialog(
@@ -228,7 +248,7 @@ function loadHdr(strFilename)
 	if iStatus==STATUS_OK then
 		local fOk, strMsg = netx_fileheader.isUnfilledHeadersBin(abBin)
 		if fOk then
-			m_nxo:setHeadersBin(abBin)
+			m_nxfile:setHeadersBin(abBin)
 			m_headerFilebar:setFilename(strFilename)
 			setButtons()
 		else
@@ -238,7 +258,7 @@ function loadHdr(strFilename)
 end
 
 function saveHdr(strFilename)
-	local abBin = m_nxo:getHeadersBin()
+	local abBin = m_nxfile:getHeadersBin()
 	saveFile1(m_headerFilebar, strFilename, "Save headers as", strHdrFilenameFilters, abBin)
 end
 
@@ -255,7 +275,7 @@ function loadElf(strFilename)
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK then
 		if isELF(abBin) then
-			m_nxo:setElf(abBin)
+			m_nxfile:setElf(abBin)
 			m_elfFilebar:setFilename(strFilename)
 			setButtons()
 		else
@@ -265,7 +285,7 @@ function loadElf(strFilename)
 end
 
 function saveElf(strFilename)
-	local abBin = m_nxo:getElf()
+	local abBin = m_nxfile:getElf()
 	saveFile1(m_elfFilebar, strFilename, "Save Elf as", strElfFilenameFilters, abBin)
 end
 
@@ -274,11 +294,12 @@ function loadTags(strFilename)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK and displayTags(abBin) then
-		m_nxo:setTaglistBin(abBin)
+		m_nxfile:setTaglistBin(abBin)
 		m_tagsFilebar:setFilename(strFilename)
 		setButtons()
 	end
 end
+
 
 
 function saveTags(strFilename)
@@ -297,26 +318,41 @@ function loadNxo(strFilename)
 	local iStatus, abBin = loadFile(strFilename)
 	-- loaded successfully
 	if iStatus==STATUS_OK then
-		local fOk, astrErrors = m_nxo:parseNxoBin(abBin)
+		m_nxfile = nxfile.new()
+		m_nxfile:initNxo()
+		m_headerFilebar:clearFilename()
+		m_elfFilebar:clearFilename()
+		m_tagsFilebar:clearFilename()
+		m_nxFilebar:clearFilename()
+		clearTags()
+		
+		local fOk, astrMsgs = m_nxfile:parseBin(abBin)
 		if fOk then
-			-- parsed successfully
-			m_nxoFilebar:setFilename(strFilename)
-			local abTags = m_nxo:getTaglistBin()
-				if abTags then
-					if not displayTags(abTags) then
-						errorDialog("Error parsing tag list")
-					end
-				else
-					messageDialog("No tag list found", "No tag list found")
+			if #astrMsgs > 0 then
+				local strMsg = table.concat(astrMsgs, "\n") 
+				messageDialog("Warning", strMsg)
+			end
+			-- parsed successfully:
+			-- try to parse and display the tag list;
+			-- reject the file if the tag list is incorrect
+			m_nxFilebar:setFilename(strFilename)
+			
+			if m_nxfile:hasTaglist() then
+				local abTags = m_nxfile:getTaglistBin()
+				if not displayTags(abTags) then
+					m_nxfile = nxfile.new()
+					m_nxfile:initNxo()
 				end
-			setButtons()
+			else
+				messageDialog("No tag list", "The file does not contain a tag list")
+			end
 		else
 			-- error parsing file
-			local strErrors = table.concat(astrErrors, "\n") 
+			local strErrors = table.concat(astrMsgs, "\n") 
 			if strErrors == "" then strErrors = "Unknown error" end
 			errorDialog("Error parsing NXO file", strErrors)
-			
 		end
+		setButtons()
 	end
 end
 
@@ -328,37 +364,55 @@ function saveNxo(strFilename)
 		return
 	end
 	
-	m_nxo:setTaglistBin(abTags)
+	-- true = replace tag list, but keep any gap data behind the tag list
+	m_nxfile:setTaglistBin(abTags, true) 
 	
 	-- build nxo file
-	local abNxoFile = m_nxo:buildNxoBin()
+	local abNxoFile = m_nxfile:buildNXFile()
 	if not abNxoFile then
 		errorDialog("Error", "Failed to build NXO file")
 		return
 	end
 
-	saveFile1(m_nxoFilebar, strFilename, "Save NXO as", strNxoFilenameFilters, abNxoFile)
+	saveFile1(m_nxFilebar, strFilename, "Save NXO as", strNxoFilenameFilters, abNxoFile)
 end
 
 --- Enable/disable load/save buttons depending on which data is in memory.
 -- loading is always possible,
 -- save/save as for headers, ELF and taglist is only possible if header/data/tags are in memory
 -- save NXO (as) is possible when headers ,elf and tags data are in memory.
-function setButtons()
-	local fHeaders = m_nxo:hasHeaders()
-	local fElf = m_nxo:hasElf()
-	local fTags = m_nxo:hasTaglist()
-	local fComplete = m_nxo:isComplete()
+-- The load/save headers/data buttons are only shown if the file type is NXO.
+function setButtons() -- should be adapt_GUI or something
+
+	-- determine which buttons are active
+	local fHeaders = m_nxfile:hasHeaders()
+	local fElf = m_nxfile:hasElf()
+	local fTags = m_nxfile:hasTaglist()
+	local fComplete = m_nxfile:isComplete()
 	
 	m_headerFilebar:enableButtons(true, fHeaders, fHeaders)
 	m_elfFilebar:enableButtons(true, fElf, fElf)
 	m_tagsFilebar:enableButtons(true, fTags, fTags)
-	m_nxoFilebar:enableButtons(true, fComplete, fComplete)
+	m_nxFilebar:enableButtons(true, fComplete, fComplete)
 
 	if DEBUG then
 		m_buttonCreateTags:Enable(not fTags)
 		m_buttonDeleteTags:Enable(fTags)
 	end
+	
+	-- If file type is nxo, show all four filebars.
+	-- For other file types, show only taglist and nx* filebars
+	local fShow_Hdr_Elf = m_nxfile:isNxo()
+	m_headerFilebar:show(fShow_Hdr_Elf)
+	m_elfFilebar:show(fShow_Hdr_Elf)
+
+	-- Show the current file type
+	local strType = m_nxfile:getHeaderType() or "Unknown file type"
+	m_fileBox:SetLabel(string.format("Load/Save (%s)", strType))
+
+	m_leftPanel:Layout()
+	m_leftPanel:Refresh()
+	m_leftPanel:Update()
 end
 
 
@@ -374,10 +428,23 @@ function filebar_getFilename(filebar)
 	return filebar.m_textctrl:GetValue(strFilename)
 end
 
+function filebar_clearFilename(filebar)
+	return filebar.m_textctrl:SetValue("")
+end
+
+
 function filebar_enableButtons(filebar, fLoad, fSave, fSaveAs)
 	if filebar.m_buttonLoad then filebar.m_buttonLoad:Enable(fLoad) end
 	if filebar.m_buttonSaveAs then filebar.m_buttonSaveAs:Enable(fSaveAs) end
 	if filebar.m_buttonSave then filebar.m_buttonSave:Enable(fSave) end
+end
+
+function filebar_show(filebar, fShow)
+	if filebar.m_label then filebar.m_label:Show(fShow) end
+	if filebar.m_textctrl then filebar.m_textctrl:Show(fShow) end
+	if filebar.m_buttonLoad then filebar.m_buttonLoad:Show(fShow) end
+	if filebar.m_buttonSaveAs then filebar.m_buttonSaveAs:Show(fShow) end
+	if filebar.m_buttonSave then filebar.m_buttonSave:Show(fShow) end
 end
 
 function insertFilebar(parent, sizer, strStaticText, fnLoad, fnSave)
@@ -425,13 +492,47 @@ function insertFilebar(parent, sizer, strStaticText, fnLoad, fnSave)
 	filebar.m_buttonSave = buttonSave
 	filebar.setFilename = filebar_setFilename
 	filebar.getFilename = filebar_getFilename
+	filebar.clearFilename = filebar_clearFilename
 	filebar.enableButtons = filebar_enableButtons
+	filebar.show = filebar_show
 	return filebar
 end
 
 ---------------------------------------------------------------------
 -- create GUI at startup
 ---------------------------------------------------------------------
+--[[
+Object hierarchy:
+m_panel sizer:mainSizer
+	m_splitterPanel
+		m_leftPanel sizer:leftSizer
+			load/save buttons etc.
+			m_paramPanel
+		m_helpWindow
+		
+	buttonSizer
+	m_buttonQuit
+	m_checkboxHelp
+	m_buttonCreateTags
+	m_buttonDeleteTags
+
+Sizer Hierarchy:
+	mainSizer
+		m_splitterPanel
+		
+		m_buttonSizer
+			m_buttonQuit
+			m_checkboxHelp
+			m_buttonCreateTags
+			m_buttonDeleteTags
+			
+	leftSizer
+		m_paramPanel
+		inputSizer
+			fileSizer
+				load/save buttons etc.
+--]]
+
 function createPanel()
 	m_splitterPanel = wx.wxSplitterWindow(m_panel, wx.wxID_ANY)
 	m_leftPanel = wx.wxPanel(m_splitterPanel, wx.wxID_ANY)
@@ -441,29 +542,25 @@ function createPanel()
 	m_paramPanel = taglistedit.createTaglistPanel(parent)
 	
 	-- Filename/load/save
+	local inputSizer = wx.wxStaticBoxSizer(wx.wxHORIZONTAL, parent, "Load/Save")
+	m_fileBox = inputSizer:GetStaticBox()
 	local fileSizer = wx.wxFlexGridSizer(4, 5, 3, 3)
 	fileSizer:AddGrowableCol(1, 1)
-
+	inputSizer:Add(fileSizer, 1, wx.wxEXPAND)
 	m_headerFilebar = insertFilebar(parent, fileSizer, "Headers", loadHdr, saveHdr)
 	m_elfFilebar = insertFilebar(parent, fileSizer, "ELF", loadElf, saveElf)
 	m_tagsFilebar = insertFilebar(parent, fileSizer, "Taglist", loadTags, saveTags)
-	m_nxoFilebar = insertFilebar(parent, fileSizer, "NXO", loadNxo, saveNxo)
+	m_nxFilebar = insertFilebar(parent, fileSizer, "NX*", loadNxo, saveNxo)
 	
-	local inputSizer = wx.wxStaticBoxSizer(wx.wxHORIZONTAL, parent, "Load/Save")
-	inputSizer:Add(fileSizer, 1, wx.wxEXPAND)
-
 	-- HTML help window
 	m_helpWindow = wx.wxHtmlWindow(m_splitterPanel)
 	
 	-- quit / create Params / delete params buttons
 	m_buttonQuit = createButton(m_panel, "Quit", OnQuit)
 	m_checkboxHelp = createCheckBox(m_panel, "Display Help", m_fShowHelp, OnHelp)
-	
-	m_buttonState = false
 	m_buttonSizer = wx.wxBoxSizer(wx.wxHORIZONTAL)
 	m_buttonSizer:Add(m_buttonQuit, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
 	m_buttonSizer:Add(m_checkboxHelp, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
-	
 	if DEBUG then
 		m_buttonCreateTags = createButton(m_panel, "Create Empty Parameters", OnCreateTags)
 		m_buttonDeleteTags = createButton(m_panel, "Delete Parameters", OnDeleteTags)
@@ -489,6 +586,7 @@ function createPanel()
 	m_panel:SetSizer(mainSizer)
 	m_panel:Layout()
 	m_panel:Refresh()
+	
 end
 
 
@@ -682,7 +780,9 @@ function run()
 		end
 	end
 
-	m_nxo = nxo.new()
+	--m_nxo = nxo.new()
+	m_nxfile = nxfile.new()
+	m_nxfile:initNxo()
 	loadConfig()
 	
 	m_panel = __MUHKUH_PANEL

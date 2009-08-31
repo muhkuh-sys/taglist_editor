@@ -264,6 +264,216 @@ RCX_MOD_TAG_IT_GPIO_T = {
   {"UINT32",                                "ulThresholdCapture"},         
   nameField = "tIdentifier.abName"
 },
+
+
+
+-- tags for configuration of 2nd stage loader
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader SDRAM settings
+
+TAG_BSL_SDRAM_PARAMS_DATA_T = {
+	{"UINT32", "ulGeneralCtrl", desc="General Control", editorParam={format="0x%08x"}},
+	{"UINT32", "ulTimingCtrl", desc="Timing Control",  editorParam={format="0x%08x"}},
+},
+
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader HIF/DPM settings
+
+TAG_BSL_HIF_PARAMS_DATA_T = {
+	{"UINT32", "ulBusType", desc="Bus Type", 
+		editor="comboedit", 
+		editorParam={nBits=32,
+			values={
+				{name="Auto", value=0},
+				{name="DPM", value=1},
+				{name="ISA", value=2},
+				{name="PCI", value=3},
+				{name="Disable ext. Bus", value=0xffffffff} 
+		}},
+	},
+	
+	-- DPM/ISA settings
+	{"UINT32", "ulIfConf0",    desc="IF_CONF0 register value", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIfConf1",    desc="IF_CONF1 register value", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIoRegMode0", desc="IO_REGMODE0 register value", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIoRegMode1", desc="IO_REGMODE1 register value", editorParam={format="0x%08x"}},
+
+	-- PCI settings  
+	-- todo: decide how to handle this!
+	--[[
+	{"UINT8", "bEnablePin", desc="Use PCI enable pin", 
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+	},
+
+	{"UINT8", "bPinType", desc="Type of enable pin", 
+		offset = 21, mask = string.char(0x7f),
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="Ignore CD pin",             value=0},
+				{name="GPIO",                      value=1},
+				{name="PIO",                       value=2},
+				{name="HIFPIO",                    value=3},
+				{name="MMIO",                      value=4},
+		}},
+	},
+	
+	{"UINT8", "bInvert", desc="Inverted", 
+		offset = 21, mask = string.char(0x80),
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="No", value=0},
+				{name="Yes", value=128}
+		}},
+	},
+
+	{"UINT16", "usPinNumber", desc="Pin Number", editorParam={format="%u"}},
+	--]]
+},
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader SD/MMC settings
+TAG_BSL_SDMMC_PARAMS_DATA_T = {
+	{"UINT8", "bEnable", desc="enable SD/MMC Support", 
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+	},
+	
+	{"UINT8", "bDetectPinType", desc="Pin Type for Card Detection", 
+		offset = 1, mask = string.char(0x7f),
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="Ignore CD pin",             value=0},
+				{name="GPIO",                      value=1},
+				{name="PIO",                       value=2},
+				{name="HIFPIO",                    value=3},
+				{name="MMIO",                      value=4},
+		}},
+	},
+	
+	{"UINT8", "bInvert", desc="Inverted", 
+		offset = 1, mask = string.char(0x80),
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="No", value=0},
+				{name="Yes", value=128}
+		}},
+	},
+	
+	{"UINT16", "usPinNumber", desc="Pin Number", editorParam={format="%u"}},
+},
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader UART settings
+TAG_BSL_UART_PARAMS_DATA_T = {
+	{"UINT8", "bEnable", desc="Enable UART", 
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+	},
+},
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader USB settings
+TAG_BSL_USB_PARAMS_DATA_T = {
+	{"UINT8", "bEnable", desc="Enable USB", 
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+	},
+	{"UINT8", "bPullupPinType", desc="Pull up Pin Type", 
+		offset = 1, mask = string.char(0x7f),
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="None",    value=0},
+				{name="GPIO",    value=1},
+				{name="PIO",     value=2},
+				{name="HIFPIO",  value=3},
+				{name="MMIO",    value=4},
+		}},
+	},
+	{"UINT8", "bInvert", desc="Inverted", 
+		offset = 1, mask = string.char(0x80),
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="No", value=0},
+				{name="Yes", value=128}
+		}},
+	},
+	{"UINT16", "usUpllupPinIdx", desc="Pin Number", editorParam={format="%u"}},
+},
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader media settings
+TAG_BSL_MEDIUM_PARAMS_DATA_T = {
+	{"UINT8", "´bFlash", desc="Flash Bootloader", 
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+	},
+
+	{"UINT8", "bMediumType", desc="Destination", 
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="Auto",             value=0},
+				{name="RAM Disk",         value=1},
+				{name="Serial Flash",     value=2},
+				{name="Parallel Flash",   value=3},
+		}},
+	},
+},
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader ext. chip select settings
+--[[
+BSL_EXTRAM_CONFIG_T = {
+	{"UINT8", "bWaitstates", desc="Wait States", 
+		editorParam={nBits=6, minValue=0, maxValue=63, format="%u"}
+	},
+	{"UINT8", "bPrePauseWs", desc="Setup WS", 
+		editor="comboedit", 
+		editorParam={nBits=8, minValue=0, maxValue=3}
+	},
+	{"UINT8", "bPostPauseWs", desc="Post Access WS",
+		editor="comboedit", 
+		editorParam={nBits=8, minValue=0, maxValue=3}
+	},
+	{"UINT8", "bDataWidth", desc="Data Width", 
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="8",   value=0},
+				{name="16",  value=1},
+				{name="32",  value=2},
+		}},
+	},
+	--layout = {sizer="h", "bDataWidth", "bWaitstates", "bPrePauseWs", "bPostPauseWs"}
+	layout = {sizer="v", 
+		"bDataWidth",
+		{sizer="h", "bWaitstates", "bPrePauseWs", "bPostPauseWs"}
+		}
+},
+--]]
+
+TAG_BSL_EXTSRAM_PARAMS_DATA_T = {
+--	{"BSL_EXTRAM_CONFIG_T", "ulRegVal0", desc="MEM_SRAM0_CTRL"},
+--	{"BSL_EXTRAM_CONFIG_T", "ulRegVal1", desc="MEM_SRAM1_CTRL"},
+	{"UINT32", "ulRegVal0", desc="MEM_SRAM0_CTRL", editorParam={format="0x%08x"}},
+	{"UINT32", "ulRegVal1", desc="MEM_SRAM1_CTRL", editorParam={format="0x%08x"}},
+	{"UINT32", "ulRegVal2", desc="MEM_SRAM2_CTRL", editorParam={format="0x%08x"}},
+	{"UINT32", "ulRegVal3", desc="MEM_SRAM3_CTRL", editorParam={format="0x%08x"}},
+	--layout = {sizer="v", {sizer="v", "ulRegVal0", "ulRegVal1"},
+	--					{sizer="v", "ulRegVal2", "ulRegVal3"}}
+},
+
+
+
 --
 memsize_t = 
 	{{"UINT32", "ulMemSize",        mode="read-only", desc="Memory Size"}},
@@ -281,6 +491,7 @@ num_comm_channel_t =
 	{{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of required comm channels"}},
 --
 }
+
 
 ---------------------------------------------------------------------------
 -- RCX_MOD_TAG definitions.
@@ -360,6 +571,24 @@ RCX_MOD_TAG_IT_PIO =
 RCX_MOD_TAG_IT_GPIO =
 	{paramtype = 0x000010A0, datatype ="RCX_MOD_TAG_IT_GPIO_T", desc="GPIO"},
 	
+	
+-- tags for configuration of 2nd stage loader
+
+TAG_BSL_SDRAM_PARAMS = 
+	{paramtype = 0x40000000, datatype="TAG_BSL_SDRAM_PARAMS_DATA_T",          desc="SDRAM"},
+TAG_BSL_HIF_PARAMS =
+	{paramtype = 0x40000001, datatype="TAG_BSL_HIF_PARAMS_DATA_T",            desc="HIF/DPM"},
+TAG_BSL_SDMMC_PARAMS =
+	{paramtype = 0x40000002, datatype="TAG_BSL_SDMMC_PARAMS_DATA_T",          desc="SD/MMC"},
+TAG_BSL_UART_PARAMS = 
+	{paramtype = 0x40000003, datatype="TAG_BSL_UART_PARAMS_DATA_T",           desc="UART"},
+TAG_BSL_USB_PARAMS = 
+	{paramtype = 0x40000004, datatype="TAG_BSL_USB_PARAMS_DATA_T",            desc="USB"},
+TAG_BSL_MEDIUM_PARAMS =
+	{paramtype = 0x40000005, datatype="TAG_BSL_MEDIUM_PARAMS_DATA_T",         desc="BSL media"},
+TAG_BSL_EXTSRAM_PARAMS =
+	{paramtype = 0x40000006, datatype="TAG_BSL_EXTSRAM_PARAMS_DATA_T",        desc="ext. SRAM"},
+
 -- demo tags, not used in taglist.h
 mac_address = 
 	{paramtype=1, datatype="mac", desc="MAC Address"},
@@ -381,6 +610,15 @@ HELP_MAPPING = {
 	RCX_MOD_TAG_IT_TIMER                = {name="Timer Tag",     file="RCX_MOD_TAG_IT_TIMER_T.htm"},
 	RCX_MOD_TAG_IT_XC                   = {name="xC Tag",        file="RCX_MOD_TAG_IT_XC_T.htm"},
 	RCX_MOD_TAG_IT_INTERRUPT            = {name="Interrupt Tag", file="RCX_MOD_TAG_IT_INTERRUPT_T.htm"},
+	 
+	TAG_BSL_SDRAM_PARAMS                = {name="SDRAM",         file="TAG_BSL_SDRAM_PARAMS_DATA_T.htm"},
+	TAG_BSL_HIF_PARAMS                  = {name="HIF/DPM",       file="TAG_BSL_HIF_PARAMS_DATA_T.htm"},
+	TAG_BSL_SDMMC_PARAMS                = {name="SD/MMC",        file="TAG_BSL_SDMMC_PARAMS_DATA_T.htm"},
+	TAG_BSL_UART_PARAMS                 = {name="UART",          file="TAG_BSL_UART_PARAMS_DATA_T.htm"},
+	TAG_BSL_USB_PARAMS                  = {name="USB",           file="TAG_BSL_USB_PARAMS_DATA_T.htm"},
+	TAG_BSL_MEDIUM_PARAMS               = {name="BSL media",     file="TAG_BSL_MEDIUM_PARAMS_DATA_T.htm"},
+	TAG_BSL_EXTSRAM_PARAMS              = {name="ext. SRAM",     file="TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm"},
+	
 	memsize                             = {name="", file="misc_tags.htm"},
 	num_comm_channel                    = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
 	min_persistent_storage_size         = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
@@ -442,8 +680,8 @@ mac = {size=6, editor="macedit"},
 ipv4 = {size=4, editor="ipv4edit"},
 rcxver = {size=8, editor="rcxveredit"},
 UINT32 = {size=4, editor="numedit"},
-UINT16 = {size=2, editor="numedit", editorParam={width=16}},
-UINT8 = {size=1, editor="numedit", editorParam={width=8}},
+UINT16 = {size=2, editor="numedit", editorParam={nBits=16}},
+UINT8 = {size=1, editor="numedit", editorParam={nBits=8}},
 STRING = {editor="stringedit"},
 bindata = {editor="hexedit"},
 }
@@ -519,7 +757,9 @@ function getSize(strType)
 	end
 end
 
-
+-- get the size of a tag.
+-- The size is either stored in a .size entry in the tag description,
+-- or obtained via the datatype.
 function getParamSize(strParamName)
 	local tTagDesc = rcx_mod_tags[strParamName]
 	assert(tTagDesc, "Unknown tag: "..strParamName)
@@ -533,14 +773,22 @@ end
 
 
 
+-- Get the size of a structure.
+-- If the structure definition has a .size entry, return it
+-- Otherwise, return the sum of the component sizes.
 function getStructSize(strType)
 	local tStructDef = structures[strType]
 	assert(tStructDef, "no definition for structure type: "..strType)
-	local iSize = 0
-	for _, tMemberDef in ipairs(tStructDef) do
-		iSize = iSize + getStructMemberSize(tMemberDef)
+	if tStructDef.size then
+		return tStructDef.size
+	else
+		local iSize = 0
+		for _, tMemberDef in ipairs(tStructDef) do
+			iSize = tMemberDef.offset or iSize
+			iSize = iSize + getStructMemberSize(tMemberDef)
+		end
+		return iSize
 	end
-	return iSize
 end
 
 
@@ -548,12 +796,15 @@ end
 -- @param tMemberDef member entry of a struct definition
 -- @return size of the member in bytes
 function getStructMemberSize(tMemberDef)
+	return tMemberDef.size or getSize(tMemberDef[1]) -- the type name
+	--[[
 	local strName, strType, iSize = tMemberDef[2], tMemberDef[1], tMemberDef.size or 0
 	if iSize>0 then
 		return iSize
 	else 
 		return getSize(strType)
 	end
+	--]]
 end
 
 
@@ -680,26 +931,32 @@ function uint32tobin(u)
 end
 
 
---- Convert a list representation of a taglist to binary.
+--- Convert a list representation of a taglist to binary form.
+-- The tags are padded to dword size.
 -- @param params a list of tags. Each element is a list of 
 --   ulTag, ulSize, abParVal.
 -- @return the binary taglist. If params is empty, an empty taglist
 --   consisting only of the end marker is returned.
 function paramsToBin(params)
-	local abParblock = "" --parblock_cookie
+	local abParblock = ""
 	for _, param in ipairs(params) do
-		local ulTag, iParamSize, abParamVal = param.ulTag, param.ulSize, param.abValue
-		
-		assert(iParamSize == abParamVal:len(),
-			string.format("tag size has changed: actual = %u, correct = %u",
-			abParamVal:len(), iParamSize))
-		abParblock = abParblock ..
+		local ulTag, ulSize, abValue = param.ulTag, param.ulSize, param.abValue
+		print(string.format("tag = 0x%08x  size=%d  value len=%d", 
+			ulTag, ulSize, abValue:len()))
+		local abTag = 
 			uint32tobin(ulTag) ..
-			uint32tobin(iParamSize) ..
-			abParamVal ..
-			string.rep(string.char(0), (4 - iParamSize) %4) -- pad to dword size
+			uint32tobin(ulSize) .. -- original size
+			abValue ..
+			string.rep(string.char(0), (4-abValue:len()) % 4)
+		abParblock = abParblock .. abTag
 	end
-	abParblock = abParblock .. uint32tobin(TAG_END) .. uint32tobin(0)
+	abParblock = abParblock .. uint32tobin(TAG_END) -- .. uint32tobin(0)
+	
+	if params.abEndGap then
+		print("appending original data behind end marker")
+		abParblock = abParblock .. params.abEndGap
+	end
+	
 	return abParblock
 
 end
@@ -735,7 +992,7 @@ function binToParams(abBin, iStartPos)
 	while (iPos < iLen) do
 		-- get tag type
 		if (iPos+4 > iLen) then
-			strMsg = "tag list truncated (in tag field)"
+			strMsg = "Tag list truncated (in tag field)"
 			break
 		end
 		
@@ -750,7 +1007,7 @@ function binToParams(abBin, iStartPos)
 		
 		-- get size
 		if (iPos+4 > iLen) then
-			strMsg = "tag list truncated (in size field)"
+			strMsg = "Tag list truncated (in size field)"
 			break
 		end
 		
@@ -762,7 +1019,7 @@ function binToParams(abBin, iStartPos)
 		
 		-- get the value. the value size must not be larger than the remaining data
 		if iPos + ulSize > iLen then
-			strMsg = "incorrect tag size or tag list truncated: size = " .. ulSize
+			strMsg = "Incorrect tag size or tag list truncated: size = " .. ulSize
 			break
 		end
 		abValue = string.sub(abBin, iPos+1, iPos+ulSize)
@@ -771,21 +1028,31 @@ function binToParams(abBin, iStartPos)
 		-- insert the param name and value
 		table.insert(params, {
 			ulTag = ulTag,
-			ulSize = ulSize, -- allows to reconstruct the binary
-			abValue = abValue,
+			ulSize = ulSize, -- original size, allows to reconstruct the binary
+			abValue = abValue
 		})
 
 		-- skip padding
 		iPos = iPos + ((4 - iPos) % 4)
 		
 		if iPos > iLen then
-			strMsg = "tag list truncated (in padding)"
+			strMsg = "Tag list truncated (in padding)"
 			break
 		end
 	end
 	
-	if strMsg=="" and ulTag ~= TAG_END then
-		strMsg = "end marker not found"
+	if strMsg=="" then
+		-- list ok, but no end marker - reject
+		if ulTag ~= TAG_END then
+			strMsg = "No end marker found in tag list."
+			
+		-- list ok, end marker and additional data - accept, but warn
+		elseif iPos < iLen and ulTag == TAG_END then
+			strMsg = 
+			"There is additional data behind the end marker of the tag list.\n" ..
+			"This data will be kept intact unless you load another tag list."
+			params.abEndGap = string.sub(abBin, iPos+1)
+		end
 	end
 	
 	return fOk, params, iPos - iStartPos, strMsg
@@ -818,6 +1085,30 @@ end
 --                split/reconstruct structures
 ---------------------------------------------------------------------
 
+function stringAnd(str1, str2)
+	local strRes = ""
+	if (str1:len() ~= str2:len()) then
+		error (string.format("stringAnd: str1 %d bytes, str2 %d bytes", str1:len(), str2:len()))
+	else
+		for i=1, str1:len() do
+			strRes = strRes .. string.char(bit.band(str1:byte(i), str2:byte(i)))
+		end
+	end
+	return strRes
+end
+
+function stringOr(str1, str2)
+	local strRes = ""
+	if (str1:len() ~= str2:len()) then
+		error (string.format("stringAnd: str1 %d bytes, str2 %d bytes", str1:len(), str2:len()))
+	else
+		for i=1, str1:len() do
+			strRes = strRes .. string.char(bit.bor(str1:byte(i), str2:byte(i)))
+		end
+	end
+	return strRes
+end
+
 --- split a structure value into separate fields.
 -- @param strTypeName the structure type name
 -- @param abValue the binary value of the structure
@@ -830,9 +1121,13 @@ function splitStructValue(strTypeName, abValue)
 	local tStructDef = getStructDef(strTypeName)
 	
 	for index, tMemberDef in ipairs(tStructDef) do
+		iPos = tMemberDef.offset or iPos
 		strMemberName, strMemberType = tMemberDef[2], tMemberDef[1]
 		ulMemberSize = getStructMemberSize(tMemberDef)
 		abMemberValue = string.sub(abValue, iPos+1, iPos+ulMemberSize)
+		if tMemberDef.mask then
+			abMemberValue = stringAnd(abMemberValue, tMemberDef.mask)
+		end
 		iPos = iPos + ulMemberSize
 		elements[index] =
 			{strName = strMemberName, 
@@ -842,6 +1137,7 @@ function splitStructValue(strTypeName, abValue)
 	end
 	return elements
 end
+
 
 
 --- join structure members into the whole structure.
@@ -862,7 +1158,13 @@ function joinStructElements(strTypeName, elements)
 			string.format("struct member size has changed: actual = %u, correct = %u",
 			abMemberValue:len(), ulMemberSize))
 
-		bin = bin .. abMemberValue
+		local iOffset = tMemberDef.offset
+		if iOffset and bin:len() > iOffset then
+			bin = string.sub(bin, 1, iOffset) .. 
+				stringOr(string.sub(bin, iOffset+1), abMemberValue)
+		else
+			bin = bin .. abMemberValue
+		end
 	end
 	return bin
 end
@@ -880,6 +1182,14 @@ example_taglist = {
 "RCX_MOD_TAG_IT_LED",
 "RCX_MOD_TAG_IT_PIO",
 "RCX_MOD_TAG_IT_GPIO",
+
+"TAG_BSL_SDRAM_PARAMS",
+"TAG_BSL_HIF_PARAMS",
+"TAG_BSL_SDMMC_PARAMS",
+"TAG_BSL_UART_PARAMS",
+"TAG_BSL_USB_PARAMS",
+"TAG_BSL_MEDIUM_PARAMS",
+"TAG_BSL_EXTSRAM_PARAMS",
 
 "memsize",
 "min_persistent_storage_size",

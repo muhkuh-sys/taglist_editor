@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_MEDIUM_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Destination Media for Flashing</h2>
+
+<p>
+If enabled, the 2nd Stage Loader will be flashed if it was loaded via DPM/PCI or serial console, so it will always be available during startup.
+It is possible to override the default volume being used.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Flash Bootloader</td>
+	<td>Enable/disable automatic flashing</td>
+</tr>
+<tr>
+	<td>Destination</td>
+	<td>Destination device/volume for flashing. <br>
+	If autodetection is selected, the following rules are followed:<br>
+		<ul>
+		<li>If the BSL is running from serial flash, use serial flash as volume.</li>
+		<li>If the BSL was loaded via PCI/DPM and not flashed, use a RAM disk.</li>
+		<li>If the BSL was loaded from parallel flash, don't use any file system, but use an NXF file at 0xc0040000.</li>
+		</ul>
+	</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

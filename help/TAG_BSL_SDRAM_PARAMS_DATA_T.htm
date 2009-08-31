@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_SDRAM_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>SDRAM Parameters</h2>
+
+<p>
+SDRAM parameters can be set using this tag. If no parameters are given the 2nd Stage Loader will use the data provided from security memory (alternatively from the NXF Header of the firmware).
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+	<td>General Control</td>
+	<td>SDRAM_GENERAL_CTRL register value. <br>
+	Set to 0 if no SDRAM Parameters are available or the parameters from security memory or .NXF file should be used.
+	</td>
+</tr>
+<tr>
+	<td>Timing Control</td>
+	<td>SDRAM_TIMING_CTRL register value.</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

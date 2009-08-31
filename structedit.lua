@@ -59,9 +59,13 @@ function updateMemberValues(origList, newvalues)
 			newvalues[strMemberName] = nil
 		end
 	end
-	if #newvalues >0 then
-		print("Could not update all members: ")
-		for strMemberName, val in pairs(newvalues) do print(strMemberName) end
+	-- unless some error occurred, the newvalues list must now be empty.
+	if next(newvalues) then
+	--if #newvalues >0 then
+		for strMemberName, val in pairs(newvalues) do 
+			print("Could not update struct member: " .. strMemberName) 
+		end
+		error("Could not update all members: ")
 	end
 end
 

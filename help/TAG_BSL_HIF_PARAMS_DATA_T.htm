@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_HIF_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>HIF/DPM Parameters</h2>
+
+<p>
+DPM parameters can be set using this tag. If no parameters are given the 2nd Stage Loader will use the default settings.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Bus Type</td>
+	<td>The eternal bus type: DPM, ISA, PCI or disabled</td>
+</tr>
+<tr>
+	<td>IF_CONF0 <br>
+		IF_CONF1 <br>
+		IO_REGMODE0 <br>
+		IO_REGMODE1
+	</td>
+	<td>Values of the HIF timing registers. <br>
+		These values are only required for bus types DPM, ISA (and auto).
+		Set the registers to 0 to use the defaults.
+	</td>
+</tr>
+<tr>
+	<td>Use PCI enable pin</td>
+	<td>Use PCI enable pin (e.g. netPLC)</td>
+</tr>
+<tr>
+	<td>Type of enable pin</td>
+	<td>Type of enable pin. <br>
+		"Ignore" means ignore the CD pin and poll once.
+	</td>
+</tr>
+<tr>
+	<td>Inverted</td>
+	<td>Indicates if the PCI enable pin is inverted.</td>
+</tr>
+<tr>
+	<td>Pin Number</td>
+	<td>Pin Number of the PCI enable pin.</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

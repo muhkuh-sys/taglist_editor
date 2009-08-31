@@ -13,6 +13,7 @@ muhkuh.include("macedit.lua", "macedit")
 muhkuh.include("rcxveredit.lua", "rcxveredit")
 muhkuh.include("structedit.lua", "structedit")
 muhkuh.include("comboedit.lua", "comboedit")
+muhkuh.include("checkboxedit.lua", "checkboxedit")
 
 
 -- public: createEditors, destroyEditors, getTagBin
@@ -23,10 +24,10 @@ m_tagList = {}
 --- list of page names/tags
 m_pages = {}
 
---- current editor
+--- current editor, e.g. numEdit
 m_editor = nil
 
---- current edit control
+--- current edit control, e.g. the text control containing the number
 m_editCtrl = nil
 
 --- the tag being edited
@@ -74,11 +75,14 @@ local function OnPageChanged(event)
 	taglistedit.enterPage(iNewPage)
 end
 
+-- m_book 
+--    +- b_bookPanel  sizer:m_bookPanelSizer
+
 --- Given a list of tags, make a list of page titles and tags and 
 -- create the book pages.
 -- @param tagList a list of parameters and values. Each entry is a list with keys
--- strTagName (the name string in the rcx_mod_tags list) and abValue, the value
--- as binary data.
+-- strTagName (the name string in the rcx_mod_tags list) and abValue (the value
+-- as binary data).
 function createEditors(tagList)
 	--print("creating editors, params=", tagList, "len=", #tagList)
 	
@@ -95,16 +99,17 @@ function createEditors(tagList)
 	m_tagList = tagList
 	m_pages = {}
 	for i, tTag in ipairs(tagList) do
-		-- print(i, tTag)
 		local strDesc = taglist.getTagDescString(tTag.ulTag)
-		local strInstName = taglist.getTagInstanceName(tTag)
-		print(strDesc, strInstName)
-		if strDesc and strInstName then
-			strDesc = strDesc .. ": " .. strInstName
-		end
 		if strDesc then
+			local strInstName = taglist.getTagInstanceName(tTag)
+			if strInstName then
+				strDesc = strDesc .. ": " .. strInstName
+			end
+			print(strDesc)
 			table.insert(m_pages, {desc=strDesc, tag=tTag})
 			m_book:AddPage(m_bookPanel, strDesc)
+		else
+			print(string.format("skipping unknown tag: 0x%0x", tTag.ulTag))
 		end
 	end
 	m_book:Connect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING, OnPageChanging)
@@ -129,7 +134,6 @@ function destroyEditors()
 	end
 	m_tagList = {}
 	m_pages = {}
-	-- print(m_book:GetPageCount())
 end
 
 

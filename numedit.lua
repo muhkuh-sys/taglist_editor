@@ -63,10 +63,11 @@ end
 function setValue(self, bin)
 	--print("numedit.setValue: self.m_tEditorParams=", self.m_tEditorParams)
 	local uVal = binToUint(bin, 0, self.m_nBits)
-	local strFormat = self.m_tEditorParams.format or
-		string.format("0x%%0%dx", self.m_nDigits)
+	--local strFormat = self.m_tEditorParams.format or
+	--	string.format("0x%%0%dx", self.m_nDigits)
 	--print(strFormat)
-	local strVal = string.format(strFormat, uVal)
+	--local strVal = string.format(strFormat, uVal)
+	local strVal = string.format(self.m_format, uVal)
 	assert(strVal, "numedit.setValue: failed to format value")
 	--print(strVal)
 	self.m_TextCtrl:SetValue(strVal)
@@ -182,7 +183,21 @@ function OnTextUpdate(self, event)
 	event:Skip(false)
 end
 
+local emptyPars = {}
 function new(_, tEditorParams)
+	local inst = {}
+	local pars = tEditorParams or emptyPars
+	inst.m_nBits   = pars.nBits     or 32
+	inst.m_nDigits =                   math.ceil(inst.m_nBits / 4)
+	inst.m_format  = pars.format    or "0x%0" .. inst.m_nDigits .. "x"
+	inst.m_minVal  = pars.minValue  or 0
+	inst.m_maxVal  = pars.maxValue  or 2^inst.m_nBits -1
+	inst.__index = numedit
+	setmetatable(inst, inst)
+	return inst
+end
+
+function new_old(_, tEditorParams)
 	--if tEditorParams then
 	--	for k,v in pairs(tEditorParams) do print(k,v) end
 	--end
@@ -194,6 +209,8 @@ function new(_, tEditorParams)
 		inst.m_tEditorParams = tEditorParams
 		inst.m_nBits = tEditorParams.width or inst.m_nBits
 		inst.m_fSigned = tEditorParams.signed or inst.m_fSigned
+		inst.m_minVal = tEditorParams.minVal or 0
+		inst.m_maxVal = tEditorParams.maxVal or 2^inst.m_nBits -1
 	end
 
 	inst.m_minVal = 0
