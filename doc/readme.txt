@@ -108,16 +108,26 @@ When loading an NX* file, three variants of the layout are recognized:
 header - data/ELF - tag list
 header - tag list - data/ELF
 header - data/ELF
-  
+
+
+
+
+Automatic adjustments
+======================
+
 The editor will preserve the gap data if you open an NXO/NXF file and
 only edit its tag list. If you load a header/elf/tag list from a file, the gap
 data following this section is replaced by 0-3 alignment bytes.
 
-If the tag list is located in front of the data AND ulTagListMaxSize is
-different from 0, the tag list is padded to the maximum size.
+If an NXF file is being edited, and the tag list is located before the data section
+a newly loaded tag list is padded to make sure that ulDataStartOffset does not change.
+If the newly loaded tag list is larger than ulDataStartOffset-ulTagListStartOffset,
+the new tag list is rejected.
 
 When a header or tag list binary is loaded, 
 ulTagListSizeMax is set to max(ulTagListSizeMax, size of tag list)
+
+
 
 
 Consistency checks when loading an NX* file:
@@ -131,7 +141,7 @@ The file will be rejected if:
 - the tag list does not contain the end marker
 
 
-The editor will open a file and display a warning if:
+The editor will accept a file and display a warning if:
 - the file type as indicated by the magic cookie at the start of the file 
   is not a known type (NXF/NXO/NXD/NXL/NXB)
 - any of the checksums in the boot header/common header are incorrect

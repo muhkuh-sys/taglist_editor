@@ -2,15 +2,26 @@
 -- Stephan Lesch/Hilscher GmbH
 -- Send feedback to SLesch@hilscher.com
 ---------------------------------------------------------------------------
--- setButtons -> adaptGUI ?
--- m_fParamsLoaded in taglistedit schieben
+-- setButtons -> updateGUI?
+-- move m_fParamsLoaded into taglistedit 
 
 module("nxoeditor", package.seeall)
 
 require("tester")
 require("gui_stuff")
 createButton = gui_stuff.createButton
---createToggleButton = gui_stuff.createToggleButton
+createRadioButton = gui_stuff.createRadioButton
+createLabel = gui_stuff.createLabel
+messageDialog = gui_stuff.messageDialog
+errorDialog = gui_stuff.errorDialog
+internalErrorDialog = gui_stuff.internalErrorDialog
+require("utils")
+
+muhkuh.include("taglist.lua", "taglist")
+muhkuh.include("page_taglistedit.lua", "taglistedit")
+muhkuh.include("nxfile.lua", "nxfile")
+muhkuh.include("structedit.lua", "structedit")
+muhkuh.include("hexdump.lua", "hexdump")
 
 function createToggleButton(parentPanel, strLabel, eventFunction)
 	local id = tester.nextID()
@@ -27,19 +38,45 @@ function createCheckBox(parentPanel, strLabel, fChecked, eventFunction)
 	return checkbox
 end
 
-createRadioButton = gui_stuff.createRadioButton
-createLabel = gui_stuff.createLabel
-messageDialog = gui_stuff.messageDialog
-errorDialog = gui_stuff.errorDialog
-internalErrorDialog = gui_stuff.internalErrorDialog
-require("utils")
+function confirmDialog(strCaption, strMessage)
+	print(strCaption .. ": " .. strMessage)
+	local dialog = wx.wxMessageDialog(__MUHKUH_PANEL, strMessage, strCaption,
+		wx.wxOK + wx.wxCANCEL + wx.wxICON_QUESTION + wx.wxSTAY_ON_TOP)
+	local res = dialog:ShowModal()
+	dialog:Destroy()
+	return res==wx.wxID_OK
+end
 
-muhkuh.include("taglist.lua", "taglist")
-muhkuh.include("page_taglistedit.lua", "taglistedit")
-muhkuh.include("nxfile.lua", "nxfile")
---muhkuh.include("nxo.lua", "nxo")
-muhkuh.include("structedit.lua", "structedit")
-muhkuh.include("hexdump.lua", "hexdump")
+
+-- Show messages
+-- if fOk = true, a notice is displayed, if false, an error message is displayed.
+-- ... may be any strings or lists of strings.
+function showMessages(fOk, ...)
+	if not ... then return end
+	
+	local messages = {}
+	for _, v in pairs({...}) do
+		if #messages > 0 then
+			table.insert(messages, "")
+		end
+		if type(v) == "string" then
+			table.insert(messages, v)
+		elseif type(v) == "table" then
+			for _, str in pairs(v) do
+				table.insert(messages, v)
+			end
+		end
+	end
+	
+	if #messages >0 then
+		local strMsg = table.concat(messages, "\n")
+		if fOk then
+			messageDialog("Notice", strMsg)
+		else
+			errorDialog("Error", strMsg)
+		end
+	end
+end
 
 DEBUG = nil
 m_nxfile = nil
@@ -77,6 +114,10 @@ local function OnQuit()
     muhkuh.TestHasFinished()
 end
 
+local function OnEmptyNxo()
+	nxoeditor.emptyNxo()
+end
+
 function OnHelp(event)
 	local fVal = nxoeditor.m_checkboxHelp:GetValue()
 	-- print("help", fVal)
@@ -101,15 +142,31 @@ local function OnDeleteTags()
 	nxoeditor.setButtons()
 end
 
+
+---------------------------------------------------------------------
+-- Taglist display
+---------------------------------------------------------------------
+
 function clearTags()
+	m_nxfile:setTaglistBin(nil)
+	taglistedit.destroyEditors()
+	m_fParamsLoaded = nil
+	m_tagsFilebar:clearFilename()
+	setButtons()
+end
+
+function displayTags2(atTags)
+	-- remove any old editors/controls
 	if m_fParamsLoaded then
 		taglistedit.destroyEditors()
-		m_fParamsLoaded = nil
 	end
-	m_panel:Layout()
-	m_panel:Refresh()
-	m_panel:Update()
+	-- create the new controls
+	if #atTags > 0 then
+		taglistedit.createEditors(atTags)
+	end
+	m_fParamsLoaded = true
 end
+
 
 --- Display a taglist.
 -- Parses a taglist, displays an error dialog and exits if parsing fails.
@@ -144,15 +201,29 @@ function displayTags(abTags)
 	return true
 end
 
+function emptyNxo()
+	m_nxfile = nxfile.new()
+	m_nxfile:initNxo()
+	m_headerFilebar:clearFilename()
+	m_elfFilebar:clearFilename()
+	m_tagsFilebar:clearFilename()
+	m_nxFilebar:clearFilename()
+	m_fParamsLoaded = nil
+	taglistedit.destroyEditors()
+	setButtons()
+end
+
+
 ---------------------------------------------------------------------
 -- loading and saving
 ---------------------------------------------------------------------
 strHdrFilenameFilters = "Header files (*.bin)|*.bin|All Files (*)|*"
 strElfFilenameFilters = "ELF files (*.elf)|*.elf|All Files (*)|*"
 strTagFilenameFilters = "Tag list files (*.bin)|*.bin|All Files (*)|*"
---strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
-strNxoFilenameFilters = "NXO/NXF/BIN files (*.nxo/*.nxf/*.bin)|*.nxo;*.nxf;*.bin|All Files (*)|*"
-
+strNxFilenameFilters = "NXO/NXF/BIN files (*.nxo/*.nxf/*.bin)|*.nxo;*.nxf;*.bin|All Files (*)|*"
+strsaveNxFilenameFilters = "NXO files (*.nxo)|*.nxo|NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
+strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|All Files (*)|*"
+strNxfFilenameFilters = "NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
 
 function loadFileDialog(parent, strTitle, strFilters)
 	local fileDialog = wx.wxFileDialog(
@@ -312,19 +383,53 @@ function saveElf(strFilename)
 	saveFile1(m_elfFilebar, strFilename, "Save Elf as", strElfFilenameFilters, abBin)
 end
 
+
+
+
+
+-- reject the tag list if:
+-- - file is an NXF
+-- - tag list is before data
+-- - tagListStartOffset + size of new tag list > dataStartOffset
+
+-- if maxsize>0 and size of new tag list > maxsize 
+-- offer user to keep the tag list and update max size or cancel the load
+
 function loadTags(strFilename)
 	local strFilename = strFilename or loadFileDialog(m_panel, "Select Tag list file", strTagFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
-	if iStatus==STATUS_OK and displayTags(abBin) then
-		m_nxfile:setTaglistBin(abBin)
-		m_tagsFilebar:setFilename(strFilename)
-		setButtons()
-		checkTagListSizeMax()
+	if iStatus==STATUS_OK then
+		print(string.format("taglist size: 0x%08x", abBin:len()))
+		-- parse data, show message dialog in case of errors
+		
+		local fOk, params, iLen, strMsg = taglist.binToParams(abBin, 0)
+		if not fOk then
+			errorDialog("Error parsing tag list", strMsg)
+			return false
+		end
+		
+		if strMsg:len()>0 then
+			messageDialog("Information", strMsg)
+		end
+		
+		if not m_nxfile:checkTagListSizeMax(abBin) and
+			not confirmDialog("Please confirm",
+			"The loaded tag list is longer than the maximum length field in the common header.\n"..
+			"Please select 'Ok' to accept the tag list and adjust the \n"..
+			"maximum length field or 'No' to cancel the load.") then
+			return
+		end
+		
+		local fOk, strMsg = m_nxfile:setTaglistBin(abBin)
+		showMessages(fOk, strMsg)
+		if fOk then
+			m_tagsFilebar:setFilename(strFilename)
+			displayTags2(params)
+			setButtons()
+		end
 	end
 end
-
-
 
 function saveTags(strFilename)
 	-- get taglist
@@ -336,8 +441,10 @@ function saveTags(strFilename)
 	end
 end
 
-function loadNxo(strFilename)
-	strFilename = strFilename or loadFileDialog(m_panel, "Select NXO file", strNxoFilenameFilters)
+
+
+function loadNx(strFilename)
+	strFilename = strFilename or loadFileDialog(m_panel, "Select NXO/NXF/bin file", strNxFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	-- loaded successfully
@@ -381,7 +488,7 @@ function loadNxo(strFilename)
 end
 
 
-function saveNxo(strFilename)
+function saveNx(strFilename)
 	-- get taglist
 	local abTags = taglistedit.getTagBin()
 	if not abTags then
@@ -394,11 +501,22 @@ function saveNxo(strFilename)
 	-- build nxo file
 	local abNxoFile = m_nxfile:buildNXFile()
 	if not abNxoFile then
-		errorDialog("Error", "Failed to build NXO file")
+		errorDialog("Error", "Failed to build NX* file")
 		return
 	end
 
-	saveFile1(m_nxFilebar, strFilename, "Save NXO as", strNxoFilenameFilters, abNxoFile)
+	local strFilter, strTitle
+	if m_nxfile:isNxf() then 
+		strFilter = strNxfFilenameFilters 
+		strTitle = "Save NXF/BIN file as"
+	elseif m_nxfile:isNxo() then
+		strFilter = strNxoFilenameFilters 
+		strTitle = "Save NXO file as"
+	else
+		strFilter = strsaveNxFilenameFilters
+		strTitle = "Save file as"
+	end
+	saveFile1(m_nxFilebar, strFilename, "Save as", strFilter, abNxoFile)
 end
 
 --- Enable/disable load/save buttons depending on which data is in memory.
@@ -574,7 +692,7 @@ function createPanel()
 	m_headerFilebar = insertFilebar(parent, fileSizer, "Headers", loadHdr, saveHdr)
 	m_elfFilebar = insertFilebar(parent, fileSizer, "ELF", loadElf, saveElf)
 	m_tagsFilebar = insertFilebar(parent, fileSizer, "Taglist", loadTags, saveTags)
-	m_nxFilebar = insertFilebar(parent, fileSizer, "NX*", loadNxo, saveNxo)
+	m_nxFilebar = insertFilebar(parent, fileSizer, "NX*", loadNx, saveNx)
 	
 	-- HTML help window
 	m_helpWindow = wx.wxHtmlWindow(m_splitterPanel)
@@ -582,9 +700,11 @@ function createPanel()
 	-- quit / create Params / delete params buttons
 	m_buttonQuit = createButton(m_panel, "Quit", OnQuit)
 	m_checkboxHelp = createCheckBox(m_panel, "Display Help", m_fShowHelp, OnHelp)
+	m_buttonEmptyNxo = createButton(m_panel, "Empty NXO", OnEmptyNxo)
 	m_buttonSizer = wx.wxBoxSizer(wx.wxHORIZONTAL)
 	m_buttonSizer:Add(m_buttonQuit, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
 	m_buttonSizer:Add(m_checkboxHelp, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
+	m_buttonSizer:Add(m_buttonEmptyNxo, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
 	if DEBUG then
 		m_buttonCreateTags = createButton(m_panel, "Create Empty Parameters", OnCreateTags)
 		m_buttonDeleteTags = createButton(m_panel, "Delete Parameters", OnDeleteTags)
@@ -804,7 +924,6 @@ function run()
 		end
 	end
 
-	--m_nxo = nxo.new()
 	m_nxfile = nxfile.new()
 	m_nxfile:initNxo()
 	loadConfig()
@@ -816,6 +935,6 @@ function run()
 	m_dSplitRatio = dSplitRatio
 	
 	if arg and arg[1] then
-		loadNxo(arg[1])
+		loadNx(arg[1])
 	end
 end

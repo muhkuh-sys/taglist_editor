@@ -187,15 +187,17 @@ end
 
 -- for Taglist editor: set fKeepGap to true to skip re-padding
 -- (assumes that the new taglist has the same size)
-function setTaglistBin(self, abBin, fKeepGap)
+function setTaglistBin_(self, abBin, fKeepGap)
 	abBin = abBin or ""
 	self.m_abTaglist = abBin
-	-- If a common header is present which says that the tag list comes before the data,
-	-- and the maximum size is set, pad the taglist up to the maximum size. 
-	-- Otherwise, it is padded to dword size.
+	-- fKeepGap is set if the edited tag list is stored (length unchanged)
+	-- otherwise, if the file is an NXF and the tag list lies before the data section,
+	-- pad the tag list to ulTagListMaxSize
+	-- otherwise, pad it to dword size.
 	if not fKeepGap then
 		local tCH = self.m_tCommonHeader
-		if tCH.ulTagListStartOffset > 0 
+		if netx_fileheader.isBootHeader(self.m_tDefaultHeader)
+		and tCH.ulTagListStartOffset > 0 
 		and tCH.ulTagListStartOffset < tCH.ulDataStartOffset
 		and tCH.ulTagListSizeMax > 0 then
 			self.m_abTagGap = getPadding(abBin, tCH.ulTagListSizeMax)
@@ -205,6 +207,36 @@ function setTaglistBin(self, abBin, fKeepGap)
 	end
 end
 
+function setTaglistBin(self, abBin, fKeepGap)
+	abBin = abBin or ""
+	self.m_abTaglist = abBin
+	-- fKeepGap is set if the edited tag list is stored (length unchanged)
+	-- otherwise, if the file is an NXF and the tag list lies before the data section,
+	-- pad the tag list to ulTagListMaxSize
+	-- otherwise, pad it to dword size.
+	if not fKeepGap then
+		local tCH = self.m_tCommonHeader
+		if netx_fileheader.isBootHeader(self.m_tDefaultHeader)
+		and tCH.ulTagListStartOffset > 0 
+		and tCH.ulTagListStartOffset < tCH.ulDataStartOffset then
+			local iPadSize = tCH.ulDataStartOffset - abBin:len() - tCH.ulTagListStartOffset
+			if iPadSize >=0 then
+				self.m_abTagGap = string.rep(string.char(0), iPadSize)
+			else
+				return false, "Tag list does not fit between headers and data section"
+			end
+		else
+			self.m_abTagGap = getPadding(abBin, 4)
+		end
+		
+		if tCH.ulTagListSizeMax < abBin:len() then
+			tCH.ulTagListSizeMax = abBin:len()
+		end
+		
+	end
+	return true
+end
+
 function getTaglistBin(self)
 	return self.m_abTaglist
 end
@@ -212,3 +244,9 @@ end
 function hasTaglist(self)
 	return self.m_abTaglist and self.m_abTaglist:len() > 0
 end
+
+function checkTagListSizeMax(self, abBin)
+	local tCH = self.m_tCommonHeader
+	return tCH.ulTagListSizeMax == 0 or tCH.ulTagListSizeMax > abBin:len()
+end
+
