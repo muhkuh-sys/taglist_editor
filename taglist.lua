@@ -294,6 +294,78 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
 		}},
 	},
 	
+	{"BSL_DPM_PARAMS_T", "DPM/ISA/Auto", "DPM settings", offset = 4},
+	{"BSL_PCI_PARAMS_T", "PCI", "PCI settings", offset = 4},
+
+	fStructToBin = function(elements)
+		local ulBusType = uint32(elements[1].abValue, 0)
+		if ulBusType == 3 then
+			return elements[1].abValue .. elements[3].abValue .. elements[2].abValue:sub(5, 16)
+		else 
+			return elements[1].abValue .. elements[2].abValue
+		end
+	end
+},
+
+BSL_DPM_PARAMS_T = {
+	-- DPM/ISA settings
+	{"UINT32", "ulIfConf0",    desc="IF_CONF0 register value", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIfConf1",    desc="IF_CONF1 register value", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIoRegMode0", desc="IO_REGMODE0 register value", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIoRegMode1", desc="IO_REGMODE1 register value", editorParam={format="0x%08x"}},
+},
+
+BSL_PCI_PARAMS_T = {
+	-- PCI settings  
+	{"UINT8", "bEnablePin", desc="Use PCI enable pin", 
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+	},
+
+	{"UINT8", "bPinType", desc="Type of enable pin", 
+		offset = 1, mask = string.char(0x7f),
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="Ignore pin",                value=0},
+				{name="GPIO",                      value=1},
+				{name="PIO",                       value=2},
+				{name="HIFPIO",                    value=3},
+				{name="MMIO",                      value=4},
+		}},
+	},
+	
+	{"UINT8", "bInvert", desc="Inverted", 
+		offset = 1, mask = string.char(0x80),
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 128, otherValues = true}
+		--[[
+		editor="comboedit", 
+		editorParam={nBits=8,
+			values={
+				{name="No", value=0},
+				{name="Yes", value=128}
+		}},
+		--]]
+	},
+	
+	{"UINT16", "usPinNumber", desc="Pin Number", editorParam={format="%u"}},
+}, 
+
+
+TAG_BSL_HIF_PARAMS_DATA_T___OLD = {
+	{"UINT32", "ulBusType", desc="Bus Type", 
+		editor="comboedit", 
+		editorParam={nBits=32,
+			values={
+				{name="Auto", value=0},
+				{name="DPM", value=1},
+				{name="ISA", value=2},
+				{name="PCI", value=3},
+				{name="Disable ext. Bus", value=0xffffffff} 
+		}},
+	},
+	
 	-- DPM/ISA settings
 	{"UINT32", "ulIfConf0",    desc="IF_CONF0 register value", editorParam={format="0x%08x"}},
 	{"UINT32", "ulIfConf1",    desc="IF_CONF1 register value", editorParam={format="0x%08x"}},
@@ -313,7 +385,7 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
 		editor="comboedit", 
 		editorParam={nBits=8,
 			values={
-				{name="Ignore CD pin",             value=0},
+				{name="Ignore pin",                value=0},
 				{name="GPIO",                      value=1},
 				{name="PIO",                       value=2},
 				{name="HIFPIO",                    value=3},
@@ -332,6 +404,61 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
 	},
 
 	{"UINT16", "usPinNumber", desc="Pin Number", editorParam={format="%u"}},
+	
+	fBinToStruct = function(abBin)
+		local abBusType = abBin:sub(1, 4)
+		local ulBusType = uint33(abBusType, 1) 
+		local ab0 = uint32tobin(0)
+		local abIfConf0      = ab0
+		local abIfConf1      = ab0
+		local abIoRegMode0   = ab0
+		local abIoRegMode1   = ab0
+		local abEnablePin    = string.char(0)
+		local abPinType      = string.char(0)
+		local abInvert       = string.char(0)
+		local abPinNumber    = string.char(0, 0)
+		
+		if ulBusType == 3 then
+			abEnablePin = abBin:sub(4, 4)
+			abPinType = stringAnd(abBin:sub(5, 5), string.char(0x7f))
+			abInvert = stringAnd(abBin:sub(5, 5), string.char(0x80))
+			abPinNumber = abBin:sub(6, 7)
+		else
+			abIfConf0 = abBin:sub(5, 8)
+			abIfConf1 = abBin:sub(9, 12)
+			abIoRegMode0 = abBin:sub(13, 16)
+			abIoRegMode1 = abBin:sub(17, 20)
+		end
+		
+		return {
+			{strName = "ulBusType",        strType = "UINT32",  ulSize = 4,  abValue = abBusType},
+			{strName = "ulIfConf0",        strType = "UINT32",  ulSize = 4,  abValue = abIfConf0},
+			{strName = "ulIfConf1",        strType = "UINT32",  ulSize = 4,  abValue = abIfConf1},
+			{strName = "ulIoRegMode0",     strType = "UINT32",  ulSize = 4,  abValue = abIoRegMode0},
+			{strName = "ulIoRegMode1",     strType = "UINT32",  ulSize = 4,  abValue = abIoRegMode1},
+			{strName = "bEnablePin",       strType = "UINT8",   ulSize = 1,  abValue = abEnablePin},
+			{strName = "bPinType",         strType = "UINT8",   ulSize = 1,  abValue = abPinType},
+			{strName = "bInvert",          strType = "UINT8",   ulSize = 1,  abValue = abInvert},
+			{strName = "usPinNumber",      strType = "UINT16",  ulSize = 2,  abValue = abPinNumber},
+		}
+	end,
+
+	fBinToStruct2 = function(abBin, elements)
+		local abBusType = abBin:sub(1, 4)
+		local ulBusType = uint33(abBusType, 1) 
+		if ulBusType == 3 then
+			elements[1] = uint32tobin(0)
+			elements[2] = uint32tobin(0)
+			elements[3] = uint32tobin(0)
+			elements[4] = uint32tobin(0)
+		else
+			elements[5] = string.char(0)
+			elements[2] = string.char(0)
+			elements[3] = string.char(0)
+			elements[4] = string.char(0, 0)
+		end
+		return elements
+	end
 	--]]
 },
 
@@ -358,12 +485,16 @@ TAG_BSL_SDMMC_PARAMS_DATA_T = {
 	
 	{"UINT8", "bInvert", desc="Inverted", 
 		offset = 1, mask = string.char(0x80),
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 128, otherValues = true}
+		--[[
 		editor="comboedit", 
 		editorParam={nBits=8,
 			values={
 				{name="No", value=0},
 				{name="Yes", value=128}
 		}},
+		--]]
 	},
 	
 	{"UINT16", "usPinNumber", desc="Pin Number", editorParam={format="%u"}},
@@ -399,12 +530,16 @@ TAG_BSL_USB_PARAMS_DATA_T = {
 	},
 	{"UINT8", "bInvert", desc="Inverted", 
 		offset = 1, mask = string.char(0x80),
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 128, otherValues = true}
+		--[[
 		editor="comboedit", 
 		editorParam={nBits=8,
 			values={
 				{name="No", value=0},
 				{name="Yes", value=128}
 		}},
+		--]]
 	},
 	{"UINT16", "usUpllupPinIdx", desc="Pin Number", editorParam={format="%u"}},
 },
@@ -1135,6 +1270,10 @@ function splitStructValue(strTypeName, abValue)
 			 ulSize = ulSize, 
 			 abValue = abMemberValue}
 	end
+	
+	if tStructDef.fBinToStruct then
+		elements = tStructDef.fBinToStruct(abValue, elements)
+	end
 	return elements
 end
 
@@ -1146,26 +1285,31 @@ end
 -- Elements have the form {strName=..., abValue=..., ulSize=...}
 -- @return the binary of the structure
 function joinStructElements(strTypeName, elements)
-	local bin = ""
-	local strMemberName, strMemberType, ulMemberSize, abMemberValue
 	local tStructDef = getStructDef(strTypeName)
+	local bin = ""
 	
-	for index, tMemberDef in ipairs(tStructDef) do
-		abMemberValue = elements[index].abValue
+	if tStructDef.fStructToBin then
+		bin = tStructDef.fStructToBin(elements)
+	else
+		local strMemberName, strMemberType, ulMemberSize, abMemberValue
+		for index, tMemberDef in ipairs(tStructDef) do
+			abMemberValue = elements[index].abValue
 		
-		ulMemberSize = getStructMemberSize(tMemberDef)
-		assert(ulMemberSize == abMemberValue:len(),
-			string.format("struct member size has changed: actual = %u, correct = %u",
-			abMemberValue:len(), ulMemberSize))
-
-		local iOffset = tMemberDef.offset
-		if iOffset and bin:len() > iOffset then
-			bin = string.sub(bin, 1, iOffset) .. 
-				stringOr(string.sub(bin, iOffset+1), abMemberValue)
-		else
-			bin = bin .. abMemberValue
+			ulMemberSize = getStructMemberSize(tMemberDef)
+			assert(ulMemberSize == abMemberValue:len(),
+				string.format("struct member size has changed: actual = %u, correct = %u",
+				abMemberValue:len(), ulMemberSize))
+	
+			local iOffset = tMemberDef.offset
+			if iOffset and bin:len() > iOffset then
+				bin = string.sub(bin, 1, iOffset) .. 
+					stringOr(string.sub(bin, iOffset+1), abMemberValue)
+			else
+				bin = bin .. abMemberValue
+			end
 		end
 	end
+
 	return bin
 end
 

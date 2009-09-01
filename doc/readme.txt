@@ -98,21 +98,26 @@ The gaps following the header, data and tag list are usually
 0-3 alignment bytes. An NXO file built from these parts using 
 the editor will have this layout. 
 
-
 The common header v3, however, allows a more flexible structure:
 - The tag list portion may be placed before the data/ELF
-- There may be extra data in the gap areas.
+- The gap areas may contain additional data.
 - There may be extra data between the end mark of the tag list and its
   ending as indicated by ulTagListSize.
 
+When loading an NX* file, three variants of the layout are recognized:
+header - data/ELF - tag list
+header - tag list - data/ELF
+header - data/ELF
+  
 The editor will preserve the gap data if you open an NXO/NXF file and
-only edit its tag list. If you load another header/elf/tag list, the gap
+only edit its tag list. If you load a header/elf/tag list from a file, the gap
 data following this section is replaced by 0-3 alignment bytes.
 
 If the tag list is located in front of the data AND ulTagListMaxSize is
 different from 0, the tag list is padded to the maximum size.
 
-
+When a header or tag list binary is loaded, 
+ulTagListSizeMax is set to max(ulTagListSizeMax, size of tag list)
 
 
 Consistency checks when loading an NX* file:

@@ -7,15 +7,25 @@
 <h2>HIF/DPM Parameters</h2>
 
 <p>
-DPM parameters can be set using this tag. If no parameters are given the 2nd Stage Loader will use the default settings.
+DPM parameters can be set using this tag. 
+If no parameters are given the 2nd Stage Loader will use the default settings.
 </p>
 <p></p>
 
 <table border=1>
 <tr>
 	<td>Bus Type</td>
-	<td>The eternal bus type: DPM, ISA, PCI or disabled</td>
+	<td>The external bus type: Auto-detect, DPM, ISA, PCI or disabled</td>
 </tr>
+</table>
+<p></p>
+
+<h3>Settings for DPM/ISA/Auto</h3>
+<p>
+The following settings are valid if the bus type is set to DPM, ISA or Auto-detection:
+</p>
+<p></p>
+<table border=1>
 <tr>
 	<td>IF_CONF0 <br>
 		IF_CONF1 <br>
@@ -27,6 +37,15 @@ DPM parameters can be set using this tag. If no parameters are given the 2nd Sta
 		Set the registers to 0 to use the defaults.
 	</td>
 </tr>
+</table>
+<p></p>
+
+<h3>Settings for PCI</h3>
+<p>
+The following settings are valid if the bus type is set to PCI:
+</p>
+<p></p>
+<table border=1>
 <tr>
 	<td>Use PCI enable pin</td>
 	<td>Use PCI enable pin (e.g. netPLC)</td>

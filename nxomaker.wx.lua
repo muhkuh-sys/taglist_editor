@@ -16,7 +16,8 @@ muhkuh = {}
 function muhkuh.include(strFile, strPackage) require(strPackage) end
 
 -- get nxo package
-require("nxo")
+--require("nxo")
+require("nxfile")
 --require("utils")
 
 
@@ -94,11 +95,41 @@ function writeBin(strName, bin)
 end
 
 
-
 --- load the component files and combine them to an nxo file.
 -- the header must be in binary form, with common header V3.
 -- returns true or false and an error message
+-- new variant using nxfile
 function makenxo(strHeaderFile, strTaglistFile, strElfFile, strNxoFile)
+	nxo = nxfile.new()
+	nxo:initNxo()
+	
+	local abDefaultHeader, abHeaders, abTags, abElf, abNxo, strMsg
+	
+	abHeaders, strMsg = loadBin(strHeaderFile)
+	if not abHeaders then return false, strMsg end
+	nxo:setHeadersBin(abHeaders)
+	
+	abElf, strMsg = loadBin(strElfFile)
+	if not abElf then return false, strMsg end
+	nxo:setElf(abElf)
+	
+	if strTaglistFile then
+		abTags, strMsg = loadBin(strTaglistFile)
+		if not abTags then return false, strMsg end
+		nxo:setTaglistBin(abTags)
+	end
+	
+	abNxo = nxo:buildNXFile()
+	if not abNxo then return false, "failed to build nxo file" end
+	
+	local fSaved, strMsg = writeBin(strNxoFile, abNxo)
+	if not fSaved then return false, strMsg end
+	return true
+end
+
+-- old variant using nxo
+--[[
+function makenxo_(strHeaderFile, strTaglistFile, strElfFile, strNxoFile)
 	nxo = nxo.new()
 	local abDefaultHeader, abHeaders, abTags, abElf, abNxo, strMsg
 	
@@ -123,7 +154,7 @@ function makenxo(strHeaderFile, strTaglistFile, strElfFile, strNxoFile)
 	if not fSaved then return false, strMsg end
 	return true
 end
-
+--]]
 
 local aStrUsage={
 "makenxo creates an rcX loadable module in NXO format from a binary",

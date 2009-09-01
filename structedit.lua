@@ -306,7 +306,7 @@ function doDefaultLayout(parent, elements)
 			sizer:Add(element.editCtrl, 0, wx.wxEXPAND + wx.wxALIGN_LEFT)
 		else
 			sizer:Add(element.staticText, 0, wx.wxALIGN_RIGHT)
-			sizer:Add(element.editCtrl, 0, wx.wxALIGN_LEFT)
+			sizer:Add(element.editCtrl, 0, wx.wxALIGN_RIGHT)
 		end
 	end
 	return sizer
