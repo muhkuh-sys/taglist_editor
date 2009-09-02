@@ -22,7 +22,7 @@ Screen layout:
 |   Load/Save       |                 |
 |                   |                 |
  -------------------------------------
- Quit   (x) show help
+ Quit   (x) show help  Empty NXO
  
  
  
@@ -119,6 +119,9 @@ The editor will preserve the gap data if you open an NXO/NXF file and
 only edit its tag list. If you load a header/elf/tag list from a file, the gap
 data following this section is replaced by 0-3 alignment bytes.
 
+A tag list may contain an additional zero length indication after the end tag.
+This additional dword is preserved and written back when saving.
+
 If an NXF file is being edited, and the tag list is located before the data section
 a newly loaded tag list is padded to make sure that ulDataStartOffset does not change.
 If the newly loaded tag list is larger than ulDataStartOffset-ulTagListStartOffset,
@@ -139,6 +142,8 @@ The file will be rejected if:
   sections overlap
 - the tag list can't be parsed
 - the tag list does not contain the end marker
+- the tag list contains extraneous data other than a zero dword between 
+  the end marker and ulTagListSize
 
 
 The editor will accept a file and display a warning if:
@@ -146,8 +151,6 @@ The editor will accept a file and display a warning if:
   is not a known type (NXF/NXO/NXD/NXL/NXB)
 - any of the checksums in the boot header/common header are incorrect
 - the common header version is above 3
-- the tag list contains extraneous data between the end marker and
-  ulTagListSize
 
 
   

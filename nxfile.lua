@@ -229,7 +229,7 @@ function setTaglistBin(self, abBin, fKeepGap)
 			self.m_abTagGap = getPadding(abBin, 4)
 		end
 		
-		if tCH.ulTagListSizeMax < abBin:len() then
+		if tCH.ulTagListSizeMax > 0 and tCH.ulTagListSizeMax < abBin:len() then
 			tCH.ulTagListSizeMax = abBin:len()
 		end
 		

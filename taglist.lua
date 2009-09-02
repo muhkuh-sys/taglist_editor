@@ -1136,7 +1136,20 @@ function binToParams(abBin, iStartPos)
 
 		-- end tag? 
 		if ulTag == TAG_END then
-			fOk = true
+			-- list ends in end tag
+			if iPos == iLen then
+				fOk = true
+			-- list ends in end tag + zero length indication - ok
+			elseif iPos+4 == iLen and string.sub(abBin, iPos + 1) == string.char(0,0,0,0) then
+				fOk = true
+				params.abEndGap = string.sub(abBin, iPos + 1)
+				strMsg = 
+				"Tag list contains zero length indication behind end marker."
+			-- other data behind end tag - reject
+			else
+				strMsg = 
+				"Malformed/damaged tag list (End marker found inside tag list)"
+			end
 			break
 		end
 		
@@ -1175,18 +1188,13 @@ function binToParams(abBin, iStartPos)
 			break
 		end
 	end
-	
-	if strMsg=="" then
-		-- list ok, but no end marker - reject
+
+	if not fOk and strMsg == "" then
 		if ulTag ~= TAG_END then
 			strMsg = "No end marker found in tag list."
-			
-		-- list ok, end marker and additional data - accept, but warn
-		elseif iPos < iLen and ulTag == TAG_END then
-			strMsg = 
-			"There is additional data behind the end marker of the tag list.\n" ..
-			"This data will be kept intact unless you load another tag list."
-			params.abEndGap = string.sub(abBin, iPos+1)
+		else
+		-- this should never happen
+			strMsg = "Unknown error in tag list."
 		end
 	end
 	
