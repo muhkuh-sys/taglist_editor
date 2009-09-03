@@ -1,33 +1,21 @@
--- build, parse and keep the contents of an NXF module file.
--- the file consists of 
--- m_abBootHeader
--- m_abBinary: common header V3 and additional headers + relocated binary
--- m_abTaglist
+-- build, parse and maintain the contents of an NXO module file or an NXF file.
+-- 
+-- m_tDefaultHeader:Boot or default header)
+-- m_tCommonHeader: Common header V3.0 or higher
+-- m_abOtherHeaders: device header, module infos etc. (128 ... ulHeaderLength-1)
+-- m_abHeaderGap: ulHeaderLength ... ulDataStartOffset - 1
+-- m_abData: ulDataStartOffset ... ulDataStartOffset + ulDataSize - 1
+-- m_abDataGap: ulDataStartOffset + ulDataSize ... ulTagListStartOffset - 1
+-- m_abTaglist: ulTagListStartOffset ... ulTagListStartOffset + ulTagListSize - 1
+-- m_abTagGap: ulTagListStartOffset + ulTagListSize ... fileEnd - 1
 
--- uncovered cases:
--- this implementation assumes that the order of contents is
--- always headers - data - taglist, with no additional data inbetween.
--- Any data between these three blocks will be lost, 
--- if the file is saved again the order will be the default order no
--- matter what it was before
-
--- modelling: default/boot and common header as structures, remaining headers and headerPad as bin
--- data and dataPad, taglist and tagPad as bin
+-- Note:
+--    The common header fields are only updated when the file is written 
+--    back, i.e. the common header may not be valid during editing.
 
 module("nxfile", package.seeall)
 
 require("netx_fileheader")
-
---[[
-function parseNxoBin(self, abBin)
-	return parseBin(self, abBin)
-end
-
-function buildNxoBin(self)
-	return buildNXFile(self)
-	-- return netx_fileheader.makeNXO(self.m_abDefaultHeader, self.m_abCommonHeader, self.m_abOtherHeaders, self.m_abData, self.m_abTaglist)
-end
---]]
 
 function new()
 	local t = {}
@@ -42,30 +30,6 @@ function new()
 	local mt = {__index=nxfile}
 	setmetatable(t, mt)
 	return t
-end
-
-function initNxo(self)
-	self.m_tDefaultHeader = netx_fileheader.makeEmptyDefaultHeader()
-	self.m_tDefaultHeader.ulMagicCookie = netx_fileheader.HIL_FILE_HEADER_OPTION_COOKIE
-	self.m_tCommonHeader = netx_fileheader.makeEmptyCommonHeader()
-end
-
-function isNxo(self)
-	return netx_fileheader.isNXODefaultHeader(self.m_tDefaultHeader)
-end
-
-function isNxf(self)
-	return netx_fileheader.isBootHeader(self.m_tDefaultHeader)
-end
-
--- returns "NXF", "NXO" etc.
-function getHeaderType(self)
-	return netx_fileheader.getHeaderType(self.m_tDefaultHeader)
-end
-
--- returns true if headers and data are present
-function isComplete(self)
-	return self:hasHeaders() and self:hasData()
 end
 
 
@@ -96,6 +60,10 @@ function buildNXFile(self)
 end
 
 
+-- returns true if headers and data are present
+function isComplete(self)
+	return self:hasHeaders() and self:hasData()
+end
 
 
 -- returns a string to pad abBin to the next multiple of length
@@ -103,8 +71,28 @@ function getPadding(abBin, length)
 	return string.rep(string.char(0), (length - abBin:len()) % length)
 end
 
+--------------------------------------------------------------------------
+--                  Boot/default header and file type
+--------------------------------------------------------------------------
 
+function initNxo(self)
+	self.m_tDefaultHeader = netx_fileheader.makeEmptyDefaultHeader()
+	self.m_tDefaultHeader.ulMagicCookie = netx_fileheader.HIL_FILE_HEADER_OPTION_COOKIE
+	self.m_tCommonHeader = netx_fileheader.makeEmptyCommonHeader()
+end
 
+function isNxo(self)
+	return netx_fileheader.isNXODefaultHeader(self.m_tDefaultHeader)
+end
+
+function isNxf(self)
+	return netx_fileheader.isBootHeader(self.m_tDefaultHeader)
+end
+
+-- returns "NXF", "NXO" etc.
+function getHeaderType(self)
+	return netx_fileheader.getHeaderType(self.m_tDefaultHeader)
+end
 
 --[[
 -- get/set the boot/default header
@@ -123,10 +111,39 @@ function hasBootHeader(self)
 end
 --]]
 
+--------------------------------------------------------------------------
+--                 Common header and any following headers
+--------------------------------------------------------------------------
 
-
+-- Set a new header binary.
+-- If ulTagListSizeMax is set, check it against the size of the currently loaded tag list.
 -- sets common header V3, device info, and module infos; NOT the default header!
--- 
+-- (as it is not contained in the file)
+
+function setHeadersBin(self, abBin)
+	abBin = abBin or ""
+	local abCH = abBin:sub(1, netx_fileheader.COMMON_HEADER_V3_SIZE)
+	local fOk = netx_fileheader.isUnfilledHeadersBin(abBin)
+	
+	if fOk then
+		local tCH = netx_fileheader.binToHeader(abCH, netx_fileheader.COMMON_HEADER_V3_SPEC)
+		local iTLSize = self.m_abTaglist and self.m_abTaglist:len() or 0
+		if tCH.ulTagListSizeMax == 0 or tCH.ulTagListSizeMax >= iTLSize then
+			self.m_tCommonHeader = tCH
+			self.m_abOtherHeaders = abBin:sub(netx_fileheader.COMMON_HEADER_V3_SIZE+1)
+			self.m_abHeaderGap = getPadding(abBin, 4)
+			return true
+		else
+			return false, 
+				"The tag list currently loaded is larger than allowed by\n"..
+				"this header according to ulTagListSizeMax"
+		end
+	else
+		return false, "The header binary is not valid."
+	end
+end
+
+--[[
 function setHeadersBin(self, abBin)
 	abBin = abBin or ""
 	local abCH = abBin:sub(1, netx_fileheader.COMMON_HEADER_V3_SIZE)
@@ -134,6 +151,7 @@ function setHeadersBin(self, abBin)
 	self.m_abOtherHeaders = abBin:sub(netx_fileheader.COMMON_HEADER_V3_SIZE+1)
 	self.m_abHeaderGap = getPadding(abBin, 4)
 end
+--]]
 
 -- gets common header V3, device info, and module infos; NOT the default header!
 function getHeadersBin(self)
@@ -143,32 +161,18 @@ function getHeadersBin(self)
 	end
 end
 
+function getCommonHeader(self)
+	return self.m_tCommonHeader
+end
+
 -- returns true if common header V3, device info, and module infos are present
 function hasHeaders(self)
 	return self.m_tCommonHeader and self.m_abOtherHeaders and self.m_abOtherHeaders:len()>0 
 end
 
-function getCommonHeader(self)
-	return self.m_tCommonHeader
-end
-
-
-
-function setElf(self, abBin)
-	abBin = abBin or ""
-	self.m_abData = abBin
-	self.m_abDataGap = getPadding(abBin, 4)
-end
-
-function getElf(self)
-	return self.m_abData
-end
-
-function hasElf(self)
-	return self.m_abData and self.m_abData:len() > 0
-end
-
-
+--------------------------------------------------------------------------
+--                         Data/ELF section
+--------------------------------------------------------------------------
 
 function setData(self, abBin)
 	abBin = abBin or ""
@@ -185,56 +189,65 @@ function hasData(self)
 end
 
 
--- for Taglist editor: set fKeepGap to true to skip re-padding
--- (assumes that the new taglist has the same size)
-function setTaglistBin_(self, abBin, fKeepGap)
+--[[
+function setElf(self, abBin)
 	abBin = abBin or ""
-	self.m_abTaglist = abBin
-	-- fKeepGap is set if the edited tag list is stored (length unchanged)
-	-- otherwise, if the file is an NXF and the tag list lies before the data section,
-	-- pad the tag list to ulTagListMaxSize
-	-- otherwise, pad it to dword size.
-	if not fKeepGap then
-		local tCH = self.m_tCommonHeader
-		if netx_fileheader.isBootHeader(self.m_tDefaultHeader)
-		and tCH.ulTagListStartOffset > 0 
-		and tCH.ulTagListStartOffset < tCH.ulDataStartOffset
-		and tCH.ulTagListSizeMax > 0 then
-			self.m_abTagGap = getPadding(abBin, tCH.ulTagListSizeMax)
-		else
-			self.m_abTagGap = getPadding(abBin, 4)
-		end
-	end
+	self.m_abData = abBin
+	self.m_abDataGap = getPadding(abBin, 4)
 end
+
+function getElf(self)
+	return self.m_abData
+end
+
+function hasElf(self)
+	return self.m_abData and self.m_abData:len() > 0
+end
+--]]
+
+
+--------------------------------------------------------------------------
+--                          tag list
+--------------------------------------------------------------------------
+
+
+-- If the tag list is at the end of the file and ulTagListSizeMax is >0,
+-- we only accept a tag list up to that size.
+-- If ulTagListSizeMax is 0, we accept a tag list of any size.
+-- Unless fKeepGap is set, the gap behind the tag list is replaced
+-- with 0-3 alignment bytes.
+--
+-- If the tag list is located before the data, we only allow replacing
+-- it with a tag list of exactly the same size, independent of
+-- ulTagListSizeMax, and no alignment bytes are inserted.
 
 function setTaglistBin(self, abBin, fKeepGap)
 	abBin = abBin or ""
-	self.m_abTaglist = abBin
-	-- fKeepGap is set if the edited tag list is stored (length unchanged)
-	-- otherwise, if the file is an NXF and the tag list lies before the data section,
-	-- pad the tag list to ulTagListMaxSize
-	-- otherwise, pad it to dword size.
-	if not fKeepGap then
-		local tCH = self.m_tCommonHeader
-		if netx_fileheader.isBootHeader(self.m_tDefaultHeader)
-		and tCH.ulTagListStartOffset > 0 
-		and tCH.ulTagListStartOffset < tCH.ulDataStartOffset then
-			local iPadSize = tCH.ulDataStartOffset - abBin:len() - tCH.ulTagListStartOffset
-			if iPadSize >=0 then
-				self.m_abTagGap = string.rep(string.char(0), iPadSize)
-			else
-				return false, "Tag list does not fit between headers and data section"
+	local tCH = self.m_tCommonHeader
+	-- no tag list or tag list at end of file
+	if tCH.ulTagListStartOffset == 0 or tCH.ulTagListStartOffset > tCH.ulDataStartOffset then
+		if tCH.ulTagListSizeMax == 0 or tCH.ulTagListSizeMax >= abBin:len() then
+			self.m_abTaglist = abBin
+			if not fKeepGap then
+				self.m_abTagGap = getPadding(abBin, 4)
 			end
+			return true
 		else
-			self.m_abTagGap = getPadding(abBin, 4)
+			return false, 
+				"The tag list is longer than the size allowed by ulTagListSizeMax."
 		end
-		
-		if tCH.ulTagListSizeMax > 0 and tCH.ulTagListSizeMax < abBin:len() then
-			tCH.ulTagListSizeMax = abBin:len()
+	
+	-- tag list before data section
+	else
+		if abBin:len()==self.m_abTaglist:len() then
+			self.m_abTaglist = abBin
+			return true
+		else
+			return false, 
+				"The tag list is located before the data/ELF section.\n"..
+				"It can only be replaced with one of exactly the same size."
 		end
-		
 	end
-	return true
 end
 
 function getTaglistBin(self)
@@ -244,9 +257,3 @@ end
 function hasTaglist(self)
 	return self.m_abTaglist and self.m_abTaglist:len() > 0
 end
-
-function checkTagListSizeMax(self, abBin)
-	local tCH = self.m_tCommonHeader
-	return tCH.ulTagListSizeMax == 0 or tCH.ulTagListSizeMax > abBin:len()
-end
-

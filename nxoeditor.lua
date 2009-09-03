@@ -2,8 +2,6 @@
 -- Stephan Lesch/Hilscher GmbH
 -- Send feedback to SLesch@hilscher.com
 ---------------------------------------------------------------------------
--- setButtons -> updateGUI?
--- move m_fParamsLoaded into taglistedit 
 
 module("nxoeditor", package.seeall)
 
@@ -78,7 +76,7 @@ function showMessages(fOk, ...)
 	end
 end
 
-DEBUG = nil
+DEBUG = true
 m_nxfile = nil
 
 m_headerFilebar = nil
@@ -175,7 +173,7 @@ end
 -- @param abTags a binary taglist.
 -- @return true if the list could be parsed and displayed, false otherwise.
 function displayTags(abTags)
-	print(string.format("taglist size: 0x%08x", abTags:len()))
+	print(string.format("tag list size: 0x%08x", abTags:len()))
 	-- parse data, show message dialog in case of errors
 	local fOk, params, iLen, strMsg = taglist.binToParams(abTags, 0)
 	if not fOk then
@@ -314,41 +312,16 @@ function loadHdr(strFilename)
 	local strFilename = strFilename or loadFileDialog(m_panel, "Select header file", strHdrFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
-	
-	
 	if iStatus==STATUS_OK then
-		local fOk, strMsg = netx_fileheader.isUnfilledHeadersBin(abBin)
+		local fOk, strMsg = m_nxfile:setHeadersBin(abBin)
+		showMessages(fOk, strMsg)
 		if fOk then
-			m_nxfile:setHeadersBin(abBin)
 			m_headerFilebar:setFilename(strFilename)
 			setButtons()
-			checkTagListSizeMax()
-		else
-			errorDialog("Not a valid headers file", strMsg)
 		end
 	end
 end
 
-
--- If both headers and tag list are present, check ulTagListMaxSize against
--- the actual size of the tag list, and adapt the maximum size if necessary.
-function checkTagListSizeMax()
-	print("checkTagListSizeMax")
-	local tCH = m_nxfile:getCommonHeader()
-	print(tCH, m_nxfile:hasTaglist())
-	if tCH and m_nxfile:hasTaglist() then
-		local ulSizeMax = tCH.ulTagListSizeMax
-		local abTl = m_nxfile:getTaglistBin()
-		local ulSize = abTl:len()
-		print("taglist size: " .. ulSize .. "  max size: " .. ulSizeMax)
-		if ulSize > ulSizeMax then
-			tCH.ulTagListSizeMax = ulSize
-			messageDialog("Information", 
-			"The maximum tag list size was adapted.\n"..
-			"Old max. size: " .. ulSizeMax .. "  New max. size: " .. ulSize)
-		end
-	end
-end
 
 
 function saveHdr(strFilename)
@@ -369,7 +342,7 @@ function loadElf(strFilename)
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK then
 		if isELF(abBin) then
-			m_nxfile:setElf(abBin)
+			m_nxfile:setData(abBin)
 			m_elfFilebar:setFilename(strFilename)
 			setButtons()
 		else
@@ -379,7 +352,7 @@ function loadElf(strFilename)
 end
 
 function saveElf(strFilename)
-	local abBin = m_nxfile:getElf()
+	local abBin = m_nxfile:getData()
 	saveFile1(m_elfFilebar, strFilename, "Save Elf as", strElfFilenameFilters, abBin)
 end
 
@@ -400,25 +373,15 @@ function loadTags(strFilename)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK then
-		print(string.format("taglist size: 0x%08x", abBin:len()))
+		print(string.format("tag list size: 0x%08x", abBin:len()))
 		-- parse data, show message dialog in case of errors
 		
 		local fOk, params, iLen, strMsg = taglist.binToParams(abBin, 0)
 		if not fOk then
 			errorDialog("Error parsing tag list", strMsg)
 			return false
-		end
-		
-		if strMsg:len()>0 then
+		elseif strMsg:len()>0 then
 			messageDialog("Information", strMsg)
-		end
-		
-		if not m_nxfile:checkTagListSizeMax(abBin) and
-			not confirmDialog("Please confirm",
-			"The loaded tag list is longer than the maximum length field in the common header.\n"..
-			"Please select 'Ok' to accept the tag list and adjust the \n"..
-			"maximum length field or 'No' to cancel the load.") then
-			return
 		end
 		
 		local fOk, strMsg = m_nxfile:setTaglistBin(abBin)
@@ -432,7 +395,6 @@ function loadTags(strFilename)
 end
 
 function saveTags(strFilename)
-	-- get taglist
 	local abBin = taglistedit.getTagBin()
 	if abBin then
 		saveFile1(m_tagsFilebar, strFilename, "Save tag list as", strTagFilenameFilters, abBin)
@@ -481,7 +443,7 @@ function loadNx(strFilename)
 			-- error parsing file
 			local strErrors = table.concat(astrMsgs, "\n") 
 			if strErrors == "" then strErrors = "Unknown error" end
-			errorDialog("Error parsing NXO file", strErrors)
+			errorDialog("Error parsing file", strErrors)
 		end
 		setButtons()
 	end
@@ -528,7 +490,7 @@ function setButtons() -- should be adapt_GUI or something
 
 	-- determine which buttons are active
 	local fHeaders = m_nxfile:hasHeaders()
-	local fElf = m_nxfile:hasElf()
+	local fElf = m_nxfile:hasData()
 	local fTags = m_nxfile:hasTaglist()
 	local fComplete = m_nxfile:isComplete()
 	
@@ -691,8 +653,8 @@ function createPanel()
 	inputSizer:Add(fileSizer, 1, wx.wxEXPAND)
 	m_headerFilebar = insertFilebar(parent, fileSizer, "Headers", loadHdr, saveHdr)
 	m_elfFilebar = insertFilebar(parent, fileSizer, "ELF", loadElf, saveElf)
-	m_tagsFilebar = insertFilebar(parent, fileSizer, "Taglist", loadTags, saveTags)
-	m_nxFilebar = insertFilebar(parent, fileSizer, "NX*", loadNx, saveNx)
+	m_tagsFilebar = insertFilebar(parent, fileSizer, "Tag list", loadTags, saveTags)
+	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF", loadNx, saveNx)
 	
 	-- HTML help window
 	m_helpWindow = wx.wxHtmlWindow(m_splitterPanel)
@@ -807,7 +769,7 @@ end
 ---------------------------------------------------------------------
 
 -- the section name in the config file
-CONFIG_PATH = "/nxo_editor"
+CONFIG_PATH = "/tag_list_editor"
 -- key for the help flag
 KEY_HELP = "display_help"
 KEY_HELP_SPLIT_RATIO = "help_split_ratio"

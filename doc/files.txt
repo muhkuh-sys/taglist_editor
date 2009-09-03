@@ -12,8 +12,7 @@ nxo_editor               Lua scripts executed by Muhkuh or wxLua
 Contents of the nxo_editor directory:
 
 test_description.xml     top-level file for Muhkuh
-nxo.lua                  header definitions and code to parse and
-                         assemble NXM files
+nxfile.lua               representation of NXF/NXO files
 taglist.lua              definitions of tags and C structures, 
                          code to parse and assemble them
 help                     HTML help pages

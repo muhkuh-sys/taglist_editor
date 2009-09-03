@@ -16,9 +16,7 @@ muhkuh = {}
 function muhkuh.include(strFile, strPackage) require(strPackage) end
 
 -- get nxo package
---require("nxo")
 require("nxfile")
---require("utils")
 
 
 -- input: unsigned->signed
@@ -158,7 +156,7 @@ end
 
 local aStrUsage={
 "makenxo creates an rcX loadable module in NXO format from a binary",
-"header file, a firmware stack in ELF format, and a taglist.",
+"header file, a firmware stack in ELF format, and a tag list.",
 "",
 "Usage:",
 "   makenxo -o OUTPUT -H HEADER [-t TAGLIST] [-v] ELFFILE",
@@ -223,10 +221,10 @@ end
 
 netx_fileheader.m_iVerbosity = fVerbose and netx_fileheader.VL_NORMAL or netx_fileheader.VL_ERRORS
 
-tprint("header file:  ", strHeaderFile or "none")
-tprint("taglist file: ", strTaglistFile or "none")
-tprint("ELF file:     ", strElfFile or "none")
-tprint("ouput file:   ", strOutFile or "none")
+tprint("header file:   ", strHeaderFile or "none")
+tprint("tag list file: ", strTaglistFile or "none")
+tprint("ELF file:      ", strElfFile or "none")
+tprint("ouput file:    ", strOutFile or "none")
 
 if not strHeaderFile or not strOutFile or not strElfFile then 
 	print("You must supply the header file, the ELF file and the output file.")

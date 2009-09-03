@@ -1,8 +1,11 @@
-NXO Editor - an NXO build tool and tag list editor.
-==================================================
+netX Tag list Editor - a tag list editor and NXO build tool
+============================================================
 
-NXO Editor allows you to construct an option module (.nxo) file,
-and to edit the tag list in an NXO, NXF, NXD, NXL or NXB file.
+This tool serves two purposes:
+- Editing the configuration tag lists used in rcX loadable modules (.nxo),
+  firmware files (.nxf) and the 2nd stage loader (.bin).
+- You can construct a option module file from its basic components.
+
 
 (c) Hilscher GmbH 2009.
 Please send feedback, questions and bug reports to SLesch@hilscher.com
@@ -39,8 +42,13 @@ consists of the following three parts:
 - an ELF file containing the firmware (no headers or tag list)
 - a binary file containing the tag list
 
+1) Click the "Empty NXO" button to reset the editor to an empty NXO file.
+2) Load the header binary, ELF file and tag list.
+3) Edit the tag list if desired.
+4) Save as an NXO file.
+
 You can load these components into the editor and save them as an NXO,
-or use the command line script 'makenxo.bat'
+Alternatively, you can use the command line script 'makenxo.bat'.
 
 
 
@@ -48,7 +56,8 @@ or use the command line script 'makenxo.bat'
 Editing tag lists:
 ==================
 
-- Load a binary tag list file or an NX* file.
+- Load a binary tag list file or an NXF/NXO/2nd stage loader file.
+  A second stage loader is 
 
 - The list of tags contained in the file is shown on the left hand side. 
   Click on the tag names to view or edit their contents. On the right 
@@ -61,7 +70,7 @@ Editing tag lists:
   If you change task priority or task token settings, always set both to 
   the same value.
 
-- Save the tag list or the NX* file.
+- Save the tag list or the NXF/NXO/2nd stage loader file.
 
 
 
@@ -69,7 +78,7 @@ Editing tag lists:
 Notes on file structure:
 ==========================
 
-The default layout of an NX* file is as follows:
+The layout of an NXF/NXO/2nd stage loader file is as follows:
 
 Common Header V3
 fields:
@@ -94,41 +103,38 @@ ulTagListOffset    +-------------------------+
 end of file        +-------------------------+
 
 
-The gaps following the header, data and tag list are usually 
-0-3 alignment bytes. An NXO file built from these parts using 
-the editor will have this layout. 
-
 The common header v3, however, allows a more flexible structure:
 - The tag list portion may be placed before the data/ELF
 - The gap areas may contain additional data.
 - There may be extra data between the end mark of the tag list and its
   ending as indicated by ulTagListSize.
 
-When loading an NX* file, three variants of the layout are recognized:
-header - data/ELF - tag list
-header - tag list - data/ELF
-header - data/ELF
+Three variants of the layout are recognized:
+1) header - data/ELF - tag list
+2) header - data/ELF
+3) header - tag list - data/ELF (used only by the 2nd stage loader)
+An NXO file built in the editor will have layout 1) or 2).
+
+The gaps following the header, data and tag list are usually 
+0-3 alignment bytes, but may contain additional data.
+The editor will preserve the gap data, as long as you only edit its tag list. 
+If you load a header/elf/tag list from a file, the gap data following 
+this section will be replaced by 0-3 alignment bytes.
 
 
 
-
-Automatic adjustments
-======================
-
-The editor will preserve the gap data if you open an NXO/NXF file and
-only edit its tag list. If you load a header/elf/tag list from a file, the gap
-data following this section is replaced by 0-3 alignment bytes.
+Tag list
+========
 
 A tag list may contain an additional zero length indication after the end tag.
 This additional dword is preserved and written back when saving.
 
-If an NXF file is being edited, and the tag list is located before the data section
-a newly loaded tag list is padded to make sure that ulDataStartOffset does not change.
-If the newly loaded tag list is larger than ulDataStartOffset-ulTagListStartOffset,
-the new tag list is rejected.
+If the tag list is located at the end of the file, and the ulTagListSizeMax
+entry in the common header is set (>0), a new tag list loaded from a file is only
+accepted if its length is <= ulTagListSizeMax. 
 
-When a header or tag list binary is loaded, 
-ulTagListSizeMax is set to max(ulTagListSizeMax, size of tag list)
+If the tag list is located before the data section,
+the tag list can only be replaced with one of exactly the same size.
 
 
 
@@ -137,21 +143,21 @@ Consistency checks when loading an NX* file:
 =============================================
 
 The file will be rejected if:
-- the common header version is below 3
-- any of the offsets and sizes is outside of the file, or any of the 
-  sections overlap
-- the tag list can't be parsed
-- the tag list does not contain the end marker
-- the tag list contains extraneous data other than a zero dword between 
-  the end marker and ulTagListSize
+- the file type as indicated by the magic cookie at the start of the file 
+  is not a known type (NXF/NXO/NXD/NXL/NXB),
+- the common header version is below 3,
+- any offset or size entry in the common header exceeds the file size, 
+  or any of the sections overlap,
+- the tag list can't be parsed,
+- the tag list does not have an end marker,
+- the tag list contains additional data other than a zero dword between 
+  the end marker and ulTagListSize.
 
 
 The editor will accept a file and display a warning if:
-- the file type as indicated by the magic cookie at the start of the file 
-  is not a known type (NXF/NXO/NXD/NXL/NXB)
-- any of the checksums in the boot header/common header are incorrect
-- the common header version is above 3
-
+- any of the checksums in the boot header/common header are incorrect,
+- the common header version is higher than 3.0,
+- the tag list contains a  zero dword behind the end marker.
 
   
   
@@ -159,7 +165,7 @@ A note on priority/token base and range:
 ========================================
 
 The base and range values have to fulfill the following condition:
-base + range -  1 <= max. value
+base + range - 1 <= max. value
 For instance, if the task priority range is 2, the base priority must 
 be set to a value less than 55, since 55 is the highest value.
 The current tag list editor does not enforce this condition.

@@ -38,6 +38,39 @@ Size information is in several places:
 
 
 ---------------------------------------------------------------------------
+-- The elementary data types. Each entry may contain:
+-- size, if the size is constant for all instances of the type
+-- editor, the lua package name of the editor control
+-- editorParam, parameters to pass to the editor control at instantiation
+---------------------------------------------------------------------------
+datatypes = {
+RX_PIO_VALUE_TYPE = {size=2, editor="comboedit", editorParam={
+	nBits=16, -- nBits = 8*size
+	values={
+		{name="no register", value=0},
+		{name="active high", value=1},
+		{name="active low", value=2},
+		{name="absolute", value=3},
+	}}},
+RX_LED_VALUE_TYPE = {size=4, editor="comboedit", editorParam={
+	nBits=32,
+	values={
+		{name="no register", value=0},
+		{name="or", value=1},
+		{name="and", value=2},
+		{name="absolute", value=3},
+	}}},
+mac = {size=6, editor="macedit"},
+ipv4 = {size=4, editor="ipv4edit"},
+rcxver = {size=8, editor="rcxveredit"},
+UINT32 = {size=4, editor="numedit"},
+UINT16 = {size=2, editor="numedit", editorParam={nBits=16}},
+UINT8 = {size=1, editor="numedit", editorParam={nBits=8}},
+STRING = {editor="stringedit"},
+bindata = {editor="hexedit"},
+}
+
+---------------------------------------------------------------------------
 -- structure definitions.
 -- table keys are the type names used where a structure occurs as a tag,
 -- or as a substructure. The entries have the form {"type", "member name"}.
@@ -71,6 +104,24 @@ end
 local RCX_MOD_TAG_IDENTIFIER_T = {"STRING", "tIdentifier.abName", desc="Identifier", size=16, mode="read-only"}
 
 structures = {
+
+
+--
+memsize_t = 
+	{{"UINT32", "ulMemSize",        mode="read-only", desc="Memory Size"}},
+min_persistent_storage_size_t = 
+	{{"UINT32", "ulMinStorageSize", mode="read-only", desc="Min. Persistent Storage Size"}},
+min_os_version_t = 
+	{{"rcxver", "ulMinOsVer",       mode="read-only", desc="Min. OS Version"}},
+max_os_version_t = 
+	{{"rcxver", "ulMaxOsVer",       mode="read-only", desc="Max. OS Version"}},
+min_chip_rev_t = 
+	{{"UINT32", "ulMinChipRev",     mode="read-only", desc="Min. Chip Revision"}},
+max_chip_rev_t = 
+	{{"UINT32", "ulMaxChipRev",     mode="read-only", desc="Max. Chip Revision"}},
+num_comm_channel_t =
+	{{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of required comm channels"}},
+--
 
 ----------------------------------------------------------------------------------------------
 -- Task priorities
@@ -110,11 +161,11 @@ RCX_MOD_TAG_IT_INTERRUPT_T = {
   mode="read-only"}, 
   
   -- priority range used by interrupts list 
-  {"UINT32", "ulBaseIntPriority",      desc="Base Priority", 
+  {"UINT32", "ulBaseIntPriority",      desc="Int. Priority Base", 
   editor="comboedit", editorParam=COMBO_IRQPRIO},
 
   -- range for interrupt priorities 
-  {"UINT32", "ulRangeInt",             desc="Priority Range",
+  {"UINT32", "ulRangeInt",             desc="Int. Priority Range",
   editorParam={format="%u"}, mode="read-only"},
   
   -- priority range used by interrupts configuring tasks 
@@ -199,10 +250,11 @@ RCX_MOD_TAG_IT_LED_REGISTER_T = {
   --layout = {sizer="h", "ulType", "ulReg", "ulValue"}
 	},
 --]]
+
+
 ----------------------------------------------------------------------------------------------
-
-
 --        PIO
+
 RCX_MOD_TAG_IT_PIO_REGISTER_VALUE_T = {
   -- Value Type
   {"RX_PIO_VALUE_TYPE", "usType"},          
@@ -609,27 +661,11 @@ TAG_BSL_EXTSRAM_PARAMS_DATA_T = {
 
 
 
---
-memsize_t = 
-	{{"UINT32", "ulMemSize",        mode="read-only", desc="Memory Size"}},
-min_persistent_storage_size_t = 
-	{{"UINT32", "ulMinStorageSize", mode="read-only", desc="Min. Persistent Storage Size"}},
-min_os_version_t = 
-	{{"rcxver", "ulMinOsVer",       mode="read-only", desc="Min. OS Version"}},
-max_os_version_t = 
-	{{"rcxver", "ulMaxOsVer",       mode="read-only", desc="Max. OS Version"}},
-min_chip_rev_t = 
-	{{"UINT32", "ulMinChipRev",     mode="read-only", desc="Min. Chip Revision"}},
-max_chip_rev_t = 
-	{{"UINT32", "ulMaxChipRev",     mode="read-only", desc="Max. Chip Revision"}},
-num_comm_channel_t =
-	{{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of required comm channels"}},
---
 }
 
 
 ---------------------------------------------------------------------------
--- RCX_MOD_TAG definitions.
+-- RCX_MOD_TAG definitions (mapping from tag number to type name)
 -- paramtype = the 32 bit tag number
 -- datatype: the elementary or struct data type of this tag
 -- desc = a string to be displayed in the GUI
@@ -724,7 +760,7 @@ TAG_BSL_MEDIUM_PARAMS =
 TAG_BSL_EXTSRAM_PARAMS =
 	{paramtype = 0x40000006, datatype="TAG_BSL_EXTSRAM_PARAMS_DATA_T",        desc="ext. SRAM"},
 
--- demo tags, not used in taglist.h
+-- unused
 mac_address = 
 	{paramtype=1, datatype="mac", desc="MAC Address"},
 ipv4_address = 
@@ -735,6 +771,11 @@ arbitrary_data =
 	{paramtype=7, datatype="bindata", size=64, desc="Binary Data"}
 }
 
+
+
+---------------------------------------------------------------------------
+--  mapping tag types to help files
+---------------------------------------------------------------------------
 
 -- "name" was used for the html book display; could be removed
 HELP_MAPPING = {
@@ -762,7 +803,8 @@ HELP_MAPPING = {
 	min_chip_rev                        = {name="", file="misc_tags.htm"}, --anchor="#min_chip_rev"},
 	max_chip_rev                        = {name="", file="misc_tags.htm"}, --anchor="#max_chip_rev"},
 	num_comm_channels                   = {name="", file="misc_tags.htm"}, --anchor="#num_comm_channels"},
-	--[[
+	
+	--[[  unused
 	xc_alloc                            = {name="", file="misc_tags.htm"}, --anchor="#xc_alloc"},
 	irq_alloc                           = {name="", file="misc_tags.htm"}, --anchor="#irq_alloc"},
 	comm_channel_alloc                  = {name="", file="misc_tags.htm"}, --anchor="#comm_channel_alloc"},
@@ -770,7 +812,7 @@ HELP_MAPPING = {
 	num_tasks                           = {name="", file="misc_tags.htm"}, --anchor="#num_tasks"},
 	--]]
 }
-HELP_PATH = "../nxm_editor/nxm_editor_help" --"D:/projekt/nxm_editor_help"
+
 
 --- Get help for a tag
 -- @param tTagDesc 
@@ -789,37 +831,9 @@ end
 
 
 ---------------------------------------------------------------------------
--- The elementary data types. Each entry may contain:
--- size, if the size is constant for all instances of the type
--- editor, the lua package name of the editor control
--- editorParam, parameters to pass to the editor control at instantiation
+--                   methods on tags/structures
 ---------------------------------------------------------------------------
-datatypes = {
-RX_PIO_VALUE_TYPE = {size=2, editor="comboedit", editorParam={
-	nBits=16, -- nBits = 8*size
-	values={
-		{name="no register", value=0},
-		{name="active high", value=1},
-		{name="active low", value=2},
-		{name="absolute", value=3},
-	}}},
-RX_LED_VALUE_TYPE = {size=4, editor="comboedit", editorParam={
-	nBits=32,
-	values={
-		{name="no register", value=0},
-		{name="or", value=1},
-		{name="and", value=2},
-		{name="absolute", value=3},
-	}}},
-mac = {size=6, editor="macedit"},
-ipv4 = {size=4, editor="ipv4edit"},
-rcxver = {size=8, editor="rcxveredit"},
-UINT32 = {size=4, editor="numedit"},
-UINT16 = {size=2, editor="numedit", editorParam={nBits=16}},
-UINT8 = {size=1, editor="numedit", editorParam={nBits=8}},
-STRING = {editor="stringedit"},
-bindata = {editor="hexedit"},
-}
+
 
 
 function getStructDef(strTypeName)
@@ -846,6 +860,15 @@ function getTagDescString(ulTag)
 end
 
 
+function isReadOnly(tDef)
+	return tDef.mode=="read-only"
+end
+
+function isHidden(tDef)
+	return tDef.mode=="hidden"
+end
+
+
 -- Extract the name string from a tag, if it has one.
 -- @param tTag the list representation of the tag
 -- (ulTag, ulSize, abValue)
@@ -864,82 +887,6 @@ function getTagInstanceName(tTag)
 			end
 		end
 	end
-end
-
-------------------  size operators
-
---- Calculate the size of an elementary datatype, a tag or structure.
--- @param strType the type name/tag name/structure name
--- @return the size
-
-function getSize(strType)
-	-- datatype
-	local tTypedef = datatypes[strType]
-	if tTypedef then 
-		return tTypedef.size
-	
-	-- tag
-	elseif rcx_mod_tags[strType] then
-		return getParamSize(strType)
-	
-	-- structure
-	elseif structures[strType] then 
-		return getStructSize(strType)
-
-	-- unknown
-	else
-		error("no size for "..strType)
-	end
-end
-
--- get the size of a tag.
--- The size is either stored in a .size entry in the tag description,
--- or obtained via the datatype.
-function getParamSize(strParamName)
-	local tTagDesc = rcx_mod_tags[strParamName]
-	assert(tTagDesc, "Unknown tag: "..strParamName)
-	if tTagDesc.size then 
-		return tTagDesc.size
-	else
-		local strTypeName = tTagDesc.datatype
-		return getSize(strTypeName)
-	end
-end
-
-
-
--- Get the size of a structure.
--- If the structure definition has a .size entry, return it
--- Otherwise, return the sum of the component sizes.
-function getStructSize(strType)
-	local tStructDef = structures[strType]
-	assert(tStructDef, "no definition for structure type: "..strType)
-	if tStructDef.size then
-		return tStructDef.size
-	else
-		local iSize = 0
-		for _, tMemberDef in ipairs(tStructDef) do
-			iSize = tMemberDef.offset or iSize
-			iSize = iSize + getStructMemberSize(tMemberDef)
-		end
-		return iSize
-	end
-end
-
-
---- Determine the size of a struct member.
--- @param tMemberDef member entry of a struct definition
--- @return size of the member in bytes
-function getStructMemberSize(tMemberDef)
-	return tMemberDef.size or getSize(tMemberDef[1]) -- the type name
-	--[[
-	local strName, strType, iSize = tMemberDef[2], tMemberDef[1], tMemberDef.size or 0
-	if iSize>0 then
-		return iSize
-	else 
-		return getSize(strType)
-	end
-	--]]
 end
 
 
@@ -1013,13 +960,11 @@ function getStructMemberEditorInfo(tStructMemberDef)
 	end
 end
 
-function isReadOnly(tDef)
-	return tDef.mode=="read-only"
-end
 
-function isHidden(tDef)
-	return tDef.mode=="hidden"
-end
+
+---------------------------------------------------------------------------
+--                       Helper functions
+---------------------------------------------------------------------------
 
 
 --- Turn an error list as returned by readEditorValues into
@@ -1052,6 +997,84 @@ function makeErrorStrings(errors, strPre, strings)
 	end
 	return strings
 end
+
+---------------------------------------------------------------------------
+--                        size operators
+---------------------------------------------------------------------------
+
+
+--- Calculate the size of an elementary datatype, a tag or structure.
+-- @param strType the type name/tag name/structure name
+-- @return the size
+
+function getSize(strType)
+	-- elementary data type (has an editor and size info)
+	local tTypedef = datatypes[strType]
+	if tTypedef then 
+		return tTypedef.size
+	
+	-- tag (maps to a type)
+	elseif rcx_mod_tags[strType] then
+		return getParamSize(strType)
+	
+	-- structure (consists of sub-structures or elementary data types)
+	elseif structures[strType] then 
+		return getStructSize(strType)
+
+	-- unknown
+	else
+		error("no size for "..strType)
+	end
+end
+
+-- get the size of a tag.
+-- The size is either stored in a .size entry in the tag description,
+-- or obtained via the datatype.
+function getParamSize(strParamName)
+	local tTagDesc = rcx_mod_tags[strParamName]
+	assert(tTagDesc, "Unknown tag: "..strParamName)
+	if tTagDesc.size then 
+		return tTagDesc.size
+	else
+		local strTypeName = tTagDesc.datatype
+		return getSize(strTypeName)
+	end
+end
+
+
+
+-- Get the size of a structure.
+-- If the structure definition has a .size entry, return it
+-- Otherwise, return the sum of the component sizes.
+
+function getStructSize(strType)
+	local tStructDef = structures[strType]
+	assert(tStructDef, "no definition for structure type: "..strType)
+	if tStructDef.size then
+		return tStructDef.size
+	else
+		local iSize, iSizeMax = 0, 0
+		for _, tMemberDef in ipairs(tStructDef) do
+			iSize = tMemberDef.offset or iSize
+			iSize = iSize + getStructMemberSize(tMemberDef)
+			if iSize > iSizeMax then iSizeMax = iSize end
+		end
+		return iSizeMax
+	end
+end
+
+
+
+
+--- Determine the size of a struct member.
+-- @param tMemberDef member entry of a struct definition
+-- @return size of the member in bytes
+function getStructMemberSize(tMemberDef)
+	return tMemberDef.size or getSize(tMemberDef[1]) -- the type name
+end
+
+
+
 
 ---------------------------------------------------------------------
 --        parse/construct tag list
@@ -1202,28 +1225,6 @@ function binToParams(abBin, iStartPos)
 end
 
 
-function makeEmptyParblock()
-	local abParblock = ""
-	for _, strTagname in ipairs(example_taglist) do
-		local tPardesc = rcx_mod_tags[strTagname]
-		local ulTag = tPardesc.paramtype
-		assert(tPardesc, "unknown tag in example block: " .. strTagname)
-		local ulSize = getSize(strTagname)
-		assert(ulSize, "datatype size not found")
-		print(string.format ("tag: 0x%08x size: %u  %-25s ", tPardesc.paramtype, ulSize, strTagname))
-		abParblock = abParblock ..
-			uint32tobin(tPardesc.paramtype) ..
-			uint32tobin(ulSize) ..
-			string.rep(string.char(0), ulSize + (4 - ulSize) % 4)
-
-	end
-	
-	--abParblock = abParblock .. uint32tobin(42) .. uint32tobin(10) .. "0123456789"
-	
-	abParblock = abParblock .. uint32tobin(TAG_END) .. uint32tobin(0)
-	return abParblock
-end
-
 ---------------------------------------------------------------------
 --                split/reconstruct structures
 ---------------------------------------------------------------------
@@ -1322,8 +1323,32 @@ function joinStructElements(strTypeName, elements)
 end
 
 ---------------------------------------------------------------------
---                           empty taglist
+--                       make empty taglist
 ---------------------------------------------------------------------
+
+
+function makeEmptyParblock()
+	local abParblock = ""
+	for _, strTagname in ipairs(example_taglist) do
+		local tPardesc = rcx_mod_tags[strTagname]
+		local ulTag = tPardesc.paramtype
+		assert(tPardesc, "unknown tag in example block: " .. strTagname)
+		local ulSize = getSize(strTagname)
+		assert(ulSize, "datatype size not found")
+		print(string.format ("tag: 0x%08x size: %u  %-25s ", tPardesc.paramtype, ulSize, strTagname))
+		abParblock = abParblock ..
+			uint32tobin(tPardesc.paramtype) ..
+			uint32tobin(ulSize) ..
+			string.rep(string.char(0), ulSize + (4 - ulSize) % 4)
+
+	end
+	
+	--abParblock = abParblock .. uint32tobin(42) .. uint32tobin(10) .. "0123456789"
+	
+	abParblock = abParblock .. uint32tobin(TAG_END) .. uint32tobin(0)
+	return abParblock
+end
+
 
 example_taglist = {
 "RCX_MOD_TAG_IT_STATIC_TASKS",
