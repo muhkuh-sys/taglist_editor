@@ -148,9 +148,9 @@ The file will be rejected if:
 - any offset or size entry in the common header exceeds the file size, 
   or any of the sections overlap,
 - the tag list can't be parsed,
+- the length of a tag value does not match the editor's structure definition,
 - the tag list does not have an end marker,
-- the tag list contains additional data other than a zero dword between 
-  the end marker and ulTagListSize.
+- the tag list contains additional data behind the end marker.
 
 
 The editor will accept a file and display a warning if:

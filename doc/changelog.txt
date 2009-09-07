@@ -1,5 +1,9 @@
 Changelog for NXO Editor/Modulator
 
+ * tag list parser checks tag length against structure definition
+ * tag list parser expects two zero dwords as end marker, also allows one dword
+ * 2nd stage loader HIF config tag changed: replaced union with two separate structures
+
 NXO Editor 1.0.5242
 
  * Added 2nd stage loader tags

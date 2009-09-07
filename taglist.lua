@@ -1161,7 +1161,8 @@ function binToParams(abBin, iStartPos)
 	
 	local iLen, iPos = abBin:len(), iStartPos
 	local ulTag, ulSize, abValue
-	
+	local ulStructSize
+
 	while (iPos < iLen) do
 		-- get tag type
 		if (iPos+4 > iLen) then
@@ -1207,7 +1208,7 @@ function binToParams(abBin, iStartPos)
 		
 		-- if the tag is known, its value size must be either equal to the 
 		-- struct size, or equal to the struct size rounded up to dword size.
-		local ulStructSize = tagCodeToSize(ulTag)
+		ulStructSize = tagCodeToSize(ulTag)
 		if ulStructSize and
 			ulSize ~= ulStructSize and
 			ulSize ~= ulStructSize + ((4-ulStructSize) % 4) then
