@@ -1,4 +1,6 @@
-Changelog for NXO Editor/Modulator
+Changelog for Tag List/NXO Editor
+
+NXO Editor 1.1.5307
 
  * tag list parser checks tag length against structure definition
  * tag list parser expects two zero dwords as end marker, also allows one dword
