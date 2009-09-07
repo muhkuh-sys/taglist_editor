@@ -1,4 +1,4 @@
-Changelog for Tag List/NXO Editor
+Change log for Tag list/NXO editor
 
 NXO Editor 1.1.5307
 
@@ -7,6 +7,14 @@ NXO Editor 1.1.5307
  * 2nd stage loader HIF config tag changed: replaced union with two separate structures
 
 NXO Editor 1.0.5242
+
+- End marker of tag list may be one or two zero dwords, but nothing else
+- A tag list between the header and data parts may only be replaced if the new
+  tag list has the same length.
+- checks/adjustments for tag list loading
+- 2nd Stage loader DPM/PCI config tag is treated as a union
+
+NXO Editor 1.1.5242
 
  * Added 2nd stage loader tags
  * Added ability to open and edit the taglist of nxf files
@@ -17,9 +25,11 @@ NXO Editor 1.0.5242
 NXO Editor 1.0.3874
 
  * NXO files can be opened by dropping them on the NXO Editor icon
- * Automatically opens an nxo file passed on the command line
+ * automatically opens an nxo file passed on the command line
  * The state and width of the help area is saved in Modulator.cfg
  * fixed: GUI was not updated correctly after loading an empty taglist
+ * asks before overwriting any files
+ * fixed: value range for interrupt base priority in RCX_MOD_TAG_IT_INTERRUPT_T
  * added sanity checks when loading headers, taglists and ELF files.
  * the taglist parser now expects each tag to start at a dword-aligned address;
    the write routine pads each tag up to the next dword boundary.
