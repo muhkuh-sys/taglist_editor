@@ -49,34 +49,39 @@ end
 -- Show messages
 -- if fOk = true, a notice is displayed, if false, an error message is displayed.
 -- ... may be any strings or lists of strings.
-function showMessages(fOk, ...)
+function showMessages(fOk, strInfoTitle, strErrTitle, ...)
 	if not ... then return end
+	
+	strInfoTitle = strInfoTitle or "Notice"
+	strErrTitle = strErrTitle or "Error"
 	
 	local messages = {}
 	for _, v in pairs({...}) do
 		if #messages > 0 then
 			table.insert(messages, "")
 		end
-		if type(v) == "string" then
+		if type(v) == "string" and v:len()>0 then
 			table.insert(messages, v)
 		elseif type(v) == "table" then
 			for _, str in pairs(v) do
-				table.insert(messages, v)
+				table.insert(messages, str)
 			end
 		end
 	end
 	
-	if #messages >0 then
-		local strMsg = table.concat(messages, "\n")
-		if fOk then
-			messageDialog("Notice", strMsg)
-		else
-			errorDialog("Error", strMsg)
-		end
+	--for k,v in pairs(messages) do print(k,v) end
+	local strMsg = table.concat(messages, "\n")
+	
+	if fOk and #messages > 0 then
+		messageDialog(strInfoTitle, strMsg)
+	elseif not fOk  and #messages > 0 then
+		errorDialog(strErrTitle, strMsg)
+	elseif not fOk then
+		errorDialog(strErrTitle, "Unknown error")
 	end
 end
 
-DEBUG = true
+DEBUG = false
 m_nxfile = nil
 
 m_headerFilebar = nil
@@ -107,13 +112,12 @@ STATUS_SAVE_ERROR = 2
 local function OnQuit()
 	if nxoeditor.m_fShowHelp then nxoeditor.getSplitRatio() end
 	nxoeditor.saveConfig()
-	--local t = os.time()
-	--while(os.difftime(os.time(), t)<3) do end
     muhkuh.TestHasFinished()
 end
 
 local function OnEmptyNxo()
 	nxoeditor.emptyNxo()
+	nxoeditor.setButtons()
 end
 
 function OnHelp(event)
@@ -126,7 +130,8 @@ end
 local function OnCreateTags()
 	-- local bin = string.rep(string.char(0), 8) 
 	local bin = taglist.makeEmptyParblock()
-	nxoeditor.displayTags(bin)
+	local fTagsOk, params, iLen, strMsg = taglist.binToParams(bin, 0)
+	nxoeditor.displayTags(params)
 	nxoeditor.m_nxfile:setTaglistBin(bin)
 	nxoeditor.m_fParamsLoaded = true
 	nxoeditor.setButtons()
@@ -134,26 +139,38 @@ end
 
 -- debug
 local function OnDeleteTags()
-	taglistedit.destroyEditors()
-	nxoeditor.m_nxfile:setTaglistBin(nil)
-	nxoeditor.m_fParamsLoaded = false
+	nxoeditor.clearTags()
 	nxoeditor.setButtons()
 end
 
+---------------------------------------------------------------------
+-- 
+---------------------------------------------------------------------
+
+
 
 ---------------------------------------------------------------------
--- Taglist display
+-- GUI update
 ---------------------------------------------------------------------
-
 function clearTags()
 	m_nxfile:setTaglistBin(nil)
 	taglistedit.destroyEditors()
 	m_fParamsLoaded = nil
 	m_tagsFilebar:clearFilename()
-	setButtons()
 end
 
-function displayTags2(atTags)
+function emptyNxo()
+	m_nxfile = nxfile.new()
+	m_nxfile:initNxo()
+	m_headerFilebar:clearFilename()
+	m_elfFilebar:clearFilename()
+	m_tagsFilebar:clearFilename()
+	m_nxFilebar:clearFilename()
+	m_fParamsLoaded = nil
+	taglistedit.destroyEditors()
+end
+
+function displayTags(atTags)
 	-- remove any old editors/controls
 	if m_fParamsLoaded then
 		taglistedit.destroyEditors()
@@ -166,51 +183,43 @@ function displayTags2(atTags)
 end
 
 
---- Display a taglist.
--- Parses a taglist, displays an error dialog and exits if parsing fails.
--- Otherwise, any currently displayed tag editors are removed, and the
--- new tags displayed.
--- @param abTags a binary taglist.
--- @return true if the list could be parsed and displayed, false otherwise.
-function displayTags(abTags)
-	print(string.format("tag list size: 0x%08x", abTags:len()))
-	-- parse data, show message dialog in case of errors
-	local fOk, params, iLen, strMsg = taglist.binToParams(abTags, 0)
-	if not fOk then
-		errorDialog("Error parsing tag list", strMsg)
-		return false
-	end
-	if fOk and strMsg:len()>0 then
-		messageDialog("Information", strMsg)
-	end
-	-- remove any old editors/controls
-	if m_fParamsLoaded then
-		taglistedit.destroyEditors()
-	end
-	-- create the new controls
-	if #params > 0 then
-		taglistedit.createEditors(params)
-	end
-	m_panel:Layout()
-	m_panel:Refresh()
-	m_panel:Update()
-	m_fParamsLoaded = true
+--- Enable/disable load/save buttons depending on which data is in memory.
+-- loading is always possible,
+-- save/save as for headers, ELF and taglist is only possible if header/data/tags are in memory
+-- save NXO (as) is possible when headers ,elf and tags data are in memory.
+-- The load/save headers/data buttons are only shown if the file type is NXO.
+function setButtons() -- should be adapt_GUI or something
+
+	-- determine which buttons are active
+	local fHeaders = m_nxfile:hasHeaders()
+	local fElf = m_nxfile:hasData()
+	local fTags = m_nxfile:hasTaglist()
+	local fComplete = m_nxfile:isComplete()
 	
-	return true
-end
+	m_headerFilebar:enableButtons(true, fHeaders, fHeaders)
+	m_elfFilebar:enableButtons(true, fElf, fElf)
+	m_tagsFilebar:enableButtons(true, fTags, fTags)
+	m_nxFilebar:enableButtons(true, fComplete, fComplete)
 
-function emptyNxo()
-	m_nxfile = nxfile.new()
-	m_nxfile:initNxo()
-	m_headerFilebar:clearFilename()
-	m_elfFilebar:clearFilename()
-	m_tagsFilebar:clearFilename()
-	m_nxFilebar:clearFilename()
-	m_fParamsLoaded = nil
-	taglistedit.destroyEditors()
-	setButtons()
-end
+	if DEBUG then
+		m_buttonCreateTags:Enable(not fTags)
+		m_buttonDeleteTags:Enable(fTags)
+	end
+	
+	-- If file type is nxo, show all four filebars.
+	-- For other file types, show only taglist and nx* filebars
+	local fShow_Hdr_Elf = m_nxfile:isNxo()
+	m_headerFilebar:show(fShow_Hdr_Elf)
+	m_elfFilebar:show(fShow_Hdr_Elf)
 
+	-- Show the current file type
+	local strType = m_nxfile:getHeaderType() or "unknown"
+	m_fileBox:SetLabel(string.format("Load/Save (Current file type: %s)", strType))
+
+	m_leftPanel:Layout()
+	m_leftPanel:Refresh()
+	m_leftPanel:Update()
+end
 
 ---------------------------------------------------------------------
 -- loading and saving
@@ -308,13 +317,17 @@ function saveFile1(filebar, strFilename, strTitle, strFilenameFilters, abBin)
 end
 
 
+
+
+
+
 function loadHdr(strFilename)
 	local strFilename = strFilename or loadFileDialog(m_panel, "Select header file", strHdrFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK then
 		local fOk, strMsg = m_nxfile:setHeadersBin(abBin)
-		showMessages(fOk, strMsg)
+		showMessages(fOk, "Notice", "Error in Headers", strMsg)
 		if fOk then
 			m_headerFilebar:setFilename(strFilename)
 			setButtons()
@@ -360,35 +373,26 @@ end
 
 
 
--- reject the tag list if:
--- - file is an NXF
--- - tag list is before data
--- - tagListStartOffset + size of new tag list > dataStartOffset
-
--- if maxsize>0 and size of new tag list > maxsize 
--- offer user to keep the tag list and update max size or cancel the load
-
 function loadTags(strFilename)
 	local strFilename = strFilename or loadFileDialog(m_panel, "Select Tag list file", strTagFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	if iStatus==STATUS_OK then
 		print(string.format("tag list size: 0x%08x", abBin:len()))
-		-- parse data, show message dialog in case of errors
-		
+		-- parse tag list
 		local fOk, params, iLen, strMsg = taglist.binToParams(abBin, 0)
-		if not fOk then
-			errorDialog("Error parsing tag list", strMsg)
-			return false
-		elseif strMsg:len()>0 then
-			messageDialog("Information", strMsg)
+		showMessages(fOk, "Notice", "Error parsing tag list", strMsg)
+		
+		-- replace tag list
+		if fOk then
+			fOk, strMsg = m_nxfile:setTaglistBin(abBin)
+			showMessages(fOk, "Notice", "Error", strMsg)
 		end
 		
-		local fOk, strMsg = m_nxfile:setTaglistBin(abBin)
-		showMessages(fOk, strMsg)
+		-- update GUI
 		if fOk then
 			m_tagsFilebar:setFilename(strFilename)
-			displayTags2(params)
+			displayTags(params)
 			setButtons()
 		end
 	end
@@ -411,39 +415,30 @@ function loadNx(strFilename)
 	local iStatus, abBin = loadFile(strFilename)
 	-- loaded successfully
 	if iStatus==STATUS_OK then
-		m_nxfile = nxfile.new()
-		m_nxfile:initNxo()
-		m_headerFilebar:clearFilename()
-		m_elfFilebar:clearFilename()
-		m_tagsFilebar:clearFilename()
-		m_nxFilebar:clearFilename()
-		clearTags()
+		emptyNxo()
 		
 		local fOk, astrMsgs = m_nxfile:parseBin(abBin)
+		showMessages(fOk, "Warning", "Error parsing file", astrMsgs)
+		
+		-- overall file structure is ok, now look after the tag list.
 		if fOk then
-			if #astrMsgs > 0 then
-				local strMsg = table.concat(astrMsgs, "\n") 
-				messageDialog("Warning", strMsg)
-			end
-			-- parsed successfully:
-			-- try to parse and display the tag list;
-			-- reject the file if the tag list is incorrect
-			m_nxFilebar:setFilename(strFilename)
-			
+			-- file has tag list
 			if m_nxfile:hasTaglist() then
 				local abTags = m_nxfile:getTaglistBin()
-				if not displayTags(abTags) then
+				local fTagsOk, params, iLen, strMsg = taglist.binToParams(abTags, 0)
+				showMessages(fTagsOk, "Notice", "Error parsing tag list", strMsg)
+				if fTagsOk then
+					displayTags(params)
+					m_nxFilebar:setFilename(strFilename)
+				else
 					m_nxfile = nxfile.new()
 					m_nxfile:initNxo()
 				end
 			else
+			-- no tag list
 				messageDialog("No tag list", "The file does not contain a tag list")
+				m_nxFilebar:setFilename(strFilename)
 			end
-		else
-			-- error parsing file
-			local strErrors = table.concat(astrMsgs, "\n") 
-			if strErrors == "" then strErrors = "Unknown error" end
-			errorDialog("Error parsing file", strErrors)
 		end
 		setButtons()
 	end
@@ -479,44 +474,6 @@ function saveNx(strFilename)
 		strTitle = "Save file as"
 	end
 	saveFile1(m_nxFilebar, strFilename, "Save as", strFilter, abNxoFile)
-end
-
---- Enable/disable load/save buttons depending on which data is in memory.
--- loading is always possible,
--- save/save as for headers, ELF and taglist is only possible if header/data/tags are in memory
--- save NXO (as) is possible when headers ,elf and tags data are in memory.
--- The load/save headers/data buttons are only shown if the file type is NXO.
-function setButtons() -- should be adapt_GUI or something
-
-	-- determine which buttons are active
-	local fHeaders = m_nxfile:hasHeaders()
-	local fElf = m_nxfile:hasData()
-	local fTags = m_nxfile:hasTaglist()
-	local fComplete = m_nxfile:isComplete()
-	
-	m_headerFilebar:enableButtons(true, fHeaders, fHeaders)
-	m_elfFilebar:enableButtons(true, fElf, fElf)
-	m_tagsFilebar:enableButtons(true, fTags, fTags)
-	m_nxFilebar:enableButtons(true, fComplete, fComplete)
-
-	if DEBUG then
-		m_buttonCreateTags:Enable(not fTags)
-		m_buttonDeleteTags:Enable(fTags)
-	end
-	
-	-- If file type is nxo, show all four filebars.
-	-- For other file types, show only taglist and nx* filebars
-	local fShow_Hdr_Elf = m_nxfile:isNxo()
-	m_headerFilebar:show(fShow_Hdr_Elf)
-	m_elfFilebar:show(fShow_Hdr_Elf)
-
-	-- Show the current file type
-	local strType = m_nxfile:getHeaderType() or "unknown"
-	m_fileBox:SetLabel(string.format("Load/Save (Current file type: %s)", strType))
-
-	m_leftPanel:Layout()
-	m_leftPanel:Refresh()
-	m_leftPanel:Update()
 end
 
 

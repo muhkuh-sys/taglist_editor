@@ -1,17 +1,18 @@
 -- build, parse and maintain the contents of an NXO module file or an NXF file.
 -- 
--- m_tDefaultHeader:Boot or default header)
--- m_tCommonHeader: Common header V3.0 or higher
--- m_abOtherHeaders: device header, module infos etc. (128 ... ulHeaderLength-1)
--- m_abHeaderGap: ulHeaderLength ... ulDataStartOffset - 1
--- m_abData: ulDataStartOffset ... ulDataStartOffset + ulDataSize - 1
--- m_abDataGap: ulDataStartOffset + ulDataSize ... ulTagListStartOffset - 1
--- m_abTaglist: ulTagListStartOffset ... ulTagListStartOffset + ulTagListSize - 1
--- m_abTagGap: ulTagListStartOffset + ulTagListSize ... fileEnd - 1
+-- m_tDefaultHeader:   Boot or default header             0 ... 63
+-- m_tCommonHeader:    Common header V3.0 or higher      64 ... 127
+-- m_abOtherHeaders:   device header, module infos etc. 128 ... ulHeaderLength-1 
+-- m_abHeaderGap:      ulHeaderLength                       ... ulDataStartOffset - 1
+-- m_abData:           ulDataStartOffset                    ... ulDataStartOffset + ulDataSize - 1
+-- m_abDataGap:        ulDataStartOffset + ulDataSize       ... ulTagListStartOffset - 1
+-- m_abTaglist:        ulTagListStartOffset                 ... ulTagListStartOffset + ulTagListSize - 1
+-- m_abTagGap:         ulTagListStartOffset + ulTagListSize ... fileEnd - 1
 
 -- Note:
---    The common header fields are only updated when the file is written 
---    back, i.e. the common header may not be valid during editing.
+--    The offsets, sizes and checksums in the default/boot and common header 
+--    are only updated when the file is written back, i.e. the headers may 
+--    not be valid during editing.
 
 module("nxfile", package.seeall)
 
@@ -143,15 +144,6 @@ function setHeadersBin(self, abBin)
 	end
 end
 
---[[
-function setHeadersBin(self, abBin)
-	abBin = abBin or ""
-	local abCH = abBin:sub(1, netx_fileheader.COMMON_HEADER_V3_SIZE)
-	self.m_tCommonHeader  = netx_fileheader.binToHeader(abCH, netx_fileheader.COMMON_HEADER_V3_SPEC)
-	self.m_abOtherHeaders = abBin:sub(netx_fileheader.COMMON_HEADER_V3_SIZE+1)
-	self.m_abHeaderGap = getPadding(abBin, 4)
-end
---]]
 
 -- gets common header V3, device info, and module infos; NOT the default header!
 function getHeadersBin(self)
@@ -188,22 +180,6 @@ function hasData(self)
 	return self.m_abData and self.m_abData:len() > 0
 end
 
-
---[[
-function setElf(self, abBin)
-	abBin = abBin or ""
-	self.m_abData = abBin
-	self.m_abDataGap = getPadding(abBin, 4)
-end
-
-function getElf(self)
-	return self.m_abData
-end
-
-function hasElf(self)
-	return self.m_abData and self.m_abData:len() > 0
-end
---]]
 
 
 --------------------------------------------------------------------------

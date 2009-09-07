@@ -346,6 +346,9 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
 		}},
 	},
 	
+	{"BSL_DPM_PARAMS_T", "DPM/ISA/Auto", "DPM settings"},
+	{"BSL_PCI_PARAMS_T", "PCI", "PCI settings"},
+	--[[
 	{"BSL_DPM_PARAMS_T", "DPM/ISA/Auto", "DPM settings", offset = 4},
 	{"BSL_PCI_PARAMS_T", "PCI", "PCI settings", offset = 4},
 
@@ -357,6 +360,7 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
 			return elements[1].abValue .. elements[2].abValue
 		end
 	end
+	--]]
 },
 
 BSL_DPM_PARAMS_T = {
@@ -1027,6 +1031,17 @@ function getSize(strType)
 	end
 end
 
+--- Map a tag code to its structure size.
+-- (used by taglist parser)
+-- @param ulTag the 32 bit tag code
+-- @return the size of the structure for the tag, or nil if the tag is unknown.
+function tagCodeToSize(ulTag)
+	for _, v in pairs(rcx_mod_tags) do
+		if v.paramtype == ulTag then return getSize(v.datatype) end
+	end
+end
+
+
 -- get the size of a tag.
 -- The size is either stored in a .size entry in the tag description,
 -- or obtained via the datatype.
@@ -1162,12 +1177,14 @@ function binToParams(abBin, iStartPos)
 			-- list ends in end tag
 			if iPos == iLen then
 				fOk = true
+				strMsg = 
+				"The tag list ends in a single zero end tag without length field."
 			-- list ends in end tag + zero length indication - ok
 			elseif iPos+4 == iLen and string.sub(abBin, iPos + 1) == string.char(0,0,0,0) then
 				fOk = true
 				params.abEndGap = string.sub(abBin, iPos + 1)
-				strMsg = 
-				"Tag list contains zero length indication behind end marker."
+				--strMsg = 
+				--"Tag list contains zero length indication behind end marker."
 			-- other data behind end tag - reject
 			else
 				strMsg = 
@@ -1187,6 +1204,20 @@ function binToParams(abBin, iStartPos)
 		
 		-- print position, size, type
 		print(string.format("pos: 0x%08x, tag: 0x%08x, size: 0x%08x", iPos-8, ulTag, ulSize))
+		
+		-- if the tag is known, its value size must be either equal to the 
+		-- struct size, or equal to the struct size rounded up to dword size.
+		local ulStructSize = tagCodeToSize(ulTag)
+		if ulStructSize and
+			ulSize ~= ulStructSize and
+			ulSize ~= ulStructSize + ((4-ulStructSize) % 4) then
+			strMsg = string.format(
+				"The length of a tag value does not match the data structure definition:\n"..
+				"tag type = 0x%08x, tag data length = %d, required length = %d",
+				--"Incorrect tag size: tag = 0x%08x, value size = %d, known size = %d",
+				ulTag, ulSize, ulStructSize)
+			break
+		end
 		
 		-- get the value. the value size must not be larger than the remaining data
 		if iPos + ulSize > iLen then

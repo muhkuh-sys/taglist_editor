@@ -126,8 +126,7 @@ this section will be replaced by 0-3 alignment bytes.
 Tag list
 ========
 
-A tag list may contain an additional zero length indication after the end tag.
-This additional dword is preserved and written back when saving.
+The tag list ends with a zero tag, optionally followed by a zero length field. 
 
 If the tag list is located at the end of the file, and the ulTagListSizeMax
 entry in the common header is set (>0), a new tag list loaded from a file is only
@@ -157,7 +156,7 @@ The file will be rejected if:
 The editor will accept a file and display a warning if:
 - any of the checksums in the boot header/common header are incorrect,
 - the common header version is higher than 3.0,
-- the tag list contains a  zero dword behind the end marker.
+- the tag list contains an end tag (0) without length indication.
 
   
   
