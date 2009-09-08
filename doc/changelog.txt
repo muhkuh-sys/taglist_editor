@@ -4,15 +4,10 @@ NXO Editor 1.1.5307
 
  * tag list parser checks tag length against structure definition
  * tag list parser expects two zero dwords as end marker, also allows one dword
+ * checks/adjustments for tag list loading
+ * A tag list between the header and data parts may only be replaced if the new
+   tag list has the same length.
  * 2nd stage loader HIF config tag changed: replaced union with two separate structures
-
-NXO Editor 1.0.5242
-
-- End marker of tag list may be one or two zero dwords, but nothing else
-- A tag list between the header and data parts may only be replaced if the new
-  tag list has the same length.
-- checks/adjustments for tag list loading
-- 2nd Stage loader DPM/PCI config tag is treated as a union
 
 NXO Editor 1.1.5242
 
