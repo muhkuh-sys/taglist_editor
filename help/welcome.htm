@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>Welcome to Tag List Editor</Title>
+</HEAD>
+<BODY>
+<h2>Welcome to Tag List Editor.</h2>
+
+<p>
+The main purpose of this tool is to edit configuration tags used by netX option modules (NXO),
+netX firmware files (NXF) or the 2nd Stage Loader. <br>
+
+
+You can edit NXO, NXF or 2nd Stage Loader files, as well as raw tag list binaries.
+Tag lists can be saved separately and loaded into another NXO/NXF/2nd stage loader file.
+</p>
+<p></p>
+
+<p>
+After starting the tool, or after clicking on "Empty NXO", an NXO file can be constructed
+from its its components:
+<ul>
+  <li>a binary header file containing the common header, device info and module info headers</li>
+  <li>an ELF file</li>
+  <li>the tag list</li>
+</ul>
+  A command line script for this process is also included.
+  It is also possible to load an existing NXO file and replace one or more of the components.
+</p>
+<p></p>
+
+<h3>Note:</h3>
+In order to parse an NXO/NXF/2nd Stage Loader, the file must contain a common header with at least version 3.
+
+</BODY>
+</HTML>

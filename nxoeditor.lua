@@ -706,7 +706,11 @@ function showTagHelp(tTagDesc)
 		return
 	end
 	
-	local strPageSource = muhkuh.load("help/"..strPageFilename)
+	showHelpPage("help/"..strPageFilename, strAnchor)
+end
+
+function showHelpPage(strPageFilename, strAnchor)
+	local strPageSource = muhkuh.load(strPageFilename)
 	if strPageSource then
 		m_helpWindow:SetPage(strPageSource)
 	
@@ -856,4 +860,6 @@ function run()
 	if arg and arg[1] then
 		loadNx(arg[1])
 	end
+	
+	showHelpPage("help/welcome.htm")
 end

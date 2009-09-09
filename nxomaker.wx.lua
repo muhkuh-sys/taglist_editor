@@ -109,7 +109,7 @@ function makenxo(strHeaderFile, strTaglistFile, strElfFile, strNxoFile)
 	
 	abElf, strMsg = loadBin(strElfFile)
 	if not abElf then return false, strMsg end
-	nxo:setElf(abElf)
+	nxo:setData(abElf)
 	
 	if strTaglistFile then
 		abTags, strMsg = loadBin(strTaglistFile)
