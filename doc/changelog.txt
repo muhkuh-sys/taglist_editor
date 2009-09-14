@@ -1,5 +1,10 @@
 Change log for Tag list/NXO editor
 
+NXO Editor 1.1.5375
+ * installer now sets PATH_NXOEDITOR 
+ * removed the association of nxo files to the editor for now 
+ * fixed bug in nxomaker.wx.lua
+ 
 NXO Editor 1.1.5307
 
  * tag list parser checks tag length against structure definition
