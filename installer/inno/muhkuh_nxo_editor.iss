@@ -78,7 +78,66 @@
 #define OutputDir "."
 
 ; include the common muhkuh settings
-#include "..\..\..\installer\inno\muhkuh_common.iss"
+;-------------------------------------------------------------------------
+;#include "..\..\..\installer\inno\muhkuh_common.iss"
+[Setup]
+AppName={#AppName}
+AppVersion={#AppVersion}
+AppVerName={#AppVerName}
+OutputBaseFilename={#InstallerName}
+VersionInfoTextVersion={#AppVersion}
+VersionInfoVersion={#AppVersion}
+
+Compression=lzma/max
+SolidCompression=yes
+
+SourceDir={#SourceDir}
+OutputDir={#OutputDir}
+
+AllowNoIcons=yes
+ChangesAssociations=yes
+LicenseFile=docs\gpl-2.0.txt
+
+
+
+;-------------------------------------------------------------------------
+
+
+
+DefaultDirName ={pf}\Hilscher GmbH\nxo_editor
+DefaultGroupName =Hilscher GmbH\Tag List Editor
+
+; misc info
+AppPublisher=Muhkuh team and Hilscher GmbH
+AppPublisherURL=http://muhkuh.sourceforge.net/
+AppSupportURL=http://www.sourceforge.net/projects/muhkuh
+AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
+AppCopyright=(C) 2009, Muhkuh team and Hilscher GmbH
+
+
+; works: company, copyright, product name, product version
+; description goes into properties and version dialogue
+VersionInfoCopyright=(C) 2009 Muhkuh team and Hilscher GmbH
+VersionInfoCompany=Hilscher GmbH
+VersionInfoDescription=Installer of the Hilscher NXO Editor application
+VersionInfoProductName=Hilscher NXO Editor
+; VersionInfoProductVersion=Version Info Product Version
+; VersionInfoVersion=1.2.3.4 already set by muhkuh installer script
+
+; icon stuff
+SetupIconFile=nxo_editor\modulator.ico
+UninstallDisplayIcon={app}\nxo_editor\modulator.ico
+
+WizardImageFile=nxo_editor\installer\inno\bootwizard_install_logo.bmp
+WizardImageStretch=no
+WizardImageBackColor=$ffffff
+
+; notify Windows of the changes to the environment
+ChangesEnvironment=yes
+
+[Messages]
+BeveledLabel=NXO Editor
+
 
 
 [Code]
@@ -133,58 +192,16 @@ begin
 end;
 
 
+[Types]
+Name: full; Description: Full installation
+;Name: "compact"; Description: "Only install the base system without plugins"
+Name: custom; Description: Custom installation; Flags: iscustom
 
-
-
-[Setup]
-DefaultDirName ={pf}\Hilscher GmbH\nxo_editor
-DefaultGroupName =Hilscher GmbH\Tag List Editor
-
-; misc info
-AppPublisher=Muhkuh team and Hilscher GmbH
-AppPublisherURL=http://muhkuh.sourceforge.net/
-AppSupportURL=http://www.sourceforge.net/projects/muhkuh
-AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
-AppCopyright=(C) 2009, Muhkuh team and Hilscher GmbH
-
-
-; works: company, copyright, product name, product version
-; description goes into properties and version dialogue
-VersionInfoCopyright=(C) 2009 Muhkuh team and Hilscher GmbH
-VersionInfoCompany=Hilscher GmbH
-VersionInfoDescription=Installer of the Hilscher NXO Editor application
-VersionInfoProductName=Hilscher NXO Editor
-; VersionInfoProductVersion=Version Info Product Version
-; VersionInfoVersion=1.2.3.4 already set by muhkuh installer script
-
-; icon stuff
-SetupIconFile=nxo_editor\modulator.ico
-UninstallDisplayIcon={app}\nxo_editor\modulator.ico
-
-WizardImageFile=nxo_editor\installer\inno\bootwizard_install_logo.bmp
-WizardImageStretch=no
-WizardImageBackColor=$ffffff
-
-; notify Windows of the changes to the environment
-ChangesEnvironment=yes
-
-[Messages]
-BeveledLabel=NXO Editor
-
-; add the modulator first to get it on top of the list
+;-------------------------------------------------------------------------
+; NXO Editor files
+;-------------------------------------------------------------------------
 [Components]
-Name: modulator; Description: Tag List Editor; Types: full; Flags: fixed
-
-[Tasks]
-Name: startmenu; Description: Create icons in Start menu; GroupDescription: Additional icons:; Components: modulator
-Name: desktopicon; Description: Create a &desktop icon; GroupDescription: Additional icons:; Components: modulator
-Name: quicklaunchicon; Description: Create a &Quick Launch icon; GroupDescription: Additional icons:; Components: modulator
-Name: envpath; Description: Set the PATH_NXO_EDITOR environment variable; GroupDescription: System:; Components: modulator
-; Name: associate; Description: Associate .nxo files with Tag list editor; GroupDescription: File associations:
-
-; include the components
-#include "..\..\..\installer\inno\muhkuh_app.iss"
-#include "..\..\..\installer\inno\lua_scripts.iss"
+Name: modulator; Description: Tag List Editor; Types: full
 
 [Files]
 Source: bin\lua_hilscher\netx_fileheader.lua; DestDir: {app}\application\lua_hilscher; Components: lua_scripts
@@ -193,6 +210,7 @@ Source: bin\lua_hilscher\gui_stuff.lua; DestDir: {app}\application\lua_hilscher;
 Source: bin\lua.exe; DestDir: {app}\application; Components: muhkuh
 Source: bin\wx.dll; DestDir: {app}\application; Components: muhkuh
 
+Source: nxo_editor\help\welcome.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\misc_tags.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_GPIO_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_INTERRUPT_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
@@ -236,6 +254,75 @@ Source: nxo_editor\doc\readme_cmdline.txt; DestDir: {app}\doc; Components: modul
 Source: nxo_editor\doc\files.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
 
+
+
+;-------------------------------------------------------------------------
+; Muhkuh Files
+;-------------------------------------------------------------------------
+[Components]
+;Name: muhkuh; Description: Muhkuh base application; Types: full compact custom; Flags: fixed
+Name: muhkuh; Description: Muhkuh base application; Types: full
+;#include "..\..\..\installer\inno\muhkuh_app.iss"
+
+[Files]
+Source: bin\muhkuh.exe; DestDir: {app}\application; Components: muhkuh
+Source: bin\serverkuh.exe; DestDir: {app}\application; Components: muhkuh
+Source: bin\muhkuh_tips.txt; DestDir: {app}\application; Components: muhkuh
+Source: icons\custom\muhkuh_uninstall.ico; DestDir: {app}\application; Components: muhkuh
+
+; system dlls
+;Source: bin\msvcr71.dll; DestDir: {app}\application; Components: muhkuh
+;Source: bin\msvcp71.dll; DestDir: {app}\application; Components: muhkuh
+Source: bin\Microsoft.VC80.CRT\*; DestDir: {app}\application\Microsoft.VC80.CRT; Components: muhkuh
+
+
+; the wxwidgets dlls
+Source: bin\wxbase28_*.dll; DestDir: {app}\application; Components: muhkuh
+Source: bin\wxmsw28_*.dll; DestDir: {app}\application; Components: muhkuh
+; the wxLua dlls
+Source: bin\lua5.1.dll; DestDir: {app}\application; Components: muhkuh
+Source: bin\wxlua_msw28_*.dll; DestDir: {app}\application; Components: muhkuh
+
+; mhash
+Source: bin\mhash.dll; DestDir: {app}\application; Components: muhkuh
+
+; the docs
+Source: docs\gpl-2.0.txt; DestDir: {app}\docs; Components: muhkuh
+Source: changelog.txt; DestDir: {app}\docs; Components: muhkuh
+
+
+
+;-------------------------------------------------------------------------
+; Muhkuh Lua scripts
+;-------------------------------------------------------------------------
+[Components]
+;Name: lua_scripts;              Description: "Lua scripts";              Types: full compact
+Name: lua_scripts; Description: Lua scripts; Types: full
+;#include "..\..\..\installer\inno\lua_scripts.iss"
+
+[Files]
+;Source: "bin\lua\mmio.lua";                 DestDir: "{app}\application\lua"; Components: lua_scripts
+Source: bin\lua\muhkuh_system.lua; DestDir: {app}\application\lua; Components: lua_scripts
+Source: bin\lua\select_plugin.lua; DestDir: {app}\application\lua; Components: lua_scripts
+;Source: "bin\lua\serialnr.lua";             DestDir: "{app}\application\lua"; Components: lua_scripts
+Source: bin\lua\tester.lua; DestDir: {app}\application\lua; Components: lua_scripts
+;Source: "bin\lua\tester_multifile.lua";     DestDir: "{app}\application\lua"; Components: lua_scripts
+Source: bin\lua\utils.lua; DestDir: {app}\application\lua; Components: lua_scripts
+
+
+
+
+;-------------------------------------------------------------------------
+; Icons/links/associations
+;-------------------------------------------------------------------------
+[Tasks]
+Name: startmenu; Description: Create icons in Start menu; GroupDescription: Additional icons:; Components: modulator
+Name: desktopicon; Description: Create a &desktop icon; GroupDescription: Additional icons:; Components: modulator
+Name: quicklaunchicon; Description: Create a &Quick Launch icon; GroupDescription: Additional icons:; Components: modulator
+Name: envpath; Description: Set the PATH_NXO_EDITOR environment variable; GroupDescription: System:; Components: modulator
+; Name: associate; Description: Associate .nxo files with Tag list editor; GroupDescription: File associations:
+
+
 [Icons]
 ; Desktop icon
 Name: {userdesktop}\Tag List Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator; Tasks: desktopicon
@@ -252,7 +339,6 @@ Name: {group}\Readme; Filename: {app}\doc\readme.txt; Components: modulator; Tas
 Name: {group}\Using makenxo.bat; Filename: {app}\doc\readme_cmdline.txt; Components: modulator; Tasks: startmenu
 Name: {group}\Files and directories; Filename: {app}\doc\files.txt; Components: modulator; Tasks: startmenu
 Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator; Tasks: startmenu
-
 
 [Registry]
 ; set PATH_NXOEDITOR
