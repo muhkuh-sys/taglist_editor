@@ -207,7 +207,7 @@ Name: modulator; Description: Tag List Editor; Types: full
 Source: bin\lua_hilscher\netx_fileheader.lua; DestDir: {app}\application\lua_hilscher; Components: lua_scripts
 Source: bin\lua_hilscher\gui_stuff.lua; DestDir: {app}\application\lua_hilscher; Components: lua_scripts
 
-Source: bin\lua.exe; DestDir: {app}\application; Components: muhkuh
+Source: bin\lua.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
 Source: bin\wx.dll; DestDir: {app}\application; Components: muhkuh
 
 Source: nxo_editor\help\welcome.htm; DestDir: {app}\nxo_editor\help; Components: modulator
@@ -226,6 +226,7 @@ Source: nxo_editor\help\TAG_BSL_SDMMC_PARAMS_DATA_T.htm; DestDir: {app}\nxo_edit
 Source: nxo_editor\help\TAG_BSL_SDRAM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_UART_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_USB_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_HWDATA_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 
 Source: nxo_editor\Modulator.cfg; DestDir: {app}\application; Components: modulator
 Source: nxo_editor\modulator.ico; DestDir: {app}\nxo_editor; Components: modulator
@@ -265,8 +266,8 @@ Name: muhkuh; Description: Muhkuh base application; Types: full
 ;#include "..\..\..\installer\inno\muhkuh_app.iss"
 
 [Files]
-Source: bin\muhkuh.exe; DestDir: {app}\application; Components: muhkuh
-Source: bin\serverkuh.exe; DestDir: {app}\application; Components: muhkuh
+Source: bin\muhkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
+Source: bin\serverkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
 Source: bin\muhkuh_tips.txt; DestDir: {app}\application; Components: muhkuh
 Source: icons\custom\muhkuh_uninstall.ico; DestDir: {app}\application; Components: muhkuh
 

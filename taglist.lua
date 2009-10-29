@@ -346,8 +346,8 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
 		}},
 	},
 	
-	{"BSL_DPM_PARAMS_T", "DPM/ISA/Auto", "DPM settings"},
-	{"BSL_PCI_PARAMS_T", "PCI", "PCI settings"},
+	{"BSL_DPM_PARAMS_T", "DPM/ISA/Auto", desc="DPM/ISA settings"},
+	{"BSL_PCI_PARAMS_T", "PCI", desc="PCI settings"},
 	--[[
 	{"BSL_DPM_PARAMS_T", "DPM/ISA/Auto", "DPM settings", offset = 4},
 	{"BSL_PCI_PARAMS_T", "PCI", "PCI settings", offset = 4},
@@ -365,10 +365,10 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
 
 BSL_DPM_PARAMS_T = {
 	-- DPM/ISA settings
-	{"UINT32", "ulIfConf0",    desc="IF_CONF0 register value", editorParam={format="0x%08x"}},
-	{"UINT32", "ulIfConf1",    desc="IF_CONF1 register value", editorParam={format="0x%08x"}},
-	{"UINT32", "ulIoRegMode0", desc="IO_REGMODE0 register value", editorParam={format="0x%08x"}},
-	{"UINT32", "ulIoRegMode1", desc="IO_REGMODE1 register value", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIfConf0",    desc="IF_CONF0", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIfConf1",    desc="IF_CONF1", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIoRegMode0", desc="IO_REGMODE0", editorParam={format="0x%08x"}},
+	{"UINT32", "ulIoRegMode1", desc="IO_REGMODE1", editorParam={format="0x%08x"}},
 },
 
 BSL_PCI_PARAMS_T = {
@@ -387,7 +387,7 @@ BSL_PCI_PARAMS_T = {
 				{name="GPIO",                      value=1},
 				{name="PIO",                       value=2},
 				{name="HIFPIO",                    value=3},
-				{name="MMIO",                      value=4},
+				--{name="MMIO",                      value=4},
 		}},
 	},
 	
@@ -445,7 +445,7 @@ TAG_BSL_HIF_PARAMS_DATA_T___OLD = {
 				{name="GPIO",                      value=1},
 				{name="PIO",                       value=2},
 				{name="HIFPIO",                    value=3},
-				{name="MMIO",                      value=4},
+				--{name="MMIO",                      value=4},
 		}},
 	},
 	
@@ -535,7 +535,7 @@ TAG_BSL_SDMMC_PARAMS_DATA_T = {
 				{name="GPIO",                      value=1},
 				{name="PIO",                       value=2},
 				{name="HIFPIO",                    value=3},
-				{name="MMIO",                      value=4},
+				--{name="MMIO",                      value=4},
 		}},
 	},
 	
@@ -581,7 +581,7 @@ TAG_BSL_USB_PARAMS_DATA_T = {
 				{name="GPIO",    value=1},
 				{name="PIO",     value=2},
 				{name="HIFPIO",  value=3},
-				{name="MMIO",    value=4},
+				--{name="MMIO",    value=4},
 		}},
 	},
 	{"UINT8", "bInvert", desc="Inverted", 
@@ -663,8 +663,50 @@ TAG_BSL_EXTSRAM_PARAMS_DATA_T = {
 	--					{sizer="v", "ulRegVal2", "ulRegVal3"}}
 },
 
-
-
+----------------------------------------------------------------------------------------------
+--  2nd stage loader HW Data
+--[[
+  unsigned char  bEnable;
+  unsigned short usManufacturer;
+  unsigned short usProductionDate;
+  unsigned short usDeviceClass;
+  unsigned char  bHwCompatibility;
+  unsigned char  bHwRevision;
+  unsigned long  ulDeviceNr;
+  unsigned long  ulSerialNr;
+  unsigned short ausHwOptions[4];
+  --]]
+  
+TAG_BSL_HWDATA_PARAMS_DATA_T = {
+	{"UINT8", "bEnable", desc="Enable",
+		editor="checkboxedit",
+		editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+	},
+	{"UINT16", "usManufacturer", desc="Manufacturer", editorParam={format="0x%04x"}},
+	-- Format: 0xyyww (year/week), byte order: ww yy
+	{"UINT8", "bProdWeek", desc="Production Week", editorParam={format="%d"}},
+	{"UINT8", "bProdYear", desc="Production Year", editorParam={format="%d"}},
+	{"UINT16", "usDeviceClass", desc="Device Class", editorParam={format="0x%04x"}},
+	{"UINT8", "bHWCompatibility", desc="HW Compatibility", editorParam={format="%d"}},
+	{"UINT8", "bHWRevision", desc="HW Revision", editorParam={format="%d"}},
+	{"UINT32", "ulDeviceNr", desc="Device Number", editorParam={format="%d"}},
+	{"UINT32", "ulSerialNr", desc="Serial Number", editorParam={format="%d"}},
+	{"UINT16", "usHwOption0", desc="HW Option 0", editorParam={format="0x%04x"}},
+	{"UINT16", "usHwOption1", desc="HW Option 1", editorParam={format="0x%04x"}},
+	{"UINT16", "usHwOption2", desc="HW Option 2", editorParam={format="0x%04x"}},
+	{"UINT16", "usHwOption3", desc="HW Option 3", editorParam={format="0x%04x"}},
+	
+	layout={
+		sizer="grid", rows=7, cols=2,
+		"bEnable", 			nil,
+		"usManufacturer", 	"bHWRevision", 
+		"ulDeviceNr", 		"bHWCompatibility",
+		"ulSerialNr", 		"usHwOption0", 
+		"bProdWeek", 		"usHwOption1", 
+		"bProdYear", 		"usHwOption2", 
+		"usDeviceClass", 	"usHwOption3", 
+	},
+},
 }
 
 
@@ -760,9 +802,12 @@ TAG_BSL_UART_PARAMS =
 TAG_BSL_USB_PARAMS = 
 	{paramtype = 0x40000004, datatype="TAG_BSL_USB_PARAMS_DATA_T",            desc="USB"},
 TAG_BSL_MEDIUM_PARAMS =
-	{paramtype = 0x40000005, datatype="TAG_BSL_MEDIUM_PARAMS_DATA_T",         desc="BSL media"},
+	{paramtype = 0x40000005, datatype="TAG_BSL_MEDIUM_PARAMS_DATA_T",         desc="BSL Media"},
 TAG_BSL_EXTSRAM_PARAMS =
-	{paramtype = 0x40000006, datatype="TAG_BSL_EXTSRAM_PARAMS_DATA_T",        desc="ext. SRAM"},
+	{paramtype = 0x40000006, datatype="TAG_BSL_EXTSRAM_PARAMS_DATA_T",        desc="Ext. SRAM"},
+TAG_BSL_HWDATA_PARAMS =
+	{paramtype = 0x40000007, datatype="TAG_BSL_HWDATA_PARAMS_DATA_T",         desc="HW Data"},
+
 
 -- unused
 mac_address = 
@@ -798,6 +843,7 @@ HELP_MAPPING = {
 	TAG_BSL_USB_PARAMS                  = {name="USB",           file="TAG_BSL_USB_PARAMS_DATA_T.htm"},
 	TAG_BSL_MEDIUM_PARAMS               = {name="BSL media",     file="TAG_BSL_MEDIUM_PARAMS_DATA_T.htm"},
 	TAG_BSL_EXTSRAM_PARAMS              = {name="ext. SRAM",     file="TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm"},
+	TAG_BSL_HWDATA_PARAMS               = {name="HW Data",       file="TAG_BSL_HWDATA_PARAMS_DATA_T.htm"},
 	
 	memsize                             = {name="", file="misc_tags.htm"},
 	num_comm_channel                    = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
