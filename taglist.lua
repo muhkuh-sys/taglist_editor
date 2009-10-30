@@ -682,6 +682,10 @@ TAG_BSL_HWDATA_PARAMS_DATA_T = {
 		editor="checkboxedit",
 		editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
 	},
+	{"UINT8", "bReserved1", desc="Reserved1", mode = "hidden", editorParam={format="0x%02x"}},
+	{"UINT8", "bReserved2", desc="Reserved2", mode = "hidden", editorParam={format="0x%02x"}},
+	{"UINT8", "bReserved3", desc="Reserved3", mode = "hidden", editorParam={format="0x%02x"}},
+
 	{"UINT16", "usManufacturer", desc="Manufacturer", editorParam={format="0x%04x"}},
 	-- Format: 0xyyww (year/week), byte order: ww yy
 	{"UINT8", "bProdWeek", desc="Production Week", editorParam={format="%d"}},
