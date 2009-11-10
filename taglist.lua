@@ -711,7 +711,34 @@ TAG_BSL_HWDATA_PARAMS_DATA_T = {
 		"usDeviceClass", 	"usHwOption3", 
 	},
 },
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader FSU parameters
+--#define BSL_FSU_MODE_DISABLED       0x00000000
+--#define BSL_FSU_MODE_ENABLE         0x00000001
+--#define BSL_FSU_MODE_FOLAYOUT       0x00000002
+--#define BSL_FSU_MODE_DISABLESECMEM  0x80000000
+--  unsigned long ulFSUMode; /*!< Bitmask -> BSL_FSU_MODE_XXX */
+
+TAG_BSL_FSU_PARAMS_DATA_T = {
+	{"UINT32", "ulEnable", desc="Enable FSU Mode", 
+		offset = 0, mask = string.char(1, 0, 0, 0),
+		editor="checkboxedit",
+		editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}
+	},
+	{"UINT32", "ulFoLayout", desc="Fo Layout", 
+		offset = 0, mask = string.char(2, 0, 0, 0),
+		editor="checkboxedit",
+		editorParam={nBits = 32, offValue = 0, onValue = 2, otherValues = true}
+	},
+	{"UINT32", "ulDisableSecmem", desc="Disable SecMem", 
+		offset = 0, mask = string.char(0, 0, 0, 0x80),
+		editor="checkboxedit",
+		editorParam={nBits = 32, offValue = 0, onValue = 0x80000000, otherValues = true}
+	},
+},
 }
+
 
 
 ---------------------------------------------------------------------------
@@ -811,6 +838,8 @@ TAG_BSL_EXTSRAM_PARAMS =
 	{paramtype = 0x40000006, datatype="TAG_BSL_EXTSRAM_PARAMS_DATA_T",        desc="Ext. SRAM"},
 TAG_BSL_HWDATA_PARAMS =
 	{paramtype = 0x40000007, datatype="TAG_BSL_HWDATA_PARAMS_DATA_T",         desc="HW Data"},
+TAG_BSL_FSU_PARAMS =
+	{paramtype = 0x40000008, datatype="TAG_BSL_FSU_PARAMS_DATA_T",            desc="Fast Startup"},
 
 
 -- unused
@@ -848,6 +877,7 @@ HELP_MAPPING = {
 	TAG_BSL_MEDIUM_PARAMS               = {name="BSL media",     file="TAG_BSL_MEDIUM_PARAMS_DATA_T.htm"},
 	TAG_BSL_EXTSRAM_PARAMS              = {name="ext. SRAM",     file="TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm"},
 	TAG_BSL_HWDATA_PARAMS               = {name="HW Data",       file="TAG_BSL_HWDATA_PARAMS_DATA_T.htm"},
+	TAG_BSL_FSU_PARAMS                  = {name="FSU",           file="TAG_BSL_FSU_PARAMS_DATA_T.htm"},
 	
 	memsize                             = {name="", file="misc_tags.htm"},
 	num_comm_channel                    = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
@@ -1449,6 +1479,8 @@ example_taglist = {
 "TAG_BSL_USB_PARAMS",
 "TAG_BSL_MEDIUM_PARAMS",
 "TAG_BSL_EXTSRAM_PARAMS",
+"TAG_BSL_HWDATA_PARAMS",
+"TAG_BSL_FSU_PARAMS",
 
 "memsize",
 "min_persistent_storage_size",

@@ -47,8 +47,9 @@ function choiceValue2Index(values, ulChoiceValue)
 	end
 end
 
-
-wxNOT_FOUND = -1
+-- wxLua bug: 
+-- SetSelection requires 0xffffffff for no selection,
+-- GetSelection returns -1
 function setValue(self, bin)
 	-- if the value is not in the value list, and the user does not
 	-- select a valid entry, we want to return the original value unchanged.
@@ -59,19 +60,20 @@ function setValue(self, bin)
 	-- find the value
 	local iIndex = choiceValue2Index(self.m_values, val)
 	-- select the entry, or deselect if the value was not found
-	self.m_choiceCtrl:SetSelection(iIndex and iIndex-1 or wxNOT_FOUND)
+	self.m_choiceCtrl:SetSelection(iIndex and iIndex-1 or 0xffffffff)
 end
 
 function getValue(self)
 	local iSelection = self.m_choiceCtrl:GetCurrentSelection()
 	--print("comboedit/getValue", iSelection)
-	if iSelection == wxNOT_FOUND then
+	if iSelection == -1 then
 		return self.m_abOrigValue
 	else
 		local iVal = self.m_values[iSelection+1].value
 		return uintToBin(iVal, self.m_nBits)
 	end
 end
+
 
 function isValid(self)
 	return true

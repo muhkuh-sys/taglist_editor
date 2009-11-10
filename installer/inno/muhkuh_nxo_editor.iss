@@ -220,13 +220,14 @@ Source: nxo_editor\help\RCX_MOD_TAG_IT_STATIC_TASKS_T.htm; DestDir: {app}\nxo_ed
 Source: nxo_editor\help\RCX_MOD_TAG_IT_TIMER_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_XC_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_FSU_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_HIF_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_BSL_HWDATA_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_MEDIUM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_SDMMC_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_SDRAM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_UART_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_USB_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
-Source: nxo_editor\help\TAG_BSL_HWDATA_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 
 Source: nxo_editor\Modulator.cfg; DestDir: {app}\application; Components: modulator
 Source: nxo_editor\modulator.ico; DestDir: {app}\nxo_editor; Components: modulator
