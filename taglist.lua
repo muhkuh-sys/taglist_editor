@@ -726,7 +726,7 @@ TAG_BSL_FSU_PARAMS_DATA_T = {
 		editor="checkboxedit",
 		editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}
 	},
-	{"UINT32", "ulFoLayout", desc="Fo Layout", 
+	{"UINT32", "ulFoLayout", desc="FO Layout", 
 		offset = 0, mask = string.char(2, 0, 0, 0),
 		editor="checkboxedit",
 		editorParam={nBits = 32, offValue = 0, onValue = 2, otherValues = true}
