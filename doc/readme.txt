@@ -1,9 +1,10 @@
 netX Tag list Editor - a tag list editor and NXO build tool
 ============================================================
 
-This tool serves two purposes:
+This tool has three purposes:
 - Editing the configuration tag lists used in rcX loadable modules (.nxo),
   firmware files (.nxf) and the 2nd stage loader (.bin).
+- Editing the device header 
 - You can construct a option module file from its basic components.
 
 
@@ -25,15 +26,15 @@ Screen layout:
 |   Load/Save       |                 |
 |                   |                 |
  -------------------------------------
- Quit   (x) show help  Empty NXO
+ Quit   (x) show help  Clear  Edit device header
  
  
  
 Building an NXO file using the editor:
 =======================================
 
-The standard layout of an NXO file according to "netX File Header Structure V3.0"
-consists of the following three parts:
+The standard layout of an NXO file according to "netX File Header Structure 
+V3.0" consists of the following three parts:
 
 - a binary file containing the following headers:
   common header v3
@@ -42,7 +43,7 @@ consists of the following three parts:
 - an ELF file containing the firmware (no headers or tag list)
 - a binary file containing the tag list
 
-1) Click the "Empty NXO" button to reset the editor to an empty NXO file.
+1) Click the "Clear" button to reset the editor to the initial state.
 2) Load the header binary, ELF file and tag list.
 3) Edit the tag list if desired.
 4) Save as an NXO file.
@@ -126,15 +127,24 @@ this section will be replaced by 0-3 alignment bytes.
 Tag list
 ========
 
-The tag list ends with a zero tag, optionally followed by a zero length field. 
+The tag list ends with a zero tag, optionally followed by a zero length field.
 
 If the tag list is located at the end of the file, and the ulTagListSizeMax
-entry in the common header is set (>0), a new tag list loaded from a file is only
-accepted if its length is <= ulTagListSizeMax. 
+entry in the common header is set (>0), a new tag list loaded from a file is 
+only accepted if its length is <= ulTagListSizeMax. 
 
 If the tag list is located before the data section,
 the tag list can only be replaced with one of exactly the same size.
 
+
+
+Editing the device header
+==========================
+
+Whenever a file containing a device header is loaded, the "Edit Device Header"
+button opens an editor which allows you to view the header and change some of 
+its fields. You can also save the header as a binary file or load it from a 
+file.
 
 
 

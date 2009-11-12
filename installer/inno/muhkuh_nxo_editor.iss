@@ -241,6 +241,7 @@ Source: nxo_editor\macedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\numedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\rcxveredit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\stringedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\devhdredit.lua; DestDir: {app}\nxo_editor; Components: modulator
 
 Source: nxo_editor\page_taglistedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\structedit.lua; DestDir: {app}\nxo_editor; Components: modulator

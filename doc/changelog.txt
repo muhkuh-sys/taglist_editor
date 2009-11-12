@@ -1,5 +1,16 @@
 Change log for Tag list/NXO editor
 
+NXO Editor 1.1.5768
+ * Added editor for device header V1
+ * Added fast startup tag for 2nd stage loader
+ * fixed problem with LED tag (workaround for wxLua bug)
+
+NXO Editor 1.1.5662
+ * Added 3 pad bytes in TAG_BSL_HWDATA_PARAMS_DATA_T
+
+NXO Editor 1.1.5658
+ * Added HWDATA tag for 2nd stage loader
+
 NXO Editor 1.1.5375
  * installer now sets PATH_NXOEDITOR 
  * removed the association of nxo files to the editor for now 
