@@ -162,6 +162,51 @@ function hasHeaders(self)
 	return self.m_tCommonHeader and self.m_abOtherHeaders and self.m_abOtherHeaders:len()>0 
 end
 
+
+
+-- if hasDeviceHeader()==true, replace the first len(device header) bytes
+function setDeviceHeader(self, abBin)
+	if self:hasDeviceHeader() then
+		self.m_abOtherHeaders = abBin .. self.m_abOtherHeaders:sub(netx_fileheader.DEVICE_INFO_V1_SIZE + 1)
+	end
+end
+
+-- if hasDeviceHeader()==true, returns the first len(device header) bytes
+function getDeviceHeader(self)
+	if self:hasDeviceHeader() then
+		return self.m_abOtherHeaders:sub(1, netx_fileheader.DEVICE_INFO_V1_SIZE)
+	end
+end
+
+-- we assume a device header is present if
+-- headers are present
+-- length is at least len(common header v3) + len(device header)
+-- common header is V3
+-- 
+function hasDeviceHeader(self)
+	if self.m_tCommonHeader and netx_fileheader.isCommonHeaderV3(self.m_tCommonHeader) and
+		self.m_abOtherHeaders and
+		-- todo: check headerLength in common header?
+		self.m_abOtherHeaders:len() >= netx_fileheader.DEVICE_INFO_V1_SIZE then
+		-- print("hasDeviceHeader->true")
+		return true
+	else
+		-- print("hasDeviceHeader->false")
+		return false, "Device header not found"
+	end
+end
+
+function hasDeviceHeaderV1(self)
+	local fOk, strMsg = self:hasDeviceHeader()
+	if fOk then
+		local abDevHdr = self:getDeviceHeader()
+		-- print("abDevHdr = ", (abDevHdr and abDevHdr:len()) or "nil")
+		return netx_fileheader.isDeviceHeaderV1(abDevHdr)
+	else
+		return fOk, strMsg
+	end
+end
+
 --------------------------------------------------------------------------
 --                         Data/ELF section
 --------------------------------------------------------------------------

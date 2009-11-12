@@ -919,6 +919,10 @@ end
 ---------------------------------------------------------------------------
 
 
+function registerStructType(structname, structdef)
+	structures[structname]=structdef
+end
+
 
 function getStructDef(strTypeName)
 	return structures[strTypeName]
@@ -1023,6 +1027,7 @@ end
 -- @param tStructMemberDef
 -- @return strEditor 
 -- @return editorParams a list or nil
+--[[
 function getStructMemberEditorInfo(tStructMemberDef)
 	local strEditor = tStructMemberDef.editor
 	local params1 = tStructMemberDef.editorParam
@@ -1043,8 +1048,31 @@ function getStructMemberEditorInfo(tStructMemberDef)
 		end
 	end
 end
+--]]
 
-
+function getStructMemberEditorInfo(tStructMemberDef)
+	local strEditor = tStructMemberDef.editor
+	local aMemberPar = tStructMemberDef.editorParam
+	
+	if strEditor then
+		return strEditor, aMemberPar
+	else
+		local strType = tStructMemberDef[1]
+		local strEditor, aTypePar = getEditorInfo(strType)
+		if aMemberPar and aTypePar then 
+			-- overlay editor parameters in the member definition 
+			-- over those in the type definition
+			-- i.e. member params take precedence over type params
+			for k,v in pairs(aTypePar) do 
+				-- aMemberPar[k] = aMemberPar[k] or v
+				if not aMemberPar[k] then aMemberPar[k] = v end
+			end
+			return strEditor, aMemberPar
+		else 
+			return strEditor, aMemberPar or aTypePar
+		end
+	end
+end
 
 ---------------------------------------------------------------------------
 --                       Helper functions

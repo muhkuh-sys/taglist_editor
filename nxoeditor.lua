@@ -20,6 +20,7 @@ muhkuh.include("page_taglistedit.lua", "taglistedit")
 muhkuh.include("nxfile.lua", "nxfile")
 muhkuh.include("structedit.lua", "structedit")
 muhkuh.include("hexdump.lua", "hexdump")
+muhkuh.include("devhdredit.lua", "devhdredit")
 
 function createToggleButton(parentPanel, strLabel, eventFunction)
 	local id = tester.nextID()
@@ -110,20 +111,31 @@ STATUS_SAVE_ERROR = 2
 
 
 local function OnQuit()
-	if nxoeditor.m_fShowHelp then nxoeditor.getSplitRatio() end
-	nxoeditor.saveConfig()
-    muhkuh.TestHasFinished()
+	if gui_stuff.confirmDialog("Please Confirm",
+			"Do you really want to close the appliation?") then
+		if nxoeditor.m_fShowHelp then nxoeditor.getSplitRatio() end
+		nxoeditor.saveConfig()
+    	muhkuh.TestHasFinished()
+    end
 end
 
-local function OnEmptyNxo()
-	nxoeditor.emptyNxo()
-	nxoeditor.setButtons()
+local function OnClear()
+	if gui_stuff.confirmDialog("Please Confirm",
+			"This will discard all currently loaded data.\n"..
+			"Do you want to proceed?") then
+		nxoeditor.emptyNxo()
+		nxoeditor.setButtons()
+	end
 end
 
 function OnHelp(event)
 	local fVal = nxoeditor.m_checkboxHelp:GetValue()
 	-- print("help", fVal)
 	nxoeditor.displayHelp(fVal)
+end
+
+function OnEditDevHdr()
+	devhdredit.editDeviceHeader(nxoeditor.m_nxfile)
 end
 
 -- debug
@@ -188,6 +200,7 @@ end
 -- save/save as for headers, ELF and taglist is only possible if header/data/tags are in memory
 -- save NXO (as) is possible when headers ,elf and tags data are in memory.
 -- The load/save headers/data buttons are only shown if the file type is NXO.
+
 function setButtons() -- should be adapt_GUI or something
 
 	-- determine which buttons are active
@@ -195,6 +208,7 @@ function setButtons() -- should be adapt_GUI or something
 	local fElf = m_nxfile:hasData()
 	local fTags = m_nxfile:hasTaglist()
 	local fComplete = m_nxfile:isComplete()
+
 	
 	m_headerFilebar:enableButtons(true, fHeaders, fHeaders)
 	m_elfFilebar:enableButtons(true, fElf, fElf)
@@ -216,6 +230,10 @@ function setButtons() -- should be adapt_GUI or something
 	local strType = m_nxfile:getHeaderType() or "unknown"
 	m_fileBox:SetLabel(string.format("Load/Save (Current file type: %s)", strType))
 
+	-- show edit device header button if device header V1 is present
+	local fDevHdr = m_nxfile:hasDeviceHeaderV1()
+	m_buttonEditDevHdr:Enable(fDevHdr)
+	
 	m_leftPanel:Layout()
 	m_leftPanel:Refresh()
 	m_leftPanel:Update()
@@ -231,6 +249,7 @@ strNxFilenameFilters = "NXO/NXF/BIN files (*.nxo/*.nxf/*.bin)|*.nxo;*.nxf;*.bin|
 strsaveNxFilenameFilters = "NXO files (*.nxo)|*.nxo|NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
 strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|All Files (*)|*"
 strNxfFilenameFilters = "NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
+strDefaultFilenameFilters = "All Files (*)|*"
 
 function loadFileDialog(parent, strTitle, strFilters)
 	local fileDialog = wx.wxFileDialog(
@@ -238,7 +257,7 @@ function loadFileDialog(parent, strTitle, strFilters)
 		strTitle or "Select file to load",
 		"",
 		"", 
-		strFilters,
+		strFilters or strDefaultFilenameFilters,
 		wx.wxFD_OPEN + wx.wxFD_FILE_MUST_EXIST)
 	local iResult = fileDialog:ShowModal()
 	local strFilename
@@ -255,7 +274,7 @@ function saveFileDialog(parent, strTitle, strFilters)
 		strTitle or "Select file to save to",
 		"",
 		"", 
-		strFilters,
+		strFilters or strDefaultFilenameFilters,
 		wx.wxFD_SAVE + wx.wxFD_OVERWRITE_PROMPT)
 	local iResult = fileDialog:ShowModal()
 	local strFilename
@@ -619,11 +638,14 @@ function createPanel()
 	-- quit / create Params / delete params buttons
 	m_buttonQuit = createButton(m_panel, "Quit", OnQuit)
 	m_checkboxHelp = createCheckBox(m_panel, "Display Help", m_fShowHelp, OnHelp)
-	m_buttonEmptyNxo = createButton(m_panel, "Empty NXO", OnEmptyNxo)
+	m_buttonClear = createButton(m_panel, "Clear", OnClear)
+	m_buttonEditDevHdr = createButton(m_panel, "Edit Device Header", OnEditDevHdr)
 	m_buttonSizer = wx.wxBoxSizer(wx.wxHORIZONTAL)
 	m_buttonSizer:Add(m_buttonQuit, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
 	m_buttonSizer:Add(m_checkboxHelp, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
-	m_buttonSizer:Add(m_buttonEmptyNxo, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
+	m_buttonSizer:Add(m_buttonClear, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
+	m_buttonSizer:Add(m_buttonEditDevHdr, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
+	
 	if DEBUG then
 		m_buttonCreateTags = createButton(m_panel, "Create Empty Parameters", OnCreateTags)
 		m_buttonDeleteTags = createButton(m_panel, "Delete Parameters", OnDeleteTags)
