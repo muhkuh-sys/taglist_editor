@@ -104,7 +104,7 @@ LicenseFile=docs\gpl-2.0.txt
 
 
 
-DefaultDirName ={pf}\Hilscher GmbH\nxo_editor
+DefaultDirName ={pf}\Hilscher GmbH\Tag List Editor
 DefaultGroupName =Hilscher GmbH\Tag List Editor
 
 ; misc info
@@ -119,8 +119,8 @@ AppCopyright=(C) 2009, Muhkuh team and Hilscher GmbH
 ; description goes into properties and version dialogue
 VersionInfoCopyright=(C) 2009 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
-VersionInfoDescription=Installer of the Hilscher NXO Editor application
-VersionInfoProductName=Hilscher NXO Editor
+VersionInfoDescription=Installer of the Hilscher Tag List Editor application
+VersionInfoProductName=Hilscher Tag List Editor
 ; VersionInfoProductVersion=Version Info Product Version
 ; VersionInfoVersion=1.2.3.4 already set by muhkuh installer script
 
@@ -136,7 +136,7 @@ WizardImageBackColor=$ffffff
 ChangesEnvironment=yes
 
 [Messages]
-BeveledLabel=NXO Editor
+BeveledLabel=Tag List Editor
 
 
 
