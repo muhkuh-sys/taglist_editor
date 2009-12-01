@@ -1231,8 +1231,9 @@ function paramsToBin(params)
 			string.rep(string.char(0), (4-abValue:len()) % 4)
 		abParblock = abParblock .. abTag
 	end
-	abParblock = abParblock .. uint32tobin(TAG_END) -- .. uint32tobin(0)
 	
+	-- append original end tag
+	abParblock = abParblock .. uint32tobin(TAG_END) -- .. uint32tobin(0)
 	if params.abEndGap then
 		print("appending original data behind end marker")
 		abParblock = abParblock .. params.abEndGap

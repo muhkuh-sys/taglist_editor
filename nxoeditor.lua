@@ -96,6 +96,7 @@ m_buttonSizer = nil
 
 -- the muhkuh panel for all gui objects
 m_panel = nil 
+-- the tag list
 m_paramPanel = nil
 -- static box around the load/save buttons
 m_fileBox = nil
@@ -465,18 +466,21 @@ end
 
 
 function saveNx(strFilename)
-	-- get taglist
-	local abTags = taglistedit.getTagBin()
-	if not abTags then
-		return
+	-- if a tag list is loaded, read its current value from the
+	-- editor and replace it in the file.
+	if m_nxfile:hasTaglist() then
+		-- get taglist
+		local abTags = taglistedit.getTagBin()
+		if not abTags then
+			return
+		end
+		-- true = replace tag list, but keep any gap data behind the tag list
+		m_nxfile:setTaglistBin(abTags, true) 
 	end
 	
-	-- true = replace tag list, but keep any gap data behind the tag list
-	m_nxfile:setTaglistBin(abTags, true) 
-	
 	-- build nxo file
-	local abNxoFile = m_nxfile:buildNXFile()
-	if not abNxoFile then
+	local abNxFile = m_nxfile:buildNXFile()
+	if not abNxFile then
 		errorDialog("Error", "Failed to build NX* file")
 		return
 	end
@@ -490,9 +494,9 @@ function saveNx(strFilename)
 		strTitle = "Save NXO file as"
 	else
 		strFilter = strsaveNxFilenameFilters
-		strTitle = "Save file as"
+		strTitle = "Save as"
 	end
-	saveFile1(m_nxFilebar, strFilename, "Save as", strFilter, abNxoFile)
+	saveFile1(m_nxFilebar, strFilename, strTitle, strFilter, abNxFile)
 end
 
 
