@@ -1,5 +1,9 @@
 Change log for Tag list/NXO editor
 
+Tag list editor 1.1.5859
+ * Bugfix: Firmware files without tag list are correctly saved
+   (were previously saved with an empty tag list instead)
+
 NXO Editor 1.1.5768
  * Added editor for device header V1
  * Added fast startup tag for 2nd stage loader
