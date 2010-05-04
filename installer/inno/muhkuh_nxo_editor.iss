@@ -96,7 +96,7 @@ OutputDir={#OutputDir}
 
 AllowNoIcons=yes
 ChangesAssociations=yes
-LicenseFile=docs\gpl-2.0.txt
+LicenseFile=nxo_editor\doc\licenses.txt
 
 
 
@@ -256,6 +256,7 @@ Source: nxo_editor\doc\readme.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\readme_cmdline.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\files.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
+Source: nxo_editor\doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 
 
 
@@ -290,7 +291,7 @@ Source: bin\wxlua_msw28_*.dll; DestDir: {app}\application; Components: muhkuh
 Source: bin\mhash.dll; DestDir: {app}\application; Components: muhkuh
 
 ; the docs
-Source: docs\gpl-2.0.txt; DestDir: {app}\docs; Components: muhkuh
+;Source: docs\gpl-2.0.txt; DestDir: {app}\docs; Components: muhkuh
 Source: changelog.txt; DestDir: {app}\docs; Components: muhkuh
 
 
