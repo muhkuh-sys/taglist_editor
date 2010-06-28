@@ -16,6 +16,7 @@
 -- $Author: slesch $
 ---------------------------------------------------------------------------
 
+
 module("taglist", package.seeall)
 
 
@@ -1002,7 +1003,13 @@ HELP_MAPPING = {
     TAG_BSL_EXTSRAM_PARAMS              = {name="ext. SRAM",     file="TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm"},
     TAG_BSL_HWDATA_PARAMS               = {name="HW Data",       file="TAG_BSL_HWDATA_PARAMS_DATA_T.htm"},
     TAG_BSL_FSU_PARAMS                  = {name="FSU",           file="TAG_BSL_FSU_PARAMS_DATA_T.htm"},
-
+    
+    TAG_DIAG_IF_CTRL_UART               = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
+    TAG_DIAG_IF_CTRL_USB                = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
+    TAG_DIAG_IF_CTRL_TCP                = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
+    TAG_DIAG_TRANSPORT_CTRL_CIFX        = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
+    TAG_DIAG_TRANSPORT_CTRL_PACKET      = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
+    
     memsize                             = {name="", file="misc_tags.htm"},
     num_comm_channel                    = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
     min_persistent_storage_size         = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},

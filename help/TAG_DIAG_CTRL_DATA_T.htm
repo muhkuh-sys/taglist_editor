@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_DIAG_IF_CTRL_UART/USB/TCP_DATA_T, RCX_TAG_DIAG_TRANSPORT_CTRL_CIFX/packet_T</Title>
+</HEAD>
+<BODY>
+<h2>Diagnostics and Remote Access Interfaces</h2>
+
+<p>
+The following tags select the interfaces and transport protocols used by the netX Diagnostics and Remote Access component ("marshaller").
+Interfaces are physical connections between the external client and the marshaller,
+transport protocols define the "language" used by the client and the marshaller.<br>
+</p>
+<h2>Caution:</h2>
+<p>
+You must always enable at least one interface AND one transport protocol.
+Otherwise you lock yourself out of the device and will be unable to replace the firmware.
+</p>
+<p></p>
+
+<h2>Interfaces: UART/USB/TCP</h2>
+<table border=1>
+<tr>
+	<td>UART number<br>
+	    USB port number<br>
+	    TCP port number</td>
+	<td>The number of an integrated netX serial port<br>
+	    The number of the integrated netX USB port<br>
+	    The TCP port number</td>
+</tr>
+<tr>
+	<td>Enable</td>
+	<td>If checked, the respective interface is enabled.</td>
+</tr>
+</table>
+
+<h2>Transport Protocols: cifX/packet</h2>
+<table border=1>
+<tr>
+	<td>Enable</td>
+	<td>If checked, the respective interface is enabled.</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>
