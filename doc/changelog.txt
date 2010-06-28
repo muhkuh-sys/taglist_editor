@@ -1,5 +1,9 @@
 Change log for Tag list/NXO editor
 
+Tag list editor 1.1.8589
+ * Added tags controlling interfaces and protocols used by netX diagnostics 
+   and remote access component
+
 Tag list editor 1.1.5859
  * Bugfix: Firmware files without tag list are correctly saved
    (were previously saved with an empty tag list instead)

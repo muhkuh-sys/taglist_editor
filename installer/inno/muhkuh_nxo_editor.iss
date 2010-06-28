@@ -74,6 +74,15 @@
 #define AppVerName AppName+" "+AppVersion
 #define InstallerName "tag_list_editor_"+AppVersion+"_setup"
 
+; make .cfg file with AppVerName as customtitle
+#define NXOEditorDir "..\.."
+#expr ExitCode = Exec("cmd", '/c m4 --define __CUSTOMTITLE__="' + AppVerName + '" Modulator_cfg.m4 >Modulator.cfg', NXOEditorDir)
+#pragma message "m4 exited with code "+str(ExitCode)
+#if ExitCode > 0
+  #error Failed to build Modulator.cfg file
+#endif
+
+
 #define SourceDir "..\..\.."
 #define OutputDir "."
 
@@ -228,6 +237,7 @@ Source: nxo_editor\help\TAG_BSL_SDMMC_PARAMS_DATA_T.htm; DestDir: {app}\nxo_edit
 Source: nxo_editor\help\TAG_BSL_SDRAM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_UART_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_USB_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: nxo_editor\help\TAG_DIAG_CTRL_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 
 Source: nxo_editor\Modulator.cfg; DestDir: {app}\application; Components: modulator
 Source: nxo_editor\modulator.ico; DestDir: {app}\nxo_editor; Components: modulator
