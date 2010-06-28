@@ -1,3 +1,21 @@
+---------------------------------------------------------------------------
+-- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+--
+-- Description:
+--   Tag definitions for Taglist editor
+--
+--  Changes:
+--    Date        Author        Description
+---------------------------------------------------------------------------
+--  2010-06-28    SL            added diag interface tags
+---------------------------------------------------------------------------
+-- SVN Keywords
+--
+-- $Date: 2010-06-28 11:25:03 +0200 (Mo, 28 Jun 2010) $
+-- $Revision: 8579 $
+-- $Author: slesch $
+---------------------------------------------------------------------------
+
 module("taglist", package.seeall)
 
 
