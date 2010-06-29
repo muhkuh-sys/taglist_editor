@@ -1,3 +1,21 @@
+---------------------------------------------------------------------------
+-- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+--
+-- Description:
+--   hex dump routines for Taglist editor
+--
+--  Changes:
+--    Date        Author        Description
+---------------------------------------------------------------------------
+--  
+---------------------------------------------------------------------------
+-- SVN Keywords
+--
+-- $Date$
+-- $Revision$
+-- $Author$
+---------------------------------------------------------------------------
+
 module("hexdump", package.seeall)
 
 function hexDumpLine(abData, iPos, iBytes, strAddrFormat, strByteSep, iHexDataLen, fAscii)

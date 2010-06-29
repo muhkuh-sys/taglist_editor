@@ -1,4 +1,8 @@
 @echo off
+rem $Date$
+rem $Revision$
+rem $Author$
+
 REM Build an nxo file. 
 REM Usage:
 REM makenxo -H headers.bin [-t taglist.bin] -o out.nxm in.elf

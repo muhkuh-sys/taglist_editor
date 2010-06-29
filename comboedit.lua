@@ -1,3 +1,21 @@
+---------------------------------------------------------------------------
+-- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+--
+-- Description:
+--   Combo box editing component for Taglist editor
+--
+--  Changes:
+--    Date        Author        Description
+---------------------------------------------------------------------------
+--  
+---------------------------------------------------------------------------
+-- SVN Keywords
+--
+-- $Date$
+-- $Revision$
+-- $Author$
+---------------------------------------------------------------------------
+
 module("comboedit", package.seeall)
 require("tester")
 

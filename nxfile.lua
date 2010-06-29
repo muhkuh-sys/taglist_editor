@@ -1,3 +1,21 @@
+---------------------------------------------------------------------------
+-- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+--
+-- Description:
+--   Routines for manipulating NXO/NXF files in Taglist editor
+--
+--  Changes:
+--    Date        Author        Description
+---------------------------------------------------------------------------
+--  
+---------------------------------------------------------------------------
+-- SVN Keywords
+--
+-- $Date$
+-- $Revision$
+-- $Author$
+---------------------------------------------------------------------------
+
 -- build, parse and maintain the contents of an NXO module file or an NXF file.
 -- 
 -- m_tDefaultHeader:   Boot or default header             0 ... 63

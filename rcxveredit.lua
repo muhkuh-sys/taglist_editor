@@ -1,3 +1,21 @@
+---------------------------------------------------------------------------
+-- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+--
+-- Description:
+--   Editor for rcX version field, component of Taglist editor
+--
+--  Changes:
+--    Date        Author        Description
+---------------------------------------------------------------------------
+--  
+---------------------------------------------------------------------------
+-- SVN Keywords
+--
+-- $Date$
+-- $Revision$
+-- $Author$
+---------------------------------------------------------------------------
+
 module("rcxveredit", package.seeall)
 
 

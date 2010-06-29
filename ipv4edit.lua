@@ -1,3 +1,20 @@
+---------------------------------------------------------------------------
+-- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+--
+-- Description:
+--   IP address editing component for Taglist editor
+--
+--  Changes:
+--    Date        Author        Description
+---------------------------------------------------------------------------
+--  
+---------------------------------------------------------------------------
+-- SVN Keywords
+--
+-- $Date$
+-- $Revision$
+-- $Author$
+---------------------------------------------------------------------------
 module("ipv4edit", package.seeall)
 
 -- display an IP address. 

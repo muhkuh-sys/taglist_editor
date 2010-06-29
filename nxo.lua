@@ -1,3 +1,21 @@
+---------------------------------------------------------------------------
+-- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+--
+-- Description:
+--   Routines for manipulating NXO files, for Taglist Editor
+--
+--  Changes:
+--    Date        Author        Description
+---------------------------------------------------------------------------
+--  
+---------------------------------------------------------------------------
+-- SVN Keywords
+--
+-- $Date$
+-- $Revision$
+-- $Author$
+---------------------------------------------------------------------------
+
 -- build, parse and keep the contents of an NXO module file.
 -- the file consists of 
 -- m_abDefaultHeader

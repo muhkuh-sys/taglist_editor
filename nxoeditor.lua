@@ -1,6 +1,19 @@
 ---------------------------------------------------------------------------
--- Stephan Lesch/Hilscher GmbH
--- Send feedback to SLesch@hilscher.com
+-- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+--
+-- Description:
+--   Main program of Taglist editor
+--
+--  Changes:
+--    Date        Author        Description
+---------------------------------------------------------------------------
+--  
+---------------------------------------------------------------------------
+-- SVN Keywords
+--
+-- $Date$
+-- $Revision$
+-- $Author$
 ---------------------------------------------------------------------------
 
 module("nxoeditor", package.seeall)
