@@ -8,8 +8,7 @@ This tool has three purposes:
 - You can construct a option module file from its basic components.
 
 
-(c) Hilscher GmbH 2009.
-Please send feedback, questions and bug reports to SLesch@hilscher.com
+(c) Hilscher GmbH 2010.
 
 
 

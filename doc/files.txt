@@ -4,10 +4,8 @@ Files and directories:
 application              the Muhkuh platform
 application\lua          commonly used auxiliary scripts
 application\lua_hilscher Hilscher/netX-specific auxiliary scripts
-wxLua-2.8.7.0-MSW-dll    standalone version of the wxLua library
-                         (used by the command line version)
-nxo_editor               Lua scripts executed by Muhkuh or wxLua
 
+nxo_editor               Lua scripts executed by Muhkuh or wxLua
 
 Contents of the nxo_editor directory:
 
@@ -33,4 +31,8 @@ rcxveredit.lua           editor for an RCX version
 ipv4edit.lua             editor for an IP address
 macedit.lua              editor for a MAC address
 
+Configuration files:
+=====================
+<install directory>\application\Modulator.cfg (default configuration)
+<user local application data directory>\Modulator.cfg (user-specific)
 

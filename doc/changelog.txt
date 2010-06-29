@@ -1,6 +1,6 @@
 Change log for Tag list/NXO editor
 
-Tag list editor 1.1.8592
+Tag list editor 1.1.8597
  * Added tags controlling interfaces and protocols used by netX Diagnostics
    and Remote Access component
 

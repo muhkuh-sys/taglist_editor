@@ -108,7 +108,6 @@ ChangesAssociations=yes
 LicenseFile=nxo_editor\doc\licenses.txt
 
 
-
 ;-------------------------------------------------------------------------
 
 
@@ -146,6 +145,8 @@ ChangesEnvironment=yes
 
 [Messages]
 BeveledLabel=Tag List Editor
+SelectDirLabel3=Setup will install [name] into the following folder. If the selected directory already contains an installation, it will be updated.
+; SelectDirBrowseLabel=To continue, click Next. If you would like to select a different folder, click Browse.
 
 
 
