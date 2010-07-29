@@ -53,6 +53,49 @@ Size information is in several places:
 - in the parameter definitions
 - in the struct member definitions
 
+How to add a new tag:
+1) 
+The table rcx_mod_tags contains mappings of the tag id numbers to structure definitions.
+Insert an entry of the form
+RCX_MOD_TAG_IT_STATIC_TASKS =
+    {paramtype = 0x00001000, datatype="RCX_MOD_TAG_IT_STATIC_TASKS_T", desc="Task Group"},
+where
+RCX_MOD_TAG_IT_STATIC_TASKS is an internal key,
+paramtype is the tag id number,
+datatype is the name under which the data portion of the tag is defined in the datatypes list and
+desc is a string which appears in the tag selection area in the editor.
+
+2)
+Add the structure definition to the datatypes table.
+RCX_MOD_TAG_IT_STATIC_TASKS_T = {
+  {"STRING", "szTaskListName",   desc="Task List Name", size=64, mode="read-only"},
+  -- priority range used by static task list
+  {"UINT32", "ulBasePriority",
+  desc="Base Priority",          editor="comboedit", editorParam=COMBO_TASKPRIO},
+  -- token range used by static task list
+  {"UINT32", "ulBaseToken",
+  desc="Base Token",             editor="comboedit", editorParam=COMBO_TASKTOKEN},
+  -- range for priority and token
+  {"UINT32", "ulRange",
+  desc="Priority/Token Range",   editorParam={format="%u"}, mode="read-only"},
+  -- task group reference id
+  {"UINT32", "ulTaskGroupRef", desc="Task Group Reference Id", mode="read-only"},
+  nameField = "szTaskListName"
+    },
+    
+where 
+RCX_MOD_TAG_IT_STATIC_TASKS_T is the same data type name used in the entry in rcx_mod_tags
+   member type  internal name          Screen name      
+  {"STRING", "szTaskListName",   desc="Task List Name", size=64, mode="read-only"},
+
+3)
+Create a HTML help page for the tag and add it to the nxoeditor/help directory.
+Add an entry to the HELP_MAPPING table:
+    RCX_MOD_TAG_IT_STATIC_TASKS         = {file="RCX_MOD_TAG_IT_STATIC_TASKS_T.htm"},
+RCX_MOD_TAG_IT_STATIC_TASKS is the key used in rcx_mod_tags.
+Add the HTML page to the SVN and to the installer.
+
+
 --]]
 
 
@@ -230,7 +273,10 @@ RCX_MOD_TAG_IT_LED_T=
 
   {"UINT32",                                "ulUsesResourceType", desc="Resource Type",
     editor="comboedit", editorParam={nBits=32,
-    values={{name="GPIO", value=1},{name="PIO", value=2},{name="HIF PIO", value=3}}}},
+    values={{name="GPIO", value=1},
+            {name="PIO", value=2},
+            --{name="HIF PIO", value=3}
+            }}},
 
   {"UINT32",                                "ulPinNumber",   desc="Pin Number",
     editorParam ={format="%u"}},
@@ -1068,6 +1114,26 @@ function getParamTypeDesc(ulTag)
     end
 end
 
+-- find the tag description given either
+-- a key from rcx_mod_tags ("RCX_MOD_TAG_IT_STATIC_TASKS"),
+-- an alternative key ("RCX_TAG_STATIC_TASKS"), or
+-- the desc value from an entry of rcx_mod_tags ("Task Group")
+-- RCX_MOD_TAG_IT_STATIC_TASKS =
+--    {paramtype = 0x00001000, datatype="RCX_MOD_TAG_IT_STATIC_TASKS_T", desc="Task Group"},
+-- alternative keys? RCX_TAG_STATIC_TASKS
+
+alternative_tag_names={
+	RCX_TAG_STATIC_TASKS = "RCX_MOD_TAG_IT_STATIC_TASKS"
+}
+function resolveTagName(strTagName)
+	strTagName = alternative_tag_names[strTagName] or strTagName
+	if rcx_mod_tags[strTagName] then return rcx_mod_tags[strTagName]
+    for k, v in pairs(rcx_mod_tags) do
+    	if v.desc == strTagName then return v end
+    end
+end
+
+
 --- get the descriptor string and the definition of a tag.
 -- If the tag doesn't have a descriptor string, return the
 -- name of the tag.
@@ -1498,8 +1564,42 @@ end
 
 
 ---------------------------------------------------------------------
+--                primitive value conversions
+---------------------------------------------------------------------
+
+require("numedit")
+primitive_type_parsefns = {
+	UINT8 = function(abValue) return numedit.binToUint(abValue, 0, 8) end
+	UINT16 = function(abValue) return numedit.binToUint(abValue, 0, 16) end
+	UINT32 = function(abValue) return numedit.binToUint(abValue, 0, 32) end
+}
+
+primitive_type_serializefns = {
+	UINT8 = function(iValue) return numedit.uintToBin(iValue, 8) end
+	UINT16 = function(iValue) return numedit.uintToBin(iValue, 16) end
+	UINT32 = function(iValue) return numedit.uintToBin(iValue, 32) end
+}
+
+
+function isPrimitiveType(strTypeName)
+	return primitive_type_parsefns[strTypeName] and true
+end
+
+function parsePrimitiveType(strTypeName, abValue)
+	local fnConv = primitive_type_parsefns[strTypeName]
+	if fnConv then return fnConv(abValue) end
+end
+
+function serializePrimitiveType(strTypeName, value)
+	local fnConv = primitive_type_serializefns[strTypeName]
+	if fnConv then return fnConv(value) end
+end
+
+
+---------------------------------------------------------------------
 --                split/reconstruct structures
 ---------------------------------------------------------------------
+
 
 function stringAnd(str1, str2)
     local strRes = ""
@@ -1593,6 +1693,105 @@ function joinStructElements(strTypeName, elements)
 
     return bin
 end
+
+
+
+
+-- recursive variant: if member.tValue is set, the value is re-constructed from the elements
+function serialize(strTypeName, atMembers, fRecursive)
+    local ser_fn = primitive_type_serializefns[strTypeName] 
+    if ser_fn then
+        return ser_fn(atMembers)
+    end
+    local tStructDef = getStructDef(strTypeName)
+    if not tStructDef then
+        return nil
+    end
+    
+    local bin = ""
+
+    if tStructDef.fStructToBin then
+        bin = tStructDef.fStructToBin(atMembers)
+    else
+        local strMemberName, strMemberType, ulMemberSize, abMemberValue
+        local tMember, abMemberValue
+        for index, tMemberDef in ipairs(tStructDef) do
+            strMemberName, strMemberType = tMemberDef[2], tMemberDef[1]
+        
+            tMember = atMembers[index]
+            if fRecursive and tMember.tValue then
+                abMemberValue = serialize(strMemberType, tMember.tValue, fRecursive)
+                tMember.abValue = abMemberValue
+            else
+                abMemberValue = tMember.abValue
+            end
+
+            assert(abMemberValue,
+                string.format("failed to get binary value for %s.%s", strTypeName, strMemberType))
+                
+            ulMemberSize = getStructMemberSize(tMemberDef)
+            assert(ulMemberSize == abMemberValue:len(),
+                string.format("struct member size has changed: actual = %u, correct = %u",
+                abMemberValue:len(), ulMemberSize))
+
+            local iOffset = tMemberDef.offset
+            if iOffset and bin:len() > iOffset then
+                bin = string.sub(bin, 1, iOffset) ..
+                    stringOr(string.sub(bin, iOffset+1), abMemberValue)
+            else
+                bin = bin .. abMemberValue
+            end
+        end
+    end
+
+    return bin
+end
+
+
+
+
+-- convert abValue into a list of members
+-- each having strName, strType, ulSize, abValue
+-- if fRecursive = true, parse each abValue and store result in tValue
+function deserialize(strTypeName, abValue, fRecursive)
+    local deser_fn = primitive_type_parsefns[strTypeName] 
+    if deser_fn then
+        return deser_fn(abValue)
+    end
+    local tStructDef = getStructDef(strTypeName)
+    if not tStructDef then
+        return abValue
+    end
+
+    local iPos = 0 -- position inside abValue
+    local atMembers = {}    
+    local strMemberName, strMemberType, ulMemberSize, abMemberValue, tMemberValue
+        
+    for index, tMemberDef in ipairs(tStructDef) do
+        iPos = tMemberDef.offset or iPos
+        strMemberName, strMemberType = tMemberDef[2], tMemberDef[1]
+        ulMemberSize = getStructMemberSize(tMemberDef)
+        abMemberValue = string.sub(abValue, iPos+1, iPos+ulMemberSize)
+        if tMemberDef.mask then
+            abMemberValue = stringAnd(abMemberValue, tMemberDef.mask)
+        end
+        tMemberValue = fRecursive and parseBinValue(strMemberType, abMemberValue) or nil
+        atMembers[index] = 
+            {strName = strMemberName,
+             strType = strMemberType,
+             ulSize = ulSize,
+             abValue = abMemberValue,
+             tValue = tMemberValue
+             }
+        iPos = iPos + ulMemberSize
+    end
+
+    if tStructDef.fBinToStruct then
+        atMembers = tStructDef.fBinToStruct(abValue, atMembers)
+    end
+    return atMembers
+end
+
 
 ---------------------------------------------------------------------
 --                       make empty taglist
