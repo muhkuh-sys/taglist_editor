@@ -16,7 +16,6 @@ SVN_DATE   ="$Date$"
 SVN_VERSION="$Revision$"
 -- $Author$
 ---------------------------------------------------------------------------
-
 -- Load the wxLua module, does nothing if running from wxLua, wxLuaFreeze, or wxLuaEdit
 package.cpath = package.cpath..";./?.dll;./?.so;../lib/?.so;../lib/vc_dll/?.dll;../lib/bcc_dll/?.dll;../lib/mingw_dll/?.dll;"
 require("wx")
@@ -780,10 +779,10 @@ function printUsage()
 end
 
 function printVersion()
-	print("tagtool")
+	print("tagtool:")
 	print(SVN_VERSION)
 	print(SVN_DATE)
-	print("taglist")
+	print("taglist:")
 	print(taglist.SVN_VERSION)
 	print(taglist.SVN_DATE)
 end

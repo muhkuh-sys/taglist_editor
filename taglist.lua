@@ -7,17 +7,38 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+--  2010-08-03    SL            added functions for tagtool
 --  2010-06-28    SL            added diag interface tags
+--  2010-07-30    SL            serialize/deserialize, value constants
+--                              support for command line tool
+---------------------------------------------------------------------------
+
+module("taglist", package.seeall)
+
 ---------------------------------------------------------------------------
 -- SVN Keywords
 --
--- $Date$
--- $Revision$
+SVN_DATE   ="$Date$"
+SVN_VERSION="$Revision$"
 -- $Author$
 ---------------------------------------------------------------------------
 
 
-module("taglist", package.seeall)
+
+require("utils")
+local vbs_printf = utils.vbs_printf
+local dbg_printf = utils.dbg_printf
+local msg_printf = utils.msg_printf
+local err_printf = utils.err_printf
+local vbs_print = utils.vbs_print
+local dbg_print = utils.dbg_print
+local msg_print = utils.msg_print
+local err_print = utils.err_print
+local function printf(...) print(string.format(...)) end
+
+
+muhkuh.include("numedit.lua", "numedit")
+muhkuh.include("rcxveredit.lua", "rcxveredit")
 
 
 --[[
@@ -54,7 +75,7 @@ Size information is in several places:
 - in the struct member definitions
 
 How to add a new tag:
-1) 
+1)
 The table rcx_mod_tags contains mappings of the tag id numbers to structure definitions.
 Insert an entry of the form
 RCX_MOD_TAG_IT_STATIC_TASKS =
@@ -82,10 +103,10 @@ RCX_MOD_TAG_IT_STATIC_TASKS_T = {
   {"UINT32", "ulTaskGroupRef", desc="Task Group Reference Id", mode="read-only"},
   nameField = "szTaskListName"
     },
-    
-where 
+
+where
 RCX_MOD_TAG_IT_STATIC_TASKS_T is the same data type name used in the entry in rcx_mod_tags
-   member type  internal name          Screen name      
+   member type  internal name          Screen name
   {"STRING", "szTaskListName",   desc="Task List Name", size=64, mode="read-only"},
 
 3)
@@ -100,37 +121,126 @@ Add the HTML page to the SVN and to the installer.
 
 
 ---------------------------------------------------------------------------
+--   Value constants
+---------------------------------------------------------------------------
+
+CONSTANTS = {
+    -- from rX_TagLists.h
+    -- resource codes for LED tag
+    RCX_LED_RESOURCE_TYPE_GPIO            =  1,
+    RCX_LED_RESOURCE_TYPE_PIO             =  2,
+    RCX_LED_RESOURCE_TYPE_HIFPIO          =  3,
+
+    -- polarity codes for LED tag
+    RCX_LED_POLARITY_NORMAL               =  0,
+    RCX_LED_POLARITY_INVERTED             =  1,
+    
+    -- media type for TAG_BSL_MEDIUM_PARAMS     
+    TAG_BSL_MEDIUM_AUTODETECT             =  0,
+    TAG_BSL_MEDIUM_USERAM                 =  1,
+    TAG_BSL_MEDIUM_USESERFLASH            =  2,
+    TAG_BSL_MEDIUM_USEPARFLASH            =  3,
+}
+
+for i=2, 55 do
+	local strKey = string.format("TSK_PRIO_%02d", i)
+	CONSTANTS[strKey]=i+7
+	strKey = string.format("TSK_TOK_%02d", i)
+	CONSTANTS[strKey]=i+7
+end
+
+
+function resolveValueConstant(strConst)
+	strConst = CONSTANT_ALIASES[strConst] or strConst
+	return CONSTANTS[strConst]
+end
+
+function listValueConstants()
+	local aastrAliases = {}
+	for strAltTagname, strTagname in pairs(CONSTANT_ALIASES) do
+		aastrAliases[strTagname] = aastrAliases[strTagname] or {}
+		table.insert(aastrAliases[strTagname], strAltTagname)
+	end
+
+	-- sort constants by name
+	local atSortedConstants = {}
+	for strName, ulValue in pairs(CONSTANTS) do
+		table.insert(atSortedConstants, {
+			strName = strName,
+			ulValue = ulValue
+		})
+	end
+	table.sort(atSortedConstants, function(a,b) return a.strName < b.strName end)
+
+	-- print
+	print()
+	print("Name                           Value hex/dec")
+	print("----------------------------------------------")
+	for i, tConst in ipairs(atSortedConstants) do
+		printf("%-30s 0x%08x %d", tConst.strName, tConst.ulValue, tConst.ulValue)
+		local astrAliases = aastrAliases[tConst.strName]
+		if astrAliases then
+			for j, strAlias in ipairs(astrAliases) do
+				printf("  Alias: %s", strAlias)
+			end
+		end
+	end
+end
+
+
+
+---------------------------------------------------------------------------
+--   Backward Compatibility Definitions
+---------------------------------------------------------------------------
+
+TAGNAME_ALIASES = {
+    -- tag type codes for general tags
+    --RCX_TAG_NUM_COMM_CHANNEL                    ="RCX_MOD_TAG_NUM_COMM_CHANNEL",
+
+    -- tag type codes for NXO specific tags
+    RCX_TAG_STATIC_TASKS                        ="RCX_MOD_TAG_IT_STATIC_TASKS",
+    --RCX_TAG_STATIC_TASK_PARAMETER_BLOCK         ="RCX_MOD_TAG_IT_STATIC_TASK_PARAMETER_BLOCK",
+    --RCX_TAG_STATIC_TASK_ENTRY                   ="RCX_MOD_TAG_IT_STATIC_TASK_ENTRY",
+    RCX_TAG_TIMER                               ="RCX_MOD_TAG_IT_TIMER",
+    RCX_TAG_INTERRUPT                           ="RCX_MOD_TAG_IT_INTERRUPT",
+    --RCX_TAG_INTERRUPT_ENTRY                     ="RCX_MOD_TAG_IT_INTERRUPT_ENTRY",
+    RCX_TAG_LED                                 ="RCX_MOD_TAG_IT_LED",
+    RCX_TAG_XC                                  ="RCX_MOD_TAG_IT_XC",
+}
+
+CONSTANT_ALIASES = {
+    -- resource codes for LED tag
+    RCX_MOD_TAG_IT_LED_RESOURCE_TYPE_PIO         ="RCX_LED_RESOURCE_TYPE_PIO",
+    RCX_MOD_TAG_IT_LED_RESOURCE_TYPE_GPIO        ="RCX_LED_RESOURCE_TYPE_GPIO",
+    RCX_MOD_TAG_IT_LED_RESOURCE_TYPE_HIFPIO      ="RCX_LED_RESOURCE_TYPE_HIFPIO",
+
+    -- polarity codes for LED tag
+    RCX_MOD_TAG_IT_LED_POLARITY_NORMAL           ="RCX_LED_POLARITY_NORMAL",
+    RCX_MOD_TAG_IT_LED_POLARITY_INVERTED         ="RCX_LED_POLARITY_INVERTED",
+}
+
+
+
+---------------------------------------------------------------------------
 -- The elementary data types. Each entry may contain:
 -- size, if the size is constant for all instances of the type
 -- editor, the lua package name of the editor control
 -- editorParam, parameters to pass to the editor control at instantiation
 ---------------------------------------------------------------------------
 datatypes = {
-RX_PIO_VALUE_TYPE = {size=2, editor="comboedit", editorParam={
-    nBits=16, -- nBits = 8*size
-    values={
-        {name="no register", value=0},
-        {name="active high", value=1},
-        {name="active low", value=2},
-        {name="absolute", value=3},
-    }}},
-RX_LED_VALUE_TYPE = {size=4, editor="comboedit", editorParam={
-    nBits=32,
-    values={
-        {name="no register", value=0},
-        {name="or", value=1},
-        {name="and", value=2},
-        {name="absolute", value=3},
-    }}},
-mac = {size=6, editor="macedit"},
-ipv4 = {size=4, editor="ipv4edit"},
-rcxver = {size=8, editor="rcxveredit"},
 UINT32 = {size=4, editor="numedit"},
 UINT16 = {size=2, editor="numedit", editorParam={nBits=16}},
 UINT8 = {size=1, editor="numedit", editorParam={nBits=8}},
 STRING = {editor="stringedit"},
+rcxver = {size=8, editor="rcxveredit"},
+
+-- for unused tags
+mac = {size=6, editor="macedit"},
+ipv4 = {size=4, editor="ipv4edit"},
 bindata = {editor="hexedit"},
 }
+
+
 
 ---------------------------------------------------------------------------
 -- structure definitions.
@@ -163,25 +273,26 @@ for i=0, 31 do
 end
 
 -- 16-char name string
-local RCX_MOD_TAG_IDENTIFIER_T = {"STRING", "tIdentifier.abName", desc="Identifier", size=16, mode="read-only"}
+local RCX_MOD_TAG_IDENTIFIER_T = {"STRING", "szIdentifier", desc="Identifier", size=16, mode="read-only"}
+
+
+
 
 structures = {
-
-
---
-memsize_t =
+-- general tags
+RCX_TAG_MEMSIZE_T =
     {{"UINT32", "ulMemSize",        mode="read-only", desc="Memory Size"}},
-min_persistent_storage_size_t =
+RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE_T =
     {{"UINT32", "ulMinStorageSize", mode="read-only", desc="Min. Persistent Storage Size"}},
-min_os_version_t =
+RCX_TAG_MIN_OS_VERSION_T =
     {{"rcxver", "ulMinOsVer",       mode="read-only", desc="Min. OS Version"}},
-max_os_version_t =
+RCX_TAG_MAX_OS_VERSION_T =
     {{"rcxver", "ulMaxOsVer",       mode="read-only", desc="Max. OS Version"}},
-min_chip_rev_t =
+RCX_TAG_MIN_CHIP_REV_T =
     {{"UINT32", "ulMinChipRev",     mode="read-only", desc="Min. Chip Revision"}},
-max_chip_rev_t =
+RCX_TAG_MAX_CHIP_REV_T =
     {{"UINT32", "ulMaxChipRev",     mode="read-only", desc="Max. Chip Revision"}},
-num_comm_channel_t =
+RCX_TAG_NUM_COMM_CHANNEL_T =
     {{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of required comm channels"}},
 --
 
@@ -212,7 +323,7 @@ RCX_MOD_TAG_IT_TIMER_T = {
   -- following structure entries are compatible to RX_TIMER_SET_T
   {"UINT32",                                "ulTimNum",
   desc="Timer Number", editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=4}},
-  nameField = "tIdentifier.abName"
+  nameField = "szIdentifier"
     },
 
 ----------------------------------------------------------------------------------------------
@@ -258,7 +369,7 @@ RCX_MOD_TAG_IT_XC_T =
   -- Specifies which Xc unit to use
   {"UINT32",                                "ulXcId",        desc="xC Unit",
      editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=3}},
-  nameField = "tIdentifier.abName"
+  nameField = "szIdentifier"
 
 },
 
@@ -284,46 +395,27 @@ RCX_MOD_TAG_IT_LED_T=
   {"UINT32",                                "ulPolarity",    desc="Polarity",
     editor="comboedit", editorParam={nBits=32,
     values={{name="normal", value=0},{name="inverted", value=1}}}},
-  nameField = "tIdentifier.abName"
+  nameField = "szIdentifier"
 },
 
-
-
---[[                   obsolete
-RCX_MOD_TAG_IT_LED_T = {
-  {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",        mode="read-only"},
-  {"UINT32",                                "ulUsesResourceType", editorParam={format="%u"}},
-  {"RCX_MOD_TAG_IDENTIFIER_T",              "tUsesResourceIdentifier"},
-  {"RCX_MOD_TAG_IT_LED_REGISTER_T",         "tMode"},
-  {"RCX_MOD_TAG_IT_LED_REGISTER_T",         "tDirection"},
-  {"RCX_MOD_TAG_IT_LED_REGISTER_T",         "tEnable"},
-  {"RCX_MOD_TAG_IT_LED_REGISTER_T",         "tDisable"},
-  layout = {sizer="v", {sizer="grid", "tIdentifier",
-                                       "ulUsesResourceType",
-                                       "tUsesResourceIdentifier"},
-                     {sizer="h", {sizer="grid", "tMode", "tDirection"},
-                                 {sizer="grid", "tEnable", "tDisable"}}},
-  layout1 = {sizer="v", {sizer="grid", "tIdentifier",
-                                       "ulUsesResourceType",
-                                       "tUsesResourceIdentifier"},
-                       {sizer="grid", "tMode", "tDirection", "tEnable", "tDisable"}}
-    },
-RCX_MOD_TAG_IT_LED_REGISTER_T = {
-  {"RX_LED_VALUE_TYPE",                     "ulType"},
-  {"UINT32",                                "ulReg"},
-  {"UINT32",                                "ulValue"},
-  --layout = {sizer="h", "ulType", "ulReg", "ulValue"}
-    },
---]]
 
 
 ----------------------------------------------------------------------------------------------
 --        PIO
 
+
 RCX_MOD_TAG_IT_PIO_REGISTER_VALUE_T = {
   -- Value Type
-  {"RX_PIO_VALUE_TYPE", "usType"},
-  --{"UINT16", "usType", editorParam={format="%u"}},
+  --{"RX_PIO_VALUE_TYPE", "usType"},
+  {"UINT16", "usType", editor="comboedit", editorParam={
+    nBits=16, -- nBits = 8*size
+    values={
+        {name="no register", value=0},
+        {name="active high", value=1},
+        {name="active low", value=2},
+        {name="absolute", value=3},
+    }  }
+  },
   -- Address of Register
   {"UINT32", "ulReg"},
   -- Value to set
@@ -331,9 +423,19 @@ RCX_MOD_TAG_IT_PIO_REGISTER_VALUE_T = {
   layout = {sizer="h", "usType", "ulReg", "ulValue"}
 },
 
+
 RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T = {
   -- Value Type
-  {"RX_PIO_VALUE_TYPE", "usType"},
+  --{"RX_PIO_VALUE_TYPE", "usType"},
+  {"UINT16", "usType", editor="comboedit", editorParam={
+    nBits=16, -- nBits = 8*size
+    values={
+        {name="no register", value=0},
+        {name="active high", value=1},
+        {name="active low", value=2},
+        {name="absolute", value=3},
+    }  }
+  },
   --{"UINT16", "usType", editorParam={format="%u"}},
   -- Address of Register
   {"UINT32", "ulReg"},
@@ -353,8 +455,8 @@ RCX_MOD_TAG_IT_PIO_T = {
   {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tClear"},
   -- Register to get current input value of the PIOs
   {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tInput"},
-  nameField = "tIdentifier.abName",
-  layout=  {sizer="grid", "tIdentifier.abName",
+  nameField = "szIdentifier",
+  layout=  {sizer="grid", "szIdentifier",
                       "tMode", "tDirection",
                       "tSet", "tClear", "tInput"},
 },
@@ -379,13 +481,12 @@ RCX_MOD_TAG_IT_GPIO_T = {
   {"UINT32",                                "fIrq", editorParam={format="%u"}},
   -- Threshold / Capture value in PWM mode
   {"UINT32",                                "ulThresholdCapture"},
-  nameField = "tIdentifier.abName"
+  nameField = "szIdentifier"
 },
 
 
 
 -- tags for configuration of 2nd stage loader
-
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader SDRAM settings
 
@@ -411,21 +512,8 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
         }},
     },
 
-    {"BSL_DPM_PARAMS_T", "DPM/ISA/Auto", desc="DPM/ISA settings"},
-    {"BSL_PCI_PARAMS_T", "PCI", desc="PCI settings"},
-    --[[
-    {"BSL_DPM_PARAMS_T", "DPM/ISA/Auto", "DPM settings", offset = 4},
-    {"BSL_PCI_PARAMS_T", "PCI", "PCI settings", offset = 4},
-
-    fStructToBin = function(elements)
-        local ulBusType = uint32(elements[1].abValue, 0)
-        if ulBusType == 3 then
-            return elements[1].abValue .. elements[3].abValue .. elements[2].abValue:sub(5, 16)
-        else
-            return elements[1].abValue .. elements[2].abValue
-        end
-    end
-    --]]
+    {"BSL_DPM_PARAMS_T", "tDpmIsaAuto", desc="DPM/ISA settings"},
+    {"BSL_PCI_PARAMS_T", "tPci", desc="PCI settings"},
 },
 
 BSL_DPM_PARAMS_T = {
@@ -452,7 +540,6 @@ BSL_PCI_PARAMS_T = {
                 {name="GPIO",                      value=1},
                 {name="PIO",                       value=2},
                 {name="HIFPIO",                    value=3},
-                --{name="MMIO",                      value=4},
         }},
     },
 
@@ -460,128 +547,11 @@ BSL_PCI_PARAMS_T = {
         offset = 1, mask = string.char(0x80),
         editor="checkboxedit",
         editorParam={nBits = 8, offValue = 0, onValue = 128, otherValues = true}
-        --[[
-        editor="comboedit",
-        editorParam={nBits=8,
-            values={
-                {name="No", value=0},
-                {name="Yes", value=128}
-        }},
-        --]]
     },
 
     {"UINT16", "usPinNumber", desc="Pin Number", editorParam={format="%u"}},
 },
 
-
-TAG_BSL_HIF_PARAMS_DATA_T___OLD = {
-    {"UINT32", "ulBusType", desc="Bus Type",
-        editor="comboedit",
-        editorParam={nBits=32,
-            values={
-                {name="Auto", value=0},
-                {name="DPM", value=1},
-                {name="ISA", value=2},
-                {name="PCI", value=3},
-                {name="Disable ext. Bus", value=0xffffffff}
-        }},
-    },
-
-    -- DPM/ISA settings
-    {"UINT32", "ulIfConf0",    desc="IF_CONF0 register value", editorParam={format="0x%08x"}},
-    {"UINT32", "ulIfConf1",    desc="IF_CONF1 register value", editorParam={format="0x%08x"}},
-    {"UINT32", "ulIoRegMode0", desc="IO_REGMODE0 register value", editorParam={format="0x%08x"}},
-    {"UINT32", "ulIoRegMode1", desc="IO_REGMODE1 register value", editorParam={format="0x%08x"}},
-
-    -- PCI settings
-    -- todo: decide how to handle this!
-    --[[
-    {"UINT8", "bEnablePin", desc="Use PCI enable pin",
-        editor="checkboxedit",
-        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
-    },
-
-    {"UINT8", "bPinType", desc="Type of enable pin",
-        offset = 21, mask = string.char(0x7f),
-        editor="comboedit",
-        editorParam={nBits=8,
-            values={
-                {name="Ignore pin",                value=0},
-                {name="GPIO",                      value=1},
-                {name="PIO",                       value=2},
-                {name="HIFPIO",                    value=3},
-                --{name="MMIO",                      value=4},
-        }},
-    },
-
-    {"UINT8", "bInvert", desc="Inverted",
-        offset = 21, mask = string.char(0x80),
-        editor="comboedit",
-        editorParam={nBits=8,
-            values={
-                {name="No", value=0},
-                {name="Yes", value=128}
-        }},
-    },
-
-    {"UINT16", "usPinNumber", desc="Pin Number", editorParam={format="%u"}},
-
-    fBinToStruct = function(abBin)
-        local abBusType = abBin:sub(1, 4)
-        local ulBusType = uint33(abBusType, 1)
-        local ab0 = uint32tobin(0)
-        local abIfConf0      = ab0
-        local abIfConf1      = ab0
-        local abIoRegMode0   = ab0
-        local abIoRegMode1   = ab0
-        local abEnablePin    = string.char(0)
-        local abPinType      = string.char(0)
-        local abInvert       = string.char(0)
-        local abPinNumber    = string.char(0, 0)
-
-        if ulBusType == 3 then
-            abEnablePin = abBin:sub(4, 4)
-            abPinType = stringAnd(abBin:sub(5, 5), string.char(0x7f))
-            abInvert = stringAnd(abBin:sub(5, 5), string.char(0x80))
-            abPinNumber = abBin:sub(6, 7)
-        else
-            abIfConf0 = abBin:sub(5, 8)
-            abIfConf1 = abBin:sub(9, 12)
-            abIoRegMode0 = abBin:sub(13, 16)
-            abIoRegMode1 = abBin:sub(17, 20)
-        end
-
-        return {
-            {strName = "ulBusType",        strType = "UINT32",  ulSize = 4,  abValue = abBusType},
-            {strName = "ulIfConf0",        strType = "UINT32",  ulSize = 4,  abValue = abIfConf0},
-            {strName = "ulIfConf1",        strType = "UINT32",  ulSize = 4,  abValue = abIfConf1},
-            {strName = "ulIoRegMode0",     strType = "UINT32",  ulSize = 4,  abValue = abIoRegMode0},
-            {strName = "ulIoRegMode1",     strType = "UINT32",  ulSize = 4,  abValue = abIoRegMode1},
-            {strName = "bEnablePin",       strType = "UINT8",   ulSize = 1,  abValue = abEnablePin},
-            {strName = "bPinType",         strType = "UINT8",   ulSize = 1,  abValue = abPinType},
-            {strName = "bInvert",          strType = "UINT8",   ulSize = 1,  abValue = abInvert},
-            {strName = "usPinNumber",      strType = "UINT16",  ulSize = 2,  abValue = abPinNumber},
-        }
-    end,
-
-    fBinToStruct2 = function(abBin, elements)
-        local abBusType = abBin:sub(1, 4)
-        local ulBusType = uint33(abBusType, 1)
-        if ulBusType == 3 then
-            elements[1] = uint32tobin(0)
-            elements[2] = uint32tobin(0)
-            elements[3] = uint32tobin(0)
-            elements[4] = uint32tobin(0)
-        else
-            elements[5] = string.char(0)
-            elements[2] = string.char(0)
-            elements[3] = string.char(0)
-            elements[4] = string.char(0, 0)
-        end
-        return elements
-    end
-    --]]
-},
 
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader SD/MMC settings
@@ -608,14 +578,6 @@ TAG_BSL_SDMMC_PARAMS_DATA_T = {
         offset = 1, mask = string.char(0x80),
         editor="checkboxedit",
         editorParam={nBits = 8, offValue = 0, onValue = 128, otherValues = true}
-        --[[
-        editor="comboedit",
-        editorParam={nBits=8,
-            values={
-                {name="No", value=0},
-                {name="Yes", value=128}
-        }},
-        --]]
     },
 
     {"UINT16", "usPinNumber", desc="Pin Number", editorParam={format="%u"}},
@@ -653,22 +615,14 @@ TAG_BSL_USB_PARAMS_DATA_T = {
         offset = 1, mask = string.char(0x80),
         editor="checkboxedit",
         editorParam={nBits = 8, offValue = 0, onValue = 128, otherValues = true}
-        --[[
-        editor="comboedit",
-        editorParam={nBits=8,
-            values={
-                {name="No", value=0},
-                {name="Yes", value=128}
-        }},
-        --]]
     },
-    {"UINT16", "usUpllupPinIdx", desc="Pin Number", editorParam={format="%u"}},
+    {"UINT16", "usPullupPinIdx", desc="Pin Number", editorParam={format="%u"}},
 },
 
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader media settings
 TAG_BSL_MEDIUM_PARAMS_DATA_T = {
-    {"UINT8", "´bFlash", desc="Flash Bootloader",
+    {"UINT8", "bFlash", desc="Flash Bootloader",
         editor="checkboxedit",
         editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
     },
@@ -677,7 +631,7 @@ TAG_BSL_MEDIUM_PARAMS_DATA_T = {
         editor="comboedit",
         editorParam={nBits=8,
             values={
-                {name="Auto",             value=0},
+                {name="Auto-detect Media",value=0},
                 {name="RAM Disk",         value=1},
                 {name="Serial Flash",     value=2},
                 {name="Parallel Flash",   value=3},
@@ -687,60 +641,27 @@ TAG_BSL_MEDIUM_PARAMS_DATA_T = {
 
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader ext. chip select settings
---[[
-BSL_EXTRAM_CONFIG_T = {
-    {"UINT8", "bWaitstates", desc="Wait States",
-        editorParam={nBits=6, minValue=0, maxValue=63, format="%u"}
-    },
-    {"UINT8", "bPrePauseWs", desc="Setup WS",
-        editor="comboedit",
-        editorParam={nBits=8, minValue=0, maxValue=3}
-    },
-    {"UINT8", "bPostPauseWs", desc="Post Access WS",
-        editor="comboedit",
-        editorParam={nBits=8, minValue=0, maxValue=3}
-    },
-    {"UINT8", "bDataWidth", desc="Data Width",
-        editor="comboedit",
-        editorParam={nBits=8,
-            values={
-                {name="8",   value=0},
-                {name="16",  value=1},
-                {name="32",  value=2},
-        }},
-    },
-    --layout = {sizer="h", "bDataWidth", "bWaitstates", "bPrePauseWs", "bPostPauseWs"}
-    layout = {sizer="v",
-        "bDataWidth",
-        {sizer="h", "bWaitstates", "bPrePauseWs", "bPostPauseWs"}
-        }
-},
---]]
+
 
 TAG_BSL_EXTSRAM_PARAMS_DATA_T = {
---  {"BSL_EXTRAM_CONFIG_T", "ulRegVal0", desc="MEM_SRAM0_CTRL"},
---  {"BSL_EXTRAM_CONFIG_T", "ulRegVal1", desc="MEM_SRAM1_CTRL"},
     {"UINT32", "ulRegVal0", desc="MEM_SRAM0_CTRL", editorParam={format="0x%08x"}},
     {"UINT32", "ulRegVal1", desc="MEM_SRAM1_CTRL", editorParam={format="0x%08x"}},
     {"UINT32", "ulRegVal2", desc="MEM_SRAM2_CTRL", editorParam={format="0x%08x"}},
     {"UINT32", "ulRegVal3", desc="MEM_SRAM3_CTRL", editorParam={format="0x%08x"}},
-    --layout = {sizer="v", {sizer="v", "ulRegVal0", "ulRegVal1"},
-    --                  {sizer="v", "ulRegVal2", "ulRegVal3"}}
 },
 
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader HW Data
---[[
-  unsigned char  bEnable;
-  unsigned short usManufacturer;
-  unsigned short usProductionDate;
-  unsigned short usDeviceClass;
-  unsigned char  bHwCompatibility;
-  unsigned char  bHwRevision;
-  unsigned long  ulDeviceNr;
-  unsigned long  ulSerialNr;
-  unsigned short ausHwOptions[4];
-  --]]
+--
+-- unsigned char  bEnable;
+-- unsigned short usManufacturer;
+-- unsigned short usProductionDate;
+-- unsigned short usDeviceClass;
+-- unsigned char  bHwCompatibility;
+-- unsigned char  bHwRevision;
+-- unsigned long  ulDeviceNr;
+-- unsigned long  ulSerialNr;
+-- unsigned short ausHwOptions[4];
 
 TAG_BSL_HWDATA_PARAMS_DATA_T = {
     {"UINT8", "bEnable", desc="Enable",
@@ -916,53 +837,25 @@ TAG_END = 0
 TAG_IGNORE_FLAG = 0x80000000
 
 rcx_mod_tags = {
--- elementary type tags -> read only
+-- Firmware description tags
 --
-memsize =
-    {paramtype = 0x800, datatype="memsize_t",          desc="Memory Size"},
-min_persistent_storage_size =
-    {paramtype = 0x801, datatype="min_persistent_storage_size_t", desc="Min. Storage Size"},
-min_os_version =
-    {paramtype = 0x802, datatype="min_os_version_t",   desc="Min. OS Version"},
-max_os_version =
-    {paramtype = 0x803, datatype="max_os_version_t",   desc="Max. OS Version"},
-min_chip_rev =
-    {paramtype = 0x804, datatype="min_chip_rev_t",     desc="Min. Chip Revision"},
-max_chip_rev =
-    {paramtype = 0x805, datatype="max_chip_rev_t",     desc="Max. Chip Revision"},
-num_comm_channel =
-    {paramtype = 0x806, datatype="num_comm_channel_t", desc="Number of channels"},
---
---[[
-memsize =
-    {paramtype = 0x800, datatype="UINT32", mode="read-only", desc="Memory Size"},
-min_persistent_storage_size =
-    {paramtype = 0x801, datatype="UINT32", mode="read-only", desc="Min. Persistent Storage Size"},
-min_os_version =
-    {paramtype = 0x802, datatype="rcxver", mode="read-only", desc="Min. OS Version"},
-max_os_version =
-    {paramtype = 0x803, datatype="rcxver", mode="read-only", desc="Max. OS Version"},
-min_chip_rev =
-    {paramtype = 0x804, datatype="UINT32", mode="read-only", desc="Min. Chip Revision"},
-max_chip_rev =
-    {paramtype = 0x805, datatype="UINT32", mode="read-only", desc="Max. Chip Revision"},
-num_comm_channel =
-    {paramtype = 0x806, datatype="UINT32", mode="read-only", desc="Number of required comm channels"},
---
-xc_alloc =
-    {paramtype = 0x806, datatype="UINT32", desc="xC allocation"},
-irq_alloc=
-    {paramtype = 0x807, datatype="UINT32", desc="IRQ allocation"},
-comm_channel_alloc =
-    {paramtype = 0x808, datatype="UINT32", desc="Comm. Channel allocation"},
-supported_comm_channels =
-    {paramtype = 0x80a, datatype="UINT32", desc="Supported comm. Channels"},
-num_tasks =
-    {paramtype = 0x80b, datatype="UINT32", desc="Number of tasks"},
---]]
 
+RCX_TAG_MEMSIZE =
+    {paramtype = 0x800, datatype="RCX_TAG_MEMSIZE_T",          desc="Memory Size"},
+RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE =
+    {paramtype = 0x801, datatype="RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE_T", desc="Min. Storage Size"},
+RCX_TAG_MIN_OS_VERSION =
+    {paramtype = 0x802, datatype="RCX_TAG_MIN_OS_VERSION_T",   desc="Min. OS Version"},
+RCX_TAG_MAX_OS_VERSION =
+    {paramtype = 0x803, datatype="RCX_TAG_MAX_OS_VERSION_T",   desc="Max. OS Version"},
+RCX_TAG_MIN_CHIP_REV =
+    {paramtype = 0x804, datatype="RCX_TAG_MIN_CHIP_REV_T",     desc="Min. Chip Revision"},
+RCX_TAG_MAX_CHIP_REV =
+    {paramtype = 0x805, datatype="RCX_TAG_MAX_CHIP_REV_T",     desc="Max. Chip Revision"},
+RCX_TAG_NUM_COMM_CHANNEL =
+    {paramtype = 0x806, datatype="RCX_TAG_NUM_COMM_CHANNEL_T", desc="Number of channels"},
 
--- struct tags
+-- task configuration
 RCX_MOD_TAG_IT_STATIC_TASKS =
     {paramtype = 0x00001000, datatype="RCX_MOD_TAG_IT_STATIC_TASKS_T", desc="Task Group"},
 RCX_MOD_TAG_IT_TIMER =
@@ -981,7 +874,6 @@ RCX_MOD_TAG_IT_GPIO =
 
 
 -- tags for configuration of 2nd stage loader
-
 TAG_BSL_SDRAM_PARAMS =
     {paramtype = 0x40000000, datatype="TAG_BSL_SDRAM_PARAMS_DATA_T",          desc="SDRAM"},
 TAG_BSL_HIF_PARAMS =
@@ -1022,6 +914,7 @@ manufacturer_name =
     {paramtype=6, datatype="STRING", size=16, desc="Manufacturer Name"},
 arbitrary_data =
     {paramtype=7, datatype="bindata", size=64, desc="Binary Data"}
+
 }
 
 
@@ -1032,45 +925,44 @@ arbitrary_data =
 
 -- "name" was used for the html book display; could be removed
 HELP_MAPPING = {
-    RCX_MOD_TAG_IT_LED                  = {name="LED Tag",       file="RCX_MOD_TAG_IT_LED_T.htm"},
-    RCX_MOD_TAG_IT_PIO                  = {name="PIO Tag",       file="RCX_MOD_TAG_IT_PIO_T.htm"},
-    RCX_MOD_TAG_IT_GPIO                 = {name="GPIO Tag",      file="RCX_MOD_TAG_IT_GPIO_T.htm"},
-    RCX_MOD_TAG_IT_STATIC_TASKS         = {name="Static Task Priorities Tag", file="RCX_MOD_TAG_IT_STATIC_TASKS_T.htm"},
-    RCX_MOD_TAG_IT_TIMER                = {name="Timer Tag",     file="RCX_MOD_TAG_IT_TIMER_T.htm"},
-    RCX_MOD_TAG_IT_XC                   = {name="xC Tag",        file="RCX_MOD_TAG_IT_XC_T.htm"},
-    RCX_MOD_TAG_IT_INTERRUPT            = {name="Interrupt Tag", file="RCX_MOD_TAG_IT_INTERRUPT_T.htm"},
+    RCX_MOD_TAG_IT_LED                  = {file="RCX_MOD_TAG_IT_LED_T.htm"},
+    RCX_MOD_TAG_IT_PIO                  = {file="RCX_MOD_TAG_IT_PIO_T.htm"},
+    RCX_MOD_TAG_IT_GPIO                 = {file="RCX_MOD_TAG_IT_GPIO_T.htm"},
+    RCX_MOD_TAG_IT_STATIC_TASKS         = {file="RCX_MOD_TAG_IT_STATIC_TASKS_T.htm"},
+    RCX_MOD_TAG_IT_TIMER                = {file="RCX_MOD_TAG_IT_TIMER_T.htm"},
+    RCX_MOD_TAG_IT_XC                   = {file="RCX_MOD_TAG_IT_XC_T.htm"},
+    RCX_MOD_TAG_IT_INTERRUPT            = {file="RCX_MOD_TAG_IT_INTERRUPT_T.htm"},
 
-    TAG_BSL_SDRAM_PARAMS                = {name="SDRAM",         file="TAG_BSL_SDRAM_PARAMS_DATA_T.htm"},
-    TAG_BSL_HIF_PARAMS                  = {name="HIF/DPM",       file="TAG_BSL_HIF_PARAMS_DATA_T.htm"},
-    TAG_BSL_SDMMC_PARAMS                = {name="SD/MMC",        file="TAG_BSL_SDMMC_PARAMS_DATA_T.htm"},
-    TAG_BSL_UART_PARAMS                 = {name="UART",          file="TAG_BSL_UART_PARAMS_DATA_T.htm"},
-    TAG_BSL_USB_PARAMS                  = {name="USB",           file="TAG_BSL_USB_PARAMS_DATA_T.htm"},
-    TAG_BSL_MEDIUM_PARAMS               = {name="BSL media",     file="TAG_BSL_MEDIUM_PARAMS_DATA_T.htm"},
-    TAG_BSL_EXTSRAM_PARAMS              = {name="ext. SRAM",     file="TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm"},
-    TAG_BSL_HWDATA_PARAMS               = {name="HW Data",       file="TAG_BSL_HWDATA_PARAMS_DATA_T.htm"},
-    TAG_BSL_FSU_PARAMS                  = {name="FSU",           file="TAG_BSL_FSU_PARAMS_DATA_T.htm"},
-    
-    TAG_DIAG_IF_CTRL_UART               = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
-    TAG_DIAG_IF_CTRL_USB                = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
-    TAG_DIAG_IF_CTRL_TCP                = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
-    TAG_DIAG_TRANSPORT_CTRL_CIFX        = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
-    TAG_DIAG_TRANSPORT_CTRL_PACKET      = {name="",              file="TAG_DIAG_CTRL_DATA_T.htm"},
-    
-    memsize                             = {name="", file="misc_tags.htm"},
-    num_comm_channel                    = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
-    min_persistent_storage_size         = {name="", file="misc_tags.htm"}, --anchor="#min_persistent_storage_size"},
-    min_os_version                      = {name="", file="misc_tags.htm"}, --anchor="#min_os_version"},
-    max_os_version                      = {name="", file="misc_tags.htm"}, --anchor="#max_os_version"},
-    min_chip_rev                        = {name="", file="misc_tags.htm"}, --anchor="#min_chip_rev"},
-    max_chip_rev                        = {name="", file="misc_tags.htm"}, --anchor="#max_chip_rev"},
-    num_comm_channels                   = {name="", file="misc_tags.htm"}, --anchor="#num_comm_channels"},
+    TAG_BSL_SDRAM_PARAMS                = {file="TAG_BSL_SDRAM_PARAMS_DATA_T.htm"},
+    TAG_BSL_HIF_PARAMS                  = {file="TAG_BSL_HIF_PARAMS_DATA_T.htm"},
+    TAG_BSL_SDMMC_PARAMS                = {file="TAG_BSL_SDMMC_PARAMS_DATA_T.htm"},
+    TAG_BSL_UART_PARAMS                 = {file="TAG_BSL_UART_PARAMS_DATA_T.htm"},
+    TAG_BSL_USB_PARAMS                  = {file="TAG_BSL_USB_PARAMS_DATA_T.htm"},
+    TAG_BSL_MEDIUM_PARAMS               = {file="TAG_BSL_MEDIUM_PARAMS_DATA_T.htm"},
+    TAG_BSL_EXTSRAM_PARAMS              = {file="TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm"},
+    TAG_BSL_HWDATA_PARAMS               = {file="TAG_BSL_HWDATA_PARAMS_DATA_T.htm"},
+    TAG_BSL_FSU_PARAMS                  = {file="TAG_BSL_FSU_PARAMS_DATA_T.htm"},
+
+    TAG_DIAG_IF_CTRL_UART               = {file="TAG_DIAG_CTRL_DATA_T.htm"},
+    TAG_DIAG_IF_CTRL_USB                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
+    TAG_DIAG_IF_CTRL_TCP                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
+    TAG_DIAG_TRANSPORT_CTRL_CIFX        = {file="TAG_DIAG_CTRL_DATA_T.htm"},
+    TAG_DIAG_TRANSPORT_CTRL_PACKET      = {file="TAG_DIAG_CTRL_DATA_T.htm"},
+
+    RCX_TAG_MEMSIZE                     = {file="misc_tags.htm"},
+    RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE = {file="misc_tags.htm"},
+    RCX_TAG_MIN_OS_VERSION              = {file="misc_tags.htm"},
+    RCX_TAG_MAX_OS_VERSION              = {file="misc_tags.htm"},
+    RCX_TAG_MIN_CHIP_REV                = {file="misc_tags.htm"},
+    RCX_TAG_MAX_CHIP_REV                = {file="misc_tags.htm"},
+    RCX_TAG_NUM_COMM_CHANNEL            = {file="misc_tags.htm"},
 
     --[[  unused
-    xc_alloc                            = {name="", file="misc_tags.htm"}, --anchor="#xc_alloc"},
-    irq_alloc                           = {name="", file="misc_tags.htm"}, --anchor="#irq_alloc"},
-    comm_channel_alloc                  = {name="", file="misc_tags.htm"}, --anchor="#comm_channel_alloc"},
-    supported_comm_channels             = {name="", file="misc_tags.htm"}, --anchor="#supported_comm_channels"},
-    num_tasks                           = {name="", file="misc_tags.htm"}, --anchor="#num_tasks"},
+    xc_alloc                            = {file="misc_tags.htm"},
+    irq_alloc                           = {file="misc_tags.htm"},
+    comm_channel_alloc                  = {file="misc_tags.htm"},
+    supported_comm_channels             = {file="misc_tags.htm"},
+    num_tasks                           = {file="misc_tags.htm"},
     --]]
 }
 
@@ -1105,6 +997,7 @@ function getStructDef(strTypeName)
     return structures[strTypeName]
 end
 
+
 --- Find the parameter description for a given parameter type
 -- @param iParamType 32 bit tag number
 -- @return name, desc
@@ -1114,6 +1007,7 @@ function getParamTypeDesc(ulTag)
     end
 end
 
+
 -- find the tag description given either
 -- a key from rcx_mod_tags ("RCX_MOD_TAG_IT_STATIC_TASKS"),
 -- an alternative key ("RCX_TAG_STATIC_TASKS"), or
@@ -1122,17 +1016,52 @@ end
 --    {paramtype = 0x00001000, datatype="RCX_MOD_TAG_IT_STATIC_TASKS_T", desc="Task Group"},
 -- alternative keys? RCX_TAG_STATIC_TASKS
 
-alternative_tag_names={
-	RCX_TAG_STATIC_TASKS = "RCX_MOD_TAG_IT_STATIC_TASKS"
-}
 function resolveTagName(strTagName)
-	strTagName = alternative_tag_names[strTagName] or strTagName
-	if rcx_mod_tags[strTagName] then return rcx_mod_tags[strTagName]
+	strTagName = TAGNAME_ALIASES[strTagName] or strTagName
+	if rcx_mod_tags[strTagName] then
+		return rcx_mod_tags[strTagName]
+	end
     for k, v in pairs(rcx_mod_tags) do
-    	if v.desc == strTagName then return v end
+    	if v.desc == strTagName then
+    		return v
+    	end
     end
 end
 
+function listKnownTags()
+	-- reverse TAGNAME_ALIASES
+	-- TAGNAME_ALIASES maps alternative name --> name in rcx_mod_tags,
+	-- atAliases maps name in rcx_mod_tags -> alternative name
+	local aastrAliases = {}
+	for strAltTagname, strTagname in pairs(TAGNAME_ALIASES) do
+		aastrAliases[strTagname] = aastrAliases[strTagname] or {}
+		table.insert(aastrAliases[strTagname], strAltTagname)
+	end
+
+	-- sort rcx_mod_tags by tag code
+	local atSortedTags = {}
+	for strTagname, tTagDesc in pairs(rcx_mod_tags) do
+		table.insert(atSortedTags, {
+			paramtype = tTagDesc.paramtype,
+			strTagname = strTagname,
+			strDesc = tTagDesc.desc})
+	end
+	table.sort(atSortedTags, function(a,b) return a and b and a.paramtype < b.paramtype end)
+
+	-- print
+	print()
+	print("Name                            Tag Id      Description")
+	print("-------------------------------------------------------------------")
+	for i, tTagDesc in ipairs(atSortedTags) do
+		printf("%-30s (0x%08x) %s", tTagDesc.strTagname, tTagDesc.paramtype, tTagDesc.strDesc)
+		local astrAliases = aastrAliases[tTagDesc.strTagname]
+		if astrAliases then
+			for j, strAlias in ipairs(astrAliases) do
+				printf("  Alias: %s", strAlias)
+			end
+		end
+	end
+end
 
 --- get the descriptor string and the definition of a tag.
 -- If the tag doesn't have a descriptor string, return the
@@ -1148,6 +1077,7 @@ end
 function isReadOnly(tDef)
     return tDef.mode=="read-only"
 end
+
 
 function isHidden(tDef)
     return tDef.mode=="hidden"
@@ -1208,7 +1138,7 @@ function getEditorInfo(strTypeName)
                 return "structedit"
             end
         else
-            print("no editor for " .. strTypeName)
+            err_printf("no editor for type %s", strTypeName)
         end
     end
 end
@@ -1224,28 +1154,6 @@ end
 -- @param tStructMemberDef
 -- @return strEditor
 -- @return editorParams a list or nil
---[[
-function getStructMemberEditorInfo(tStructMemberDef)
-    local strEditor = tStructMemberDef.editor
-    local params1 = tStructMemberDef.editorParam
-
-    if strEditor then
-        --print(strEditor)
-        return strEditor, params1
-    else
-        local strType = tStructMemberDef[1]
-        local strEditor, params2 = getEditorInfo(strType)
-        if params1 and params2 then
-            -- params in the member definitions overwrite
-            -- params in the type/struct definition
-            for k,v in pairs(params1) do params2[k]=v end
-            return strEditor, params2
-        else
-            return strEditor, params1 or params2
-        end
-    end
-end
---]]
 
 function getStructMemberEditorInfo(tStructMemberDef)
     local strEditor = tStructMemberDef.editor
@@ -1336,6 +1244,7 @@ function getSize(strType)
     end
 end
 
+
 --- Map a tag code to its structure size.
 -- (used by taglist parser)
 -- @param ulTag the 32 bit tag code
@@ -1417,10 +1326,11 @@ end
 --   consisting only of the end marker is returned.
 function paramsToBin(params)
     local abParblock = ""
+    vbs_print("Serializing tag list")
     for _, param in ipairs(params) do
         local ulTag, ulSize, abValue = param.ulTag, param.ulSize, param.abValue
-        print(string.format("tag = 0x%08x  size=%d  value len=%d",
-            ulTag, ulSize, abValue:len()))
+        vbs_printf("tag = 0x%08x  size=%d  value len=%d",
+            ulTag, ulSize, abValue:len())
         local abTag =
             uint32tobin(ulTag) ..
             uint32tobin(ulSize) .. -- original size
@@ -1432,9 +1342,10 @@ function paramsToBin(params)
     -- append original end tag
     abParblock = abParblock .. uint32tobin(TAG_END) -- .. uint32tobin(0)
     if params.abEndGap then
-        print("appending original data behind end marker")
+        vbs_print("appending original data behind end marker")
         abParblock = abParblock .. params.abEndGap
     end
+    vbs_print("Done")
 
     return abParblock
 
@@ -1468,6 +1379,8 @@ function binToParams(abBin, iStartPos)
     local iLen, iPos = abBin:len(), iStartPos
     local ulTag, ulSize, abValue
     local ulStructSize
+
+    vbs_print("Deserializing tag list")
 
     while (iPos < iLen) do
         -- get tag type
@@ -1510,7 +1423,7 @@ function binToParams(abBin, iStartPos)
         iPos = iPos + 4
 
         -- print position, size, type
-        print(string.format("pos: 0x%08x, tag: 0x%08x, size: 0x%08x", iPos-8, ulTag, ulSize))
+        vbs_printf("pos: 0x%08x, tag: 0x%08x, size: 0x%08x", iPos-8, ulTag, ulSize)
 
         -- if the tag is known, its value size must be either equal to the
         -- struct size, or equal to the struct size rounded up to dword size.
@@ -1559,6 +1472,8 @@ function binToParams(abBin, iStartPos)
         end
     end
 
+    vbs_print("Done")
+
     return fOk, params, iPos - iStartPos, strMsg
 end
 
@@ -1567,31 +1482,86 @@ end
 --                primitive value conversions
 ---------------------------------------------------------------------
 
-require("numedit")
-primitive_type_parsefns = {
-	UINT8 = function(abValue) return numedit.binToUint(abValue, 0, 8) end
-	UINT16 = function(abValue) return numedit.binToUint(abValue, 0, 16) end
-	UINT32 = function(abValue) return numedit.binToUint(abValue, 0, 32) end
-}
-
-primitive_type_serializefns = {
-	UINT8 = function(iValue) return numedit.uintToBin(iValue, 8) end
-	UINT16 = function(iValue) return numedit.uintToBin(iValue, 16) end
-	UINT32 = function(iValue) return numedit.uintToBin(iValue, 32) end
-}
-
-
-function isPrimitiveType(strTypeName)
-	return primitive_type_parsefns[strTypeName] and true
+-- If the string contains a zero byte, strip the zero and everything behind it
+function deserialize_string(abStr)
+	local iZeroPos = string.find(abStr, string.char(0), 1, true)
+	if iZeroPos then
+		return string.sub(abStr, 1, iZeroPos-1)
+	else
+		return abStr
+	end
 end
 
-function parsePrimitiveType(strTypeName, abValue)
-	local fnConv = primitive_type_parsefns[strTypeName]
+
+function parseUINT(strNum, iMax)
+	local iNum = tonumber(strNum)
+	if not iNum then
+		return nil, string.format("Can't parse %s as a number", strNum or "<nil>")
+	elseif iNum>iMax then
+		return nil, string.format("number exceeds maximum: %d (max. %d)", iNum, iMax)
+	else
+		return iNum
+	end
+end
+
+-- Note:
+-- The deserializer for strings removes anything starting from the first 0-byte, if present.
+-- The serializer does NOT pad the string with zeros, as it does not know the required size.
+-- This has to be done in the structure serializer.
+
+primitive_type_deserializers = {
+	UINT8 = function(abValue) return numedit.binToUint(abValue, 0, 8) end,
+	UINT16 = function(abValue) return numedit.binToUint(abValue, 0, 16) end,
+	UINT32 = function(abValue) return numedit.binToUint(abValue, 0, 32) end,
+	STRING = deserialize_string,
+	rcxver = rcxveredit.deserialize_version
+}
+
+primitive_type_serializers = {
+	UINT8 = function(iValue) return numedit.uintToBin(iValue, 8) end,
+	UINT16 = function(iValue) return numedit.uintToBin(iValue, 16) end,
+	UINT32 = function(iValue) return numedit.uintToBin(iValue, 32) end,
+	STRING = function(abValue) return abValue end,
+	rcxver = rcxveredit.serialize_version
+}
+
+primitive_type_parsers = {
+	UINT8 = function(strNum) return parseUINT(strNum, 2^8-1) end,
+	UINT16 = function(strNum) return parseUINT(strNum, 2^16-1) end,
+	UINT32 = function(strNum) return parseUINT(strNum, 2^32-1) end,
+	STRING = function(abValue) return abValue end,
+	rcxver = function(strValue) return strValue end
+}
+
+primitive_type_tostring = {
+	UINT8 = function(iNum) return string.format("0x%02x", iNum) end,
+	UINT16 = function(iNum) return string.format("0x%04x", iNum) end,
+	UINT32 = function(iNum) return string.format("0x%08x", iNum) end,
+	STRING = function(abValue) return abValue end,
+	rcxver = function(strValue) return strValue end
+}
+
+function isPrimitiveType(strTypeName)
+	return primitive_type_deserializers[strTypeName] and true
+end
+
+function parsePrimitiveType(strTypeName, strValue)
+	local fnConv = primitive_type_parsers[strTypeName]
+	if fnConv then return fnConv(strValue) end
+end
+
+function primitiveTypeToString(strTypeName, strValue)
+	local fnConv = primitive_type_tostring[strTypeName]
+	if fnConv then return fnConv(strValue) end
+end
+
+function deserializePrimitiveType(strTypeName, abValue)
+	local fnConv = primitive_type_deserializers[strTypeName]
 	if fnConv then return fnConv(abValue) end
 end
 
 function serializePrimitiveType(strTypeName, value)
-	local fnConv = primitive_type_serializefns[strTypeName]
+	local fnConv = primitive_type_serializers[strTypeName]
 	if fnConv then return fnConv(value) end
 end
 
@@ -1696,19 +1666,19 @@ end
 
 
 
-
--- recursive variant: if member.tValue is set, the value is re-constructed from the elements
+-- If fRecursive = true, member.tValue is serialized.
+-- If false, member.abValue is used.
 function serialize(strTypeName, atMembers, fRecursive)
-    local ser_fn = primitive_type_serializefns[strTypeName] 
-    if ser_fn then
-        return ser_fn(atMembers)
-    end
+	if isPrimitiveType(strTypeName) then
+		return serializePrimitiveType(strTypeName, atMembers)
+	end
+
     local tStructDef = getStructDef(strTypeName)
+    local bin = ""
     if not tStructDef then
         return nil
     end
-    
-    local bin = ""
+
 
     if tStructDef.fStructToBin then
         bin = tStructDef.fStructToBin(atMembers)
@@ -1717,7 +1687,8 @@ function serialize(strTypeName, atMembers, fRecursive)
         local tMember, abMemberValue
         for index, tMemberDef in ipairs(tStructDef) do
             strMemberName, strMemberType = tMemberDef[2], tMemberDef[1]
-        
+
+            -- get binary value
             tMember = atMembers[index]
             if fRecursive and tMember.tValue then
                 abMemberValue = serialize(strMemberType, tMember.tValue, fRecursive)
@@ -1725,15 +1696,22 @@ function serialize(strTypeName, atMembers, fRecursive)
             else
                 abMemberValue = tMember.abValue
             end
-
             assert(abMemberValue,
                 string.format("failed to get binary value for %s.%s", strTypeName, strMemberType))
-                
+
+            -- check size
+            -- pad strings to the required size
             ulMemberSize = getStructMemberSize(tMemberDef)
+            ulActualSize = abMemberValue:len()
+            if ulActualSize<ulMemberSize and strMemberType=="STRING" then
+                abMemberValue = abMemberValue .. string.rep(string.char(0), ulMemberSize - ulActualSize)
+	            ulActualSize = abMemberValue:len()
+            end
             assert(ulMemberSize == abMemberValue:len(),
                 string.format("struct member size has changed: actual = %u, correct = %u",
                 abMemberValue:len(), ulMemberSize))
 
+            -- append to structure binary, handle overlayed members
             local iOffset = tMemberDef.offset
             if iOffset and bin:len() > iOffset then
                 bin = string.sub(bin, 1, iOffset) ..
@@ -1754,19 +1732,18 @@ end
 -- each having strName, strType, ulSize, abValue
 -- if fRecursive = true, parse each abValue and store result in tValue
 function deserialize(strTypeName, abValue, fRecursive)
-    local deser_fn = primitive_type_parsefns[strTypeName] 
-    if deser_fn then
-        return deser_fn(abValue)
-    end
+	if isPrimitiveType(strTypeName) then
+		return deserializePrimitiveType(strTypeName, abValue)
+	end
     local tStructDef = getStructDef(strTypeName)
     if not tStructDef then
         return abValue
     end
 
     local iPos = 0 -- position inside abValue
-    local atMembers = {}    
+    local atMembers = {}
     local strMemberName, strMemberType, ulMemberSize, abMemberValue, tMemberValue
-        
+
     for index, tMemberDef in ipairs(tStructDef) do
         iPos = tMemberDef.offset or iPos
         strMemberName, strMemberType = tMemberDef[2], tMemberDef[1]
@@ -1775,8 +1752,8 @@ function deserialize(strTypeName, abValue, fRecursive)
         if tMemberDef.mask then
             abMemberValue = stringAnd(abMemberValue, tMemberDef.mask)
         end
-        tMemberValue = fRecursive and parseBinValue(strMemberType, abMemberValue) or nil
-        atMembers[index] = 
+        tMemberValue = fRecursive and deserialize(strMemberType, abMemberValue, fRecursive) or nil
+        atMembers[index] =
             {strName = strMemberName,
              strType = strMemberType,
              ulSize = ulSize,
@@ -1793,6 +1770,45 @@ function deserialize(strTypeName, abValue, fRecursive)
 end
 
 
+
+-- fPretty = false: 
+-- prints nested structure members with full member path, e.g.
+--    .tDpmIsaAuto.ulIfConf0 = 0x00000000
+-- fPretty = true:
+-- prints nested structures enclosed in { }, e.g.
+--    .tDpmIsaAuto = {
+--        .ulIfConf0 = 0x00000000
+--        ...
+--     }
+function printStructure(tStruct, strIndent, fPretty)
+    strIndent = strIndent or ""
+    if type(tStruct)=="table" then
+        for iMember, tMember in ipairs(tStruct) do
+            if isPrimitiveType(tMember.strType) then
+                local strValue = primitiveTypeToString(tMember.strType, tMember.tValue)
+                printf("%s.%s = %s", strIndent, tMember.strName, strValue)
+            --[[
+            if type(tMember.tValue)=="number" then
+                printf("%s.%s = 0x%08x", strIndent, tMember.strName, tMember.tValue)
+            elseif type(tMember.tValue)=="string" then
+                printf("%s.%s = %s", strIndent, tMember.strName, tMember.tValue)
+                --]]
+            elseif type(tMember.tValue)=="table" then
+                if fPretty then
+                    printf("%s.%s = {",  strIndent, tMember.strName)
+                    printStructure(tMember.tValue, strIndent.."    ", fPretty)
+                    printf("%s }",  strIndent)
+                else
+                    printStructure(tMember.tValue, strIndent .. "." .. tMember.strName, fPretty)
+                end
+            else
+                printf("%s.%s = %s(%s)", strIndent, tMember.strName, tostring(tMember.tValue), type(tMember.tValue))
+            end
+        end
+    else
+        printf("%s (string)", strIndent)
+    end
+end
 ---------------------------------------------------------------------
 --                       make empty taglist
 ---------------------------------------------------------------------
@@ -1806,7 +1822,7 @@ function makeEmptyParblock()
         assert(tPardesc, "unknown tag in example block: " .. strTagname)
         local ulSize = getSize(strTagname)
         assert(ulSize, "datatype size not found")
-        print(string.format ("tag: 0x%08x size: %u  %-25s ", tPardesc.paramtype, ulSize, strTagname))
+        vbs_printf("tag: 0x%08x size: %u  %-25s ", tPardesc.paramtype, ulSize, strTagname)
         abParblock = abParblock ..
             uint32tobin(tPardesc.paramtype) ..
             uint32tobin(ulSize) ..
@@ -1847,13 +1863,14 @@ example_taglist = {
 "TAG_DIAG_TRANSPORT_CTRL_CIFX",
 "TAG_DIAG_TRANSPORT_CTRL_PACKET",
 
-"memsize",
-"min_persistent_storage_size",
-"min_os_version",
-"max_os_version",
-"min_chip_rev",
-"max_chip_rev",
-"num_comm_channel",
+"RCX_TAG_MEMSIZE",
+"RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE",
+"RCX_TAG_MIN_OS_VERSION",
+"RCX_TAG_MAX_OS_VERSION",
+"RCX_TAG_MIN_CHIP_REV",
+"RCX_TAG_MAX_CHIP_REV",
+"RCX_TAG_NUM_COMM_CHANNEL",
+
 
 "mac_address",
 "ipv4_address",

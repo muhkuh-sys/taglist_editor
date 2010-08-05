@@ -263,8 +263,11 @@ Source: nxo_editor\nxfile.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\taglist.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\doc\readme.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\readme_cmdline.txt; DestDir: {app}\doc; Components: modulator
+Source: nxo_editor\doc\readme_tagtool.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\files.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
 Source: nxo_editor\doc\licenses.txt; DestDir: {app}\doc; Components: modulator
@@ -352,6 +355,7 @@ Name: {app}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Paramete
 Name: {group}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator; Tasks: startmenu
 Name: {group}\Readme; Filename: {app}\doc\readme.txt; Components: modulator; Tasks: startmenu
 Name: {group}\Using makenxo.bat; Filename: {app}\doc\readme_cmdline.txt; Components: modulator; Tasks: startmenu
+Name: {group}\Using tagtool.bat; Filename: {app}\doc\readme_tagtool.txt; Components: modulator; Tasks: startmenu
 Name: {group}\Files and directories; Filename: {app}\doc\files.txt; Components: modulator; Tasks: startmenu
 Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator; Tasks: startmenu
 

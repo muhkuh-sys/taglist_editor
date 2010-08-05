@@ -95,7 +95,7 @@ function showMessages(fOk, strInfoTitle, strErrTitle, ...)
 	end
 end
 
-DEBUG = false
+DEBUG = true --false
 m_nxfile = nil
 
 m_headerFilebar = nil

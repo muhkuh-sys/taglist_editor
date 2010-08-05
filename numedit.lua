@@ -19,41 +19,6 @@
 module("numedit", package.seeall)
 require("tester")
 
---[[
-function binToUint(bin, pos, nBits)
-	--print("nBits=", nBits, "bin: ", bin:len())
-	local nBytes = math.ceil(nBits/8)
-	local val = 0
-	for i= nBytes, 1, -1 do
-		val = val *256 +  bin:byte(pos+i)
-	end
-	return val
-end
-
-function uint32tobin(u)
-	return string.char(bit.band(u or 0, 0xff), 
-	bit.band(bit.rshift(u or 0, 8), 0xff),
-	bit.band(bit.rshift(u or 0, 16), 0xff),
-	bit.band(bit.rshift(u or 0, 24), 0xff))
-end
-
-function binToUint32(bin, pos)
-	return bin:byte(pos+1) + 0x100* bin:byte(pos+2) + 0x10000 * bin:byte(pos+3) + 0x1000000*bin:byte(pos+4)
-end
-
-function uint_big_endian(bin, pos, nBits)
-	--print("nBits=", nBits, "bin: ", bin:len())
-	local nBytes = math.ceil(nBits/8)
-	local val = 0
-	for i=1, nBytes do
-		local b = bin:byte(pos+i)
-		val = 256*val + b
-	end
-	return val
-end
---]]
-
-
 function uintToBin(u, nBits)
 	local u = u or 0
 	local nBytes = math.ceil(nBits/8)
