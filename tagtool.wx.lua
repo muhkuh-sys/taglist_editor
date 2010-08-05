@@ -931,7 +931,7 @@ end
 local iMode = nil
 local MODE_HELP = 1
 local MODE_HELP_TAGS = 2
-local MODE_HELP_CONSTANTS = 3
+local MODE_HELP_CONST = 3
 local MODE_VERSION = 4
 local MODE_SETTAGS = 5
 local MODE_edit = 6
@@ -959,7 +959,7 @@ elseif iArg <= #arg then
 		iArg = iArg + 1
 		
 	elseif strMode=="help_const" then
-		iMode = MODE_HELP_CONSTANTS
+		iMode = MODE_HELP_CONST
 		iArg = iArg + 1
 		
 	elseif strMode=="-version" then
@@ -1035,7 +1035,7 @@ elseif iMode==MODE_HELP_TAGS then
 	taglist.listKnownTags()
 	fOk = true
 	
-elseif iMode==MODE_HELP_CONSTANTS then
+elseif iMode==MODE_HELP_CONST then
 	taglist.listValueConstants()
 	fOk = true
 	
