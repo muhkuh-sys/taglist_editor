@@ -16,7 +16,9 @@ taglist.lua              definitions of tags and C structures,
 help                     HTML help pages
 
 makenxo.bat              script to build an NXO from the command line
-nxomaker.wx.lua          the actual script
+nxomaker.wx.lua          Lua script called by makenxo.bat
+tagtool.bat              script to print, manipulate and replace tag lists
+tagtool.wx.lua           Lua script called by tagtool.bat
 
 hexdump.lua              used by hex editor and to print hex dumps
 
