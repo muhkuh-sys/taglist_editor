@@ -4,30 +4,45 @@
 <Title>TAG_BSL_MEDIUM_PARAMS_DATA_T</Title>
 </HEAD>
 <BODY>
-<h2>Destination Media for Flashing</h2>
+<h2>Destination Media</h2>
 
 <p>
-If enabled, the 2nd Stage Loader will be flashed if it was loaded via DPM/PCI or serial console, so it will always be available during startup.
-It is possible to override the default volume being used.
+Using this tag, it is possible to override the default device being used for the volume, and to enable automatic flashing of the 
+bootloader.
 </p>
 <p></p>
 
 <table border=1>
 <tr>
 	<td>Flash Bootloader</td>
-	<td>Enable/disable automatic flashing</td>
+	<td>
+	If this flag is enabled and the 2nd Stage Loader is downloaded via DPM/PCI or the serial console, it will flash itself
+	to the destination device.
+	</td>
 </tr>
+
 <tr>
 	<td>Destination</td>
-	<td>Destination device/volume for flashing. <br>
-	If autodetection is selected, the following rules are followed:<br>
+	
+	<td>
+	Destination device used for the volume and for flashing the 2nd Stage Loader.<br>
+	<ul>
+		<li>Auto-detect media: See below</li>
+		<li>RAM Disk: Use a file system in RAM</li>
+		<li>Serial Flash: Use a file system in serial flash</li>
+		<li>Parallel Flash: No file system will be available, 
+		    only a single file can be downloaded and will always be stored at location 0xc0040000.</li>
+	</ul>
+	<br><br>
+	Auto-detection works as follows:<br>
 		<ul>
-		<li>If the BSL is running from serial flash, use serial flash as volume.</li>
-		<li>If the BSL was loaded via PCI/DPM and not flashed, use a RAM disk.</li>
-		<li>If the BSL was loaded from parallel flash, don't use any file system, but use an NXF file at 0xc0040000.</li>
+		<li>If the BSL is running from serial flash, use serial flash.</li>
+		<li>If the BSL was loaded via PCI/DPM and self-flashing is disabled, use a RAM disk.</li>
+		<li>If the BSL was loaded from parallel flash, use parallel flash.</li>
 		</ul>
 	</td>
 </tr>
+
 </table>
 
 </BODY>
