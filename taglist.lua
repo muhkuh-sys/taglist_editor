@@ -1770,6 +1770,9 @@ function deserialize(strTypeName, abValue, fRecursive)
 end
 
 
+---------------------------------------------------------------------
+--                       print a structure
+---------------------------------------------------------------------
 
 -- fPretty = false: 
 -- prints nested structure members with full member path, e.g.
@@ -1780,13 +1783,25 @@ end
 --        .ulIfConf0 = 0x00000000
 --        ...
 --     }
+
 function printStructure(tStruct, strIndent, fPretty)
     strIndent = strIndent or ""
     if type(tStruct)=="table" then
+        -- make format string for member names
+        local iMaxNameLen = 0
         for iMember, tMember in ipairs(tStruct) do
+            if isPrimitiveType(tMember.strType) and tMember.strName:len()>iMaxNameLen then 
+                    iMaxNameLen = tMember.strName:len()
+            end
+        end
+        local strNameFormat = "%-" .. tostring(iMaxNameLen) .. "s"
+        
+        -- print the members
+        for iMember, tMember in ipairs(tStruct) do
+            local strName = string.format(strNameFormat, tMember.strName)
             if isPrimitiveType(tMember.strType) then
                 local strValue = primitiveTypeToString(tMember.strType, tMember.tValue)
-                printf("%s.%s = %s", strIndent, tMember.strName, strValue)
+                printf("%s.%s = %s", strIndent, strName, strValue)
             --[[
             if type(tMember.tValue)=="number" then
                 printf("%s.%s = 0x%08x", strIndent, tMember.strName, tMember.tValue)
@@ -1809,6 +1824,8 @@ function printStructure(tStruct, strIndent, fPretty)
         printf("%s (string)", strIndent)
     end
 end
+
+
 ---------------------------------------------------------------------
 --                       make empty taglist
 ---------------------------------------------------------------------

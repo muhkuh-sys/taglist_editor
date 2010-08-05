@@ -102,7 +102,9 @@ end
 -- 3 name, but no tValue (should not happen)
 function printTaglist(atTags)
 	if #atTags==0 then
-		printf("The tag list is empty")
+		printf("# The tag list is empty")
+		print()
+		print()
 	end
 
 	for iTag, tTag in ipairs(atTags) do
@@ -126,9 +128,9 @@ function printTaglist(atTags)
 		end
 		print()
 		print()
-	
 	end
 end
+
 
 --[[
 -- for each known tag, update abValue from tValue if tValue is set.
@@ -144,16 +146,13 @@ end
 ----------------------------------------------------------------------------
 --                parse and perform editing instructions
 ----------------------------------------------------------------------------
-strLineBreak = "\r\n"
-strCommentChar = "#"
-strTrimPattern = "^%s*(.+[^%s])%s*$"
--- strEmptyLinePattern = "^%s*$"
--- strNamePattern = "^%s*([%w_]+)%s*$"
--- strMatchPattern = "^%s*MATCH%s+(.*[^%s])%s*=%s*(.+[^%s])%s*$"
--- strSetPattern =           "^%s*(.*[^%s])%s*=%s*(.+[^%s])%s*$"
-strNamePattern  = "^Tag[^:]*:%s*([%w_]+)"
-strMatchPattern =     '^%s*%.?([%w_%.]+)%s*=%s*"?([%w%s_]+)"?'
-strSetPattern   = '^SET %s*%.?([%w_%.]+)%s*=%s*"?([%w%s_]+)"?'
+strLineBreak          = "\r\n"
+strCommentChar        = "#"
+strTrimPattern        = "^%s*(.+[^%s])%s*$"
+strTagNamePattern     = "^Tag[^:]*:%s*([%w_]+)"
+strStructNamePattern  =             "^([%w_]+)$"
+strMatchPattern       =     '^%s*%.?([%w_%.]+)%s*=%s*"?([%w%s_]+)"?'
+strSetPattern         = '^SET %s*%.?([%w_%.]+)%s*=%s*"?([%w%s_]+)"?'
 
 -- split strText into lines at "\n" and remove comments starting with "#"
 function splitIntoLines(strText)
@@ -212,19 +211,22 @@ end
 -- iLineNo                       - line number in the input
 
 function parseEdits(astrLines)
-
 	local atEditRecs = {}
 	local tEditRec = nil
 	for iLineNo, strLine in ipairs(astrLines) do
 		dbg_printf("%d: %s", iLineNo, strLine)
 		local strTagName, strFieldName, strValue
 		
+		-- empty line
 		if strLine == "" then 
 			dbg_printf("skipping line %d", iLineNo)
 		else
-			local strName = string.match(strLine, strNamePattern)
+			-- Tag: ...: <tag name> 
+			-- <struct name>
+			strName = string.match(strLine, strTagNamePattern)
+				or string.match(strLine, strStructNamePattern)
 			if strName then
-				dbg_printf("got name: %s", strName)
+				dbg_printf("got tag/structure name: %s", strName)
 				if tEditRec then
 					table.insert(atEditRecs, tEditRec)
 				end
@@ -237,18 +239,19 @@ function parseEdits(astrLines)
 			elseif not tEditRec then
 				return nil, string.format("Line %d: parse error (no tag specified)", iLineNo)
 			else
-				local strFieldName, strValue = string.match(strLine, strMatchPattern)
+				-- <field name>=<value>
+				strFieldName, strValue = string.match(strLine, strMatchPattern)
 				if strFieldName and strValue then
-					--local strValue = string.match(strValue, strQuotePattern)
 					table.insert(tEditRec.atMatches, {strFieldName = strFieldName, strValue = strValue, iLineNo = iLineNo})
 					dbg_printf("match %s = %s", strFieldName, strValue)
 				else
+					-- SET <field name>=<value>
 					strFieldName, strValue = string.match(strLine, strSetPattern)
 					if strFieldName and strValue then
-						--local strValue = string.match(strValue, strQuotePattern)
 						table.insert(tEditRec.atEdits, {strFieldName = strFieldName, strValue = strValue, iLineNo = iLineNo})
 						dbg_printf("edit %s = %s", strFieldName, strValue)
 					else
+						-- anything else
 						print(">"..strLine.."<")
 						return nil, string.format("line %d: parse error", iLineNo)
 					end
@@ -561,7 +564,7 @@ end
 
 -- returns true/false and any messages.
 -- Messages may be nil, a string or a list of strings.
-function edittags(strInputFile, strEditsFile, strOutputFile)
+function edit(strInputFile, strEditsFile, strOutputFile)
 	-- load and parse the existing nxf/nxo file
 	local abInputFile, strMsg = loadBin(strInputFile)
 	if not abInputFile then 
@@ -688,8 +691,131 @@ function listtags(strInputFile)
 	
 	printTaglist(atTags)
 	
-	return fOk, strMsg
+	return true
 end
+
+
+
+
+----------------------------------------------------------------------------
+--        print device header of an NXF/NXO file
+----------------------------------------------------------------------------
+
+-- returns true/false and any messages.
+-- Messages may be nil, a string or a list of strings.
+function listdevhdr(strInputFile)
+	-- load and parse the existing nxf/nxo file
+	local abInputFile, strMsg = loadBin(strInputFile)
+	if not abInputFile then 
+		return false, strMsg 
+	end
+	
+	nx = nxfile.new()
+	local fOk, astrErrors = nx:parseBin(abInputFile)
+	if fOk then
+		printResults(fOk, astrErrors)
+	else
+		return fOk, astrErrors
+	end
+	
+	-- get the device header
+	if not nx:hasDeviceHeader() then
+		return false, "Device header not found"
+	end
+	
+	local abDevHdr = nx:getDeviceHeader()
+	
+	-- deserialize device header and check version
+	local tDevHdr = taglist.deserialize("DEVICE_HEADER_V1_T", abDevHdr, true)
+	
+	if not tDevHdr then
+		return false, "Error while deserializing device header"
+	end
+	
+	if not tDevHdr.ulStructVersion==0x00010000 then
+		return false, string.format("Device header has the wrong version: 0x%08x", tDevHdr.ulStructVersion)
+	end
+	
+	print("DEVICE_HEADER_V1_T")
+	taglist.printStructure(tDevHdr)
+	print()
+	print()
+	
+	return true
+
+end
+
+
+
+
+
+----------------------------------------------------------------------------
+--        print known tags and device header
+----------------------------------------------------------------------------
+
+-- returns true/false and any messages.
+-- Messages may be nil, a string or a list of strings.
+function listTagsAndDevHdr(strInputFile)
+	-- load and parse the existing nxf/nxo file
+	local abInputFile, strMsg = loadBin(strInputFile)
+	if not abInputFile then 
+		return false, strMsg 
+	end
+	
+	nx = nxfile.new()
+	local fOk, astrErrors = nx:parseBin(abInputFile)
+	if fOk then
+		printResults(fOk, astrErrors)
+	else
+		return fOk, astrErrors
+	end
+	
+	-- tag list
+	if nx:hasTaglist() then
+		local abTags = nx:getTaglistBin()
+		
+		local fOk, atTags, iLen, strError = taglist.binToParams(abTags, 0)
+		if fOk then
+			printResults(fOk, strError)
+		else
+			return false, strError
+		end
+		
+		local fOk, strError = deserializeKnownTags(atTags)
+		if not fOk then
+			return false, strError
+		end
+		
+		printTaglist(atTags)
+	else
+		print("# No tag list")
+		print()
+	end
+	
+	-- device header
+	if nx:hasDeviceHeader() then
+		local abDevHdr = nx:getDeviceHeader()
+		
+		-- deserialize device header and check version
+		local tDevHdr = taglist.deserialize("DEVICE_HEADER_V1_T", abDevHdr, true)
+		
+		if not tDevHdr then
+			return false, "Error while deserializing device header"
+		end
+		
+		if tDevHdr.ulStructVersion==0x00010000 then
+			printf("# Unknown device header version (0x%08x)",  tDevHdr.ulStructVersion)
+		else
+			print("DEVICE_HEADER_V1_T")
+			taglist.printStructure(tDevHdr)
+		end
+	else
+		print("No device header")
+	end
+	
+	return true
+end
+
 
 
 
@@ -747,31 +873,32 @@ local strUsage = [==[
 tagtool prints or manipulates the tag list in an NXF or NXO file
 
 Usage: 
+   tagtool settags    [-v|-debug] infile taglistfile outfile
+   tagtool edit       [-v|-debug] infile editsfile outfile
+   tagtool list       [-v|-debug] infile 
    tagtool [help|-h]
    tagtool help_tags
    tagtool help_const
    tagtool -version
-   tagtool settags [-v|-debug]  infile taglistfile outfile
-   tagtool edittags [-v|-debug] infile editsfile outfile
-   tagtool listtags [-v|-debug] infile 
 
 Modes:
-   settags:    Replaces the tag list
-   edittags:   Assigns values to specific fields of the tag list
-   listtags:   Prints a listing of the tags contained in the file
-   help:       Prints this help text
-   help_tags:  Prints a list of the known tags
-   help_const: Prints a list of the known value constants
-
+   settags     Replaces the tag list
+   edit        Changes values in the tag list or device header
+   list        Prints the tags list and the device header
+   help        Prints this help text
+   help_tags   Prints a list of the known tags
+   help_const  Prints a list of the known value constants
+   -version    Prints version information
+   
 Flags:
-   -v             enable verbose output
-   -debug         enable debug output    
+   -v          enable verbose output
+   -debug      enable debug output    
    
 Arguments:
-   infile         The NXF/NXO file to load
-   editsfile      Text file containing editing instructions
-   taglistfile    The new tag list in binary format
-   outfile        The NXF/NXO file to write
+   infile      The NXF/NXO file to load
+   editsfile   Text file containing editing instructions
+   taglistfile The new tag list in binary format
+   outfile     The NXF/NXO file to write
 ]==]
 
 function printUsage()
@@ -804,11 +931,12 @@ end
 local iMode = nil
 local MODE_HELP = 1
 local MODE_HELP_TAGS = 2
-local MODE_HELP_CONSTANTS = 6
-local MODE_VERSION = 7
-local MODE_SETTAGS = 3
-local MODE_EDITTAGS = 4
-local MODE_LISTTAGS = 5
+local MODE_HELP_CONSTANTS = 3
+local MODE_VERSION = 4
+local MODE_SETTAGS = 5
+local MODE_edit = 6
+local MODE_LISTTAGS = 7
+local MODE_LISTDEVHDR = 8
 
 local fArgsOk = false
 local iArg = 1
@@ -842,14 +970,19 @@ elseif iArg <= #arg then
 		iMode = MODE_SETTAGS
 		iArg = iArg + 1
 		
-	elseif strMode=="edittags" then
-		iMode = MODE_EDITTAGS
+	elseif strMode=="edit" then
+		iMode = MODE_edit
 		iArg = iArg + 1
 		
-	elseif strMode=="listtags" then
+	elseif strMode=="list" then
 		iMode = MODE_LISTTAGS
 		iArg = iArg + 1
+	
+	elseif strMode=="listdevhdr" then
+		iMode = MODE_LISTDEVHDR
+		iArg = iArg + 1
 	end
+
 end
 
 -- optional: -v/-debug
@@ -874,14 +1007,15 @@ if (iMode==MODE_HELP or
 	fArgsOk = true
 	
 elseif (iMode==MODE_SETTAGS or 
-		iMode==MODE_EDITTAGS) and iRemArgs == 3 then
+		iMode==MODE_edit) and iRemArgs == 3 then
 	strInputFile = arg[iArg]
 	strTagsFile = arg[iArg+1]
 	strOutputFile = arg[iArg+2]
 	iArg = iArg+3
 	fArgsOk = true
 
-elseif iMode==MODE_LISTTAGS and iRemArgs == 1 then
+elseif (iMode==MODE_LISTTAGS or
+		iMode==MODE_LISTDEVHDR) and iRemArgs == 1 then
 	strInputFile = arg[iArg]
 	iArg = iArg+1
 	fArgsOk = true
@@ -912,11 +1046,14 @@ elseif iMode==MODE_VERSION then
 elseif iMode == MODE_SETTAGS then
 	fOk, msgs = replacetags(strInputFile, strTagsFile, strOutputFile)
 	
-elseif iMode == MODE_EDITTAGS then
-	fOk, msgs = edittags(strInputFile, strTagsFile, strOutputFile)
+elseif iMode == MODE_edit then
+	fOk, msgs = edit(strInputFile, strTagsFile, strOutputFile)
 	
 elseif iMode==MODE_LISTTAGS then
-	fOk, msgs = listtags(strInputFile)
+	fOk, msgs = listTagsAndDevHdr(strInputFile)
+	
+elseif iMode==MODE_LISTDEVHDR then
+	fOk, msgs = listdevhdr(strInputFile)
 end
 
 printResults(fOk, msgs)
