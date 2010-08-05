@@ -1,6 +1,6 @@
 Change log for Tag List Editor
 
-Tag list editor 1.1.8841
+Tag list editor 1.1.8845
  * added tagtool.bat
  * removed option HIF PIO in RCX_TAG_LED_T
 
