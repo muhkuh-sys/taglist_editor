@@ -6,12 +6,13 @@ Tagtool is a command line tool with three functionalities:
 3) Modify the tag list in an NXF or NXO file according to instructions
    which are read from a text file.
 
-tagtool prints or manipulates the tag list in an NXF or NXO file.
+tagtool prints or manipulates the tag list in an NXF or NXO file
 
 Usage: 
    tagtool settags    [-v|-debug] infile taglistfile outfile
    tagtool edit       [-v|-debug] infile editsfile outfile
    tagtool list       [-v|-debug] infile 
+   tagtool diff       [-v|-debug] infile1 infile2 
    tagtool [help|-h]
    tagtool help_tags
    tagtool help_const
@@ -21,6 +22,7 @@ Modes:
    settags     Replaces the tag list
    edit        Changes values in the tag list or device header
    list        Prints the tags list and the device header
+   diff        Extract changes between infile1 and infile2
    help        Prints this help text
    help_tags   Prints a list of the known tags
    help_const  Prints a list of the known value constants
@@ -35,7 +37,7 @@ Arguments:
    editsfile   Text file containing editing instructions
    taglistfile The new tag list in binary format
    outfile     The NXF/NXO file to write
-
+   
 Help
 ======
 help, -h, /? prints the above usage information.
@@ -49,6 +51,25 @@ For the tags whose structure is known to the program, the contents are
 listed. For all other tags, only the 32 bit identifier number is listed.
 Currently, only device header version 1.0 is supported.
 
+diff
+=======
+Loads two NXF/NXO files, compares their tag lists and device headers and 
+prints any differences.
+The two tag lists must contain the same tags in the same order. 
+For any tags whose values differ, the tag from the second file is
+printed as an edit record which can be fed into the "edit" function.
+
+Example: both files contain an xC number tag, in both files the identifier
+is "RTE_XC0" and in file 2, ulXcId is 2:
+
+Tag 14: RCX_MOD_TAG_IT_XC (0x00001050)
+    .szIdentifier = RTE_XC0
+SET .ulXcId       = 0x00000002
+
+This allows you to edit a tag list using the GUI based editor, save
+to a different file, extract the changes and later apply the changes to
+another file.
+
 settags
 =========
 Replaces the tag list in the input file with the contents of the taglist file
@@ -56,7 +77,7 @@ and writes the result to the output file.
 
 edit
 =========
-Edits the tag list in the input file according to the instaructions in
+Edits the tag list in the input file according to the instructions in
 the editsfile and writes the result to the output file.
 
 Format of the editing instructions file:
@@ -96,18 +117,21 @@ description, its ulXcId field is set to 2.
 
 The device header is selected as follows:
 DEVICE_HEADER_V1_T
-SET .usDeviceClass = 5
 
 
 How to generate the editing instructions file
 ===============================================
+Method 1) 
+Edit an NXO/NXF file using the GUI-based editor, save the result to 
+another file and use the "diff" function to extract the changes.
 
+Method 2) 
 The output of the "list" function can be parsed by the "edit" function.
 Redirect the output to a text file, edit the file and put "SET " at the
 beginning of every line which contains a value you want to be changed. 
-Either change the values directly in the text file, or use the tag list
-editor to edit the NXF/NXO file beforehand, and then use tagtool to 
-generate the text file.
+
+Method 3) 
+Write it manually according to the format described above.
 
 
 
@@ -195,6 +219,5 @@ The file does not contain a tag list
 
 Internal errors:
 Any error messages starting with "BUG" indicate bugs in the program or the
-tag structure definitions. If you have made any changes of your own, check them.
-If you have not made any such changes, contact netX support.
-  
+tag structure definitions. If you have made any changes of your own, 
+check them. If you have not made any such changes, contact netX support.

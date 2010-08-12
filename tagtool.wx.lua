@@ -109,13 +109,12 @@ function printTaglist(atTags)
 
 	for iTag, tTag in ipairs(atTags) do
 		-- print structure header
-		strTagName, tTagDef = taglist.getParamTypeDesc(tTag.ulTag)
-		strDesc = tTagDef and tTagDef.desc or ""
+		strTagName = taglist.getParamTypeDesc(tTag.ulTag)
 		
-		if strTagName and tTagDef then
+		if strTagName then
 			-- TAG #9 RCX_MOD_TAG_IT_XC_T (0x00001050) xC Unit
 			-- (RCX_MOD_TAG_IT_XC -alternatives)
-			printf("Tag %d: %s (0x%08x)", iTag, strTagName, tTag.ulTag, strDesc)
+			printf("Tag %d: %s (0x%08x)", iTag, strTagName, tTag.ulTag)
 			-- print structure content
 			if tTag.tValue then
 			    taglist.printStructure(tTag.tValue)
@@ -143,6 +142,84 @@ function serializeKnownTags(atTags)
 	end
 end
 --]]
+
+
+function getDeviceHeaderVersion(tDevHdr)
+	for iMember, tMember in ipairs(tDevHdr) do
+		if tMember.strName == "ulStructVersion" then 
+			return tMember.tValue 
+		end
+	end
+end
+
+function checkDeviceHeaderVersion(tDevHdr)
+	local ulVersion = getDeviceHeaderVersion(tDevHdr)
+	if ulVersion == 0x00010000 then
+		return true
+	elseif ulVersion == nil then
+		return false, "no header version found, illegal structure"
+	else
+		return string.format("# Unknown device header version (0x%08x)", ulVersion)
+	end
+end
+
+function loadInputFile(strInputFile)
+	local tNx
+	local abTags, iLen, atTags
+	local abDevHdr, tDevHdr
+	local fOk, strError, astrErrors
+
+	-- load and parse the existing nxf/nxo file
+	local abInputFile, strMsg = loadBin(strInputFile)
+	if not abInputFile then 
+		return nil,strMsg 
+	end
+	
+	tNx = nxfile.new()
+	fOk, astrErrors = tNx:parseBin(abInputFile)
+	if fOk then
+		printResults(fOk, astrErrors)
+	else
+		return nil, astrErrors
+	end
+	
+	-- tag list
+	if tNx:hasTaglist() then
+		abTags = tNx:getTaglistBin()
+		
+		fOk, atTags, iLen, strError = taglist.binToParams(abTags, 0)
+		if fOk then
+			printResults(fOk, strError)
+			fOk, strError = deserializeKnownTags(atTags)
+		end
+		
+		if not fOk then
+			return nil, strError
+		end
+	else
+		atTags = {}
+	end
+	
+	-- device header
+	if tNx:hasDeviceHeader() then
+		abDevHdr = tNx:getDeviceHeader()
+		
+		-- deserialize device header and check version. We only handle Version 1.0
+		tDevHdr = taglist.deserialize("DEVICE_HEADER_V1_T", abDevHdr, true)
+		if not tDevHdr then
+			return nil, "Error while deserializing device header"
+		end
+	end
+	
+	return {
+		tNx = tNx,
+		atTags = atTags,
+		abDevHdr = abDevHdr,
+		tDevHdr = tDevHdr
+	}
+end
+
+
 ----------------------------------------------------------------------------
 --                parse and perform editing instructions
 ----------------------------------------------------------------------------
@@ -500,8 +577,9 @@ function handle_editrec_device_header(nx, tEditRecord, iEdit)
 		return false, "Error while deserializing device header"
 	end
 	
-	if not tDevHdr.ulStructVersion==0x00010000 then
-		return false, string.format("Device header has the wrong version: 0x%08x", tDevHdr.ulStructVersion)
+	local fOk, strError = checkDeviceHeaderVersion(tDevHdr)
+	if not fOk then
+		return false, strError
 	end
 	
 	-- match edit record
@@ -565,37 +643,12 @@ end
 -- returns true/false and any messages.
 -- Messages may be nil, a string or a list of strings.
 function edit(strInputFile, strEditsFile, strOutputFile)
-	-- load and parse the existing nxf/nxo file
-	local abInputFile, strMsg = loadBin(strInputFile)
-	if not abInputFile then 
-		return false, strMsg 
+	local tRes, msgs = loadInputFile(strInputFile)
+	if not tRes then
+		return false, msgs
 	end
-	
-	nx = nxfile.new()
-	local fOk, astrErrors = nx:parseBin(abInputFile) --
-	if fOk then
-		printResults(fOk, astrErrors)
-	else
-		return false, astrErrors
-	end
-	
-	-- extract and parse the tag list
-	if not nx:hasTaglist() then
-		return false, "The file does not contain a tag list"
-	end
-	local abTags = nx:getTaglistBin()
-	
-	local fOk, atTags, iLen, strError = taglist.binToParams(abTags, 0)  --
-	if fOk then
-		printResults(fOk, strError)
-	else
-		return false, strError
-	end
-	
-	local fOk, strError = deserializeKnownTags(atTags)
-	if not fOk then
-		return false, strError
-	end
+
+	local nx, atTags = tRes.tNx, tRes.atTags
 	
 	-- load and parse the edits file
 	local strEdits, strMsg = loadBin(strEditsFile)
@@ -629,7 +682,7 @@ function edit(strInputFile, strEditsFile, strOutputFile)
 	end
 	
 	-- rebuild taglist binary
-	abTags = taglist.paramsToBin(atTags)
+	local abTags = taglist.paramsToBin(atTags)
 	
 	-- replace the tag list
 	local fOk, strError = nx:setTaglistBin(abTags, true)
@@ -650,104 +703,6 @@ function edit(strInputFile, strEditsFile, strOutputFile)
 end
 
 
-----------------------------------------------------------------------------
---        print known tags from the tag list in NXF/NXO file
-----------------------------------------------------------------------------
-
--- returns true/false and any messages.
--- Messages may be nil, a string or a list of strings.
-function listtags(strInputFile)
-	-- load and parse the existing nxf/nxo file
-	local abInputFile, strMsg = loadBin(strInputFile)
-	if not abInputFile then 
-		return false, strMsg 
-	end
-	
-	nx = nxfile.new()
-	local fOk, astrErrors = nx:parseBin(abInputFile)
-	if fOk then
-		printResults(fOk, astrErrors)
-	else
-		return fOk, astrErrors
-	end
-	
-	-- extract and parse the tag list
-	if not nx:hasTaglist() then
-		return false, "The file does not contain a tag list"
-	end
-	local abTags = nx:getTaglistBin()
-	
-	local fOk, atTags, iLen, strError = taglist.binToParams(abTags, 0)
-	if fOk then
-		printResults(fOk, strError)
-	else
-		return false, strError
-	end
-	
-	local fOk, strError = deserializeKnownTags(atTags)
-	if not fOk then
-		return false, strError
-	end
-	
-	printTaglist(atTags)
-	
-	return true
-end
-
-
-
-
-----------------------------------------------------------------------------
---        print device header of an NXF/NXO file
-----------------------------------------------------------------------------
-
--- returns true/false and any messages.
--- Messages may be nil, a string or a list of strings.
-function listdevhdr(strInputFile)
-	-- load and parse the existing nxf/nxo file
-	local abInputFile, strMsg = loadBin(strInputFile)
-	if not abInputFile then 
-		return false, strMsg 
-	end
-	
-	nx = nxfile.new()
-	local fOk, astrErrors = nx:parseBin(abInputFile)
-	if fOk then
-		printResults(fOk, astrErrors)
-	else
-		return fOk, astrErrors
-	end
-	
-	-- get the device header
-	if not nx:hasDeviceHeader() then
-		return false, "Device header not found"
-	end
-	
-	local abDevHdr = nx:getDeviceHeader()
-	
-	-- deserialize device header and check version
-	local tDevHdr = taglist.deserialize("DEVICE_HEADER_V1_T", abDevHdr, true)
-	
-	if not tDevHdr then
-		return false, "Error while deserializing device header"
-	end
-	
-	if not tDevHdr.ulStructVersion==0x00010000 then
-		return false, string.format("Device header has the wrong version: 0x%08x", tDevHdr.ulStructVersion)
-	end
-	
-	print("DEVICE_HEADER_V1_T")
-	taglist.printStructure(tDevHdr)
-	print()
-	print()
-	
-	return true
-
-end
-
-
-
-
 
 ----------------------------------------------------------------------------
 --        print known tags and device header
@@ -755,67 +710,125 @@ end
 
 -- returns true/false and any messages.
 -- Messages may be nil, a string or a list of strings.
+
 function listTagsAndDevHdr(strInputFile)
-	-- load and parse the existing nxf/nxo file
-	local abInputFile, strMsg = loadBin(strInputFile)
-	if not abInputFile then 
-		return false, strMsg 
+	local tRes, msgs = loadInputFile(strInputFile)
+	if not tRes then
+		return false, msgs
 	end
+
+	local atTags, tDevHdr = tRes.atTags, tRes.tDevHdr 
 	
-	nx = nxfile.new()
-	local fOk, astrErrors = nx:parseBin(abInputFile)
-	if fOk then
-		printResults(fOk, astrErrors)
-	else
-		return fOk, astrErrors
-	end
-	
-	-- tag list
-	if nx:hasTaglist() then
-		local abTags = nx:getTaglistBin()
-		
-		local fOk, atTags, iLen, strError = taglist.binToParams(abTags, 0)
-		if fOk then
-			printResults(fOk, strError)
-		else
-			return false, strError
-		end
-		
-		local fOk, strError = deserializeKnownTags(atTags)
-		if not fOk then
-			return false, strError
-		end
-		
+	if atTags and #atTags>0 then
 		printTaglist(atTags)
 	else
 		print("# No tag list")
 		print()
 	end
-	
-	-- device header
-	if nx:hasDeviceHeader() then
-		local abDevHdr = nx:getDeviceHeader()
-		
-		-- deserialize device header and check version
-		local tDevHdr = taglist.deserialize("DEVICE_HEADER_V1_T", abDevHdr, true)
-		
-		if not tDevHdr then
-			return false, "Error while deserializing device header"
-		end
-		
-		if tDevHdr.ulStructVersion==0x00010000 then
-			printf("# Unknown device header version (0x%08x)",  tDevHdr.ulStructVersion)
+
+	if tDevHdr then
+		local fOk, strError = checkDeviceHeaderVersion(tDevHdr)
+		if not fOk then
+			printf("# %s", strError)
 		else
 			print("DEVICE_HEADER_V1_T")
 			taglist.printStructure(tDevHdr)
 		end
 	else
-		print("No device header")
+		print("# No device header")
 	end
 	
 	return true
 end
 
+
+----------------------------------------------------------------------------
+--        print differences in known tags and device header
+----------------------------------------------------------------------------
+
+-- Extracts tag lists from file 1 and 2 and
+-- prints those tags whose contents are different.
+-- Both tag lists must contain the same number and types of tags in the same order.
+
+-- returns true/false and any messages.
+-- Messages may be nil, a string or a list of strings.
+function listdiffs(strInputFile, strInputFile2)
+	local tRes1, msgs = loadInputFile(strInputFile)
+	if not tRes1 then
+		return false, msgs
+	end
+	
+	local tRes2, msgs = loadInputFile(strInputFile2)
+	if not tRes2 then
+		return false, msgs
+	end
+
+	local atTags1, abDevHdr1, tDevHdr1 = tRes1.atTags, tRes1.abDevHdr, tRes1.tDevHdr
+	local atTags2, abDevHdr2, tDevHdr2 = tRes2.atTags, tRes2.abDevHdr, tRes2.tDevHdr
+	
+	-- compare tag lists
+	if #atTags1 ~= #atTags2 then
+		return false, "The two tag lists do not have the same number of entries"
+	end
+	
+	for iTag = 1, #atTags1 do
+		local tTag1 = atTags1[iTag]
+		local tTag2 = atTags2[iTag]
+		
+		-- abort if there are two different tags at the same position
+		if tTag1.ulTag ~= tTag2.ulTag then
+			return false, string.format("Tag #%d is not of the same type", iTag)
+			
+		-- skip any tags which have the same binary value
+		elseif tTag1.abValue == tTag2.abValue then
+			vbs_printf("# Tag %d (0x%08x) equal", iTag, tTag1.ulTag)
+		else
+			-- if the binary values differ and both tags are deserialized, print the differences
+			local strTagName = taglist.getParamTypeDesc(tTag2.ulTag)
+			
+			if tTag1.tValue and tTag2.tValue and strTagName then
+				printf("Tag %d: %s (0x%08x)", iTag, strTagName, tTag2.ulTag)
+				local fOk, msg = taglist.printStructureDiffs(tTag1.tValue, tTag2.tValue)
+				if not fOk then
+					return false, msg
+				end
+				print()
+				print()
+			else
+				-- the binary values differ, but we can't print the structures
+				printf("# Tag %d (0x%08x) differs - no structure definition available", iTag, tTag.ulTag)
+				print()
+				print()
+			end
+		end
+	end
+	
+	
+	-- compare device headers
+	if tDevHdr1 == nil and tDevHdr2 == nil then
+		print("# No device header")
+	elseif tDevHdr1 == nil and tDevHdr2 ~= nil then
+		return false, "File 1 has a device header but File 2 does not"
+	elseif tDevHdr1 ~= nil and tDevHdr2 == nil then
+		return false, "File 2 has a device header but File 1 does not"
+	elseif abDevHdr1 ~= abDevHdr2 then
+		local ulVer1 = getDeviceHeaderVersion(tDevHdr1)
+		local ulVer2 = getDeviceHeaderVersion(tDevHdr2)
+		if ulVer1 ~= ulVer2 then
+			print("# File 1 and File 2 have different versions of the device header")
+		elseif ulVer1 ~= 0x00010000 then
+			printf("# unknown device header version", ulVer1, ulVer2)
+		else
+			print("DEVICE_HEADER_V1_T")
+			local fOk, msg = taglist.printStructureDiffs(tDevHdr1, tDevHdr2)
+			if not fOk then
+				return false, msg
+			end
+		end
+	end
+	
+	return true
+end
 
 
 
@@ -831,13 +844,7 @@ function replacetags(strInputFile, strTagsFile, strOutputFile)
 	if not abInputFile then 
 		return false, strMsg 
 	end
-	
-	-- load the new tag list
-	local abTags, strMsg = loadBin(strTagsFile)
-	if not abTags then 
-		return false, strMsg 
-	end
-	
+
 	-- parse the nxf/nxo file
 	nx = nxfile.new()
 	local fOk, astrErrors = nx:parseBin(abInputFile)
@@ -845,7 +852,14 @@ function replacetags(strInputFile, strTagsFile, strOutputFile)
 		printResults(fOk, astrErrors)
 	else
 		return false, astrErrors
-	end	
+	end
+	
+	-- load the new tag list
+	local abTags, strMsg = loadBin(strTagsFile)
+	if not abTags then 
+		return false, strMsg 
+	end
+	
 	-- replace the tag list
 	local fOk, strError = nx:setTaglistBin(abTags, false)
 	if not fOk then
@@ -876,6 +890,7 @@ Usage:
    tagtool settags    [-v|-debug] infile taglistfile outfile
    tagtool edit       [-v|-debug] infile editsfile outfile
    tagtool list       [-v|-debug] infile 
+   tagtool diff       [-v|-debug] infile1 infile2 
    tagtool [help|-h]
    tagtool help_tags
    tagtool help_const
@@ -885,6 +900,7 @@ Modes:
    settags     Replaces the tag list
    edit        Changes values in the tag list or device header
    list        Prints the tags list and the device header
+   diff        Extract changes between infile1 and infile2
    help        Prints this help text
    help_tags   Prints a list of the known tags
    help_const  Prints a list of the known value constants
@@ -934,13 +950,13 @@ local MODE_HELP_TAGS = 2
 local MODE_HELP_CONST = 3
 local MODE_VERSION = 4
 local MODE_SETTAGS = 5
-local MODE_edit = 6
-local MODE_LISTTAGS = 7
-local MODE_LISTDEVHDR = 8
+local MODE_EDIT = 6
+local MODE_LIST = 7
+local MODE_DIFF = 8
 
 local fArgsOk = false
 local iArg = 1
-local strInputFile
+local strInputFile, strInputFile2
 local strTagsFile
 local strOutputFile
 
@@ -971,15 +987,15 @@ elseif iArg <= #arg then
 		iArg = iArg + 1
 		
 	elseif strMode=="edit" then
-		iMode = MODE_edit
+		iMode = MODE_EDIT
 		iArg = iArg + 1
 		
 	elseif strMode=="list" then
-		iMode = MODE_LISTTAGS
+		iMode = MODE_LIST
 		iArg = iArg + 1
 	
-	elseif strMode=="listdevhdr" then
-		iMode = MODE_LISTDEVHDR
+	elseif strMode=="diff" then
+		iMode = MODE_DIFF
 		iArg = iArg + 1
 	end
 
@@ -999,6 +1015,7 @@ if iArg <= #arg and arg[iArg]=="-debug" then
 end
 
 local iRemArgs = #arg - iArg + 1
+
 -- mode-specific arguments
 if (iMode==MODE_HELP or
 	iMode==MODE_HELP_TAGS or
@@ -1006,18 +1023,23 @@ if (iMode==MODE_HELP or
 	iMode==MODE_VERSION) and iRemArgs == 0 then
 	fArgsOk = true
 	
+elseif iMode==MODE_LIST and iRemArgs == 1 then
+	strInputFile = arg[iArg]
+	iArg = iArg+1
+	fArgsOk = true
+	
+elseif iMode==MODE_DIFF and iRemArgs == 2 then
+	strInputFile = arg[iArg]
+	strInputFile2 = arg[iArg+1]
+	iArg = iArg+2
+	fArgsOk = true
+	
 elseif (iMode==MODE_SETTAGS or 
-		iMode==MODE_edit) and iRemArgs == 3 then
+		iMode==MODE_EDIT) and iRemArgs == 3 then
 	strInputFile = arg[iArg]
 	strTagsFile = arg[iArg+1]
 	strOutputFile = arg[iArg+2]
 	iArg = iArg+3
-	fArgsOk = true
-
-elseif (iMode==MODE_LISTTAGS or
-		iMode==MODE_LISTDEVHDR) and iRemArgs == 1 then
-	strInputFile = arg[iArg]
-	iArg = iArg+1
 	fArgsOk = true
 end
 
@@ -1046,14 +1068,14 @@ elseif iMode==MODE_VERSION then
 elseif iMode == MODE_SETTAGS then
 	fOk, msgs = replacetags(strInputFile, strTagsFile, strOutputFile)
 	
-elseif iMode == MODE_edit then
+elseif iMode == MODE_EDIT then
 	fOk, msgs = edit(strInputFile, strTagsFile, strOutputFile)
 	
-elseif iMode==MODE_LISTTAGS then
+elseif iMode==MODE_LIST then
 	fOk, msgs = listTagsAndDevHdr(strInputFile)
 	
-elseif iMode==MODE_LISTDEVHDR then
-	fOk, msgs = listdevhdr(strInputFile)
+elseif iMode==MODE_DIFF then
+	fOk, msgs = listdiffs(strInputFile, strInputFile2)
 end
 
 printResults(fOk, msgs)

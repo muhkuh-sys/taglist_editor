@@ -292,8 +292,6 @@ RCX_TAG_MIN_CHIP_REV_T =
     {{"UINT32", "ulMinChipRev",     mode="read-only", desc="Min. Chip Revision"}},
 RCX_TAG_MAX_CHIP_REV_T =
     {{"UINT32", "ulMaxChipRev",     mode="read-only", desc="Max. Chip Revision"}},
-RCX_TAG_NUM_COMM_CHANNEL_T =
-    {{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of required comm channels"}},
 --
 
 ----------------------------------------------------------------------------------------------
@@ -399,90 +397,6 @@ RCX_MOD_TAG_IT_LED_T=
 },
 
 
-
-----------------------------------------------------------------------------------------------
---        PIO
-
-
-RCX_MOD_TAG_IT_PIO_REGISTER_VALUE_T = {
-  -- Value Type
-  --{"RX_PIO_VALUE_TYPE", "usType"},
-  {"UINT16", "usType", editor="comboedit", editorParam={
-    nBits=16, -- nBits = 8*size
-    values={
-        {name="no register", value=0},
-        {name="active high", value=1},
-        {name="active low", value=2},
-        {name="absolute", value=3},
-    }  }
-  },
-  -- Address of Register
-  {"UINT32", "ulReg"},
-  -- Value to set
-  {"UINT32", "ulValue"},
-  layout = {sizer="h", "usType", "ulReg", "ulValue"}
-},
-
-
-RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T = {
-  -- Value Type
-  --{"RX_PIO_VALUE_TYPE", "usType"},
-  {"UINT16", "usType", editor="comboedit", editorParam={
-    nBits=16, -- nBits = 8*size
-    values={
-        {name="no register", value=0},
-        {name="active high", value=1},
-        {name="active low", value=2},
-        {name="absolute", value=3},
-    }  }
-  },
-  --{"UINT16", "usType", editorParam={format="%u"}},
-  -- Address of Register
-  {"UINT32", "ulReg"},
-  layout = {sizer="h", "usType", "ulReg"}
-},
-
-RCX_MOD_TAG_IT_PIO_T = {
-  -- following structure entries are compatible to RX_PIO_SET_T
-  RCX_MOD_TAG_IDENTIFIER_T,
-  -- Optional Register to make PIO Pin to output at startup
-  {"RCX_MOD_TAG_IT_PIO_REGISTER_VALUE_T",   "tMode"},
-  -- Optional Register to make PIO Pin to output at startup
-  {"RCX_MOD_TAG_IT_PIO_REGISTER_VALUE_T",   "tDirection"},
-  -- PIO Register to set PIOs
-  {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tSet"},
-  -- PIO Register to clear PIOs
-  {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tClear"},
-  -- Register to get current input value of the PIOs
-  {"RCX_MOD_TAG_IT_PIO_REGISTER_ONLY_T",    "tInput"},
-  nameField = "szIdentifier",
-  layout=  {sizer="grid", "szIdentifier",
-                      "tMode", "tDirection",
-                      "tSet", "tClear", "tInput"},
-},
-
-
-----------------------------------------------------------------------------------------------
---        GPIO
-RCX_MOD_TAG_IT_GPIO_T = {
-  RCX_MOD_TAG_IDENTIFIER_T,
-  -- following structure entries are compatible to RX_GPIO_SET_T
-  -- GPIO Number
-  {"UINT32",                                "ulGpioNum", editorParam={format="%u"}},
-  -- GPIO Type
-  {"UINT16",                                "usType", editorParam={format="%u"}},
-  -- GPIO Polarity
-  {"UINT16",                                "usPolarity", editorParam={format="%u"}},
-  -- GPIO Mode
-  {"UINT16",                                "usMode", editorParam={format="%u"}},
-  -- Counter Reference, needed when edges or levels shall be counted
-  {"UINT16",                                "usCntRef", editorParam={format="%u"}},
-  -- Enables/Disables IRQ in the case a counter is referenced
-  {"UINT32",                                "fIrq", editorParam={format="%u"}},
-  -- Threshold / Capture value in PWM mode
-  {"UINT32",                                "ulThresholdCapture"},
-  nameField = "szIdentifier"
-},
 
 
 
@@ -852,8 +766,21 @@ RCX_TAG_MIN_CHIP_REV =
     {paramtype = 0x804, datatype="RCX_TAG_MIN_CHIP_REV_T",     desc="Min. Chip Revision"},
 RCX_TAG_MAX_CHIP_REV =
     {paramtype = 0x805, datatype="RCX_TAG_MAX_CHIP_REV_T",     desc="Max. Chip Revision"},
-RCX_TAG_NUM_COMM_CHANNEL =
-    {paramtype = 0x806, datatype="RCX_TAG_NUM_COMM_CHANNEL_T", desc="Number of channels"},
+    
+
+
+
+-- /* tag type codes for NXO specific tags */
+-- #define RCX_TAG_STATIC_TASKS                    0x00001000
+-- #define RCX_TAG_STATIC_TASK_PARAMETER_BLOCK     0x00001001  -
+-- #define RCX_TAG_STATIC_TASK_ENTRY               0x00001002  -
+-- #define RCX_TAG_TIMER                           0x00001010
+-- #define RCX_TAG_INTERRUPT                       0x00001020
+-- #define RCX_TAG_INTERRUPT_ENTRY                 0x00001022  -
+-- #define RCX_TAG_UART                            0x00001030  - fehlt der noch?
+-- #define RCX_TAG_LED                             0x00001040  -
+-- #define RCX_TAG_XC                              0x00001050  -
+-- 
 
 -- task configuration
 RCX_MOD_TAG_IT_STATIC_TASKS =
@@ -862,15 +789,10 @@ RCX_MOD_TAG_IT_TIMER =
     {paramtype = 0x00001010, datatype ="RCX_MOD_TAG_IT_TIMER_T", desc="Hardware Timer"},
 RCX_MOD_TAG_IT_INTERRUPT =
     {paramtype = 0x00001020, datatype ="RCX_MOD_TAG_IT_INTERRUPT_T", desc="Interrupt"},
-RCX_MOD_TAG_IT_XC =
-    {paramtype = 0x00001050, datatype ="RCX_MOD_TAG_IT_XC_T", desc="xC Unit"},
-
 RCX_MOD_TAG_IT_LED =
     {paramtype = 0x00001040, datatype ="RCX_MOD_TAG_IT_LED_T", desc="LED"},
-RCX_MOD_TAG_IT_PIO =
-    {paramtype = 0x00001090, datatype ="RCX_MOD_TAG_IT_PIO_T", desc="PIO"},
-RCX_MOD_TAG_IT_GPIO =
-    {paramtype = 0x000010A0, datatype ="RCX_MOD_TAG_IT_GPIO_T", desc="GPIO"},
+RCX_MOD_TAG_IT_XC =
+    {paramtype = 0x00001050, datatype ="RCX_MOD_TAG_IT_XC_T", desc="xC Unit"},
 
 
 -- tags for configuration of 2nd stage loader
@@ -905,15 +827,6 @@ TAG_DIAG_TRANSPORT_CTRL_CIFX =
 TAG_DIAG_TRANSPORT_CTRL_PACKET =
     {paramtype = 0x10820011, datatype="TAG_DIAG_TRANSPORT_CTRL_PACKET_DATA_T", desc="Remote Access via rcX Packets"},
 
--- unused
-mac_address =
-    {paramtype=1, datatype="mac", desc="MAC Address"},
-ipv4_address =
-    {paramtype=2, datatype="ipv4", desc="IP Address"},
-manufacturer_name =
-    {paramtype=6, datatype="STRING", size=16, desc="Manufacturer Name"},
-arbitrary_data =
-    {paramtype=7, datatype="bindata", size=64, desc="Binary Data"}
 
 }
 
@@ -926,8 +839,8 @@ arbitrary_data =
 -- "name" was used for the html book display; could be removed
 HELP_MAPPING = {
     RCX_MOD_TAG_IT_LED                  = {file="RCX_MOD_TAG_IT_LED_T.htm"},
-    RCX_MOD_TAG_IT_PIO                  = {file="RCX_MOD_TAG_IT_PIO_T.htm"},
-    RCX_MOD_TAG_IT_GPIO                 = {file="RCX_MOD_TAG_IT_GPIO_T.htm"},
+--     RCX_MOD_TAG_IT_PIO                  = {file="RCX_MOD_TAG_IT_PIO_T.htm"},
+--     RCX_MOD_TAG_IT_GPIO                 = {file="RCX_MOD_TAG_IT_GPIO_T.htm"},
     RCX_MOD_TAG_IT_STATIC_TASKS         = {file="RCX_MOD_TAG_IT_STATIC_TASKS_T.htm"},
     RCX_MOD_TAG_IT_TIMER                = {file="RCX_MOD_TAG_IT_TIMER_T.htm"},
     RCX_MOD_TAG_IT_XC                   = {file="RCX_MOD_TAG_IT_XC_T.htm"},
@@ -955,15 +868,7 @@ HELP_MAPPING = {
     RCX_TAG_MAX_OS_VERSION              = {file="misc_tags.htm"},
     RCX_TAG_MIN_CHIP_REV                = {file="misc_tags.htm"},
     RCX_TAG_MAX_CHIP_REV                = {file="misc_tags.htm"},
-    RCX_TAG_NUM_COMM_CHANNEL            = {file="misc_tags.htm"},
 
-    --[[  unused
-    xc_alloc                            = {file="misc_tags.htm"},
-    irq_alloc                           = {file="misc_tags.htm"},
-    comm_channel_alloc                  = {file="misc_tags.htm"},
-    supported_comm_channels             = {file="misc_tags.htm"},
-    num_tasks                           = {file="misc_tags.htm"},
-    --]]
 }
 
 
@@ -1825,7 +1730,79 @@ function printStructure(tStruct, strIndent, fPretty)
     end
 end
 
+-- Check if two structures are structurally identical, i.e. 
+-- they have the same number, names and types of members.
+function checkStructuralIdentity(tStruct1, tStruct2)
+	if type(tStruct1)~="table" then
+		return false, "arg1 is not a structure"
+	elseif type(tStruct2)~="table" then
+		return false, "arg2 is not a structure"
+	elseif #tStruct1~=#tStruct2 then
+		return false, "arg1 and arg2 do not have the same number of members"
+	else
+		for iMember = 1, #tStruct1 do
+			local tMember1 = tStruct1[iMember]
+			local tMember2 = tStruct2[iMember]
+			
+			if not tMember1 or not tMember2 or
+				tMember1.strName ~= tMember2.strName or
+				tMember1.strType ~= tMember2.strType then
+				return false, "structures do not have the same members"
+			end
+		end
+	end
+	
+	return true
+end
 
+-- make format string for member names
+function makeMemberFormatString(tStruct)
+	local iMaxNameLen = 0
+	for iMember, tMember in ipairs(tStruct) do
+		if isPrimitiveType(tMember.strType) and tMember.strName:len()>iMaxNameLen then 
+			iMaxNameLen = tMember.strName:len()
+		end
+	end
+	return "%-" .. tostring(iMaxNameLen) .. "s"
+end
+
+-- Compare the values in two structures with the same type. 
+-- Members with equal values are listed as by printStructure, 
+-- members with different values are listed as 
+-- SET fieldname = <value in tStruct2>
+function printStructureDiffs(tStruct1, tStruct2, strIndent)
+	strIndent = strIndent or ""
+	
+	local fOk, strError = checkStructuralIdentity(tStruct1, tStruct2)
+	if not fOk then 
+		return fOk, strError
+	end
+	
+	local strNameFormat = makeMemberFormatString(tStruct2)
+	
+	-- compare and print the members
+	for iMember = 1, #tStruct2 do
+		local tMember1 = tStruct1[iMember]
+		local tMember2 = tStruct2[iMember]
+		local strName = string.format(strNameFormat, tMember2.strName)
+		if isPrimitiveType(tMember2.strType) then
+			local strValue = primitiveTypeToString(tMember2.strType, tMember2.tValue)
+			if tMember1.tValue == tMember2.tValue then
+				printf("    %s.%s = %s", strIndent, strName, strValue)
+			else
+				printf("SET %s.%s = %s", strIndent, strName, strValue)
+			end
+		elseif type(tMember2.tValue)=="table" then
+			local fOk, msg = printStructure(tMember1.tValue, tMember2.tValue, strIndent .. "." .. tMember2.strName, fPretty)
+			if not fOk then
+				return fOk, msg
+			end
+		else
+			printf("%s.%s = %s(%s)", strIndent, tMember2.strName, tostring(tMember2.tValue), type(tMember2.tValue))
+		end
+	end
+	return true
+end
 ---------------------------------------------------------------------
 --                       make empty taglist
 ---------------------------------------------------------------------
@@ -1861,8 +1838,8 @@ example_taglist = {
 "RCX_MOD_TAG_IT_TIMER",
 "RCX_MOD_TAG_IT_INTERRUPT",
 "RCX_MOD_TAG_IT_LED",
-"RCX_MOD_TAG_IT_PIO",
-"RCX_MOD_TAG_IT_GPIO",
+--"RCX_MOD_TAG_IT_PIO",
+--"RCX_MOD_TAG_IT_GPIO",
 
 "TAG_BSL_SDRAM_PARAMS",
 "TAG_BSL_HIF_PARAMS",
@@ -1886,10 +1863,10 @@ example_taglist = {
 "RCX_TAG_MAX_OS_VERSION",
 "RCX_TAG_MIN_CHIP_REV",
 "RCX_TAG_MAX_CHIP_REV",
-"RCX_TAG_NUM_COMM_CHANNEL",
+--"RCX_TAG_NUM_COMM_CHANNEL",
 
 
-"mac_address",
-"ipv4_address",
-"arbitrary_data",
+--"mac_address",
+--"ipv4_address",
+--"arbitrary_data",
 }

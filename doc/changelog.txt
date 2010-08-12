@@ -1,5 +1,11 @@
 Change log for Tag List Editor
 
+ * added "diff" function to tagtool
+ * removed tags
+     RCX_TAG_NUM_COMM_CHANNEL (0x806) 
+     RCX_MOD_TAG_IT_PIO (0x1090) 
+     RCX_MOD_TAG_IT_GPIO (0x10a0) 
+
 Tag list editor 1.1.8845
  * added tagtool.bat
  * removed option HIF PIO in RCX_TAG_LED_T
