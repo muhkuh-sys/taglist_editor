@@ -289,6 +289,40 @@ function setTaglistBin(self, abBin, fKeepGap)
 	end
 end
 
+
+-- new
+--[[
+function setTaglistBin(self, abBin, fKeepGap)
+	abBin = abBin or ""
+	local tCH = self.m_tCommonHeader
+	
+	if tCH.ulTagListSizeMax == 0 or tCH.ulTagListSizeMax >= abBin:len() then
+		self.m_abTaglist = abBin
+	else
+		return false, 
+			"The tag list is longer than the size allowed by ulTagListSizeMax."
+	end
+	
+	-- no tag list or tag list at end of file: just pad to dword size
+	if tCH.ulTagListStartOffset == 0 or tCH.ulTagListStartOffset > tCH.ulDataStartOffset then
+		if not fKeepGap then
+			self.m_abTagGap = getPadding(abBin, 4)
+		end
+	
+	-- tag list before data section: adjust TagGap to ulDataStartOffset
+	else
+		local iTagAreaLen = tCH.ulDataStartOffset - tCH.ulTagListStartOffset
+		local iLen = abBin:len() + self.m_abTagGap:len()
+		if iLen < iTagAreaLen then
+			self.m_abTagGap = string.char(0, iTagAreaLen - iLen) .. self.m_abTagGap
+		elseif iLen > iTagAreaLen then
+			self.m_abTagGap = string.sub(self.m_abTagGap, iLen - iTagAreaLen)
+		end
+	end
+	return true
+end
+--]]
+
 function getTaglistBin(self)
 	return self.m_abTaglist
 end

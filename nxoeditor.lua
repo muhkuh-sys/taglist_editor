@@ -59,6 +59,14 @@ function confirmDialog(strCaption, strMessage)
 	return res==wx.wxID_OK
 end
 
+function yesNoDialog(strCaption, strMessage)
+	print(strCaption .. ": " .. strMessage)
+	local dialog = wx.wxMessageDialog(__MUHKUH_PANEL, strMessage, strCaption,
+		wx.wxYES_NO + wx.wxICON_QUESTION + wx.wxSTAY_ON_TOP)
+	local res = dialog:ShowModal()
+	dialog:Destroy()
+	return res==wx.wxID_YES
+end
 
 -- Show messages
 -- if fOk = true, a notice is displayed, if false, an error message is displayed.
@@ -125,7 +133,7 @@ STATUS_SAVE_ERROR = 2
 
 
 local function OnQuit()
-	if gui_stuff.confirmDialog("Please Confirm",
+	if nxoeditor.confirmDialog("Please Confirm",
 			"Do you really want to close the appliation?") then
 		if nxoeditor.m_fShowHelp then nxoeditor.getSplitRatio() end
 		nxoeditor.saveConfig()
@@ -134,7 +142,7 @@ local function OnQuit()
 end
 
 local function OnClear()
-	if gui_stuff.confirmDialog("Please Confirm",
+	if nxoeditor.yesNoDialog("Please Confirm",
 			"This will discard all currently loaded data.\n"..
 			"Do you want to proceed?") then
 		nxoeditor.emptyNxo()
@@ -156,7 +164,7 @@ end
 local function OnCreateTags()
 	-- local bin = string.rep(string.char(0), 8) 
 	local bin = taglist.makeEmptyParblock()
-	local fTagsOk, params, iLen, strMsg = taglist.binToParams(bin, 0)
+	local fTagsOk, params, iLen, strMsg = taglist.binToParams(bin)
 	nxoeditor.displayTags(params)
 	nxoeditor.m_nxfile:setTaglistBin(bin)
 	nxoeditor.m_fParamsLoaded = true
@@ -413,11 +421,15 @@ function loadTags(strFilename)
 	if iStatus==STATUS_OK then
 		print(string.format("tag list size: 0x%08x", abBin:len()))
 		-- parse tag list
-		local fOk, params, iLen, strMsg = taglist.binToParams(abBin, 0)
+		local fOk, params, iLen, strMsg = taglist.binToParams(abBin)
 		showMessages(fOk, "Notice", "Error parsing tag list", strMsg)
 		
 		-- replace tag list
 		if fOk then
+			local fChanged = checkEndMarker(params)
+			if fChanged then
+				abBin = taglist.paramsToBin(params)
+			end
 			fOk, strMsg = m_nxfile:setTaglistBin(abBin)
 			showMessages(fOk, "Notice", "Error", strMsg)
 		end
@@ -440,7 +452,42 @@ function saveTags(strFilename)
 	end
 end
 
-
+-- Check if the end marker is 0 or 4 bytes long.
+-- If it is, and it can be replaced with an 8 byte end marker, 
+-- offer to do so and replace it if the user choses yes.
+-- If it cannot be replaced, just notify the user.
+-- 
+-- Returns true if the end marker was changed, false otherwise
+function checkEndMarker(atTags)
+	-- check/correct end marker
+	local fEndOk, fCorrectible, strMsg = taglist.checkEndMarker(m_nxfile, atTags)
+	print("check end marker: ", fEndOk, fCorrectible, strMsg)
+	local fChanged = false
+	if not fEndOk then
+		if fCorrectible then
+			local fDoCorrect = yesNoDialog(
+				"Notice",
+				"The tag list has a non-standard ending:\n"..
+				strMsg.."\n"..
+				"Do you want to replace the end marker with a correct one?"
+				)
+			if fDoCorrect then
+				print("replacing end marker with eight zero bytes")
+				taglist.correctEndMarker(atTags)
+				fChanged = true
+			end
+		else
+			messageDialog( 
+				"Notice",
+				"The tag list has a non-standard ending:\n"..
+				strMsg.."\n"..
+				"The end marker cannot be replaced."
+				)
+		end
+	end
+	
+	return fChanged
+end
 
 function loadNx(strFilename)
 	strFilename = strFilename or loadFileDialog(m_panel, "Select NXO/NXF/bin file", strNxFilenameFilters)
@@ -458,9 +505,11 @@ function loadNx(strFilename)
 			-- file has tag list
 			if m_nxfile:hasTaglist() then
 				local abTags = m_nxfile:getTaglistBin()
-				local fTagsOk, params, iLen, strMsg = taglist.binToParams(abTags, 0)
+				local fTagsOk, params, iLen, strMsg = taglist.binToParams(abTags)
 				showMessages(fTagsOk, "Notice", "Error parsing tag list", strMsg)
+				
 				if fTagsOk then
+					checkEndMarker(params)
 					displayTags(params)
 					m_nxFilebar:setFilename(strFilename)
 				else
@@ -851,7 +900,7 @@ function printParamList(paramList)
 end
 
 function tryExtract(origbin, trybin)
-	local fOk, params, iLen, strMsg = taglist.binToParams(trybin, 0)
+	local fOk, params, iLen, strMsg = taglist.binToParams(trybin)
 	print("binToParam status: ", fOk)
 	print("message:", strMsg)
 	print("len: ", iLen)
@@ -868,7 +917,7 @@ function test()
 	tryExtract(bin, bin..junk)
 	tryExtract(bin, junk)
 
-	local fOk, params, iLen, strMsg = taglist.binToParams(bin, 0)
+	local fOk, params, iLen, strMsg = taglist.binToParams(bin)
 	printParamList(params)
 	local rebin = taglist.paramsToBin(params)
 	hexdump.printHex(rebin, "0x%08x", 16, true)

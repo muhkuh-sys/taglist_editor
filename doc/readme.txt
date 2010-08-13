@@ -158,16 +158,20 @@ The file will be rejected if:
   or any of the sections overlap,
 - the tag list can't be parsed,
 - the length of a tag value does not match the editor's structure definition,
-- the tag list does not have an end marker,
 - the tag list contains additional data behind the end marker.
-
 
 The editor will accept a file and display a warning if:
 - any of the checksums in the boot header/common header are incorrect,
 - the common header version is higher than 3.0,
-- the tag list contains an end tag (0) without length indication.
 
-  
+The end of a tag list is normally marked with the end tag (0) and length 0,
+that is eight zero bytes. If 
+- the tag list contains an end tag (0) without length indication.
+- the tag list does not have an end marker (ends directly after a tag)
+the editor will display a warning, and, if the memory layout of the file
+(TagListSizeMax) allows it, the editor will offer to correct the end marker.
+
+
   
 A note on priority/token base and range:
 ========================================

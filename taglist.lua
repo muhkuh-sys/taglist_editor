@@ -11,6 +11,8 @@
 --  2010-06-28    SL            added diag interface tags
 --  2010-07-30    SL            serialize/deserialize, value constants
 --                              support for command line tool
+--  2010-08-13    SL            recognizes and corrects abnormal end marker
+
 ---------------------------------------------------------------------------
 
 module("taglist", package.seeall)
@@ -47,12 +49,12 @@ taglists, tags AND structures.
 
 Tags:
 memsize = {paramtype = 0x800, datatype="UINT32", desc="Memory Size"},
-RCX_MOD_TAG_IT_LED =
+RCX_TAG_LED =
     {paramtype = 0x00001040, datatype ="RCX_MOD_TAG_IT_LED_T", desc="LED description"},
 ->  {ulTag = ulTag, ulSize = ulSize, abValue = abValue }
 
 Structs:
-RCX_MOD_TAG_IT_LED_T = {
+RCX_TAG_LED_T = {
   {"RCX_MOD_TAG_IDENTIFIER_T",              "tIdentifier",  mode="read-only"},
   {"UINT32",                                "ulUsesResourceType"},
     },
@@ -78,17 +80,17 @@ How to add a new tag:
 1)
 The table rcx_mod_tags contains mappings of the tag id numbers to structure definitions.
 Insert an entry of the form
-RCX_MOD_TAG_IT_STATIC_TASKS =
+RCX_TAG_STATIC_TASKS =
     {paramtype = 0x00001000, datatype="RCX_MOD_TAG_IT_STATIC_TASKS_T", desc="Task Group"},
 where
-RCX_MOD_TAG_IT_STATIC_TASKS is an internal key,
+RCX_TAG_STATIC_TASKS is an internal key,
 paramtype is the tag id number,
 datatype is the name under which the data portion of the tag is defined in the datatypes list and
 desc is a string which appears in the tag selection area in the editor.
 
 2)
 Add the structure definition to the datatypes table.
-RCX_MOD_TAG_IT_STATIC_TASKS_T = {
+RCX_TAG_STATIC_TASKS_T = {
   {"STRING", "szTaskListName",   desc="Task List Name", size=64, mode="read-only"},
   -- priority range used by static task list
   {"UINT32", "ulBasePriority",
@@ -105,15 +107,15 @@ RCX_MOD_TAG_IT_STATIC_TASKS_T = {
     },
 
 where
-RCX_MOD_TAG_IT_STATIC_TASKS_T is the same data type name used in the entry in rcx_mod_tags
+RCX_TAG_STATIC_TASKS_T is the same data type name used in the entry in rcx_mod_tags
    member type  internal name          Screen name
   {"STRING", "szTaskListName",   desc="Task List Name", size=64, mode="read-only"},
 
 3)
 Create a HTML help page for the tag and add it to the nxoeditor/help directory.
 Add an entry to the HELP_MAPPING table:
-    RCX_MOD_TAG_IT_STATIC_TASKS         = {file="RCX_MOD_TAG_IT_STATIC_TASKS_T.htm"},
-RCX_MOD_TAG_IT_STATIC_TASKS is the key used in rcx_mod_tags.
+    RCX_TAG_STATIC_TASKS         = {file="RCX_MOD_TAG_IT_STATIC_TASKS_T.htm"},
+RCX_TAG_STATIC_TASKS is the key used in rcx_mod_tags.
 Add the HTML page to the SVN and to the installer.
 
 
@@ -140,13 +142,123 @@ CONSTANTS = {
     TAG_BSL_MEDIUM_USERAM                 =  1,
     TAG_BSL_MEDIUM_USESERFLASH            =  2,
     TAG_BSL_MEDIUM_USEPARFLASH            =  3,
+    
+    -- Hardware options 
+	RCX_HW_ASSEMBLY_UNDEFINED             =  0x0000,
+	RCX_HW_ASSEMBLY_NOT_AVAILABLE         =  0x0001,
+	
+	RCX_HW_ASSEMBLY_VALIDATION_START      =  0x0010,    -- Start of HW option validation area 
+
+	RCX_HW_ASSEMBLY_SERIAL                =  0x0010,
+	RCX_HW_ASSEMBLY_ASI                   =  0x0020,
+	RCX_HW_ASSEMBLY_CAN                   =  0x0030,
+	RCX_HW_ASSEMBLY_DEVICENET             =  0x0040,
+	RCX_HW_ASSEMBLY_PROFIBUS              =  0x0050,
+
+	RCX_HW_ASSEMBLY_CCLINK                =  0x0070,
+	RCX_HW_ASSEMBLY_ETHERNET              =  0x0080,
+	RCX_HW_ASSEMBLY_ETHERNET_X_PHY        =  0x0081,
+	RCX_HW_ASSEMBLY_ETHERNET_FIBRE_OPTIC  =  0x0082,
+	
+	RCX_HW_ASSEMBLY_SPI                   =  0x0090,
+	RCX_HW_ASSEMBLY_IO_LINK               =  0x00A0,
+	RCX_HW_ASSEMBLY_COMPONET              =  0x00B0,
+	
+	RCX_HW_ASSEMBLY_VALIDATION_END        =  0xFFEF,
+	
+	RCX_HW_ASSEMBLY_I2C_UNKNOWN           =  0xFFF4,
+	RCX_HW_ASSEMBLY_SSI                   =  0xFFF5,
+	RCX_HW_ASSEMBLY_SYNC                  =  0xFFF6,
+	
+	RCX_HW_ASSEMBLY_FIELDBUS              =  0xFFF8,
+	
+	RCX_HW_ASSEMBLY_TOUCH_SCREEN          =  0xFFFA,
+	RCX_HW_ASSEMBLY_I2C_PIO               =  0xFFFB,
+	RCX_HW_ASSEMBLY_I2C_PIO_NT            =  0xFFFC,
+	RCX_HW_ASSEMBLY_PROPRIETARY           =  0xFFFD,
+	RCX_HW_ASSEMBLY_NOT_CONNECTED         =  0xFFFE,
+	RCX_HW_ASSEMBLY_RESERVED              =  0xFFFF,
+
+	-- Manufacturer definition 
+	RCX_MANUFACTURER_UNDEFINED            =  0x0000,
+	RCX_MANUFACTURER_HILSCHER_GMBH        =  0x0001,    -- Hilscher GmbH 
+	RCX_MANUFACTURER_HILSCHER_GMBH_MAX    =  0x00FF,    -- Hilscher GmbH max. value
+
+	-- Production date definition 
+	RCX_PRODUCTION_DATE_YEAR_MASK         =  0xFF00,    -- Year offset (0..255) starting at 2000 
+	RCX_PRODUCTION_DATE_WEEK_MASK         =  0x00FF,    -- Week of year ( 1..52) 
+
+	-- Device class definition
+	RCX_HW_DEV_CLASS_UNDEFINED            =  0x0000,
+	RCX_HW_DEV_CLASS_UNCLASSIFIABLE       =  0x0001,
+	RCX_HW_DEV_CLASS_CHIP_NETX_500        =  0x0002,
+	RCX_HW_DEV_CLASS_CIFX                 =  0x0003,
+	RCX_HW_DEV_CLASS_COMX                 =  0x0004,
+	RCX_HW_DEV_CLASS_EVA_BOARD            =  0x0005,
+	RCX_HW_DEV_CLASS_NETDIMM              =  0x0006,
+	RCX_HW_DEV_CLASS_CHIP_NETX_100        =  0x0007,
+	RCX_HW_DEV_CLASS_NETX_HMI             =  0x0008,
+
+	RCX_HW_DEV_CLASS_NETIO_50             =  0x000A,
+	RCX_HW_DEV_CLASS_NETIO_100            =  0x000B,
+	RCX_HW_DEV_CLASS_CHIP_NETX_50         =  0x000C,
+	RCX_HW_DEV_CLASS_GW_NETPAC            =  0x000D,
+	RCX_HW_DEV_CLASS_GW_NETTAP            =  0x000E,
+	RCX_HW_DEV_CLASS_NETSTICK             =  0x000F,
+	RCX_HW_DEV_CLASS_NETANALYZER          =  0x0010,
+	RCX_HW_DEV_CLASS_NETSWITCH            =  0x0011,
+	RCX_HW_DEV_CLASS_NETLINK              =  0x0012,
+	RCX_HW_DEV_CLASS_NETIC                =  0x0013,
+	RCX_HW_DEV_CLASS_NPLC_C100            =  0x0014,
+	RCX_HW_DEV_CLASS_NPLC_M100            =  0x0015,
+	RCX_HW_DEV_CLASS_GW_NETTAP_50         =  0x0016,
+	RCX_HW_DEV_CLASS_NETBRICK             =  0x0017,
+	RCX_HW_DEV_CLASS_NPLC_T100            =  0x0018,
+	RCX_HW_DEV_CLASS_NETLINK_PROXY        =  0x0019,
+
+	RCX_HW_DEV_CLASS_HILSCHER_GMBH_MAX    =  0x7FFF,    -- Hilscher GmbH max. value
+	RCX_HW_DEV_CLASS_OEM_DEVICE           =  0xFFFE,
 }
 
+-- Currently, device class in the device header editor is a number field,
+-- where any value can be entered. Do we want to replace it with a 
+-- combo box where you can only select from the pre-defined values?
+DEVICE_CLASS_COMBO_VALUES = {
+	{name="UNDEFINED"           ,value =  0x0000},
+	{name="UNCLASSIFIABLE"      ,value =  0x0001},
+	{name="CHIP_NETX_500"       ,value =  0x0002},
+	{name="CIFX"                ,value =  0x0003},
+	{name="COMX"                ,value =  0x0004},
+	{name="EVA_BOARD"           ,value =  0x0005},
+	{name="NETDIMM"             ,value =  0x0006},
+	{name="CHIP_NETX_100"       ,value =  0x0007},
+	{name="NETX_HMI"            ,value =  0x0008},
+
+	{name="NETIO_50"            ,value =  0x000A},
+	{name="NETIO_100"           ,value =  0x000B},
+	{name="CHIP_NETX_50"        ,value =  0x000C},
+	{name="GW_NETPAC"           ,value =  0x000D},
+	{name="GW_NETTAP"           ,value =  0x000E},
+	{name="NETSTICK"            ,value =  0x000F},
+	{name="NETANALYZER"         ,value =  0x0010},
+	{name="NETSWITCH"           ,value =  0x0011},
+	{name="NETLINK"             ,value =  0x0012},
+	{name="NETIC"               ,value =  0x0013},
+	{name="NPLC_C100"           ,value =  0x0014},
+	{name="NPLC_M100"           ,value =  0x0015},
+	{name="GW_NETTAP_50"        ,value =  0x0016},
+	{name="NETBRICK"            ,value =  0x0017},
+	{name="NPLC_T100"           ,value =  0x0018},
+	{name="NETLINK_PROXY"       ,value =  0x0019},
+	
+	{name="OEM_DEVICE"          ,value =  0xFFFE},
+	
+}
+
+-- add TSK_PRIO_02 ... TSK_PRIO_55 and TSK_TOK_02 ... TSK_TOK_55
 for i=2, 55 do
-	local strKey = string.format("TSK_PRIO_%02d", i)
-	CONSTANTS[strKey]=i+7
-	strKey = string.format("TSK_TOK_%02d", i)
-	CONSTANTS[strKey]=i+7
+	CONSTANTS[string.format("TSK_PRIO_%02d", i)]=i+7
+	CONSTANTS[string.format("TSK_TOK_%02d", i)]=i+7
 end
 
 
@@ -194,18 +306,12 @@ end
 ---------------------------------------------------------------------------
 
 TAGNAME_ALIASES = {
-    -- tag type codes for general tags
-    --RCX_TAG_NUM_COMM_CHANNEL                    ="RCX_MOD_TAG_NUM_COMM_CHANNEL",
-
     -- tag type codes for NXO specific tags
-    RCX_TAG_STATIC_TASKS                        ="RCX_MOD_TAG_IT_STATIC_TASKS",
-    --RCX_TAG_STATIC_TASK_PARAMETER_BLOCK         ="RCX_MOD_TAG_IT_STATIC_TASK_PARAMETER_BLOCK",
-    --RCX_TAG_STATIC_TASK_ENTRY                   ="RCX_MOD_TAG_IT_STATIC_TASK_ENTRY",
-    RCX_TAG_TIMER                               ="RCX_MOD_TAG_IT_TIMER",
-    RCX_TAG_INTERRUPT                           ="RCX_MOD_TAG_IT_INTERRUPT",
-    --RCX_TAG_INTERRUPT_ENTRY                     ="RCX_MOD_TAG_IT_INTERRUPT_ENTRY",
-    RCX_TAG_LED                                 ="RCX_MOD_TAG_IT_LED",
-    RCX_TAG_XC                                  ="RCX_MOD_TAG_IT_XC",
+    RCX_MOD_TAG_IT_STATIC_TASKS                  ="RCX_TAG_STATIC_TASKS",
+    RCX_MOD_TAG_IT_TIMER                         ="RCX_TAG_TIMER",
+    RCX_MOD_TAG_IT_INTERRUPT                     ="RCX_TAG_INTERRUPT",
+    RCX_MOD_TAG_IT_LED                           ="RCX_TAG_LED",
+    RCX_MOD_TAG_IT_XC                            ="RCX_TAG_XC",
 }
 
 CONSTANT_ALIASES = {
@@ -279,6 +385,7 @@ local RCX_MOD_TAG_IDENTIFIER_T = {"STRING", "szIdentifier", desc="Identifier", s
 
 
 structures = {
+----------------------------------------------------------------------------------------------
 -- general tags
 RCX_TAG_MEMSIZE_T =
     {{"UINT32", "ulMemSize",        mode="read-only", desc="Memory Size"}},
@@ -639,8 +746,8 @@ TAG_BSL_FSU_PARAMS_DATA_T = {
 },
 
 
----------------------------------------------------------------------------
 
+----------------------------------------------------------------------------------------------
 -- tags for netX Diagnostics and Remote Access component
 
 
@@ -663,6 +770,7 @@ TAG_DIAG_IF_CTRL_UART_DATA_T = {
 },
 
 
+----------------------------------------------------------------------------------------------
 -- TAG_DIAG_IF_CTRL_USB = 0x10820001  4   netX Diagnostics and Remote Access component USB interface control
 -- "    interface enable flag (UINT8, 0, 1)
 -- "    interface number (UINT8, 0...15)
@@ -680,6 +788,7 @@ TAG_DIAG_IF_CTRL_USB_DATA_T = {
     layout = {sizer="grid", "bInterfaceNumber", "bEnable"}
 },
 
+----------------------------------------------------------------------------------------------
 -- TAG_DIAG_IF_CTRL_TCP = 0x10820002  4   netX Diagnostics and Remote Access component TCP interface control
 -- "    interface enable flag (UINT8, 0, 1)
 -- "    interface number (UINT8, 0...15)
@@ -696,6 +805,7 @@ TAG_DIAG_IF_CTRL_TCP_DATA_T = {
     layout = {sizer="grid", "usTCPPortNo", "bEnable"}
 },
 
+----------------------------------------------------------------------------------------------
 -- TAG_DIAG_TRANSPORT_CTRL_CIFX = 0x10820003  4   netX Diagnostics and Remote Access component cifX transport interface control
 -- "    interface enable flag (UINT8, 0, 1)
 -- "    three bytes reserved for future use
@@ -712,6 +822,7 @@ TAG_DIAG_TRANSPORT_CTRL_CIFX_DATA_T = {
     layout = {sizer="grid", "bEnable"}
 },
 
+----------------------------------------------------------------------------------------------
 -- TAG_DIAG_TRANSPORT_CTRL_PACKET = 0x10820004  4   netX Diagnostics and Remote Access component packet transport interface control
 -- "    interface enable flag (UINT8, 0, 1)
 -- "    three bytes reserved for future use
@@ -752,47 +863,31 @@ TAG_IGNORE_FLAG = 0x80000000
 
 rcx_mod_tags = {
 -- Firmware description tags
---
-
 RCX_TAG_MEMSIZE =
-    {paramtype = 0x800, datatype="RCX_TAG_MEMSIZE_T",          desc="Memory Size"},
+    {paramtype = 0x800, datatype="RCX_TAG_MEMSIZE_T",                         desc="Memory Size"},
 RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE =
-    {paramtype = 0x801, datatype="RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE_T", desc="Min. Storage Size"},
+    {paramtype = 0x801, datatype="RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE_T",     desc="Min. Storage Size"},
 RCX_TAG_MIN_OS_VERSION =
-    {paramtype = 0x802, datatype="RCX_TAG_MIN_OS_VERSION_T",   desc="Min. OS Version"},
-RCX_TAG_MAX_OS_VERSION =
-    {paramtype = 0x803, datatype="RCX_TAG_MAX_OS_VERSION_T",   desc="Max. OS Version"},
-RCX_TAG_MIN_CHIP_REV =
-    {paramtype = 0x804, datatype="RCX_TAG_MIN_CHIP_REV_T",     desc="Min. Chip Revision"},
-RCX_TAG_MAX_CHIP_REV =
-    {paramtype = 0x805, datatype="RCX_TAG_MAX_CHIP_REV_T",     desc="Max. Chip Revision"},
+    {paramtype = 0x802, datatype="RCX_TAG_MIN_OS_VERSION_T",                  desc="Min. OS Version"},
+RCX_TAG_MAX_OS_VERSION =                                                      
+    {paramtype = 0x803, datatype="RCX_TAG_MAX_OS_VERSION_T",                  desc="Max. OS Version"},
+RCX_TAG_MIN_CHIP_REV =                                                        
+    {paramtype = 0x804, datatype="RCX_TAG_MIN_CHIP_REV_T",                    desc="Min. Chip Revision"},
+RCX_TAG_MAX_CHIP_REV =                                                        
+    {paramtype = 0x805, datatype="RCX_TAG_MAX_CHIP_REV_T",                    desc="Max. Chip Revision"},
     
 
-
-
--- /* tag type codes for NXO specific tags */
--- #define RCX_TAG_STATIC_TASKS                    0x00001000
--- #define RCX_TAG_STATIC_TASK_PARAMETER_BLOCK     0x00001001  -
--- #define RCX_TAG_STATIC_TASK_ENTRY               0x00001002  -
--- #define RCX_TAG_TIMER                           0x00001010
--- #define RCX_TAG_INTERRUPT                       0x00001020
--- #define RCX_TAG_INTERRUPT_ENTRY                 0x00001022  -
--- #define RCX_TAG_UART                            0x00001030  - fehlt der noch?
--- #define RCX_TAG_LED                             0x00001040  -
--- #define RCX_TAG_XC                              0x00001050  -
--- 
-
 -- task configuration
-RCX_MOD_TAG_IT_STATIC_TASKS =
-    {paramtype = 0x00001000, datatype="RCX_MOD_TAG_IT_STATIC_TASKS_T", desc="Task Group"},
-RCX_MOD_TAG_IT_TIMER =
-    {paramtype = 0x00001010, datatype ="RCX_MOD_TAG_IT_TIMER_T", desc="Hardware Timer"},
-RCX_MOD_TAG_IT_INTERRUPT =
-    {paramtype = 0x00001020, datatype ="RCX_MOD_TAG_IT_INTERRUPT_T", desc="Interrupt"},
-RCX_MOD_TAG_IT_LED =
-    {paramtype = 0x00001040, datatype ="RCX_MOD_TAG_IT_LED_T", desc="LED"},
-RCX_MOD_TAG_IT_XC =
-    {paramtype = 0x00001050, datatype ="RCX_MOD_TAG_IT_XC_T", desc="xC Unit"},
+RCX_TAG_STATIC_TASKS =
+    {paramtype = 0x00001000, datatype="RCX_MOD_TAG_IT_STATIC_TASKS_T",        desc="Task Group"},
+RCX_TAG_TIMER =                                                               
+    {paramtype = 0x00001010, datatype ="RCX_MOD_TAG_IT_TIMER_T",              desc="Hardware Timer"},
+RCX_TAG_INTERRUPT =                                                           
+    {paramtype = 0x00001020, datatype ="RCX_MOD_TAG_IT_INTERRUPT_T",          desc="Interrupt"},
+RCX_TAG_LED =                                                                 
+    {paramtype = 0x00001040, datatype ="RCX_MOD_TAG_IT_LED_T",                desc="LED"},
+RCX_TAG_XC =                                                                  
+    {paramtype = 0x00001050, datatype ="RCX_MOD_TAG_IT_XC_T",                 desc="xC Unit"},
 
 
 -- tags for configuration of 2nd stage loader
@@ -815,6 +910,7 @@ TAG_BSL_HWDATA_PARAMS =
 TAG_BSL_FSU_PARAMS =
     {paramtype = 0x40000008, datatype="TAG_BSL_FSU_PARAMS_DATA_T",            desc="Fast Startup"},
 
+
 -- tags for netX Diagnostics and Remote Access component
 TAG_DIAG_IF_CTRL_UART =
     {paramtype = 0x10820000, datatype="TAG_DIAG_IF_CTRL_UART_DATA_T",          desc="UART Diagnostics Interface"},
@@ -826,8 +922,7 @@ TAG_DIAG_TRANSPORT_CTRL_CIFX =
     {paramtype = 0x10820010, datatype="TAG_DIAG_TRANSPORT_CTRL_CIFX_DATA_T",   desc="Remote Access via cifX API"},
 TAG_DIAG_TRANSPORT_CTRL_PACKET =
     {paramtype = 0x10820011, datatype="TAG_DIAG_TRANSPORT_CTRL_PACKET_DATA_T", desc="Remote Access via rcX Packets"},
-
-
+    
 }
 
 
@@ -838,13 +933,13 @@ TAG_DIAG_TRANSPORT_CTRL_PACKET =
 
 -- "name" was used for the html book display; could be removed
 HELP_MAPPING = {
-    RCX_MOD_TAG_IT_LED                  = {file="RCX_MOD_TAG_IT_LED_T.htm"},
---     RCX_MOD_TAG_IT_PIO                  = {file="RCX_MOD_TAG_IT_PIO_T.htm"},
---     RCX_MOD_TAG_IT_GPIO                 = {file="RCX_MOD_TAG_IT_GPIO_T.htm"},
-    RCX_MOD_TAG_IT_STATIC_TASKS         = {file="RCX_MOD_TAG_IT_STATIC_TASKS_T.htm"},
-    RCX_MOD_TAG_IT_TIMER                = {file="RCX_MOD_TAG_IT_TIMER_T.htm"},
-    RCX_MOD_TAG_IT_XC                   = {file="RCX_MOD_TAG_IT_XC_T.htm"},
-    RCX_MOD_TAG_IT_INTERRUPT            = {file="RCX_MOD_TAG_IT_INTERRUPT_T.htm"},
+    RCX_TAG_LED                         = {file="RCX_MOD_TAG_IT_LED_T.htm"},
+--  RCX_MOD_TAG_IT_PIO                  = {file="RCX_MOD_TAG_IT_PIO_T.htm"},
+--  RCX_MOD_TAG_IT_GPIO                 = {file="RCX_MOD_TAG_IT_GPIO_T.htm"},
+    RCX_TAG_STATIC_TASKS                = {file="RCX_MOD_TAG_IT_STATIC_TASKS_T.htm"},
+    RCX_TAG_TIMER                       = {file="RCX_MOD_TAG_IT_TIMER_T.htm"},
+    RCX_TAG_XC                          = {file="RCX_MOD_TAG_IT_XC_T.htm"},
+    RCX_TAG_INTERRUPT                   = {file="RCX_MOD_TAG_IT_INTERRUPT_T.htm"},
 
     TAG_BSL_SDRAM_PARAMS                = {file="TAG_BSL_SDRAM_PARAMS_DATA_T.htm"},
     TAG_BSL_HIF_PARAMS                  = {file="TAG_BSL_HIF_PARAMS_DATA_T.htm"},
@@ -1223,17 +1318,24 @@ function uint32tobin(u)
 end
 
 
+function uint32(bin, pos)
+    return bin:byte(pos+1) + 0x100* bin:byte(pos+2) + 0x10000 * bin:byte(pos+3) + 0x1000000*bin:byte(pos+4)
+end
+
+
+
 --- Convert a list representation of a taglist to binary form.
--- The tags are padded to dword size.
+-- Concatenates the BINARY values (abValue) of the tags
+-- and appends the end marker. The tags are padded to dword size.
 -- @param params a list of tags. Each element is a list of
 --   ulTag, ulSize, abParVal.
 -- @return the binary taglist. If params is empty, an empty taglist
 --   consisting only of the end marker is returned.
-function paramsToBin(params)
-    local abParblock = ""
+function paramsToBin(atTags)
+    local abTags = ""
     vbs_print("Serializing tag list")
-    for _, param in ipairs(params) do
-        local ulTag, ulSize, abValue = param.ulTag, param.ulSize, param.abValue
+    for _, tTag in ipairs(atTags) do
+        local ulTag, ulSize, abValue = tTag.ulTag, tTag.ulSize, tTag.abValue
         vbs_printf("tag = 0x%08x  size=%d  value len=%d",
             ulTag, ulSize, abValue:len())
         local abTag =
@@ -1241,88 +1343,77 @@ function paramsToBin(params)
             uint32tobin(ulSize) .. -- original size
             abValue ..
             string.rep(string.char(0), (4-abValue:len()) % 4)
-        abParblock = abParblock .. abTag
+        abTags = abTags .. abTag
     end
 
-    -- append original end tag
-    abParblock = abParblock .. uint32tobin(TAG_END) -- .. uint32tobin(0)
-    if params.abEndGap then
-        vbs_print("appending original data behind end marker")
-        abParblock = abParblock .. params.abEndGap
-    end
+    abTags = abTags .. atTags.abEndMarker
     vbs_print("Done")
 
-    return abParblock
+    return abTags
 
 end
 
-function uint32(bin, pos)
-    return bin:byte(pos+1) + 0x100* bin:byte(pos+2) + 0x10000 * bin:byte(pos+3) + 0x1000000*bin:byte(pos+4)
-end
+
 
 --- Tries to extract a parameter list from binary data.
 -- If a well-formed parameter block is found, the parameters are extracted.
--- This routine does not require a size after the end tag
+-- Accepts a tag list which ends directly after a tag, or
+-- ends with 4 or 8 zero bytes.
 --
 -- @param abBin binary data
--- @param iStartPos 0-based offset of the parameter block in the data
 --
--- @return fOk, paramlist, iLen, strError. fOk is true if a well-formed
--- parameter list was found, false otherwise.
+-- @return fOk, paramlist, iLen, strError. 
+-- fOk is true if a well-formed parameter list was found, false otherwise.
 -- paramlist contains whatver parameters could be extracted. Each entry is a
 -- list with the keys ulTag = the 32 bit tag number, ulSize = the size of this
 -- parameter in the list (including padding), abValue = the binary value of
 -- the parameter
--- len is the length of the binary data that was parsed.
+-- If the tag list is accepted, abEndMarker is either 0, 4 or 8 zero bytes.
+-- len is the length of the binary data that was parsed, including the end marker.
 -- strError contains an error message if any parameter could not be parsed.
 
-function binToParams(abBin, iStartPos)
-    local params = {}
-    local strMsg = ""
+function binToParams(abBin)
     local fOk = false
+    local atTags = {}
+    local strMsg = nil
 
-    local iLen, iPos = abBin:len(), iStartPos
+    -- 0-based offsets
+    local iLen = abBin:len()
+    local iPos = 0
+    
     local ulTag, ulSize, abValue
     local ulStructSize
-
+    
+    local abEndMarker = nil    
+    local abEndMarker0 = ""
+    local abEndMarker4 = string.char(0,0,0,0)
+    local abEndMarker8 = string.char(0,0,0,0,0,0,0,0)
+    
     vbs_print("Deserializing tag list")
 
-    while (iPos < iLen) do
-        -- get tag type
-        if (iPos+4 > iLen) then
-            strMsg = "Tag list truncated (in tag field)"
+    while (iPos <= iLen) do
+        -- ends with no end marker, 4x0 or 8x0
+        if iPos+8>=iLen and abBin:sub(iPos+1, iPos+8)==abEndMarker8 then
+            iPos = iPos + 8
+            abEndMarker = abEndMarker8
+            break
+        elseif iPos+4>=iLen and abBin:sub(iPos+1, iPos+4)==abEndMarker4 then
+            iPos = iPos + 4
+            abEndMarker = abEndMarker4
+            break
+        elseif iPos==iLen then
+            abEndMarker = abEndMarker0
+            break
+        end
+        
+        if (iPos+8 > iLen) then
+            strMsg = "Tag list truncated (in tag header)"
             break
         end
 
+        -- get tag type and size
         ulTag = uint32(abBin, iPos)
-        iPos = iPos+4
-
-        -- end tag?
-        if ulTag == TAG_END then
-            -- list ends in end tag
-            if iPos == iLen then
-                fOk = true
-                strMsg =
-                "The tag list ends in a single zero end tag without length field."
-            -- list ends in end tag + zero length indication - ok
-            elseif iPos+4 == iLen and string.sub(abBin, iPos + 1) == string.char(0,0,0,0) then
-                fOk = true
-                params.abEndGap = string.sub(abBin, iPos + 1)
-                --strMsg =
-                --"Tag list contains zero length indication behind end marker."
-            -- other data behind end tag - reject
-            else
-                strMsg =
-                "Malformed/damaged tag list (End marker found inside tag list)"
-            end
-            break
-        end
-
-        -- get size
-        if (iPos+4 > iLen) then
-            strMsg = "Tag list truncated (in size field)"
-            break
-        end
+        iPos = iPos + 4
 
         ulSize = uint32(abBin, iPos)
         iPos = iPos + 4
@@ -1339,7 +1430,6 @@ function binToParams(abBin, iStartPos)
             strMsg = string.format(
                 "The length of a tag value does not match the data structure definition:\n"..
                 "tag type = 0x%08x, tag data length = %d, required length = %d",
-                --"Incorrect tag size: tag = 0x%08x, value size = %d, known size = %d",
                 ulTag, ulSize, ulStructSize)
             break
         end
@@ -1353,7 +1443,7 @@ function binToParams(abBin, iStartPos)
         iPos = iPos + ulSize
 
         -- insert the param name and value
-        table.insert(params, {
+        table.insert(atTags, {
             ulTag = ulTag,
             ulSize = ulSize, -- original size, allows to reconstruct the binary
             abValue = abValue
@@ -1368,24 +1458,76 @@ function binToParams(abBin, iStartPos)
         end
     end
 
-    if not fOk and strMsg == "" then
-        if ulTag ~= TAG_END then
-            strMsg = "No end marker found in tag list."
+    atTags.abEndMarker = abEndMarker
+    atTags.iLen = iPos
+    
+    if abEndMarker then
+        if iPos == iLen then
+            fOk = true
         else
-        -- this should never happen
-            strMsg = "Unknown error in tag list."
+            -- if there is any data behind the end marker, reject the tag list.
+            fOk = false
+            strMsg = "There is extraneous data behind the end marker."
         end
+    else
+        fOk = false
+        strMsg = strMsg or "Unknown error in tag list."        
     end
-
+    
     vbs_print("Done")
 
-    return fOk, params, iPos - iStartPos, strMsg
+    return fOk, atTags, iPos, strMsg
 end
 
+-- Check if the end marker is 0 or 4 bytes long, and if it can be corrected.
+-- atTags must contain the entries abEndMarker and iLen,
+-- abEndMarker must be 0, 4 or 8 bytes long.
+function checkEndMarker(tNx, atTags)
+    local fOk          -- ok (only if the tag list ends with 8x0)
+    local fCorrectible -- if not ok: indicates if the ending can be corrected
+    local strMsg       -- type of ending (no end marker or 4 bytes)
+
+    local abEnd = atTags.abEndMarker
+    local iEndLen = abEnd:len()
+    local iLen = atTags.iLen
+    
+    if iEndLen == 8 then
+        fOk = true
+    elseif iEndLen == 4 then
+        fOk = false
+        strMsg = "The tag list ends with only four zero bytes."
+    elseif iEndLen == 0 then
+        fOk = false
+        strMsg = "The tag list does not have an end marker."
+    end
+
+    if not fOk then
+        local tCH = tNx:getCommonHeader()
+        if not tCH or
+        	tCH.ulTagListSizeMax >= iLen - iEndLen + 8 or
+            --tCH.ulTagListSizeMax >= iLen - iEndLen + 8 and tCH.ulTagListStartOffset >= tCH.ulDataStartOffset or
+            tCH.ulTagListSizeMax == 0 and (tCH.ulTagListStartOffset == 0 or tCH.ulTagListStartOffset >= tCH.ulDataStartOffset) then
+            fCorrectible = true
+        else
+        	fCorrectible = false
+        end
+    end    
+    
+    return fOk, fCorrectible, strMsg
+end
+
+-- replace the end marker with eight zero bytes and adjust the length field
+function correctEndMarker(atTags)
+    atTags.iLen = atTags.iLen - atTags.abEndMarker:len()
+    atTags.abEndMarker = string.char(0,0,0,0,  0,0,0,0)
+    atTags.iLen = atTags.iLen + atTags.abEndMarker:len()
+end
 
 ---------------------------------------------------------------------
 --                primitive value conversions
 ---------------------------------------------------------------------
+
+
 
 -- If the string contains a zero byte, strip the zero and everything behind it
 function deserialize_string(abStr)
@@ -1679,6 +1821,18 @@ end
 --                       print a structure
 ---------------------------------------------------------------------
 
+-- make format string for member names
+function makeMemberFormatString(tStruct)
+	local iMaxNameLen = 0
+	for iMember, tMember in ipairs(tStruct) do
+		if isPrimitiveType(tMember.strType) and tMember.strName:len()>iMaxNameLen then 
+			iMaxNameLen = tMember.strName:len()
+		end
+	end
+	return "%-" .. tostring(iMaxNameLen) .. "s"
+end
+
+-- recursively print a structure
 -- fPretty = false: 
 -- prints nested structure members with full member path, e.g.
 --    .tDpmIsaAuto.ulIfConf0 = 0x00000000
@@ -1689,37 +1843,23 @@ end
 --        ...
 --     }
 
-function printStructure(tStruct, strIndent, fPretty)
+function printStructure(tStruct, fPretty, strIndent)
     strIndent = strIndent or ""
     if type(tStruct)=="table" then
-        -- make format string for member names
-        local iMaxNameLen = 0
-        for iMember, tMember in ipairs(tStruct) do
-            if isPrimitiveType(tMember.strType) and tMember.strName:len()>iMaxNameLen then 
-                    iMaxNameLen = tMember.strName:len()
-            end
-        end
-        local strNameFormat = "%-" .. tostring(iMaxNameLen) .. "s"
-        
         -- print the members
+        local strNameFormat = makeMemberFormatString(tStruct)
         for iMember, tMember in ipairs(tStruct) do
             local strName = string.format(strNameFormat, tMember.strName)
             if isPrimitiveType(tMember.strType) then
                 local strValue = primitiveTypeToString(tMember.strType, tMember.tValue)
                 printf("%s.%s = %s", strIndent, strName, strValue)
-            --[[
-            if type(tMember.tValue)=="number" then
-                printf("%s.%s = 0x%08x", strIndent, tMember.strName, tMember.tValue)
-            elseif type(tMember.tValue)=="string" then
-                printf("%s.%s = %s", strIndent, tMember.strName, tMember.tValue)
-                --]]
             elseif type(tMember.tValue)=="table" then
                 if fPretty then
                     printf("%s.%s = {",  strIndent, tMember.strName)
-                    printStructure(tMember.tValue, strIndent.."    ", fPretty)
+                    printStructure(tMember.tValue, fPretty, strIndent.."    ")
                     printf("%s }",  strIndent)
                 else
-                    printStructure(tMember.tValue, strIndent .. "." .. tMember.strName, fPretty)
+                    printStructure(tMember.tValue, fPretty, strIndent .. "." .. tMember.strName)
                 end
             else
                 printf("%s.%s = %s(%s)", strIndent, tMember.strName, tostring(tMember.tValue), type(tMember.tValue))
@@ -1755,16 +1895,7 @@ function checkStructuralIdentity(tStruct1, tStruct2)
 	return true
 end
 
--- make format string for member names
-function makeMemberFormatString(tStruct)
-	local iMaxNameLen = 0
-	for iMember, tMember in ipairs(tStruct) do
-		if isPrimitiveType(tMember.strType) and tMember.strName:len()>iMaxNameLen then 
-			iMaxNameLen = tMember.strName:len()
-		end
-	end
-	return "%-" .. tostring(iMaxNameLen) .. "s"
-end
+
 
 -- Compare the values in two structures with the same type. 
 -- Members with equal values are listed as by printStructure, 
@@ -1793,7 +1924,7 @@ function printStructureDiffs(tStruct1, tStruct2, strIndent)
 				printf("SET %s.%s = %s", strIndent, strName, strValue)
 			end
 		elseif type(tMember2.tValue)=="table" then
-			local fOk, msg = printStructure(tMember1.tValue, tMember2.tValue, strIndent .. "." .. tMember2.strName, fPretty)
+			local fOk, msg = printStructureDiffs(tMember1.tValue, tMember2.tValue, strIndent .. "." .. tMember2.strName, fPretty)
 			if not fOk then
 				return fOk, msg
 			end
@@ -1803,10 +1934,11 @@ function printStructureDiffs(tStruct1, tStruct2, strIndent)
 	end
 	return true
 end
+
+
 ---------------------------------------------------------------------
 --                       make empty taglist
 ---------------------------------------------------------------------
-
 
 function makeEmptyParblock()
     local abParblock = ""
@@ -1823,21 +1955,18 @@ function makeEmptyParblock()
             string.rep(string.char(0), ulSize + (4 - ulSize) % 4)
 
     end
-
-    --abParblock = abParblock .. uint32tobin(42) .. uint32tobin(10) .. "0123456789"
-
     abParblock = abParblock .. uint32tobin(TAG_END) .. uint32tobin(0)
     return abParblock
 end
 
 
 example_taglist = {
-"RCX_MOD_TAG_IT_STATIC_TASKS",
-"RCX_MOD_TAG_IT_STATIC_TASKS",
-"RCX_MOD_TAG_IT_XC",
-"RCX_MOD_TAG_IT_TIMER",
-"RCX_MOD_TAG_IT_INTERRUPT",
-"RCX_MOD_TAG_IT_LED",
+"RCX_TAG_STATIC_TASKS",
+"RCX_TAG_STATIC_TASKS",
+"RCX_TAG_XC",
+"RCX_TAG_TIMER",
+"RCX_TAG_INTERRUPT",
+"RCX_TAG_LED",
 --"RCX_MOD_TAG_IT_PIO",
 --"RCX_MOD_TAG_IT_GPIO",
 
@@ -1864,7 +1993,6 @@ example_taglist = {
 "RCX_TAG_MIN_CHIP_REV",
 "RCX_TAG_MAX_CHIP_REV",
 --"RCX_TAG_NUM_COMM_CHANNEL",
-
 
 --"mac_address",
 --"ipv4_address",

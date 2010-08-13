@@ -159,7 +159,7 @@ function checkDeviceHeaderVersion(tDevHdr)
 	elseif ulVersion == nil then
 		return false, "no header version found, illegal structure"
 	else
-		return string.format("# Unknown device header version (0x%08x)", ulVersion)
+		return false, string.format("# Unknown device header version (0x%08x)", ulVersion)
 	end
 end
 
@@ -187,7 +187,7 @@ function loadInputFile(strInputFile)
 	if tNx:hasTaglist() then
 		abTags = tNx:getTaglistBin()
 		
-		fOk, atTags, iLen, strError = taglist.binToParams(abTags, 0)
+		fOk, atTags, iLen, strError = taglist.binToParams(abTags)
 		if fOk then
 			printResults(fOk, strError)
 			fOk, strError = deserializeKnownTags(atTags)
@@ -218,6 +218,7 @@ function loadInputFile(strInputFile)
 		tDevHdr = tDevHdr
 	}
 end
+
 
 
 ----------------------------------------------------------------------------
@@ -562,6 +563,8 @@ function applyEdit(tEditRecord, tValue)
 	return true
 end
 
+
+
 function handle_editrec_device_header(nx, tEditRecord, iEdit)
 	-- get the device header
 	if not nx:hasDeviceHeader() then
@@ -766,6 +769,7 @@ function listdiffs(strInputFile, strInputFile2)
 	local atTags1, abDevHdr1, tDevHdr1 = tRes1.atTags, tRes1.abDevHdr, tRes1.tDevHdr
 	local atTags2, abDevHdr2, tDevHdr2 = tRes2.atTags, tRes2.abDevHdr, tRes2.tDevHdr
 	
+	
 	-- compare tag lists
 	if #atTags1 ~= #atTags2 then
 		return false, "The two tag lists do not have the same number of entries"
@@ -817,7 +821,7 @@ function listdiffs(strInputFile, strInputFile2)
 		if ulVer1 ~= ulVer2 then
 			print("# File 1 and File 2 have different versions of the device header")
 		elseif ulVer1 ~= 0x00010000 then
-			printf("# unknown device header version", ulVer1, ulVer2)
+			printf("# unknown device header version: 0x%08x 0x%08x", ulVer1, ulVer2)
 		else
 			print("DEVICE_HEADER_V1_T")
 			local fOk, msg = taglist.printStructureDiffs(tDevHdr1, tDevHdr2)
@@ -943,6 +947,7 @@ function printResults(fOk, msgs)
 		end
 	end
 end
+
 
 local iMode = nil
 local MODE_HELP = 1

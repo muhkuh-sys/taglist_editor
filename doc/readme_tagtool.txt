@@ -53,11 +53,11 @@ Currently, only device header version 1.0 is supported.
 
 diff
 =======
-Loads two NXF/NXO files, compares their tag lists and device headers and 
+Compares their tag lists and device headers of two NXF/NXO files and 
 prints any differences.
 The two tag lists must contain the same tags in the same order. 
 For any tags whose values differ, the tag from the second file is
-printed as an edit record which can be fed into the "edit" function.
+printed as an edit record which can be used as input for the "edit" function.
 
 Example: both files contain an xC number tag, in both files the identifier
 is "RTE_XC0" and in file 2, ulXcId is 2:
