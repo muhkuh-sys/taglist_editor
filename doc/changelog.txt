@@ -1,17 +1,15 @@
 Change log for Tag List Editor
- * added "diff" function to tagtool
- * added device class and hardware option defines to tagtool
+
+Tag list editor 1.1.8912
+ * new: command line tool to manipulate tag lists (tagtool.bat)
+ * Tag list editor checks for tag lists without end marker or 4-byte end marker
+   and offers to correct it if possible
+ * Load new tag lists into 2nd Stage Loader
  * removed tags
      RCX_TAG_NUM_COMM_CHANNEL (0x806) 
      RCX_MOD_TAG_IT_PIO (0x1090) 
      RCX_MOD_TAG_IT_GPIO (0x10a0) 
- * Tag list editor checks for tag lists without end marker or 4-byte end marker
-   and offers to correct it if possible
- * Load new tag lists into 2nd Stage Loader
-   
-Tag list editor 1.1.8845
- * added tagtool.bat
- * removed option HIF PIO in RCX_TAG_LED_T
+ * removed option HIF PIO in RCX_TAG_LED_T   
 
 Tag list editor 1.1.8597
  * Added tags controlling interfaces and protocols used by netX Diagnostics
