@@ -222,13 +222,13 @@ Source: bin\wx.dll; DestDir: {app}\application; Components: muhkuh
 
 Source: nxo_editor\help\welcome.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\misc_tags.htm; DestDir: {app}\nxo_editor\help; Components: modulator
-Source: nxo_editor\help\RCX_MOD_TAG_IT_GPIO_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_INTERRUPT_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_LED_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
-Source: nxo_editor\help\RCX_MOD_TAG_IT_PIO_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_STATIC_TASKS_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_TIMER_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\RCX_MOD_TAG_IT_XC_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+;Source: nxo_editor\help\RCX_MOD_TAG_IT_GPIO_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+;Source: nxo_editor\help\RCX_MOD_TAG_IT_PIO_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_EXTSRAM_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_FSU_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 Source: nxo_editor\help\TAG_BSL_HIF_PARAMS_DATA_T.htm; DestDir: {app}\nxo_editor\help; Components: modulator
