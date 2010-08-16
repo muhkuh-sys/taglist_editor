@@ -335,10 +335,10 @@ function setTaglistBin(self, abBin, fKeepGap)
 			-- by appending or removing bytes at the beginning of tag gap
 			local iLen = abBin:len() + self.m_abTagGap:len()
 			if iLen < iTagAreaLen then
-				print(string.format("enlarging tag gap by %d bytes", iTagAreaLen - iLen))
+				--print(string.format("enlarging tag gap by %d bytes", iTagAreaLen - iLen))
 				self.m_abTagGap = string.rep(string.char(0), iTagAreaLen - iLen) .. self.m_abTagGap
 			elseif iLen > iTagAreaLen then
-				print(string.format("shrinking tag gap by %d bytes", iLen - iTagAreaLen))
+				--print(string.format("shrinking tag gap by %d bytes", iLen - iTagAreaLen))
 				self.m_abTagGap = string.sub(self.m_abTagGap, iLen - iTagAreaLen + 1)
 			end
 			return true

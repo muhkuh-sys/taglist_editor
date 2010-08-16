@@ -193,7 +193,12 @@ function loadInputFile(strInputFile)
 			fOk, strError = deserializeKnownTags(atTags)
 		end
 		
-		if not fOk then
+		if fOk then
+			local fEndOk, fCorrectible, strMsg = taglist.checkEndMarker(tNx, atTags)
+			if not fEndOk then
+				printResults(true, strMsg)
+			end
+		else
 			return nil, strError
 		end
 	else
@@ -862,6 +867,18 @@ function replacetags(strInputFile, strTagsFile, strOutputFile)
 	local abTags, strMsg = loadBin(strTagsFile)
 	if not abTags then 
 		return false, strMsg 
+	end
+	
+	local fOk, atTags, iLen, strError = taglist.binToParams(abTags)
+	if fOk then
+		printResults(fOk, strError)
+	else
+		return false, strError
+	end
+	
+	local fEndOk, fCorrectible, strMsg = taglist.checkEndMarker(nx, atTags)
+	if not fEndOk then
+		printResults(true, strMsg)
 	end
 	
 	-- replace the tag list
