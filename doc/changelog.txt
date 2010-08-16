@@ -1,5 +1,4 @@
 Change log for Tag List Editor
-
  * added "diff" function to tagtool
  * added device class and hardware option defines to tagtool
  * removed tags
@@ -8,7 +7,8 @@ Change log for Tag List Editor
      RCX_MOD_TAG_IT_GPIO (0x10a0) 
  * Tag list editor checks for tag lists without end marker or 4-byte end marker
    and offers to correct it if possible
-
+ * Load new tag lists into 2nd Stage Loader
+   
 Tag list editor 1.1.8845
  * added tagtool.bat
  * removed option HIF PIO in RCX_TAG_LED_T

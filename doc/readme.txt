@@ -57,7 +57,6 @@ Editing tag lists:
 ==================
 
 - Load a binary tag list file or an NXF/NXO/2nd stage loader file.
-  A second stage loader is 
 
 - The list of tags contained in the file is shown on the left hand side. 
   Click on the tag names to view or edit their contents. On the right 
@@ -117,33 +116,8 @@ An NXO file built in the editor will have layout 1) or 2).
 
 The gaps following the header, data and tag list are usually 
 0-3 alignment bytes, but may contain additional data.
-The editor will preserve the gap data, as long as you only edit its tag list. 
-If you load a header/elf/tag list from a file, the gap data following 
-this section will be replaced by 0-3 alignment bytes.
-
-
-
-Tag list
-========
-
-The tag list ends with a zero tag, optionally followed by a zero length field.
-
-If the tag list is located at the end of the file, and the ulTagListSizeMax
-entry in the common header is set (>0), a new tag list loaded from a file is 
-only accepted if its length is <= ulTagListSizeMax. 
-
-If the tag list is located before the data section,
-the tag list can only be replaced with one of exactly the same size.
-
-
-
-Editing the device header
-==========================
-
-Whenever a file containing a device header is loaded, the "Edit Device Header"
-button opens an editor which allows you to view the header and change some of 
-its fields. You can also save the header as a binary file or load it from a 
-file.
+The editor will preserve the gap data, as long as you only edit the tag list.
+If you load another tag list, the gap data is adjusted to fit the new size.
 
 
 
@@ -160,16 +134,16 @@ The file will be rejected if:
 - the length of a tag value does not match the editor's structure definition,
 - the tag list contains additional data behind the end marker.
 
-The editor will accept a file and display a warning if:
+The editor will accept the file and display a warning if:
 - any of the checksums in the boot header/common header are incorrect,
 - the common header version is higher than 3.0,
 
 The end of a tag list is normally marked with the end tag (0) and length 0,
-that is eight zero bytes. If 
-- the tag list contains an end tag (0) without length indication.
+that is, eight zero bytes. If 
+- the tag list contains an end tag (0) without length indication or
 - the tag list does not have an end marker (ends directly after a tag)
 the editor will display a warning, and, if the memory layout of the file
-(TagListSizeMax) allows it, the editor will offer to correct the end marker.
+(TagListSizeMax) allows it, offer to correct the end marker.
 
 
   
@@ -181,3 +155,30 @@ base + range - 1 <= max. value
 For instance, if the task priority range is 2, the base priority must 
 be set to a value less than 55, since 55 is the highest value.
 The current tag list editor does not enforce this condition.
+
+
+
+Loading a new Tag list into an opened NXF/NXO file
+====================================================
+
+When a new tag list is loaded and the common header field ulTagListSizeMax is >0,
+the new tag list is only accepted if its size fits into ulTagListSizeMax. Also, 
+if the tag list is located before the data section (as in a 2nd Stage Loader),
+it is only accepted if the size fits into the range defined by 
+ulDataStartOffset - ulTagListStartOffset.
+
+If the tag list is located at the end of the NXF/NXO file, the gap data 
+following the tag list will be replaced by 0-3 alignment bytes.
+If the tag list is located before the data section, the gap data will be
+grown or shrunk to fit the size of the new tag list.
+
+
+
+Editing the device header
+==========================
+
+Whenever a file containing a device header is loaded, the "Edit Device Header"
+button opens an editor which allows you to view the header and change some of 
+its fields. You can also save the header as a binary file or load it from a 
+file.
+

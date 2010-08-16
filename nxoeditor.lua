@@ -509,7 +509,15 @@ function loadNx(strFilename)
 				showMessages(fTagsOk, "Notice", "Error parsing tag list", strMsg)
 				
 				if fTagsOk then
-					checkEndMarker(params)
+					local fChanged = checkEndMarker(params)
+					if fChanged then
+						abTags = taglist.paramsToBin(params)
+					end
+					fTagsOk, strMsg = m_nxfile:setTaglistBin(abTags)
+					showMessages(fOk, "Notice", "Error", strMsg)
+				end
+					
+				if fTagsOk then
 					displayTags(params)
 					m_nxFilebar:setFilename(strFilename)
 				else

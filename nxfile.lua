@@ -260,7 +260,7 @@ end
 -- it with a tag list of exactly the same size, independent of
 -- ulTagListSizeMax, and no alignment bytes are inserted.
 
-function setTaglistBin(self, abBin, fKeepGap)
+function setTaglistBin_(self, abBin, fKeepGap)
 	abBin = abBin or ""
 	local tCH = self.m_tCommonHeader
 	-- no tag list or tag list at end of file
@@ -290,38 +290,61 @@ function setTaglistBin(self, abBin, fKeepGap)
 end
 
 
--- new
---[[
+-- replace the tag list and adjust tagGap.
+-- If ulTagListSizeMax is >0, only accept a tag list up to that size.
+-- If the tag list is located before the data, check that it does not
+-- overlap data start offset.
+--
+-- Adjust tag gap:
+-- If the tag list is at the end of the file, and fKeepGap is false,
+-- replace the tag gap with 0-3 alignment bytes.
+-- If the tag list is located before the data, adjust tagGap to data start offset.
+--
+-- ulTagListSize is ignored here and the value is not necessarily correct.
+-- It's set in makeNXFile.
 function setTaglistBin(self, abBin, fKeepGap)
 	abBin = abBin or ""
 	local tCH = self.m_tCommonHeader
 	
-	if tCH.ulTagListSizeMax == 0 or tCH.ulTagListSizeMax >= abBin:len() then
-		self.m_abTaglist = abBin
-	else
-		return false, 
-			"The tag list is longer than the size allowed by ulTagListSizeMax."
-	end
-	
 	-- no tag list or tag list at end of file: just pad to dword size
 	if tCH.ulTagListStartOffset == 0 or tCH.ulTagListStartOffset > tCH.ulDataStartOffset then
-		if not fKeepGap then
-			self.m_abTagGap = getPadding(abBin, 4)
+		if tCH.ulTagListSizeMax == 0 or tCH.ulTagListSizeMax >= abBin:len() then
+			self.m_abTaglist = abBin
+			if not fKeepGap then
+				self.m_abTagGap = getPadding(abBin, 4)
+			end
+			return true
+		else
+			return false, 
+				"The tag list is longer than the size allowed by ulTagListSizeMax."
 		end
 	
 	-- tag list before data section: adjust TagGap to ulDataStartOffset
 	else
+		-- length of the area between taglist start and data start
 		local iTagAreaLen = tCH.ulDataStartOffset - tCH.ulTagListStartOffset
-		local iLen = abBin:len() + self.m_abTagGap:len()
-		if iLen < iTagAreaLen then
-			self.m_abTagGap = string.char(0, iTagAreaLen - iLen) .. self.m_abTagGap
-		elseif iLen > iTagAreaLen then
-			self.m_abTagGap = string.sub(self.m_abTagGap, iLen - iTagAreaLen)
+		if iTagAreaLen < tCH.ulTagListSizeMax then
+			return false, 
+				"Error in common header: ulTagListStartOffset - ulDataStartOffset < ulTagListSizeMax"
+		elseif tCH.ulTagListSizeMax ~= 0 and tCH.ulTagListSizeMax < abBin:len() then
+			return false, 
+				"The tag list is longer than the size allowed by ulTagListSizeMax."
+		else
+			self.m_abTaglist = abBin
+			-- adjust the tag gap such that length of tag list + tag gap = iTagAreaLen
+			-- by appending or removing bytes at the beginning of tag gap
+			local iLen = abBin:len() + self.m_abTagGap:len()
+			if iLen < iTagAreaLen then
+				print(string.format("enlarging tag gap by %d bytes", iTagAreaLen - iLen))
+				self.m_abTagGap = string.rep(string.char(0), iTagAreaLen - iLen) .. self.m_abTagGap
+			elseif iLen > iTagAreaLen then
+				print(string.format("shrinking tag gap by %d bytes", iLen - iTagAreaLen))
+				self.m_abTagGap = string.sub(self.m_abTagGap, iLen - iTagAreaLen + 1)
+			end
+			return true
 		end
 	end
-	return true
 end
---]]
 
 function getTaglistBin(self)
 	return self.m_abTaglist
