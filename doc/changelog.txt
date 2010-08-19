@@ -1,5 +1,7 @@
 Change log for Tag List Editor
 
+ * added RCX_TAG_UART
+
 Tag list editor 1.1.8912
  * new: command line tool to manipulate tag lists (tagtool.bat)
  * Tag list editor checks for tag lists without end marker or 4-byte end marker

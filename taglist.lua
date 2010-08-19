@@ -142,6 +142,42 @@ CONSTANTS = {
     TAG_BSL_MEDIUM_USERAM                 =  1,
     TAG_BSL_MEDIUM_USESERFLASH            =  2,
     TAG_BSL_MEDIUM_USEPARFLASH            =  3,
+
+	-- UART parameters
+	RX_UART_BAUDRATE_300    =    3,
+	RX_UART_BAUDRATE_600    =    6,
+	RX_UART_BAUDRATE_1200   =   12,
+	RX_UART_BAUDRATE_2400   =   24,
+	RX_UART_BAUDRATE_4800   =   48,
+	RX_UART_BAUDRATE_9600   =   96,
+	RX_UART_BAUDRATE_19200  =  192,
+	RX_UART_BAUDRATE_38400  =  384,
+	RX_UART_BAUDRATE_57600  =  576,
+	RX_UART_BAUDRATE_115200 = 1152,
+	RX_UART_PARITY_NONE = 0,
+	RX_UART_PARITY_ODD  = 1,
+	RX_UART_PARITY_EVEN = 2,
+	RX_UART_STOPBIT_1 = 0,
+	RX_UART_STOPBIT_2 = 1,
+	RX_UART_DATABIT_5 = 1,
+	RX_UART_DATABIT_6 = 2,
+	RX_UART_DATABIT_7 = 3,
+	RX_UART_DATABIT_8 = 4,
+	RX_UART_DATABIT_9 = 5,
+	RX_UART_RTS_NONE          = 0,
+	RX_UART_RTS_AUTO_INBITS   = 1,
+	RX_UART_RTS_AUTO_INCLOCKS = 2,
+	RX_UART_RTS_AUTO_INTICKS  = 3,
+	RX_UART_RTS_SELF          = 4,
+	RX_UART_RTS_DEFAULT       = 0,
+	RX_UART_RTS_ACTIVE_HIGH   = 1,
+	RX_UART_RTS_ACTIVE_LOW    = 2,
+	RX_UART_CTS_NONE        = 0,
+	RX_UART_CTS_AUTO        = 1,
+	RX_UART_CTS_SELF        = 2,
+	RX_UART_CTS_DEFAULT     = 0,
+	RX_UART_CTS_ACTIVE_HIGH = 1,
+	RX_UART_CTS_ACTIVE_LOW  = 2,
     
     -- Hardware options 
 	RCX_HW_ASSEMBLY_UNDEFINED             =  0x0000,
@@ -253,6 +289,69 @@ DEVICE_CLASS_COMBO_VALUES = {
 	
 	{name="OEM_DEVICE"          ,value =  0xFFFE},
 	
+}
+
+
+RX_UART_BAUDRATE = {
+	{name="300"    ,value =    3},
+	{name="600"    ,value =    6},
+	{name="1200"   ,value =   12},
+	{name="2400"   ,value =   24},
+	{name="4800"   ,value =   48},
+	{name="9600"   ,value =   96},
+	{name="19200"  ,value =  192},
+	{name="38400"  ,value =  384},
+	{name="57600"  ,value =  576},
+	{name="115200" ,value = 1152}
+}
+
+RX_UART_PARITY = {
+	{name="None" ,value = 0},
+	{name="Odd"  ,value = 1},
+	{name="Even" ,value = 2}
+}
+
+RX_UART_STOPBIT = {
+	{name="1", value = 0},
+	{name="2", value = 1},
+}
+
+RX_UART_DATABIT = {
+	{name="5", value = 1},
+	{name="6", value = 2},
+	{name="7", value = 3},
+	{name="8", value = 4},
+	{name="9", value = 5},
+}
+
+RX_UART_RTS_MODE = {
+	{name="None",      value = 0},
+	{name="Auto/Bits",   value = 1},
+	{name="Auto/Clock cycles", value = 2},
+	-- {name="Auto/System Ticks",  value = 3},
+	{name="Self",      value = 4},
+}
+
+RX_UART_RTS_CTS_POLARITY = {
+	{name="Default",      value = 0},
+	{name="Active High",  value = 1},
+	{name="Active Low",   value = 2},
+}
+
+RX_UART_CTS_MODE = {
+	{name="None",      value = 0},
+	{name="Auto",      value = 1},
+	{name="Self",      value = 2},
+}
+
+RX_UART_NUMBER = {
+	{name="0",      value = 0},
+	{name="1",      value = 1},
+}
+
+RX_FIFO_TRIGGER_LEVEL = {
+	{name="0",      value = 0},
+
 }
 
 -- add TSK_PRIO_02 ... TSK_PRIO_55 and TSK_TOK_02 ... TSK_TOK_55
@@ -464,6 +563,27 @@ RCX_MOD_TAG_IT_INTERRUPT_T = {
   nameField = "szInterruptListName"
 },
 
+
+----------------------------------------------------------------------------------------------
+--       UART
+
+RCX_TAG_UART_DATA_T = {
+  RCX_MOD_TAG_IDENTIFIER_T,
+    {"UINT32", "ulUrtNumber"   , desc="UART number"           , editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=1}},
+    {"UINT32", "ulBaudRate"    , desc="Baud rate"             , editor="comboedit", editorParam={nBits=32, values = RX_UART_BAUDRATE}},
+    {"UINT32", "ulParity"      , desc="Parity"                , editor="comboedit", editorParam={nBits=32, values = RX_UART_PARITY}},
+    {"UINT32", "ulStopBits"    , desc="Stop bits"             , editor="comboedit", editorParam={nBits=32, values = RX_UART_STOPBIT}},
+    {"UINT32", "ulDataBits"    , desc="Data bits"             , editor="comboedit", editorParam={nBits=32, values = RX_UART_DATABIT}},
+    {"UINT32", "ulRxFifoLevel" , desc="Rx FIFO trigger level" , editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=14}},
+    {"UINT32", "ulTxFifoLevel" , desc="Tx FIFO trigger level" , editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=14}},
+    {"UINT32", "ulRtsMode"     , desc="RTS mode"              , editor="comboedit", editorParam={nBits=32, values = RX_UART_RTS_MODE}},
+    {"UINT32", "ulRtsPolarity" , desc="RTS polarity"          , editor="comboedit", editorParam={nBits=32, values = RX_UART_RTS_CTS_POLARITY}},
+    {"UINT32", "ulRtsForerun"  , desc="RTS forerun"           ,                     editorParam={nBits=32, format = "%d", minValue=0, maxValue=255}},
+    {"UINT32", "ulRtsTrail"    , desc="RTS trail"             ,                     editorParam={nBits=32, format = "%d", minValue=0, maxValue=255}},
+    {"UINT32", "ulCtsMode"     , desc="CTS mode"              , editor="comboedit", editorParam={nBits=32, values = RX_UART_CTS_MODE}},
+    {"UINT32", "ulCtsPolarity" , desc="CTS polarity"          , editor="comboedit", editorParam={nBits=32, values = RX_UART_RTS_CTS_POLARITY}},
+    nameField = "szIdentifier"
+},
 
 ----------------------------------------------------------------------------------------------
 --        xC
@@ -884,6 +1004,8 @@ RCX_TAG_TIMER =
     {paramtype = 0x00001010, datatype ="RCX_MOD_TAG_IT_TIMER_T",              desc="Hardware Timer"},
 RCX_TAG_INTERRUPT =                                                           
     {paramtype = 0x00001020, datatype ="RCX_MOD_TAG_IT_INTERRUPT_T",          desc="Interrupt"},
+RCX_TAG_UART = 
+    {paramtype = 0x00001030, datatype ="RCX_TAG_UART_DATA_T",                 desc="UART"},    
 RCX_TAG_LED =                                                                 
     {paramtype = 0x00001040, datatype ="RCX_MOD_TAG_IT_LED_T",                desc="LED"},
 RCX_TAG_XC =                                                                  
@@ -940,6 +1062,7 @@ HELP_MAPPING = {
     RCX_TAG_TIMER                       = {file="RCX_MOD_TAG_IT_TIMER_T.htm"},
     RCX_TAG_XC                          = {file="RCX_MOD_TAG_IT_XC_T.htm"},
     RCX_TAG_INTERRUPT                   = {file="RCX_MOD_TAG_IT_INTERRUPT_T.htm"},
+    RCX_TAG_UART                        = {file="RCX_TAG_UART_DATA_T.htm"},
 
     TAG_BSL_SDRAM_PARAMS                = {file="TAG_BSL_SDRAM_PARAMS_DATA_T.htm"},
     TAG_BSL_HIF_PARAMS                  = {file="TAG_BSL_HIF_PARAMS_DATA_T.htm"},
@@ -1967,6 +2090,7 @@ example_taglist = {
 "RCX_TAG_TIMER",
 "RCX_TAG_INTERRUPT",
 "RCX_TAG_LED",
+"RCX_TAG_UART",
 --"RCX_MOD_TAG_IT_PIO",
 --"RCX_MOD_TAG_IT_GPIO",
 

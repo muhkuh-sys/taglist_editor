@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBtdC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_TAG_UART_T</Title>
+</HEAD>
+<BODY>
+<h2>UART Settings</h2>
+
+<p>
+</p>
+
+
+<table border=1>
+
+<tr>
+	<td>UART number</td>
+	<td>0 or 1</td>
+</tr>
+<tr>
+	<td>Baud rate</td>
+	<td>300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200</td>
+</tr>
+<tr>
+	<td>Parity</td>
+	<td>No parity checking, odd parity, or even parity</td>
+</tr>
+<tr>
+	<td>Stop bits</td>
+	<td>The number of stop bits (1 or 2)</td>
+</tr>
+<tr>
+	<td>Data bits</td>
+	<td>The number of data bits (5 .. 9)</td>
+</tr>
+<tr>
+	<td>Rx FIFO trigger level</td>
+	<td>Configures the receive FIFO and the "Rx FIFO ready" IRQ trigger level.<br>
+		<ul>
+		<li>0: Disables FIFO and forces immediate notification for each character received.</li>
+		<li>1 .. 14: Enables FIFO. An IRQ is triggered when the receive FIFO fill level is greater than or equal to the value.</li>
+		</ul>
+		Recommended value: 8 
+	</td>
+</tr>
+<tr>
+	<td>Tx FIFO trigger level</td>
+	<td>
+		Configures the transmit FIFO and the "Tx FIFO empty" IRQ trigger level.
+		<ul>
+		<li>0: Disables FIFO and forces immediate sending of each character.</li> 
+		<li>1 .. 14: Enables FIFO. An IRQ is triggered when the number of characters left in the FIFO is less than the value.</li>
+		</ul>
+	Recommended value: 4 
+		
+	</td>
+</tr>
+<tr>
+	<td>RTS Mode</td>
+	<td>
+		<ul>
+			<li>None: RTS is not used.</li>
+			<li>Auto/Bits: RTS is controlled by the driver, RTS forerun/trail are given in bit times.</li>
+			<li>Auto/Cycles: RTS is controlled by the driver, RTS forerun/trail are given in clock cycles.</li>
+			<!--li>Auto/Ticks: RTS is controlled by the driver, RTS forerun/trail are given in sytem ticks.</li -->
+			<li>Self: RTS is controlled by the application.</li>
+		</ul>
+	</td>
+</tr>
+<tr>
+	<td>RTS Polarity</td>
+	<td>
+		<ul>
+			<li>Default</li>
+			<li>Active High</li>
+			<li>Active Low</li>
+		</ul>
+	</td>
+</tr>
+<tr>
+	<td>RTS Forerun</td>
+	<td>If RTS Mode is set to Auto/Bits or Auto/Cycles, 
+		this value defines the delay between the assertion of RTS and the beginning of the start bit.<br>
+		The unit of this value is either bit times or clock cycles, depending on the value of RTS mode.<br>
+		Recommended values are 1 .. 5 bit times or 1 .. 10 clock cycles.<br>
+		See netX Technical Reference Guide, Electrical Specifications, UART.
+	</td>
+</tr>
+<tr>
+	<td>RTS Trail</td>
+	<td>
+		If RTS Mode is set to Auto/Bits or Auto/Cycles, 
+		this value defines the delay between the end of the stop bit(s) and de-assertion of RTS.<br>
+		The unit of this value is either bit times or clock cycles, depending on the value of RTS mode.<br>
+		Recommended values are 1 .. 5 bit times or 1 .. 10 clock cycles.<br>
+		See netX Technical Reference Guide, Electrical Specifications, UART.
+	</td>
+</tr>
+<tr>
+	<td>CTS Mode</td>
+	<td>
+		<ul>
+			<li>None: CTS is not used.</li>
+			<li>Auto: CTS is controlled by the driver.</li>
+			<li>Self: CTS is controlled by the application.</li>
+		</ul>
+	</td>
+</tr>
+<tr>
+	<td>CTS Polarity</td>
+	<td>
+		<ul>
+			<li>Default</li>
+			<li>Active High</li>
+			<li>Active Low</li>
+		</ul>
+	</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>
