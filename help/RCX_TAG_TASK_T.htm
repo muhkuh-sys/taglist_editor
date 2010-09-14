@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_TAG_TASK_ENTRY_T</Title>
+</HEAD>
+<BODY>
+<h2>Task Settings</h2>
+
+<p>
+This tag allows to configure the key settings of an individual task.
+Using the tag parameters, you can reassign the priority and token
+parameters of a preconfigured task. This feature is especially useful
+when adapting a standard firmware for use with specific hardware.
+</p>
+
+<p>
+Please note that each rcX task needs to have a unique token and
+a unique priority. Recommendation: In order to avoid conflicts,
+always use identical values for task priorities and for the
+associated task tokens.
+</p>
+
+<p>
+Please consult the rcX Configuration and the Kernel API Function
+Reference for more details about task priorities and tokens.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Priority</td>
+    <td>
+        Value that replaces the preconfigured task priority. <br>
+        Range: 0 ... 56
+    </td>
+</tr>
+<tr>
+    <td>Token</td>
+    <td>
+        Value that replaces the preconfigured task token. <br>
+        Range: 0 ... 56
+    </td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_TAG_TASK_GROUP_T</Title>
+</HEAD>
+<BODY>
+<h2>Task Group Settings</h2>
+
+<p>
+This tag allows to reconfigure the key settings of a group of tasks.
+Using the tag parameters, you can add a common base offset to the
+priority and token entries of all tasks within this group while
+preserving their relative priorities. This feature is useful for
+manipulating tasks which have a close relationship.
+</p>
+
+<p>
+E.g.: A firmware could use different task groups for tasks with
+critical functionality running in a high priority band and for
+other tasks with less critical functionality running in a lower
+priority band.
+</p>
+
+<p>
+Please note that each rcX task needs to have a unique token and
+a unique priority. Recommendation: In order to avoid conflicts,
+always use identical values for task priorities and for the
+associated task tokens.
+</p>
+
+<p>
+Please consult the rcX Configuration and the Kernel API Function
+Reference for more details about task priorities and tokens.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Base Priority</td>
+    <td>
+        Base value (= offset) added to the preconfigured task priorities of all tasks in the group. <br>
+        Value range: 0 ... (56-Task Range), if the preconfigured task priorities are 0 ... (Task Range-1)
+    </td>
+</tr>
+<tr>
+    <td>Base Token</td>
+    <td>
+        Base value (= offset) added to the preconfigured task tokens of all tasks in the group. <br>
+        Value range: 0 ... (56-Task Range), if the preconfigured task tokens are 0 ... (Task Range-1)
+    </td>
+</tr>
+<tr>
+    <td>Task Range</td>
+    <td>
+        Number of tasks in the group. <br>
+        This read-only parameter is useful when checking the allowed range for Base Priority and Base Token.
+    </td>
+</tr>
+<tr>
+    <td>Task Group Ref.</td>
+    <td>
+        Group reference number common to all tasks in the group. <br>
+        This read-only parameter can be used to identify the tasks belonging to the group.
+    </td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

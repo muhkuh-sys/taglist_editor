@@ -7,62 +7,62 @@
 <h2>HIF/DPM Parameters</h2>
 
 <p>
-DPM parameters can be set using this tag. 
+DPM parameters can be set using this tag.
 If no parameters are given the 2nd Stage Loader will use the default settings.
 </p>
 <p></p>
 
 <table border=1>
 <tr>
-	<td>Bus Type</td>
-	<td>The external bus type: Auto-detect, DPM, ISA, PCI or disabled</td>
+    <td>Bus Type</td>
+    <td>The external bus type: Auto, DPM, ISA, PCI or Disabled.</td>
 </tr>
 </table>
 <p></p>
 
 <h3>Settings for DPM/ISA/Auto</h3>
 <p>
-The following settings are valid if the bus type is set to DPM, ISA or auto-detection:
+The following settings are valid if the bus type is set to DPM, ISA or Auto:
 </p>
 <p></p>
 <table border=1>
 <tr>
-	<td>IF_CONF0 <br>
-		IF_CONF1 <br>
-		IO_REGMODE0 <br>
-		IO_REGMODE1
-	</td>
-	<td>Values of the HIF timing registers. <br>
-		These values are only required for bus types DPM, ISA (and auto).
-		Set the registers to 0 to use the defaults.
-	</td>
+    <td>IF_CONF0 <br>
+        IF_CONF1 <br>
+        IO_REGMODE0 <br>
+        IO_REGMODE1
+    </td>
+    <td>Values of the HIF timing registers. <br>
+        These values are only required for bus types DPM, ISA (and auto).
+        Set the registers to 0 to use the defaults.
+    </td>
 </tr>
 </table>
 <p></p>
 
 <h3>Settings for PCI/Auto</h3>
 <p>
-The following settings are valid if the bus type is set to PCI or auto-detection:
+The following settings are valid if the bus type is set to PCI or Auto:
 </p>
 <p></p>
 <table border=1>
 <tr>
-	<td>Use PCI enable pin</td>
-	<td>Use PCI enable pin (e.g. netPLC)</td>
+    <td>Use PCI enable pin</td>
+    <td>Use PCI enable pin (e.g. netPLC)</td>
 </tr>
 <tr>
-	<td>Type of enable pin</td>
-	<td>Type of enable pin. <br>
-		"Ignore" means ignore the pin and poll once.
-	</td>
+    <td>Type of enable pin</td>
+    <td>Type of enable pin. <br>
+        "Ignore" means ignore the pin and poll once.
+    </td>
 </tr>
 <tr>
-	<td>Inverted</td>
-	<td>Indicates if the PCI enable pin is inverted.</td>
+    <td>Inverted</td>
+    <td>Indicates if the PCI enable pin is inverted.</td>
 </tr>
 <tr>
-	<td>Pin Number</td>
-	<td>Pin Number of the PCI enable pin.</td>
+    <td>Pin Number</td>
+    <td>Pin Number of the PCI enable pin.</td>
 </tr>
 </table>
 
