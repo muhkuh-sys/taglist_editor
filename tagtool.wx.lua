@@ -234,8 +234,8 @@ strCommentChar        = "#"
 strTrimPattern        = "^%s*(.+[^%s])%s*$"
 strTagNamePattern     = "^Tag[^:]*:%s*([%w_]+)"
 strStructNamePattern  =             "^([%w_]+)$"
-strMatchPattern       =     '^%s*%.?([%w_%.]+)%s*=%s*"?([%w%s_]+)"?'
-strSetPattern         = '^SET %s*%.?([%w_%.]+)%s*=%s*"?([%w%s_]+)"?'
+strMatchPattern       =     '^%s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]+)"?'
+strSetPattern         = '^SET %s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]+)"?'
 
 -- split strText into lines at "\n" and remove comments starting with "#"
 function splitIntoLines(strText)
