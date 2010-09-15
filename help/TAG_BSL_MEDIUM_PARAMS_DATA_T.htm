@@ -27,25 +27,25 @@ bootloader.
     <td>
     Destination device used for the volume and for flashing the 2nd Stage Loader.<br>
     <ul>
-        <li>Auto-detect media: See below</li>
+        <li>Auto-detect media:</li>
+            <ul>
+                <li>If the BSL is running from serial flash, use serial flash.</li>
+                <li>If the BSL was loaded via PCI/DPM and self-flashing is disabled, use a RAM disk.</li>
+                <li>If the BSL was loaded from parallel flash, use parallel flash.</li>
+            </ul></li>
         <li>RAM Disk: Use a file system in RAM</li>
         <li>Serial Flash: Use a file system in serial flash</li>
         <li>Parallel Flash: No file system will be available.
             Only a single file can be downloaded and will always be stored at location 0xc0040000.</li>
         <li>SQI Flash - netX10 only: Use a file system in flash for configuration files.<br>
-            The area from offset 0 to 0x1ffff is reserved for the Second Stage Loader.<br>
-            The area from offset 0x20000 to 0x1fffff holds a single firmware file.<br>
-            The file system is located from offset 0x200000 and the end of the SQI Flash.<br>
-            The offset and size of the file system can be adjusted using the "Disk position" tag.
+            <ul>
+                <li>The area from offset 0 to 0x1ffff is reserved for the Second Stage Loader.</li>
+                <li>The area from offset 0x20000 to 0x1fffff holds a single firmware file.</li>
+                <li>The file system is located from offset 0x200000 to the end of the SQI Flash.
+                The offset and size of the file system can be adjusted using the "Disk position" tag.</li>
+            </ul>
             </li>
     </ul>
-    <br><br>
-    Auto-detection works as follows:<br>
-        <ul>
-        <li>If the BSL is running from serial flash, use serial flash.</li>
-        <li>If the BSL was loaded via PCI/DPM and self-flashing is disabled, use a RAM disk.</li>
-        <li>If the BSL was loaded from parallel flash, use parallel flash.</li>
-        </ul>
     </td>
 </tr>
 
