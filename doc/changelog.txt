@@ -1,12 +1,33 @@
 Change log for Tag List Editor
 
- * added RCX_TAG_UART
+Tag list editor 1.1.9014
 
-Tag list editor 1.1.8912
- * new: command line tool to manipulate tag lists (tagtool.bat)
+ * added/renamed RCX Tags:
+   renamed RCX_MOD_TAG_INTERRUPT -> RCX_TAG_INTERRUPT_GROUP
+   added RCX_TAG_INTERRUPT
+   renamed RCX_MOD_TAG_IT_STATIC_TASKS -> RCX_TASK_GROUP
+   added RCX_TAG_TASK
+   renamed RCX_MOD_TAG_IDENTIFIER -> RCX_TAG_IDENTIFIER
+   renamed RCX_MOD_TAG_IT_TIMER -> RCX_TAG_TIMER
+   renamed RCX_MOD_TAG_IT_XC -> RCX_TAG_XC
+   renamed RCX_MOD_TAG_IT_LED -> RCX_TAG_LED
+
+ * Added/updated BSL tags:   
+   added TAG_BSL_HIF_NETX10_PARAMS
+   added TAG_BSL_USB_DESCR_PARAMS
+   added TAG_BSL_DISK_POS_PARAMS
+   added TAG_BSL_MMIO_NETX50_PARAMS
+   added TAG_BSL_MMIO_NETX10_PARAMS
+   updated TAG_BSL_HIF_PARAMS
+   updated TAG_BSL_MEDIUM_PARAMS
+
+Tag list editor 1.1.8918
+
+ * Added command line tool to manipulate tag lists (tagtool.bat)
  * Tag list editor checks for tag lists without end marker or 4-byte end marker
    and offers to correct it if possible
  * Load new tag lists into 2nd Stage Loader
+ * added RCX_TAG_UART
  * removed tags
      RCX_TAG_NUM_COMM_CHANNEL (0x806) 
      RCX_MOD_TAG_IT_PIO (0x1090) 
