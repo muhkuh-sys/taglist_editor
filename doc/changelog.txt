@@ -1,7 +1,7 @@
 Change log for Tag List Editor
 
-Tag list editor 1.1.9014
-
+Tag list editor 1.1.9016
+ * tagtool now allows for field names containing [], like .atMMIOCfg[1].bConfig 
  * added/renamed RCX Tags:
    renamed RCX_MOD_TAG_INTERRUPT -> RCX_TAG_INTERRUPT_GROUP
    added RCX_TAG_INTERRUPT
