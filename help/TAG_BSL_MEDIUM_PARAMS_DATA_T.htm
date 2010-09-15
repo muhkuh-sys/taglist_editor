@@ -32,11 +32,12 @@ bootloader.
         <li>Serial Flash: Use a file system in serial flash</li>
         <li>Parallel Flash: No file system will be available.
             Only a single file can be downloaded and will always be stored at location 0xc0040000.</li>
-        <li>SQI Flash: Use a file system in flash for configuration files.
-            Only a single firmware file can be downloaded and will always be stored at location 0x09020000.
-            (The first 128 KB of the SQI flash device are reserved for the Second Stage Loader.)
-            The flash file system starts at location 0x09200000 and occupies the remaining 2 MB.
-            This setting allows for a maximum firmware file size of 1,875 MB (0x001E0000).</li>
+        <li>SQI Flash - netX10 only: Use a file system in flash for configuration files.<br>
+            The area from offset 0 to 0x1ffff is reserved for the Second Stage Loader.<br>
+            The area from offset 0x20000 to 0x1fffff holds a single firmware file.<br>
+            The file system is located from offset 0x200000 and the end of the SQI Flash.<br>
+            The offset and size of the file system can be adjusted using the "Disk position" tag.
+            </li>
     </ul>
     <br><br>
     Auto-detection works as follows:<br>

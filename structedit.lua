@@ -127,7 +127,6 @@ end
 --- Create the edit controls for the structure using the structure definition
 -- passed during creation.
 function create(self, parent)
-	--print("creating editors")
 	self.m_controls = {}
 	self.m_editorAssoc = {}
 	local tStructDef = taglist.getStructDef(self.strTypeName)
@@ -157,7 +156,6 @@ function create(self, parent)
 				--print(strMemberName, strMemberType)
 				local editor = tEditPackage.new(strMemberType, tEditorParams)
 				local editCtrl = editor:create(structPanel)
-	
 				if taglist.isReadOnly(member) then
 					-- print("disabling ", strMemberName)
 					disableControl(editCtrl)
@@ -180,11 +178,11 @@ function create(self, parent)
 			end
 		end
 	end
+	
 	local structSizer = doLayout(structPanel, elements, tStructDef.layout) 
 	structPanel:SetSizer(structSizer)
 	self.m_panel = structPanel
 	self.m_sizer = structSizer
-	
 	return structPanel
 end
 

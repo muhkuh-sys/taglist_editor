@@ -15,7 +15,9 @@ If no parameters are given, the 2nd Stage Loader will use the default settings.
 <table border=1>
 <tr>
     <td>Custom Settings</td>
-    <td>A nonzero value enables the custom USB settings given in the subsequent tag structure members.</td>
+    <td>Check to use the custom settings in the remaining fields. Otherwise, the default settings will be used.
+    <!-- A nonzero value enables the custom USB settings given in the subsequent tag structure members.-->
+    </td>
 </tr>
 <!-- The following members and reserved for future use and therefore hidden:
     <tr>
@@ -47,11 +49,17 @@ If no parameters are given, the 2nd Stage Loader will use the default settings.
     <td>Characteristics</td>
     <td>Configuration characteristics.<br>
     <ul>
+        <li>Self-powered</li>
+        <li>Bus-powered</li>
+        <li>Self-powered, capable of Remote Wakeup</li>
+        <li>Bus-powered, capable of Remote Wakeup</li>
+        <!--
         <li>D7: Reserved (set to one)</li>
         <li>D6: Self-powered</li>
         <li>D5: Remote Wakeup</li>
         <li>D4...0: Reserved (reset to zero)</li>
         <li>D7 is reserved and must be set to one for historical reasons.</li>
+        -->
     </ul>
     </td>
 </tr>
@@ -62,15 +70,15 @@ If no parameters are given, the 2nd Stage Loader will use the default settings.
 <tr>
 <tr>
     <td>Vendor Name</td>
-    <td>Name string associated with the vendor ID. (Max. 15 alphanumerical characters.)</td>
+    <td>Name string associated with the vendor ID. (Max. 16 alphanumerical characters.)</td>
 </tr>
 <tr>
     <td>Product Name</td>
-    <td>Name string associated with the product ID. (Max. 15 alphanumerical characters.)</td>
+    <td>Name string associated with the product ID. (Max. 16 alphanumerical characters.)</td>
 </tr>
 <tr>
     <td>Serial Number</td>
-    <td>Serial number string associated with the device. (Max. 15 numerical characters.)</td>
+    <td>Serial number string associated with the device. (Max. 16 numerical characters.)</td>
 </tr>
 </table>
 

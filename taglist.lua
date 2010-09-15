@@ -296,7 +296,6 @@ DEVICE_CLASS_COMBO_VALUES = {
 
 }
 
-
 RX_UART_BAUDRATE = {
     {name="300"    ,value =    3},
     {name="600"    ,value =    6},
@@ -362,9 +361,10 @@ RX_FIFO_TRIGGER_LEVEL = {
 
 -- MMIO flags
 MMIO_FLAGS = {
-    {name="No Inversion",     value = 0x00},
-    {name="Output Inversion", value = 0x01},
-    {name="Input Inversion",  value = 0x02},
+    {name="No Inversion",             value = 0x00},
+    {name="Output Inversion",         value = 0x01},
+    {name="Input Inversion",          value = 0x02},
+    {name="Input + Output Inversion", value = 0x03},
 }
 
 
@@ -952,8 +952,6 @@ TAG_BSL_HIF_NETX10_PARAMS_DATA_T =
       {
         {name="Auto", value=0},
         {name="DPM", value=1},
-        {name="ISA", value=2},
-        {name="PCI", value=3},
         {name="Disabled", value=0xffffffff}
       }
     },
@@ -972,17 +970,25 @@ TAG_BSL_HIF_NETX10_PARAMS_DATA_T =
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader USB descriptor
 
+
 TAG_BSL_USB_DESCR_PARAMS_DATA_T =
 {
-  {"UINT8",  "bCustomSettings",   desc="Custom Settings"},
+  {"UINT8",  "bCustomSettings",   desc="Custom Settings", editor="checkboxedit", editorParam={onValue=1, offValue=0, otherValues=true, nBits=8}},
   {"UINT8",  "bDeviceClass",      desc="Device Class", mode = "hidden"},
   {"UINT8",  "bSubClass",         desc="Subclass", mode = "hidden"},
   {"UINT8",  "bProtocol",         desc="Protocol", mode = "hidden"},
   {"UINT16", "usVendorId",        desc="Vendor ID"},
   {"UINT16", "usProductId",       desc="Product ID"},
   {"UINT16", "usReleaseNr",       desc="Release Number"},
-  {"UINT8",  "bCharacteristics",  desc="Characteristics"},
-  {"UINT8",  "bMaxPower",         desc="Maximum Power"},
+  {"UINT8",  "bCharacteristics",  desc="Characteristics", editor="comboedit", editorParam={
+     nBits=8,
+     values={
+       {name="Self-powered",                 value=0x80+0x40},
+       {name="Bus-powered",                  value=0x80},
+       {name="Self-powered, remote wakeup",  value=0x80+0x40+0x20},
+       {name="Bus-powered, remote wakeup",   value=0x80+0x20},
+     }}},
+  {"UINT8",  "bMaxPower",         desc="Maximum Power", editor="numedit", editorParam={nBits=8, format="%d", minValue=0, maxValue=250}},
   {"STRING", "szVendor",          desc="Vendor Name", size=16},
   {"STRING", "szProduct",         desc="Product Name", size=16},
   {"STRING", "szSerial",          desc="Serial Number", size=16},
@@ -1187,7 +1193,7 @@ MMIO_PIN_NETX50_T = {
     },
 },
 
-TAG_BSL_MMIO_NETX50_PARAMS_DATA_T = {
+TAG_BSL_MMIO_NETX50_PARAMS_DATA_T= {
     {"MMIO_PIN_NETX50_T", "atMMIOCfg[0]",   desc="MMIO 0"},
     {"MMIO_PIN_NETX50_T", "atMMIOCfg[1]",   desc="MMIO 1"},
     {"MMIO_PIN_NETX50_T", "atMMIOCfg[2]",   desc="MMIO 2"},
@@ -1229,8 +1235,6 @@ TAG_BSL_MMIO_NETX50_PARAMS_DATA_T = {
     {"MMIO_PIN_NETX50_T", "atMMIOCfg[38]",  desc="MMIO 38"},
     {"MMIO_PIN_NETX50_T", "atMMIOCfg[39]",  desc="MMIO 39"},
 },
-
-
 
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader MMIO parameters for netX 10
@@ -1426,7 +1430,7 @@ RCX_TAG_XC =
 TAG_BSL_SDRAM_PARAMS =
     {paramtype = 0x40000000, datatype="TAG_BSL_SDRAM_PARAMS_DATA_T",          desc="SDRAM"},
 TAG_BSL_HIF_PARAMS =
-    {paramtype = 0x40000001, datatype="TAG_BSL_HIF_PARAMS_DATA_T",            desc="HIF/DPM"},
+    {paramtype = 0x40000001, datatype="TAG_BSL_HIF_PARAMS_DATA_T",            desc="netX 50/100/500 HIF/DPM"},
 TAG_BSL_SDMMC_PARAMS =
     {paramtype = 0x40000002, datatype="TAG_BSL_SDMMC_PARAMS_DATA_T",          desc="SD/MMC"},
 TAG_BSL_UART_PARAMS =
@@ -2284,14 +2288,17 @@ function serialize(strTypeName, atMembers, fRecursive)
         bin = tStructDef.fStructToBin(atMembers)
     else
         local strMemberName, strMemberType, ulMemberSize, abMemberValue
-        local tMember, abMemberValue
+        local tMember, abMemberValue, strError
         for index, tMemberDef in ipairs(tStructDef) do
             strMemberName, strMemberType = tMemberDef[2], tMemberDef[1]
 
             -- get binary value
             tMember = atMembers[index]
             if fRecursive and tMember.tValue then
-                abMemberValue = serialize(strMemberType, tMember.tValue, fRecursive)
+                abMemberValue, strError = serialize(strMemberType, tMember.tValue, fRecursive)
+                if not abMemberValue then
+                	return nil, strError
+                end
                 tMember.abValue = abMemberValue
             else
                 abMemberValue = tMember.abValue
@@ -2300,12 +2307,18 @@ function serialize(strTypeName, atMembers, fRecursive)
                 string.format("failed to get binary value for %s.%s", strTypeName, strMemberType))
 
             -- check size
-            -- pad strings to the required size
+            -- pad strings to the required size. Error if this size is exceeded.
             ulMemberSize = getStructMemberSize(tMemberDef)
             ulActualSize = abMemberValue:len()
-            if ulActualSize<ulMemberSize and strMemberType=="STRING" then
-                abMemberValue = abMemberValue .. string.rep(string.char(0), ulMemberSize - ulActualSize)
-                ulActualSize = abMemberValue:len()
+            if strMemberType=="STRING" then
+                if ulActualSize<ulMemberSize then
+                    abMemberValue = abMemberValue .. string.rep(string.char(0), ulMemberSize - ulActualSize)
+                    ulActualSize = ulMemberSize
+                elseif ulActualSize>ulMemberSize then
+                    return nil, string.format(
+                        "string too long: %s max. size = %d actual size = %d", 
+                        strMemberName, ulMemberSize, ulActualSize)
+                end 
             end
             assert(ulMemberSize == abMemberValue:len(),
                 string.format("struct member size has changed: actual = %u, correct = %u",
@@ -2490,7 +2503,7 @@ end
 
 
 ---------------------------------------------------------------------
---                       make empty taglist
+--               make empty taglist (debugging)
 ---------------------------------------------------------------------
 
 function makeEmptyParblock()
@@ -2514,15 +2527,21 @@ end
 
 
 example_taglist = {
+"RCX_TAG_MEMSIZE",
+"RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE",
+"RCX_TAG_MIN_OS_VERSION",
+"RCX_TAG_MAX_OS_VERSION",
+"RCX_TAG_MIN_CHIP_REV",
+"RCX_TAG_MAX_CHIP_REV",
+
 "RCX_TAG_TASK_GROUP",
-"RCX_TAG_TASK_GROUP",
-"RCX_TAG_XC",
-"RCX_TAG_TIMER",
+"RCX_TAG_TASK",
 "RCX_TAG_INTERRUPT_GROUP",
-"RCX_TAG_LED",
+"RCX_TAG_INTERRUPT",
+"RCX_TAG_TIMER",
 "RCX_TAG_UART",
---"RCX_MOD_TAG_IT_PIO",
---"RCX_MOD_TAG_IT_GPIO",
+"RCX_TAG_LED",
+"RCX_TAG_XC",
 
 "TAG_BSL_SDRAM_PARAMS",
 "TAG_BSL_HIF_PARAMS",
@@ -2533,6 +2552,7 @@ example_taglist = {
 "TAG_BSL_EXTSRAM_PARAMS",
 "TAG_BSL_HWDATA_PARAMS",
 "TAG_BSL_FSU_PARAMS",
+"TAG_BSL_MMIO_NETX50_PARAMS",
 "TAG_BSL_MMIO_NETX10_PARAMS",
 "TAG_BSL_HIF_NETX10_PARAMS",
 "TAG_BSL_USB_DESCR_PARAMS",
@@ -2543,14 +2563,6 @@ example_taglist = {
 "TAG_DIAG_IF_CTRL_TCP",
 "TAG_DIAG_TRANSPORT_CTRL_CIFX",
 "TAG_DIAG_TRANSPORT_CTRL_PACKET",
-
-"RCX_TAG_MEMSIZE",
-"RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE",
-"RCX_TAG_MIN_OS_VERSION",
-"RCX_TAG_MAX_OS_VERSION",
-"RCX_TAG_MIN_CHIP_REV",
-"RCX_TAG_MAX_CHIP_REV",
---"RCX_TAG_NUM_COMM_CHANNEL",
 
 --"mac_address",
 --"ipv4_address",

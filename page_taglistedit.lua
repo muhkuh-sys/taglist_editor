@@ -188,7 +188,6 @@ function enterPage(iPage)
 	local editCtrl = editor:create(m_bookPanel)
 	-- set the value
 	editor:setValue(abValue)
-
 	if taglist.isReadOnly(tTagDesc) then
 		structedit.disableControl(editCtrl)
 		--if editor.disable then
@@ -211,7 +210,6 @@ function enterPage(iPage)
 	m_bookPanel:Layout()
 	m_bookPanel:Thaw()
 	m_bookPanel:Refresh()
-	
 end
 
 --- Read back the values in the currently displayed editor.

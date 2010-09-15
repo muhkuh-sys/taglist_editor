@@ -607,7 +607,10 @@ function handle_editrec_device_header(nx, tEditRecord, iEdit)
 	end
 	
 	-- serialize device header
-	abDevHdr = taglist.serialize("DEVICE_HEADER_V1_T", tDevHdr, true)
+	abDevHdr, strError = taglist.serialize("DEVICE_HEADER_V1_T", tDevHdr, true)
+	if not abDevHdr then
+		return false, strError
+	end
 	
 	-- set device header
 	nx:setDeviceHeader(abDevHdr)
@@ -640,7 +643,11 @@ function handle_editrec_tag(atTags, tEditRecord, iEdit)
 		if not fOk then
 			return false, strError
 		end
-		tSelectedTag.abValue = taglist.serialize(tSelectedTag.tTagDesc.datatype, tSelectedTag.tValue, true)
+		tSelectedTag.abValue, strError = taglist.serialize(tSelectedTag.tTagDesc.datatype, tSelectedTag.tValue, true)
+		if not tSelectedTag.abValue then
+			return false, strError
+		end
+
 		dbg_printf("serialized tag #%d/0x%08x", iSelectedTag, tSelectedTag.ulTag)
 	else
 		return false, string.format("Line %d: edit record matches no tag", tEditRecord.iLineNo)

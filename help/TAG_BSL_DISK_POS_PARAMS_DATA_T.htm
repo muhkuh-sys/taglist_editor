@@ -7,18 +7,21 @@
 <h2>Disk Position</h2>
 
 <p>
-The disk position and size can be set using this tag.
+If a serial flash disk or RAM disk is used, this tag can be used to override the builtin 
+offset and size defaults. If a parallel flash is used, this tag is ignored.
 </p>
 <p></p>
 
 <table border=1>
 <tr>
     <td>Offset</td>
-    <td>The offset of the disk from the beginning of the associated memory area given in bytes. (The value 0xFFFFFFFF means that the default setting should be used.)</td>
+    <td>
+    The offset of the disk from the beginning of the device (serial flash or SDRAM) in bytes. 
+    The value 0xFFFFFFFF means that the default setting should be used.</td>
 </tr>
 <tr>
     <td>Size</td>
-    <td>The size of the disk given in bytes. (The value 0xFFFFFFFF means that the default setting should be used.)</td>
+    <td>The size of the disk in bytes. The value 0xFFFFFFFF means that the default setting should be used.</td>
 </tr>
 </table>
 
