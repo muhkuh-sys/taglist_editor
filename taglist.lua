@@ -7,9 +7,16 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+--  2010-10-14    SL/YZ         added RCX_TAG_ETHERNET_PARAMS, 
+--                                    RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS
+--                                    RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS
 --  2010-09-13    MS            added TAG_BSL_DISK_POS_PARAMS
---  2010-09-08    MS            added TAG_BSL_MMIO_NETX50_PARAMS, TAG_BSL_MMIO_NETX10_PARAMS, TAG_BSL_HIF_NETX10_PARAMS, TAG_BSL_USB_DESCR_PARAMS
---  2010-08-27    MS            added RCX_TAG_TASK_T and RCX_TAG_INTERRUPT_T
+--  2010-09-08    MS            added TAG_BSL_MMIO_NETX50_PARAMS
+--                                    TAG_BSL_MMIO_NETX10_PARAMS 
+--                                    TAG_BSL_HIF_NETX10_PARAMS 
+--                                    TAG_BSL_USB_DESCR_PARAMS
+--  2010-08-27    MS            added RCX_TAG_TASK_T
+--                                    RCX_TAG_INTERRUPT_T
 --  2010-08-03    SL            added functions for tagtool
 --  2010-06-28    SL            added diag interface tags
 --  2010-07-30    SL            serialize/deserialize, value constants
@@ -586,6 +593,14 @@ NETX50_MMIO_CONFIG = {
 }
 
 
+-- MMIO pin numbers for netX 50
+NETX50_MMIO_NUMBERS = {}
+for i=0, 39 do
+	table.insert(NETX50_MMIO_NUMBERS, 
+		{name=string.format("MMIO %2d", i), value = i})
+end
+
+
 -- add MMIO config constants
 for _, e in ipairs(NETX10_MMIO_CONFIG) do
    CONSTANTS["MMIO_CONFIG_NETX10_" .. e.name] = e.value
@@ -739,6 +754,9 @@ RCX_TAG_MIN_CHIP_REV_T =
     {{"UINT32", "ulMinChipRev",     mode="read-only", desc="Min. Chip Revision"}},
 RCX_TAG_MAX_CHIP_REV_T =
     {{"UINT32", "ulMaxChipRev",     mode="read-only", desc="Max. Chip Revision"}},
+-- re-introduced, may be removed again
+RCX_TAG_NUM_COMM_CHANNELS_T =
+    {{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of Comm. Channels"}},
 --
 
 ----------------------------------------------------------------------------------------------
@@ -1371,11 +1389,74 @@ TAG_DIAG_TRANSPORT_CTRL_PACKET_DATA_T = {
 
 
 
+----------------------------------------------------------------------------------------------
+--  Fiber Optic Interface settings
+RCX_TAG_ETHERNET_PARAMS_DATA_T = {
+    {"UINT8", "bActivePortsBf", desc="Active Ports",
+        editor="comboedit",
+        editorParam={nBits=8,
+            values={
+                {name="PORT0 only",         value=1},
+                {name="PORT1 only",         value=2},
+                {name="PORT0 and PORT1",    value=3},
+        }},
+    },
+    {"UINT8", "bFiberOpticMode", desc="Enable Fiber Optic Interface support",
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+    },
+    {"UINT8", "bReserved1", desc="Reserved1", mode = "hidden", editorParam={format="0x%02x"}},
+    {"UINT8", "bReserved2", desc="Reserved2", mode = "hidden", editorParam={format="0x%02x"}},
+},
+
+----------------------------------------------------------------------------------------------
+--  Fiber Optic Transceiver Diagnostic and Monitoring Interface settings for netX50
+--  I2C SDA line 1 pin selectable via MMIO Pin number
+--  I2C SDA line 2 pin selectable via MMIO Pin number
+--  I2C SCL line pin selectable via MMIO Pin number
+
+
+RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS_DATA_T = {
+    {"UINT8", "bSDA1PinIdx", desc="I2C SDA1 Pin Number", editor="comboedit", editorParam={nBits=8, values=NETX50_MMIO_NUMBERS}},
+    {"UINT8", "bSDA2PinIdx", desc="I2C SDA2 Pin Number", editor="comboedit", editorParam={nBits=8, values=NETX50_MMIO_NUMBERS}},
+    {"UINT8", "bSCLPinIdx",  desc="I2C SCL Pin Number",  editor="comboedit", editorParam={nBits=8, values=NETX50_MMIO_NUMBERS}},
+    {"UINT8", "bReserved1",  desc="Reserved1",           mode = "hidden", editorParam={format="0x%02x"}},
+},
+
+----------------------------------------------------------------------------------------------
+--  Fiber Optic Transceiver Diagnostic and Monitoring Interface settings for netX100/500
+--  I2C SDA line is fix on pin W15
+--  I2C SCL line is fix on pin W14
+--  I2C Select pin is configurable
+RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS_DATA_T = {
+    {"UINT8", "bSelectPinType", desc="I2C Transceiver Pin Type",
+        editor="comboedit",
+        editorParam={nBits=8,
+            values={
+                {name="None",    value=0},
+                {name="GPIO",    value=1},
+                {name="PIO",     value=2},
+        }},
+    },
+    {"UINT8", "bSelectPinInvert", desc="Inverted",
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+    },
+    {"UINT8", "bSelectPinIdx", desc="Pin Number", 
+        editor="numedit", editorParam={nBits=8, format="%d", minValue=0, maxValue=84}
+    },
+    {"UINT8", "bReserved",     desc="Reserved", mode = "hidden", editorParam={format="0x%02x"}},
+    
+    layout = {
+    	sizer="grid",
+    	"bSelectPinType",
+    	"bSelectPinIdx",
+    	"bSelectPinInvert"
+    	}
+},
 
 
 }
-
-
 
 ---------------------------------------------------------------------------
 -- RCX_MOD_TAG definitions (mapping from tag number to type name)
@@ -1405,6 +1486,10 @@ RCX_TAG_MIN_CHIP_REV =
     {paramtype = 0x804, datatype="RCX_TAG_MIN_CHIP_REV_T",                    desc="Min. Chip Revision"},
 RCX_TAG_MAX_CHIP_REV =
     {paramtype = 0x805, datatype="RCX_TAG_MAX_CHIP_REV_T",                    desc="Max. Chip Revision"},
+    
+-- re-introduced, may be removed again, missing in File Formats.doc V 9
+RCX_TAG_NUM_COMM_CHANNELS =
+    {paramtype = 0x806, datatype="RCX_TAG_NUM_COMM_CHANNELS_T",               desc="Number of Comm. Channels"},
 
 
 -- firmware tags
@@ -1469,6 +1554,18 @@ TAG_DIAG_TRANSPORT_CTRL_CIFX =
 TAG_DIAG_TRANSPORT_CTRL_PACKET =
     {paramtype = 0x10820011, datatype="TAG_DIAG_TRANSPORT_CTRL_PACKET_DATA_T", desc="Remote Access via rcX Packets"},
 
+    
+-- facility tags: netX Ethernet and Fiber Optic Interface
+-- This tag is assigned to the DRV_EDD facility (0x00f), but is handled 
+-- by each individual realtime ethernet protocol
+RCX_TAG_ETHERNET_PARAMS =
+    {paramtype = 0x100f0000, datatype="RCX_TAG_ETHERNET_PARAMS_DATA_T",                   desc="Ethernet and Fiber Optic IF"},
+-- The next two tags are assigned to facility 0x096
+RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS =
+    {paramtype = 0x10960000, datatype="RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS_DATA_T", desc="netX100/500 Fiber Optic DMI"},
+RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS =
+    {paramtype = 0x10960001, datatype="RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS_DATA_T",  desc="netX50 Fiber Optic DMI"},
+    
 }
 
 
@@ -1511,13 +1608,17 @@ HELP_MAPPING = {
     TAG_DIAG_TRANSPORT_CTRL_CIFX        = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_TRANSPORT_CTRL_PACKET      = {file="TAG_DIAG_CTRL_DATA_T.htm"},
 
+    RCX_TAG_ETHERNET_PARAMS 			  		= {file="RCX_TAG_ETHERNET_PARAMS_T.htm"},
+    RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS  	= {file="RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS_T.htm"},
+    RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS 	= {file="RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS_T.htm"},
+
     RCX_TAG_MEMSIZE                     = {file="misc_tags.htm"},
     RCX_TAG_MIN_PERSISTENT_STORAGE_SIZE = {file="misc_tags.htm"},
     RCX_TAG_MIN_OS_VERSION              = {file="misc_tags.htm"},
     RCX_TAG_MAX_OS_VERSION              = {file="misc_tags.htm"},
     RCX_TAG_MIN_CHIP_REV                = {file="misc_tags.htm"},
     RCX_TAG_MAX_CHIP_REV                = {file="misc_tags.htm"},
-
+    RCX_TAG_NUM_COMM_CHANNELS           = {file="misc_tags.htm"},
 }
 
 
@@ -2563,6 +2664,11 @@ example_taglist = {
 "TAG_DIAG_IF_CTRL_TCP",
 "TAG_DIAG_TRANSPORT_CTRL_CIFX",
 "TAG_DIAG_TRANSPORT_CTRL_PACKET",
+
+"RCX_TAG_ETHERNET_PARAMS",
+"RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS",
+"RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS",
+    
 
 --"mac_address",
 --"ipv4_address",
