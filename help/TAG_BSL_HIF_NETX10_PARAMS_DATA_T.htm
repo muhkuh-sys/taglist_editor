@@ -6,6 +6,7 @@
 <BODY>
 <h2>netX 10 HIF/DPM Parameters</h2>
 
+<a name="top"></a>
 <p>
 DPM parameters for netX 10 can be set using this tag.
 If no parameters are given the 2nd Stage Loader will use the default settings.
@@ -23,33 +24,1304 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 </tr>
 <tr>
     <td>I/O Configuration</td>
-    <td>See netX10 Programm Reference Guide<br> ulHifloCfg</td>
+    <td>Register <a href="#hif_io_cfg">ulHifIoCfg</a></td>
 </tr>
 <tr>
     <td>DPM Configuration Register 0</td>
-    <td>See netX10 Programm Reference Guide <br> ulDpmCfg0</td>
+    <td>Register <a href="#dpm_cfg0x0">ulDpmCfg0</a></td>
 </tr>
 <tr>
     <td>DPM Address</td>
-    <td>See netX10 Programm Reference Guide <br> ulDpm_addr_cfg</td>
+    <td>Register <a href="#dpm_addr_cfg">ulDpm_addr_cfg</a></td>
 </tr>
 <tr>
     <td>DPM Timing</td>
-    <td>See netX10 Programm Reference Guide <br> ulDpm_timing_cfg</td>
+    <td>Register <a href="#dpm_timing_cfg">ulDpm_timing_cfg</a></td>
 </tr>
 <tr>
     <td>DPM Ready Configuration</td>
-    <td>See netX10 Programm Reference Guide <br> ulDpm_rdy_cfg</td>
+    <td>Register <a href="#dpm_rdy_cfg">ulDpm_rdy_cfg</a></td>
 </tr>
 <tr>
     <td>DPM I/O Configuration</td>
-    <td>See netX10 Programm Reference Guide <br> ulDpm_misc_cfg</td>
+    <td>Register <a href="#dpm_misc_cfg">ulDpm_misc_cfg</a></td>
 </tr>
 <tr>
     <td>Miscellaneous DPM I/O Configuration</td>
-    <td>See netX10 Programm Reference Guide <br> ulDpm_io_cfg_misc</td>
+    <td>Register <a href="#dpm_io_cfg_misc">ulDpm_io_cfg_misc</a></td>
 </tr>
 </table>
 
+
+
+
+
+
+
+
+
+<a name="hif_io_cfg" href="#top">Top</a>
+<table border="1">
+<tbody>
+  <tr>
+   <td colspan="3" align="center"><font size="+2"<b>hif_io_cfg</b></font><br><font size="-2">(NETX_IO_CFG)</font></td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> IO Config Register:<br>Selects of HIF pin multiplexing.<br>See Excel pinning sheet for details.<br>This configuration must be set up according to external netX connection before any access to external logic.<br>This register is protected by the netX access key mechanism; changing this register is only possible by the following sequence: </td>
+
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 1.: </td>
+       <td valign="top"> read out access key from ACCESS_KEY register (ASIC_CTRL address area) </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> 2.: </td>
+       <td valign="top"> write back access key to ACCESS_KEY register (ASIC_CTRL address area) </td>
+      </tr>
+      <tr>
+       <td valign="top"> 3.: </td>
+
+       <td valign="top"> write desired value to this register (ASIC_CTRL address area) </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Attention: Be very careful programming this register. False settings may cause permanent damage on netX or devices connected<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to HIF-IOs. </td>
+
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="left">
+   Address&nbsp;:&nbsp;0x101c0c40<br>
+
+   </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+
+   <td>31&nbsp;-&nbsp;25</td>
+   <td>0</td>
+   <td>-</td>
+   <td>&nbsp;reserved</td>
+  </tr>
+  <tr>
+
+   <td>24</td>
+   <td>"1"</td>
+   <td>en_hif_rdy_pio_mi</td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Enable HIF_RDY for PIO usage. </td>
+
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> This bit must be disabled if HIF_RDY is used as EXT_BUS RDY. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> This bit is ignored if HIF is DPM. Use DPM RDY configuration if HIF_RDY should<br>be used as PIO together with DPM functionallity. </td>
+      </tr>
+     </tbody></table>
+
+</td>
+  </tr>
+  <tr>
+   <td>23&nbsp;-&nbsp;21</td>
+   <td>0</td>
+   <td>-</td>
+   <td>&nbsp;reserved</td>
+
+  </tr>
+  <tr>
+   <td>20&nbsp;-&nbsp;8</td>
+   <td>0x1fff<br></td>
+   <td>en_hif_a23to11_pio_mi<br></td>
+   <td>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Enable HIF_A23..1 for PIO usage in MI function. </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+
+       <td valign="top"> Note: </td>
+       <td valign="top"> If 'hif_mi_cfg' bit is set, HIF_A18..14 are not available as PIOs even if according bits are set here. </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> For parallel DPM address line PIO usage depends on programmed DPM address range (config in area DPM). </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> For serial DPM all address lines can be used as PIOs if MI is not enabled ('hif_mi_cfg' is 0). </td>
+      </tr>
+     </tbody></table>
+</td>
+
+  </tr>
+  <tr>
+   <td>7</td>
+   <td>0<br></td>
+   <td>-<br></td>
+   <td>&nbsp;reserved</td>
+  </tr>
+
+  <tr>
+   <td>6</td>
+   <td>"0"<br></td>
+   <td>en_hif_sdram_mi<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+
+       <td valign="top"> Enable HIF IOs for SDRAM Memory Interface configuration.<br>If enabled following IOs are used as outputs for SDRAM (netx10, partial shared with SRAM/FLASH ctrl signals): </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> &nbsp;&nbsp;netX10 IO </td>
+
+       <td valign="top"> &nbsp;Function </td>
+       <td valign="top"> &nbsp;Comment </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_A14 </td>
+       <td valign="top"> &nbsp;SD_BA0 </td>
+
+       <td valign="top"> &nbsp;Only during SDRAM access, usable as FLASH/SRAM A14 simultaneously. </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_A15 </td>
+       <td valign="top"> &nbsp;SD_BA1 </td>
+       <td valign="top"> &nbsp;Only during SDRAM access, usable as FLASH/SRAM A15 simultaneously. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_A16 </td>
+       <td valign="top"> &nbsp;SD_RASN </td>
+       <td valign="top"> &nbsp;Only during SDRAM access, usable as FLASH/SRAM A16 simultaneously. </td>
+      </tr>
+
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_A17 </td>
+       <td valign="top"> &nbsp;SD_CASN </td>
+       <td valign="top"> &nbsp;Only during SDRAM access, usable as FLASH/SRAM A17 simultaneously. </td>
+      </tr>
+      <tr>
+
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_A18 </td>
+       <td valign="top"> &nbsp;SD_DQM0N </td>
+       <td valign="top"> &nbsp;Only during SDRAM access, usable as FLASH/SRAM A18 simultaneously. </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_RDN </td>
+
+       <td valign="top"> &nbsp;SD_CKE </td>
+       <td valign="top"> &nbsp;Only during SDRAM access, usable as FLASH/SRAM nRD simultaneously. </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_WRN </td>
+       <td valign="top"> &nbsp;SD_WEN </td>
+
+       <td valign="top"> &nbsp;Only during SDRAM access, usable as FLASH/SRAM nWR simultaneously. </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_DIRQ </td>
+       <td valign="top"> &nbsp;SD_CSN </td>
+       <td valign="top"> &nbsp;For serial DPM and 8 bit MI DPM IRQ/DIRQ is available on HIF_D1. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;HIF_SDCLK </td>
+       <td valign="top"> &nbsp;SD_CLK </td>
+       <td valign="top"> &nbsp;For serial DPM and 8 bit MI DPM FIQ/SIRQ is available on HIF_D13. </td>
+      </tr>
+
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> For SDRAM usage, 'hif_mi_cfg' must be configured for 8 or 16 bit MI. </td>
+      </tr>
+
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> If this bit is set, HIF_A18..14 are not available as PIOs even if according bits are set<br>in 'en_a23to11_pio'. </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+
+       <td valign="top"> For parallel DPM fast/service IRQ functionallity (SIRQ/FIQ) on HIF_SDCLK this bit must be set to '0'. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>5&nbsp;-&nbsp;4</td>
+
+   <td>"11"<br></td>
+   <td>hif_mi_cfg<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> HIF IO Memory Interface usage configuration.<br>Note: Configuration of SRAM/FLASH Chip-Select usage must be done additionally in<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ASYNCMEM_CTRL address area. By default, all Chip-Selects are configured for PIO usage.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If any external memory is used, Chip-Select configuration must be done<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;before the first access to external memory. Otherwise netX or memory<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;devices may be damaged.<br>Settings: </td>
+
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> &nbsp;00: </td>
+       <td valign="top"> HIF IOs are used as 8 bit MI (together with serial DPM possible).<br>Used HIF IOs: HIF_D7..0, HIF_A10..0, HIF_RDN, HIF_WRN. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;01: </td>
+       <td valign="top"> HIF IOs are used as 16 bit MI (no DPM possible).<br>Used HIF IOs (add. to '00' setting): HIF_D15..8, HIF_BHEN. </td>
+      </tr>
+      <tr>
+
+       <td valign="top"> &nbsp;10: </td>
+       <td valign="top"> reserved. </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;11: </td>
+       <td valign="top"> No MI usage. HIF IOs can be used as PIOs or for parallel DPM. </td>
+
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> If upper address lines HIF_A23...11 are not used as PIOs, this must be configured in<br>bits 'en_a23to11'. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> If HIF is configured as parallel DPM ('sel_hif_dpm' set and 'sel_dpm_serial' not set), HIF IOs are<br>not available for Memory Interface usage programmed value is ignored. </td>
+      </tr>
+      <tr>
+
+       <td valign="top"> Note: </td>
+       <td valign="top"> If HIF is configured as serial DPM ('sel_hif_dpm' set and 'sel_dpm_serial' set), HIF IOs are<br>not available for 16 bit Memory Interface. Programmed value '01' will be ignored in this case. </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:<br> </td>
+
+       <td valign="top"> SDRAM Chip-Select is multiplext with SRAM/FLASH Chip-Select 1 on HIF_DIRQ. If 'en_hif_sdram_mi'<br>is set and SRAM/FLASH Chip-Select 1 enabled in ASYNCMEM_CTRL address area, SDRAM Chip-Select<br>gains priority and SRAM/FLASH Chip-Select 1 will not be mapped to HIF_DIRQ. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>3</td>
+
+   <td>"0"<br></td>
+   <td>sel_dpm_serial_spo<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> select serial DPM mode SPI clock polarity (sel_hif_dpm and sel_dpm_serial must be set). </td>
+      </tr>
+
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> &nbsp;0: </td>
+       <td valign="top"> Serial clock idle state is low. </td>
+      </tr>
+
+      <tr>
+       <td valign="top"> &nbsp;1: </td>
+       <td valign="top"> Serial clock idle state is high. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+
+  <tr>
+   <td>2</td>
+   <td>"0"<br></td>
+   <td>sel_dpm_serial_sph<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+
+       <td valign="top"> select serial DPM mode SPI clock phase (sel_hif_dpm and sel_dpm_serial must be set). </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> &nbsp;0: </td>
+
+       <td valign="top"> Serial data sampling on first serial clock edge. </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;1: </td>
+       <td valign="top"> Serial data sampling on second serial clock edge. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>1</td>
+   <td>"0"<br></td>
+   <td>sel_dpm_serial<br></td>
+   <td>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> select serial DPM mode (ignored if sel_hif_dpm not set). </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+
+       <td valign="top"> Note: </td>
+       <td valign="top"> Serial DPM is an SPI compliant interface. </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Serial DPM can be used together with 8 bit Memory Interface on HIF IOs.. </td>
+
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>0</td>
+   <td>"0"<br></td>
+   <td>sel_hif_dpm<br></td>
+
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> select HIF pins for DPM </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> For parallel DPM IO configuration use config registers in address area DPM. </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+
+       <td valign="top"> Parallel DPM fast/service IRQ functionallity (SIRQ/FIQ) on HIF_SDCLK is controlled by<br>en_hif_sdram_mi bit. </td>
+     </tr>
+     </tbody>
+    </table>
+   </td>
+  </tr>
+ </tbody>
+</table>
+<br><br>
+
+
+
+
+       
+       
+       
+       
+<a name="dpm_cfg0x0" href="#top">Top</a>
+<table border="1">
+<tbody>
+  <tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_cfg0x0</b></font></td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM IO Control Register 0.<br>This register is accessible in any DPM-mode (8, 16, 32 bit, SRAM, Intel, Motorola, little endian, big endian) by access to DPM address 0.<br>Basic DPM settings are configurable here to make higher addresses accessible. </td>
+
+      </tr>
+     </tbody>
+     </table>
+   </td>
+  </tr>
+  
+  <tr>
+   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="left">
+   Address&nbsp;:&nbsp;0x101c1200<br>
+   </td>
+  </tr>
+  
+   <tr>
+   <th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr>
+  
+  <tr>
+   <td>31&nbsp;-&nbsp;6</td>
+   <td>0<br></td>
+   <td>-<br></td>
+   <td>&nbsp;reserved</td>
+  </tr>
+  
+  <tr>
+   <td>5&nbsp;-&nbsp;4</td>
+   <td>"00"<br></td>
+   <td>endian<br></td>
+   <td>
+   
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+
+       <td valign="top"> Endianess of 32 bit (DWord) address alignment (B0: least significant byte, B3: most significant byte): </td>
+      </tr>
+     </tbody>
+     </table>
+
+     <table border="0" cellspacing="1">
+      <tbody>
+      <tr>
+       <td valign="top"> &nbsp;coding </td>
+       <td valign="top"> &nbsp;&nbsp;Address </td>
+       <td valign="top"> &nbsp;&nbsp;A+3 </td>
+       <td valign="top"> &nbsp;&nbsp;A+2 </td>
+       <td valign="top"> &nbsp;&nbsp;A+1 </td>
+       <td valign="top"> &nbsp;&nbsp;A+0 </td>
+      </tr>
+      
+      <tr>
+       <td valign="top"> &nbsp;00 </td>
+       <td valign="top"> &nbsp;&nbsp;little endian </td>
+       <td valign="top"> &nbsp;&nbsp;B3 </td>
+       <td valign="top"> &nbsp;&nbsp;B2 </td>
+       <td valign="top"> &nbsp;&nbsp;B1 </td>
+       <td valign="top"> &nbsp;&nbsp;B0 </td>
+      </tr>
+      
+      <tr>
+       <td valign="top"> &nbsp;01 </td>
+       <td valign="top"> &nbsp;&nbsp;16 bit big endian </td>
+       <td valign="top"> &nbsp;&nbsp;B2 </td>
+       <td valign="top"> &nbsp;&nbsp;B3 </td>
+       <td valign="top"> &nbsp;&nbsp;B0 </td>
+       <td valign="top"> &nbsp;&nbsp;B1 </td>
+      </tr>
+      
+      <tr>
+       <td valign="top"> &nbsp;10 </td>
+       <td valign="top"> &nbsp;&nbsp;32 bit big endian </td>
+       <td valign="top"> &nbsp;&nbsp;B0 </td>
+       <td valign="top"> &nbsp;&nbsp;B1 </td>
+       <td valign="top"> &nbsp;&nbsp;B2 </td>
+       <td valign="top"> &nbsp;&nbsp;B3 </td>
+      </tr>
+      
+      <tr>
+       <td valign="top"> &nbsp;11 </td>
+       <td valign="top"> &nbsp;&nbsp;reserved </td>
+       <td valign="top"> &nbsp; </td>
+       <td valign="top"> &nbsp; </td>
+       <td valign="top"> &nbsp; </td>
+       <td valign="top"> &nbsp; </td>
+      </tr>
+
+     </tbody>
+     </table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Little endian is used netX inside. If big endian host device is used, set to this 01 or 10 according to<br>host device data width. </td>
+      </tr>
+     </tbody>
+     </table>
+  </td>
+  </tr>
+<br><br>  
+  
+  <tr>
+   <td>3&nbsp;-&nbsp;0</td>
+   <td>"0000"<br></td>
+   <td>mode<br></td>
+   <td>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM access mode:<br>Chip-select, output-enable, write-enable and byte-enables are always low active (i.e.: nCS, nOE, nWE, nBE*, nBHE).<br>8 bit modes use D[7:0], 16 bit modes use D[15:0].<br>For DPM modes with less than 32 bit data, write data may not written immediate to netX memory or<br>registers (view dpm_win1_map register).<br>Internal access size decision depends on external DPM data size:<br>Supported DPM modes are: </td>
+      </tr>
+     </tbody>
+     </table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> &nbsp;0000: </td>
+       <td valign="top"> 8 bit SRAM (write data/address valid at positive edge nWR).<br>DPM_D0..7 are used as data lines, DPM_D8..31 can be used as PIOs (+24 PIOs). </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;: </td>
+       <td valign="top"> reserved. </td>
+      </tr>
+      
+      <tr>
+       <td valign="top"> &nbsp;0100: </td>
+       <td valign="top"> 16 bit SRAM (address 16 bit aligned, 2 byte enables) or<br>Intel (byte address with byte-high enable) mode. </td>
+      </tr>
+      
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;: </td>
+       <td valign="top"> reserved. </td>
+      </tr>
+      
+      <tr>
+       <td valign="top"> &nbsp;0110: </td>
+       <td valign="top"> 16 bit TI OMAP address/data multiplexed mode. </td>
+      </tr>
+      
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;: </td>
+       <td valign="top"> reserved. </td>
+      </tr>
+
+      <tr>
+       <td valign="top"> &nbsp;1111: </td>
+       <td valign="top"> reserved. </td>
+      </tr>
+     </tbody>
+    </table>
+   </td>
+  </tr>
+ </tbody>
+</table>
+<br><br>
+
+
+
+
+
+
+
+
+
+
+
+<a name="dpm_addr_cfg" href="#top">Top</a>
+
+<table border="1">
+<tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_addr_cfg</b></font></td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM External Address Range Configuration Register.<br>Unused address lines can be used as PIOs. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="left">
+   Address&nbsp;:&nbsp;0x101c1210<br>
+
+   </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+
+   <td>31&nbsp;-&nbsp;6</td>
+   <td>0<br></td>
+   <td>-<br></td>
+   <td>&nbsp;reserved</td>
+  </tr>
+  <tr>
+
+   <td>5&nbsp;-&nbsp;4</td>
+   <td>"00"<br></td>
+   <td>cfg_win_addr_cfg<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+
+       <td valign="top"> Configuration of External DPM Configuration Window 0.<br>Supported settings are: </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> &nbsp;00: </td>
+
+       <td valign="top"> Configuration Window is located in the first 256 bytes of external DPM address<br>range (0x0 to 0xff). It is located before the next enabled Window (1 to 4). </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;01:<br> </td>
+       <td valign="top"> Configuration Window is located in the last 256 bytes of external DPM address<br>range. It is located after the last enabled Window (1 to 4).<br>Example: 'addr_range' is 8kB: Configuration Window is located in 0x1F00..0x1FFF. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;10: </td>
+       <td valign="top"> reserved. </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;11: </td>
+
+       <td valign="top"> Configuration Window is disabled for external DPM access. Full DPM address<br>range can be used for Windows 1 to 4. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>3&nbsp;-&nbsp;0</td>
+
+   <td>"0010"<br></td>
+   <td>addr_range<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM external address range. </td>
+      </tr>
+
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> &nbsp;coding </td>
+       <td valign="top"> function </td>
+       <td valign="top"> address used signals </td>
+
+       <td valign="top"> signals for PIO usage </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;0000 </td>
+       <td valign="top"> reserved </td>
+       <td valign="top"> &nbsp; </td>
+
+       <td valign="top"> &nbsp; </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;0001 </td>
+       <td valign="top"> reserved </td>
+       <td valign="top"> &nbsp; </td>
+
+       <td valign="top"> &nbsp; </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;0010 </td>
+       <td valign="top"> 2KB address range </td>
+       <td valign="top"> DPM_A[10:0] </td>
+
+       <td valign="top"> +9 PIOs: DPM_A[19:11] </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;0011 </td>
+       <td valign="top"> reserved </td>
+       <td valign="top"> &nbsp; </td>
+
+       <td valign="top"> &nbsp; </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;0100 </td>
+       <td valign="top"> 8KB address range </td>
+       <td valign="top"> DPM_A[12:0] </td>
+
+       <td valign="top"> +7 PIOs: DPM_A[19:13] </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;0101 </td>
+       <td valign="top"> 16KB address range </td>
+       <td valign="top"> DPM_A[13:0] </td>
+
+       <td valign="top"> +6 PIOs: DPM_A[19:14] </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;0110 </td>
+       <td valign="top"> 32KB address range </td>
+       <td valign="top"> DPM_A[14:0] </td>
+
+       <td valign="top"> +5 PIOs: DPM_A[19:15] </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;0111 </td>
+       <td valign="top"> 64KB address range </td>
+       <td valign="top"> DPM_A[15:0] </td>
+
+       <td valign="top"> +4 PIOs: DPM_A[19:16] </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;1000 </td>
+       <td valign="top"> 128KB address range </td>
+       <td valign="top"> DPM_A[16:0] </td>
+
+       <td valign="top"> +3 PIOs: DPM_A[19:17] </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;&nbsp;: </td>
+       <td valign="top"> reserved </td>
+       <td valign="top"> &nbsp; </td>
+
+       <td valign="top"> &nbsp; </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;&nbsp;1111 </td>
+       <td valign="top"> reserved </td>
+       <td valign="top"> &nbsp; </td>
+
+       <td valign="top"> &nbsp; </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+ </tbody>
+</table>
+<br><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a name="dpm_timing_cfg" href="#top">Top</a>
+<table border="1">
+<tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_timing_cfg</b></font></td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM Timing Configuration register. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="left">
+  Address&nbsp;:&nbsp;0x101c1214<br>
+
+   </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+
+   <td>31&nbsp;-&nbsp;8</td>
+   <td>0<br></td>
+   <td>-<br></td>
+   <td>&nbsp;reserved</td>
+  </tr>
+  <tr>
+
+   <td>7</td>
+   <td>"0"<br></td>
+   <td>rd_burst_en<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Read burst enable. </td>
+
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>6&nbsp;-&nbsp;4</td>
+   <td>"010"<br></td>
+
+   <td>t_rds<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Read data setup time (in steps of 10ns).<br>If DPM_RDY is used (rdy_mode != 0), DPM_RDY is generated t_rds*10ns after read data is stored on data bus.<br>Without DPM_RDY use (rdy_mode == 0) read access error is detected if access terminates before t_rds*10ns<br>passed after read data generation.<br>Valid settings are: 0..7.<br>Note:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read data access time will increased by t_rds * 10ns if t_rds is not 0. </td>
+
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>0<br></td>
+   <td>-<br></td>
+
+   <td>&nbsp;reserved</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>"1"<br></td>
+   <td>filter<br></td>
+   <td>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Filter DPM Control Signals.<br>If this bit is set, DPM signals Chip-Select, Read-Enable and Write-Enable (and Address latch enable if multiplexed<br>Parallel DPM modes are used) are filtered for spike suppression. </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+
+      <tbody><tr>
+       <td valign="top"> &nbsp;0: </td>
+       <td valign="top"> no spike suppression. </td>
+      </tr>
+      <tr>
+       <td valign="top"> &nbsp;1: </td>
+
+       <td valign="top"> Spikes &lt; 10ns are suppressed, read data access time increased by 10ns. </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: Data, address and byte-enable inputs are not filtered and must be stable when sampled. I.e. during<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the last 10ns of a read access and at the first 10ns of read access start.<br>Note:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read data access time is increased by 10ns if this bit is set. </td>
+
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>1&nbsp;-&nbsp;0</td>
+   <td>"11"<br></td>
+
+   <td>t_osa<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address Setup Time (t_osa * 10ns).<br>Address sampling can be delayed for read and write accesses by this parameter.<br>E.g. host device asserts Chip-Select, Read-Enable and address lines simultaneously but<br>some address lines are not stable while Chip-Select and Read-Enable are both low, set t_osa<br>to delay address sampling by t_osa * 10ns.<br>Valid settings are: 0..3.<br>Note:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read data access time will increased by t_osa * 10ns if t_osa is not 0. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+ </tbody>
+</table>
+<br><br>
+
+
+
+
+
+
+
+
+
+
+<a name="dpm_rdy_cfg" href="#top">Top</a>
+<table border="1">
+<tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_rdy_cfg</b></font></td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM Ready (DPM_RDY) Signal Configuration Register. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="left">
+   Address&nbsp;:&nbsp;0x101c1218<br>
+
+   </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+
+   <td>31&nbsp;-&nbsp;4</td>
+   <td>0<br></td>
+   <td>-<br></td>
+   <td>&nbsp;reserved</td>
+  </tr>
+  <tr>
+
+   <td>3</td>
+   <td>"0"<br></td>
+   <td>rdy_sig_mode<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Ready signal mode. </td>
+
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 1:<br><br> </td>
+       <td valign="top"> DPM_RDY is generated as ready/acknowledge pulse.<br>In this mode, DPM_RDY is only in active state at access end to sign that host device is allowed to finish the<br>current access. If no access to DPM is done or if host device runs DPM access but is not allowed to finish it yet,<br>DPM_RDY will remain in inactive state. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> 0:<br><br> </td>
+       <td valign="top"> DPM_RDY is generated as wait/busy state signal.<br>In this mode, DPM_RDY becomes active at access start and will remain active while host device is not allowed to finish the<br>current access. If no access to DPM is done or if host device runs DPM access and allowed to finish it and continue<br>access generation, DPM_RDY will be in inactive state. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>2&nbsp;-&nbsp;1</td>
+   <td>"00"<br></td>
+   <td>rdy_drv_mode<br></td>
+
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Ready generation mode. </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+
+      <tbody><tr>
+       <td valign="top"> 00: </td>
+       <td valign="top"> ready signal generation is disabled (High-Impedance mode). </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01: </td>
+
+       <td valign="top"> ready is driven when active and inactive. Never highZ. (Push-Pull mode) </td>
+      </tr>
+      <tr>
+       <td valign="top"> 10:<br><br><br><br><br> </td>
+       <td valign="top"> ready is driven when active and for a short time when inactive-phase starts for fast<br>busy to ready signal state change (Sustain-Tristate mode).<br>Inactive-phase ready driving time (tRPm02, tRPm12) depends on rdy_sig_mode:<br>For rdy_sig_mode=0 this time (tRPm02) is 10ns.<br>For rdy_sig_mode=1 this time (tRPm12) depends on programmed input signal<br>filtering (register dpm_timing_cfg bit filter): If filtering is disabled tRPm12 is 20ns to 30ns,<br>if input filtering is enabled,&nbsp;&nbsp;tRPm12 is 30ns to 40ns. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> 11: </td>
+       <td valign="top"> ready is only driven when cycle active (Open-Drain/Open-Source mode). </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mode 2 and 3 are reordered in comparison to netX100/500/50. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+
+   <td>0</td>
+   <td>"1"<br></td>
+   <td>rdy_pol<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Ready signal active state polarity. </td>
+
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 1: </td>
+       <td valign="top"> DPM is ready when external RDY-signal is high. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> 0: </td>
+       <td valign="top"> DPM is busy when external RDY-signal is high. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+</table>
+<br><br>
+
+
+
+
+<a name="dpm_misc_cfg" href="#top">Top</a>
+<table border="1">
+<tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_misc_cfg</b></font></td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM Configuration Register for some Special Functions. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="left">
+   Address&nbsp;:&nbsp;0x101c1228<br>
+
+   </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+
+   <td>31&nbsp;-&nbsp;1</td>
+   <td>0<br></td>
+   <td>-<br></td>
+   <td>&nbsp;reserved</td>
+  </tr>
+  <tr>
+
+   <td>0</td>
+   <td>"0"<br></td>
+   <td>enable_flag_reset_on_rd<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Enable Status Flag Reset by Reading this register.<br>If enable_flag_reset_on_rd-bit is 0, there is only one access necessary for<br>error detection and clearing the error status bits. In cases where internal access time is<br>not predictable and host provides no ready function, it is recommended to enable reset-on-read-function<br>to minimize traffic. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+ </tbody>   
+</table>
+<br><br>
+
+
+
+
+
+
+
+
+
+<a name="dpm_io_cfg_misc" href="#top">Top</a>
+<table border="1">
+<tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_io_cfg_misc</b></font></td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM IO Configuration Register 0.<br>Unused DPM IOs can be used as PIOs. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="left">
+   Address&nbsp;:&nbsp;0x101c122c<br>
+
+   </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+
+   <td>31&nbsp;-&nbsp;8</td>
+   <td>0<br></td>
+   <td>-<br></td>
+   <td>&nbsp;reserved</td>
+  </tr>
+  <tr>
+
+   <td>7</td>
+   <td>"1"<br></td>
+   <td>fiq_oec<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> FIQ/SIRQ output enable controlled. </td>
+
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0: </td>
+       <td valign="top"> FIQ/SIRQ signal is always driven. </td>
+
+      </tr>
+      <tr>
+       <td valign="top"> 1: </td>
+       <td valign="top"> FIQ/SIRQ signal is only driven when active. Inactive level must be realized by external pull-up or pull-down resistor. </td>
+      </tr>
+     </tbody></table>
+</td>
+
+  </tr>
+  <tr>
+   <td>6</td>
+   <td>"0"<br></td>
+   <td>fiq_pol<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+
+      <tbody><tr>
+       <td valign="top"> FIQ/SIRQ signal polarity. </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0: </td>
+
+       <td valign="top"> FIQ/SIRQ is active low. </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1: </td>
+       <td valign="top"> FIQ/SIRQ is active high. </td>
+      </tr>
+
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>"1"<br></td>
+   <td>irq_oec<br></td>
+   <td>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> IRQ output enable controlled. </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+
+       <td valign="top"> 0: </td>
+       <td valign="top"> IRQ/DIRQ signal is always driven. </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1: </td>
+       <td valign="top"> IRQ/DIRQ signal is only driven when active. Inactive level must be realized by external pull-up or pull-down resistor. </td>
+
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>"0"<br></td>
+   <td>irq_pol<br></td>
+
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> IRQ/DIRQ signal polarity. </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+
+      <tbody><tr>
+       <td valign="top"> 0: </td>
+       <td valign="top"> IRQ/DIRQ is active low. </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1: </td>
+
+       <td valign="top"> IRQ/DIRQ is active high. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>0<br></td>
+
+   <td>-<br></td>
+   <td>&nbsp;reserved</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>"1"<br></td>
+   <td>sel_sirq_pio<br></td>
+
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_SIRQ-pin as PIO pin. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+
+  <tr>
+   <td>1</td>
+   <td>"1"<br></td>
+   <td>sel_dirq_pio<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+
+       <td valign="top"> Use DPM_DIRQ-pin as PIO pin. </td>
+      </tr>
+     </tbody></table>
+</td>
+  </tr>
+  <tr>
+   <td>0</td>
+   <td>"1"<br></td>
+
+   <td>sel_rdy_pio<br></td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_RDY-pin as PIO pin. RDY is by default PIO to avoid RDY-conflicts during reset. </td>
+      </tr>
+     </tbody></table>
+</td>
+
+  </tr>
+ </tbody>
+ </table>
+
+
+
+ 
 </BODY>
 </HTML>
