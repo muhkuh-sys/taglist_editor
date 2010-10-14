@@ -754,10 +754,9 @@ RCX_TAG_MIN_CHIP_REV_T =
     {{"UINT32", "ulMinChipRev",     mode="read-only", desc="Min. Chip Revision"}},
 RCX_TAG_MAX_CHIP_REV_T =
     {{"UINT32", "ulMaxChipRev",     mode="read-only", desc="Max. Chip Revision"}},
--- re-introduced, may be removed again
-RCX_TAG_NUM_COMM_CHANNELS_T =
-    {{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of Comm. Channels"}},
---
+-- obsolete
+-- RCX_TAG_NUM_COMM_CHANNELS_T =
+--    {{"UINT32", "ulNumCommCh",      mode="read-only", desc="Number of Comm. Channels"}},
 
 ----------------------------------------------------------------------------------------------
 -- Task
@@ -1487,9 +1486,9 @@ RCX_TAG_MIN_CHIP_REV =
 RCX_TAG_MAX_CHIP_REV =
     {paramtype = 0x805, datatype="RCX_TAG_MAX_CHIP_REV_T",                    desc="Max. Chip Revision"},
     
--- re-introduced, may be removed again, missing in File Formats.doc V 9
-RCX_TAG_NUM_COMM_CHANNELS =
-    {paramtype = 0x806, datatype="RCX_TAG_NUM_COMM_CHANNELS_T",               desc="Number of Comm. Channels"},
+-- obsolete
+-- RCX_TAG_NUM_COMM_CHANNELS =
+--    {paramtype = 0x806, datatype="RCX_TAG_NUM_COMM_CHANNELS_T",               desc="Number of Comm. Channels"},
 
 
 -- firmware tags
@@ -1618,7 +1617,7 @@ HELP_MAPPING = {
     RCX_TAG_MAX_OS_VERSION              = {file="misc_tags.htm"},
     RCX_TAG_MIN_CHIP_REV                = {file="misc_tags.htm"},
     RCX_TAG_MAX_CHIP_REV                = {file="misc_tags.htm"},
-    RCX_TAG_NUM_COMM_CHANNELS           = {file="misc_tags.htm"},
+    --RCX_TAG_NUM_COMM_CHANNELS           = {file="misc_tags.htm"},
 }
 
 
