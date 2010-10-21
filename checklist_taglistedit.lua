@@ -6,15 +6,16 @@
 --
 --  Changes:
 --    Date        Author        Description
--- Oct 21, 2010   SL            Support for enabling/disabling tags
+-- Oct 21, 2010   SL            derived from page_taglistedit.lua
+--                              Support for enabling/disabling tags using Checkbox list
 ---------------------------------------------------------------------------
 --  
 ---------------------------------------------------------------------------
 -- SVN Keywords
 --
--- $Date$
--- $Revision$
--- $Author$
+-- $Date: 2010-10-21 11:03:04 +0200 (Do, 21 Okt 2010) $
+-- $Revision: 9313 $
+-- $Author: slesch $
 ---------------------------------------------------------------------------
 
 module("taglistedit", package.seeall)
@@ -37,17 +38,18 @@ muhkuh.include("checkboxedit.lua", "checkboxedit")
 
 -- public: createEditors, destroyEditors, getTagBin
 
+--- all tags
+
 --- the tag list
 m_tagList = {}
 
 --- list of page names/tags
+-- each entry has the form {desc="xC Unit...", tag=<m_tagList entry>}
 m_pages = {}
 
---- "tag disabled" checkbox
-m_disabledCheckbox = nil
 
---- window id of the checkbox
-m_disabledCheckboxId = nil
+
+--- for the current tag
 
 --- current editor, e.g. numEdit
 m_editor = nil
@@ -55,59 +57,94 @@ m_editor = nil
 --- current edit control, e.g. the text control containing the number
 m_editCtrl = nil
 
---- the tag being edited
+--- the tag being edited, m_pages[index].tag
 m_tag = nil
+
+--- 1-based index into m_pages - remove?
+m_iPageIndex = nil
+
+
+--- static  items
 
 --- the parent window
 m_parent = nil
 
---- the Treebook
-m_book = nil
+-- the panel containing the list and tag editor
+m_panel = nil
 
---- window ID of the treebook
-m_bookId = nil
+-- sizer for m_panel
+m_panelSizer = nil
 
---- the scrolling panel inside the treebook
+-- The checked list control 
+m_listCtrl = nil
+
+-- id of m_listCtrl
+m_listId = nil
+
+-- the panel holding the single tag editor
 m_bookPanel = nil
 
---- the sizer for m_bookPanel
+-- the sizer for m_bookPanel
 m_bookPanelSizer = nil
 
---- Event handler called when a page has been selected.
--- If a tag is currently displayed, the editor fields of
--- this tag are read back and checked. 
--- If the contents are valid, the values are stored in m_taglist,
--- and the page is cleared.
--- If there are errors on the current page, a message box 
--- is displayed and the pages are not switched.
-local function OnPageChanging(event)
-	local iOldPage = event:GetOldSelection()+1
-	-- print("changing from page", iOldPage)
-	
-	if taglistedit.readbackPage() then
-		taglistedit.clearPage()
-	else
-		event:Veto()
-	end
-end
+--- static text to display whether a tag is enabled or disabled
+m_tagEnabledDisplay = nil
+
+
 
 --- Event handler called when a new page has been selected,
 -- after calling OnPageChanging. This handler will show the 
 -- editor for the new tag.
 local function OnPageChanged(event)
+	--print("OnPageChanged")
+	if taglistedit.readbackPage() then
+		taglistedit.clearPage()
+	else
+		event:Veto()
+	end
+	
 	local iNewPage = event:GetSelection()+1
 	-- print("changed to page", iNewPage)
 	taglistedit.enterPage(iNewPage)
 end
 
-
-local function OnDisable(event)
-	local fDisabled = taglistedit.m_disabledCheckbox:GetValue()
-	taglistedit.m_editCtrl:Enable(not fDisabled)
+-- When a tag has been checked/unchecked in the checklist,
+-- updates fDisabled of the respective tag
+-- Updates the display, if the currently selected tag has been 
+-- checked/unchecked.
+function OnToggle (event)
+	local iItem = event:GetSelection() -- 0-based list index
+	local fChecked = taglistedit.m_listCtrl:IsChecked(iItem)
+	-- print("OnToggle: GetSelection =", iItem, " m_listCtrl:IsChecked =", tostring(fChecked))
+	local tTag = taglistedit.m_pages[iItem+1].tag
+	tTag.fDisabled = not fChecked
+	if tTag == taglistedit.m_tag then
+		taglistedit.updateTagEnabledDisplay()
+	end
 end
 
--- m_book 
---    +- b_bookPanel  sizer:m_bookPanelSizer
+-- Makes the enabled/disabled text line invisible
+function clearTagEnabledDisplay()
+	m_tagEnabledDisplay:SetLabel("")
+	m_tagEnabledDisplay:SetBackgroundColour(wx.wxNullColour)
+	m_tagEnabledDisplay:Refresh()
+end
+
+-- Updates the "Tag enabled/disabled" display and 
+-- enables/disables the edit control for the current tag
+-- depending on the state of m_tag.fDisabled 
+local yellow = wx.wxColour(255,255,0)
+
+function updateTagEnabledDisplay()
+	local fEnabled = (m_tag.fDisabled ~= true)
+	local strText = fEnabled and "Tag enabled" or "Tag disabled"
+	local iColor = fEnabled and wx.wxGREEN or yellow
+	m_tagEnabledDisplay:SetLabel(strText)
+	m_tagEnabledDisplay:SetBackgroundColour(iColor)
+	m_tagEnabledDisplay:Refresh()
+	m_editCtrl:Enable(fEnabled)
+end
+
 
 --- Given a list of tags, make a list of page titles and tags and 
 -- create the book pages.
@@ -116,24 +153,6 @@ end
 -- as binary data).
 function createEditors(tagList)
 	--print("creating editors, params=", tagList, "len=", #tagList)
-	
-	if not m_bookPanel then
-		m_bookPanel = wx.wxScrolledWindow(m_book) 
-		--m_bookPanel = wx.wxScrolledWindow(m_book, wx.wxID_ANY, 
-		--wx.wxDefaultPosition, wx.wxDefaultSize, wx.wxVSCROLL + wx.wxHSCROLL)
-		m_bookPanel:SetScrollRate(32, 32)
-		m_bookPanelSizer = wx.wxBoxSizer(wx.wxVERTICAL)
-		m_bookPanel:SetSizer(m_bookPanelSizer)
-		-- m_bookPanel:SetBackgroundColour(wx.wxGREEN)
-	end
-	
-	-- create the "Tag Disabled" checkbox
-	if not m_disabledCheckbox then
-		m_disabledCheckbox = wx.wxCheckBox(m_bookPanel, m_disabledCheckboxId, "Tag disabled")
-		m_bookPanel:Connect(m_disabledCheckboxId, wx.wxEVT_COMMAND_CHECKBOX_CLICKED , OnDisable)
-		m_bookPanelSizer:Add(m_disabledCheckbox, 0, wx.wxALL, 3)
-	end
-	
 	m_tagList = tagList
 	m_pages = {}
 	for i, tTag in ipairs(tagList) do
@@ -145,61 +164,38 @@ function createEditors(tagList)
 			end
 			print(strDesc)
 			table.insert(m_pages, {desc=strDesc, tag=tTag})
-			m_book:AddPage(m_bookPanel, strDesc)
 		else
 			print(string.format("skipping unknown tag: 0x%0x", tTag.ulTag))
 		end
 	end
-	m_book:Connect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING, OnPageChanging)
-	m_book:Connect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, OnPageChanged)
+	
+	for i, page in ipairs(m_pages) do
+		m_listCtrl:Append(page.desc)
+		m_listCtrl:Check(i-1, not page.tag.fDisabled)
+	end
+	
+	m_listCtrl:Connect(m_listId, wx.wxEVT_COMMAND_LISTBOX_SELECTED , OnPageChanged)
+	m_listCtrl:Connect(m_listId, wx.wxEVT_COMMAND_CHECKLISTBOX_TOGGLED , OnToggle)
+	
 	if #tagList > 0 then
-		m_book:SetSelection(0)
-		m_book:Fit()
+		m_listCtrl:SetSelection(0)
+		enterPage(1)
 	end
-end
-
--- bool Disconnect(
--- 	wxEventType eventType = wxEVT_NULL, 
--- 	wxObjectEventFunction function = NULL, 
--- 	wxObject* userData = NULL, 
--- 	wxEvtHandler* eventSink = NULL)
--- 
--- bool Disconnect(
--- 	int id = wxID_ANY, 
--- 	wxEventType eventType = wxEVT_NULL, 
--- 	wxObjectEventFunction function = NULL, 
--- 	wxObject* userData = NULL, 
--- 	wxEvtHandler* eventSink = NULL)
-
-
-
---- Remove all pages from the notebook and remove the "Disabled" checkbox.
-function destroyEditors()
-	m_book:Disconnect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING)
-	m_book:Disconnect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED)
-	clearPage()
-	local iPages = m_book:GetPageCount()
-	
-	for i=1, iPages do
-		-- print(m_book:GetPageCount())
-		m_book:RemovePage(0)
-	end
-	m_tagList = {}
-	m_pages = {}
-	
-	if m_disabledCheckbox then
-		m_book:Disconnect(m_disabledCheckboxId, wx.wxEVT_COMMAND_CHECKBOX_CLICKED)
-		m_bookPanelSizer:Detach(m_disabledCheckbox)
-		m_bookPanel:RemoveChild(m_disabledCheckbox)
-		m_disabledCheckbox:Destroy()
-		m_disabledCheckbox = nil
-	end
+	m_listCtrl:FitInside()
+	m_panel:Layout()
+	m_panel:Refresh()
 end
 
 
 --- Get the current tags as a binary string.
 -- Reads the values off the edit controls, and
 -- shows an error message if any values are invalid.
+--
+-- NOTE: This works because the entries in m_pages
+-- contain references to the entries of m_taglist.
+-- When a tag page is left and the values are read back
+-- from the controls, they are automatically stored in m_taglist.
+-- 
 -- @return abTags The tag block as a binary string
 function getTagBin()
 	if readbackPage() then
@@ -226,6 +222,8 @@ function enterPage(iPage)
 	local tEditPackage = _G[strEditorName]
 	assert(tEditPackage, "package " .. strEditorName .. " not available")
 	local editor = tEditPackage.new(strDatatype, tEditorParams)
+	
+	
 	m_bookPanel:Freeze()
 	local editCtrl = editor:create(m_bookPanel)
 	-- set the value
@@ -234,13 +232,13 @@ function enterPage(iPage)
 		structedit.disableControl(editCtrl)
 	end
 	
-	m_disabledCheckbox:SetValue(tTag.fDisabled)
-	editCtrl:Enable(not tTag.fDisabled)
-	
 	m_editor = editor
 	m_editCtrl = editCtrl
 	m_tag = tTag
-	
+	m_iPageIndex = iPage
+
+	updateTagEnabledDisplay()
+
 	nxoeditor.showTagHelp(tTagDesc)
 	
 	-- insert into panel/sizer
@@ -262,7 +260,6 @@ function readbackPage()
 		if fValid then
 			local abNewValue = m_editor:getValue()
 			m_tag.abValue = abNewValue
-			m_tag.fDisabled = m_disabledCheckbox:GetValue()
 			return true
 		else
 			local strMsg = astrErrors and 
@@ -287,39 +284,54 @@ function clearPage()
 		m_editor = nil
 		m_editCtrl = nil
 		m_tag = nil
+		m_iPageIndex = nil
 	end
 end
 
---[[
-function clearPage()
-	local node = m_bookPanel:GetChildren():GetFirst()
-	local win
-	while node do
-		win = node:GetData():DynamicCast("wxWindow")
-		m_bookPanelSizer:Detach(win)
-		m_bookPanel:RemoveChild(win)
-		win:Destroy()
-		node = node:GetNext()
-	end
+
+function destroyEditors()
+	m_listCtrl:Disconnect(m_listId, wx.wxEVT_COMMAND_LISTBOX_SELECTED)
+	m_listCtrl:Disconnect(m_listId, wx.wxEVT_COMMAND_CHECKLISTBOX_TOGGLED)
+
+	clearPage()
+	m_listCtrl:Clear()
+	clearTagEnabledDisplay()
+	
+	m_tagList = {}
+	m_pages = {}
 end
---]]
+
 
 --- Initialize the notebook and the contents panel to hold editors.
 function createTaglistPanel(parent)
-	m_bookId = tester.nextID()
-	m_disabledCheckboxId = tester.nextID()
-	
-	m_book = wx.wxTreebook(parent, m_bookId,
-		wx.wxDefaultPosition, wx.wxDefaultSize, wx.wxNB_LEFT)
-	
-	m_bookPanel = nil
-
 	m_parent = parent
-	
 	m_tagList = {}
 	m_pages = {}
 	m_editor = nil
 	m_editCtrl = nil
 	m_tag = nil
-	return m_book
+	m_iPageIndex = nil
+	
+	m_panel = wx.wxPanel(m_parent, wx.wxID_ANY, wx.wxDefaultPosition, wx.wxDefaultSize)
+	
+	m_listId = tester.nextID()
+	m_listCtrl = wx.wxCheckListBox(m_panel, m_listId, 
+		wx.wxDefaultPosition, wx.wxDefaultSize, {},
+		wx.wxLB_SINGLE + wx.wxLB_NEEDED_SB )--+ wx.wxLB_HSCROLL )
+
+	m_bookPanel = wx.wxScrolledWindow(m_panel) 
+	m_bookPanel:SetScrollRate(32, 32)
+	m_bookPanelSizer = wx.wxBoxSizer(wx.wxVERTICAL)
+	m_bookPanel:SetSizer(m_bookPanelSizer)
+	
+	m_tagEnabledDisplay = wx.wxStaticText(m_bookPanel, wx.wxID_ANY, "",
+		wx.wxDefaultPosition, wx.wxDefaultSize, wx.wxALIGN_LEFT + wx.wxST_NO_AUTORESIZE )
+	m_bookPanelSizer:Add(m_tagEnabledDisplay, 0, wx.wxEXPAND + wx.wxBOTTOM, 3)
+	
+	m_panelSizer = wx.wxBoxSizer(wx.wxHORIZONTAL)
+	m_panel:SetSizer(m_panelSizer)
+	m_panelSizer:Add(m_listCtrl, 0, wx.wxEXPAND + wx.wxRIGHT, 3)
+	m_panelSizer:Add(m_bookPanel, 1, wx.wxEXPAND)
+	
+	return m_panel
 end

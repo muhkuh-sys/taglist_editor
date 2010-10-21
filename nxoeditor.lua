@@ -29,7 +29,8 @@ internalErrorDialog = gui_stuff.internalErrorDialog
 require("utils")
 
 muhkuh.include("taglist.lua", "taglist")
-muhkuh.include("page_taglistedit.lua", "taglistedit")
+--muhkuh.include("page_taglistedit.lua", "taglistedit")
+muhkuh.include("checklist_taglistedit.lua", "taglistedit")
 muhkuh.include("nxfile.lua", "nxfile")
 muhkuh.include("structedit.lua", "structedit")
 muhkuh.include("hexdump.lua", "hexdump")
@@ -146,9 +147,11 @@ local function OnClear()
 			"This will discard all currently loaded data.\n"..
 			"Do you want to proceed?") then
 		nxoeditor.emptyNxo()
+		nxoeditor.showWelcomePage()
 		nxoeditor.setButtons()
 	end
 end
+
 
 function OnHelp(event)
 	local fVal = nxoeditor.m_checkboxHelp:GetValue()
@@ -258,7 +261,7 @@ function setButtons() -- should be adapt_GUI or something
 	
 	m_leftPanel:Layout()
 	m_leftPanel:Refresh()
-	m_leftPanel:Update()
+	--m_leftPanel:Update()
 end
 
 ---------------------------------------------------------------------
@@ -820,6 +823,9 @@ function showHelpPage(strPageFilename, strAnchor)
 	end
 end
 
+function showWelcomePage()
+	showHelpPage("help/welcome.htm")
+end
 
 ---------------------------------------------------------------------
 ---------------------   load/save configuration
@@ -957,5 +963,5 @@ function run()
 		loadNx(arg[1])
 	end
 	
-	showHelpPage("help/welcome.htm")
+	showWelcomePage()
 end
