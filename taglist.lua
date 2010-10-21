@@ -1989,9 +1989,12 @@ function paramsToBin(atTags)
     local abTags = ""
     vbs_print("Serializing tag list")
     for _, tTag in ipairs(atTags) do
-        local ulTag, ulSize, abValue = tTag.ulTag, tTag.ulSize, tTag.abValue
-        vbs_printf("tag = 0x%08x  size=%d  value len=%d",
-            ulTag, ulSize, abValue:len())
+        local ulTag, fDisabled, ulSize, abValue = tTag.ulTag, tTag.fDisabled, tTag.ulSize, tTag.abValue
+        vbs_printf("tag = 0x%08x  size=%d  value len=%d  %s",
+            ulTag, ulSize, abValue:len(), fDisabled and "disabled" or "enabled")
+        if fDisabled then
+        	ulTag = ulTag + TAG_IGNORE_FLAG
+        end
         local abTag =
             uint32tobin(ulTag) ..
             uint32tobin(ulSize) .. -- original size
@@ -2035,7 +2038,7 @@ function binToParams(abBin)
     local iLen = abBin:len()
     local iPos = 0
 
-    local ulTag, ulSize, abValue
+    local ulTag, fDisabled, ulSize, abValue
     local ulStructSize
 
     local abEndMarker = nil
@@ -2068,12 +2071,20 @@ function binToParams(abBin)
         -- get tag type and size
         ulTag = uint32(abBin, iPos)
         iPos = iPos + 4
-
+        
         ulSize = uint32(abBin, iPos)
         iPos = iPos + 4
 
         -- print position, size, type
-        vbs_printf("pos: 0x%08x, tag: 0x%08x, size: 0x%08x", iPos-8, ulTag, ulSize)
+        if ulTag >= TAG_IGNORE_FLAG then
+        	ulTag = ulTag - TAG_IGNORE_FLAG
+        	fDisabled = true
+        else
+        	fDisabled = false
+        end
+
+        vbs_printf("pos: 0x%08x, tag: 0x%08x, size: 0x%08x %s", iPos-8, ulTag, ulSize, 
+        	fDisabled and "disabled" or "enabled")
 
         -- if the tag is known, its value size must be either equal to the
         -- struct size, or equal to the struct size rounded up to dword size.
@@ -2099,6 +2110,7 @@ function binToParams(abBin)
         -- insert the param name and value
         table.insert(atTags, {
             ulTag = ulTag,
+            fDisabled = fDisabled,
             ulSize = ulSize, -- original size, allows to reconstruct the binary
             abValue = abValue
         })

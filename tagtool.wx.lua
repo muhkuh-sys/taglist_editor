@@ -115,6 +115,7 @@ function printTaglist(atTags)
 			-- TAG #9 RCX_MOD_TAG_IT_XC_T (0x00001050) xC Unit
 			-- (RCX_MOD_TAG_IT_XC -alternatives)
 			printf("Tag %d: %s (0x%08x)", iTag, strTagName, tTag.ulTag)
+			print(tTag.fDisabled and "DISABLED" or "ENABLED")
 			-- print structure content
 			if tTag.tValue then
 			    taglist.printStructure(tTag.tValue)
@@ -237,6 +238,11 @@ strStructNamePattern  =             "^([%w_]+)$"
 strMatchPattern       =     '^%s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]+)"?'
 strSetPattern         = '^SET %s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]+)"?'
 
+strSetEnabledPattern  = "^SET %s*ENABLED"
+strSetDisabledPattern = "^SET %s*DISABLED"
+strEnabledPattern     = "^ENABLED"
+strDisabledPattern    = "^DISABLED"
+
 -- split strText into lines at "\n" and remove comments starting with "#"
 function splitIntoLines(strText)
 	local astrLines = {}
@@ -284,9 +290,10 @@ end
 -- iLineNo                             - line number in the input
 -- atMatches                           - constraints, fields which have to match
 -- atEdits                             - fields to overwrite
+-- fMatchDisabled                      - if non-nil, the tag's fDisabled must match the value
+-- fSetDisabled                        - if non-nil, the tag's fDisabled is set to the value
 -- 
--- 
--- Each match/edit record contains:
+-- Each entry in atMatches/atEdits contains:
 -- strFieldName   "Identifier"   - field name from the input file (string)
 -- strValue       "DPS_RDY"      - value from the input file (string)
 -- astrMemberNames               - field name split into member names
@@ -303,6 +310,15 @@ function parseEdits(astrLines)
 		-- empty line
 		if strLine == "" then 
 			dbg_printf("skipping line %d", iLineNo)
+		-- [SET] ENABLED|DISABLED
+		elseif string.match(strLine, strEnabledPattern) then
+			tEditRec.fMatchDisabled = false
+		elseif string.match(strLine, strDisabledPattern) then
+			tEditRec.fMatchDisabled = true
+		elseif string.match(strLine, strSetEnabledPattern) then
+			tEditRec.fSetDisabled = false
+		elseif string.match(strLine, strSetDisabledPattern) then
+			tEditRec.fSetDisabled = true
 		else
 			-- Tag: ...: <tag name> 
 			-- <struct name>
@@ -520,6 +536,7 @@ end
 
 -- Match edit record to a structure.
 -- Returns true if they match, false if not.
+--
 -- tEditRecord =
 -- {strTagName = "RCX_MOD_TAG_IT_XC",
 --  atMatches={
@@ -528,9 +545,6 @@ end
 --  atEdits={
 --    {strFieldName="ulXcId", strValue = "2"}
 --  }}
--- tEditRecord.atMatches = {
--- 	{strFieldName=strFieldName, strValue = strValue}
--- }
 
 function matchEditRecord(tEditRecord, tValue) 
 	for iMatch, tMatch in ipairs(tEditRecord.atMatches) do
@@ -626,6 +640,7 @@ function handle_editrec_tag(atTags, tEditRecord, iEdit)
 		dbg_printf("edit record %d <-> tag %d", iEdit, iTag)
 		if tEditRecord.ulTag == tTag.ulTag and 
 			tTag.tValue and
+			(tEditRecord.fMatchDisabled == nil or tEditRecord.fMatchDisabled == tTag.fDisabled) and
 			matchEditRecord(tEditRecord, tTag.tValue) then
 			if tSelectedTag then
 				return false, string.format("Line %d: edit record matches multiple tags", tEditRecord.iLineNo)
@@ -635,9 +650,13 @@ function handle_editrec_tag(atTags, tEditRecord, iEdit)
 			end
 		end
 	end
-	-- if exactly one matching tag was found, apply the 
+	-- if exactly one matching tag was found, apply the edits
 	if tSelectedTag then
 		dbg_printf("applying edit record %d to tag %d", iEdit, iSelectedTag)
+		if tEditRecord.fSetDisabled ~= nil then
+			dbg_printf("Setting fDisabled to %s", tostring(tEditRecord.fSetDisabled))
+			tSelectedTag.fDisabled = tEditRecord.fSetDisabled
+		end
 		tSelectedTag.abValue = nil
 		local fOk, strError = applyEdit(tEditRecord, tSelectedTag.tValue)
 		if not fOk then
@@ -796,14 +815,17 @@ function listdiffs(strInputFile, strInputFile2)
 			return false, string.format("Tag #%d is not of the same type", iTag)
 			
 		-- skip any tags which have the same binary value
-		elseif tTag1.abValue == tTag2.abValue then
+		elseif tTag1.abValue == tTag2.abValue and
+			tTag1.fDisabled == tTag2.fDisabled then
 			vbs_printf("# Tag %d (0x%08x) equal", iTag, tTag1.ulTag)
 		else
 			-- if the binary values differ and both tags are deserialized, print the differences
 			local strTagName = taglist.getParamTypeDesc(tTag2.ulTag)
-			
 			if tTag1.tValue and tTag2.tValue and strTagName then
 				printf("Tag %d: %s (0x%08x)", iTag, strTagName, tTag2.ulTag)
+				printf("%3s %s", 
+					tTag1.fDisabled ~= tTag2.fDisabled and "SET" or "", 
+					tTag2.fDisabled and "DISABLED" or "ENABLED")
 				local fOk, msg = taglist.printStructureDiffs(tTag1.tValue, tTag2.tValue)
 				if not fOk then
 					return false, msg

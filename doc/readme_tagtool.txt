@@ -97,9 +97,11 @@ The general form of an edit record is:
   or, optionally:
   Tag <ignored until colon>: TAG_NAME <The rest of the line is ignored>
 - any number of additional constraints on member values
-  .member_name = value
+  .member_name = value  
+  ENABLED or DISABLED to check whether the tag is enabled or disabled
 - any number of SET instructions to set member values
   SET .member_name = value
+  SET ENABLED or SET DISABLED to set the tag to enabled or disabled
 
 String values may be written with or without double quotes.
 Numeric values may be written in decimal or hexadecimal notation.
@@ -108,12 +110,16 @@ line is ignored.
   
 Example:
 Tag 15: RCX_MOD_TAG_IT_XC (0x00001050)
-.szIdentifier = "RTE_XC1"             
+.szIdentifier = "RTE_XC1"
+DISABLED
 SET .ulXcId = 2                   
+SET ENABLED
 
-This selects a tag with type RCX_MOD_TAG_IT_XC and the identifier string 
-"RTE_XC1". If the tag list contains exactly one tag which matches this 
-description, its ulXcId field is set to 2.
+This selects a tag with type RCX_MOD_TAG_IT_XC which has the identifier string 
+"RTE_XC1" and is currently disabled. If the tag list contains exactly one 
+tag which matches this description, it is enabled and its ulXcId field is set 
+to 2.
+
 
 The device header is selected as follows:
 DEVICE_HEADER_V1_T

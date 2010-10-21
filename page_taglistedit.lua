@@ -42,6 +42,12 @@ m_tagList = {}
 --- list of page names/tags
 m_pages = {}
 
+--- "tag disabled" checkbox
+m_disabledCheckbox = nil
+
+--- window id of the checkbox
+m_disabledCheckboxId = nil
+
 --- current editor, e.g. numEdit
 m_editor = nil
 
@@ -93,6 +99,12 @@ local function OnPageChanged(event)
 	taglistedit.enterPage(iNewPage)
 end
 
+
+local function OnDisable(event)
+	local fDisabled = taglistedit.m_disabledCheckbox:GetValue()
+	taglistedit.m_editCtrl:Enable(not fDisabled)
+end
+
 -- m_book 
 --    +- b_bookPanel  sizer:m_bookPanelSizer
 
@@ -112,6 +124,13 @@ function createEditors(tagList)
 		m_bookPanelSizer = wx.wxBoxSizer(wx.wxVERTICAL)
 		m_bookPanel:SetSizer(m_bookPanelSizer)
 		-- m_bookPanel:SetBackgroundColour(wx.wxGREEN)
+	end
+	
+	-- create the "Tag Disabled" checkbox
+	if not m_disabledCheckbox then
+		m_disabledCheckbox = wx.wxCheckBox(m_bookPanel, m_disabledCheckboxId, "Tag disabled")
+		m_bookPanel:Connect(m_disabledCheckboxId, wx.wxEVT_COMMAND_CHECKBOX_CLICKED , OnDisable)
+		m_bookPanelSizer:Add(m_disabledCheckbox, 0, wx.wxALL, 3)
 	end
 	
 	m_tagList = tagList
@@ -138,8 +157,22 @@ function createEditors(tagList)
 	end
 end
 
+-- bool Disconnect(
+-- 	wxEventType eventType = wxEVT_NULL, 
+-- 	wxObjectEventFunction function = NULL, 
+-- 	wxObject* userData = NULL, 
+-- 	wxEvtHandler* eventSink = NULL)
+-- 
+-- bool Disconnect(
+-- 	int id = wxID_ANY, 
+-- 	wxEventType eventType = wxEVT_NULL, 
+-- 	wxObjectEventFunction function = NULL, 
+-- 	wxObject* userData = NULL, 
+-- 	wxEvtHandler* eventSink = NULL)
 
---- Remove all pages from the notebook.
+
+
+--- Remove all pages from the notebook and remove the "Disabled" checkbox.
 function destroyEditors()
 	m_book:Disconnect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING)
 	m_book:Disconnect(m_bookId, wx.wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED)
@@ -152,6 +185,14 @@ function destroyEditors()
 	end
 	m_tagList = {}
 	m_pages = {}
+	
+	if m_disabledCheckbox then
+		m_book:Disconnect(m_disabledCheckboxId, wx.wxEVT_COMMAND_CHECKBOX_CLICKED)
+		m_bookPanelSizer:Detach(m_disabledCheckbox)
+		m_bookPanel:RemoveChild(m_disabledCheckbox)
+		m_disabledCheckbox:Destroy()
+		m_disabledCheckbox = nil
+	end
 end
 
 
@@ -190,12 +231,10 @@ function enterPage(iPage)
 	editor:setValue(abValue)
 	if taglist.isReadOnly(tTagDesc) then
 		structedit.disableControl(editCtrl)
-		--if editor.disable then
-		--	editor:disable()
-		--else
-		--	editCtrl:Enable(false)
-		--end
 	end
+	
+	m_disabledCheckbox:SetValue(tTag.fDisabled)
+	editCtrl:Enable(not tTag.fDisabled)
 	
 	m_editor = editor
 	m_editCtrl = editCtrl
@@ -204,7 +243,7 @@ function enterPage(iPage)
 	nxoeditor.showTagHelp(tTagDesc)
 	
 	-- insert into panel/sizer
-	m_bookPanelSizer:Add(editCtrl)
+	m_bookPanelSizer:Add(editCtrl, 0, wx.wxALL, 3)
 	m_editCtrl:Fit()
 	m_bookPanel:FitInside()
 	m_bookPanel:Layout()
@@ -222,6 +261,7 @@ function readbackPage()
 		if fValid then
 			local abNewValue = m_editor:getValue()
 			m_tag.abValue = abNewValue
+			m_tag.fDisabled = m_disabledCheckbox:GetValue()
 			return true
 		else
 			local strMsg = astrErrors and 
@@ -266,6 +306,8 @@ end
 --- Initialize the notebook and the contents panel to hold editors.
 function createTaglistPanel(parent)
 	m_bookId = tester.nextID()
+	m_disabledCheckboxId = tester.nextID()
+	
 	m_book = wx.wxTreebook(parent, m_bookId,
 		wx.wxDefaultPosition, wx.wxDefaultSize, wx.wxNB_LEFT)
 	
