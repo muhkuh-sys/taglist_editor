@@ -237,6 +237,7 @@ Source: nxo_editor\stringedit.lua; DestDir: {app}\nxo_editor; Components: modula
 Source: nxo_editor\devhdredit.lua; DestDir: {app}\nxo_editor; Components: modulator
 
 Source: nxo_editor\page_taglistedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\checklist_taglistedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\structedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\nxoeditor.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\test_description.xml; DestDir: {app}\nxo_editor; Components: modulator

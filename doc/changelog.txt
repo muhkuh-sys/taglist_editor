@@ -1,6 +1,15 @@
 Change log for Tag List Editor
 
+Tag list editor 1.1.9322
+
+ * Added support for enabling/disabling tags to editor and tagtool
+ * added RCX_TAG_ETHERNET_PARAMS 0x100f0000
+         RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS 0x10960000
+         RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS 0x10960001
+ * removed RCX_TAG_NUM_COMM_CHANNELS
+
 Tag list editor 1.1.9016
+
  * tagtool now allows for field names containing [], like .atMMIOCfg[1].bConfig 
  * added/renamed RCX Tags:
    renamed RCX_MOD_TAG_INTERRUPT -> RCX_TAG_INTERRUPT_GROUP
@@ -35,25 +44,31 @@ Tag list editor 1.1.8918
  * removed option HIF PIO in RCX_TAG_LED_T   
 
 Tag list editor 1.1.8597
+
  * Added tags controlling interfaces and protocols used by netX Diagnostics
    and Remote Access component
 
 Tag list editor 1.1.5859
+
  * Bugfix: Firmware files without tag list are correctly saved
    (were previously saved with an empty tag list instead)
 
 NXO Editor 1.1.5768
+
  * Added editor for device header V1
  * Added fast startup tag for 2nd stage loader
  * fixed problem with LED tag (workaround for wxLua bug)
 
 NXO Editor 1.1.5662
+
  * Added 3 pad bytes in TAG_BSL_HWDATA_PARAMS_DATA_T
 
 NXO Editor 1.1.5658
+
  * Added HWDATA tag for 2nd stage loader
 
 NXO Editor 1.1.5375
+
  * installer now sets PATH_NXOEDITOR 
  * removed the association of nxo files to the editor for now 
  * fixed bug in nxomaker.wx.lua
