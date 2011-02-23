@@ -7,6 +7,13 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+--  2011-02-23    SL            updated tag IDs
+--  2011-02-11    SL            added RCX_TAG_DP_DEVICEID 
+--                                    RCX_TAG_CIP_DEVICEID
+--                                    RCX_TAG_CO_DEVICEID 
+--                                    RCX_TAG_CCL_DEVICEID
+--                                    RCX_TAG_PN_DEVICEID 
+--                                    RCX_TAG_EIP_EDD_CONFIGURATION
 --  2010-10-14    SL/YZ         added RCX_TAG_ETHERNET_PARAMS, 
 --                                    RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS
 --                                    RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS
@@ -265,7 +272,11 @@ CONSTANTS = {
 
     RCX_HW_DEV_CLASS_HILSCHER_GMBH_MAX    =  0x7FFF,    -- Hilscher GmbH max. value
     RCX_HW_DEV_CLASS_OEM_DEVICE           =  0xFFFE,
-    
+  
+    -- EIP xC type
+    EIP_XC_TYPE_DLR_2PORT_SWITCH          = 1,
+    EIP_XC_TYPE_STD_2PORT_SWITCH          = 2,
+    EIP_XC_TYPE_STD_ETH                   = 3,
 }
 
 -- Currently, device class in the device header editor is a number field,
@@ -593,6 +604,12 @@ NETX50_MMIO_CONFIG = {
 }
 
 
+EIP_XC_TYPE = {
+	{name="Ethernet DLR",             value=1},
+	{name="Ethernet 2 port switch",   value=2},
+	{name="Ethernet single port",     value=3},
+}
+
 -- MMIO pin numbers for netX 50
 NETX50_MMIO_NUMBERS = {}
 for i=0, 39 do
@@ -884,6 +901,29 @@ RCX_TAG_LED_T=
     values={{name="normal", value=0},{name="inverted", value=1}}}},
   nameField = "szIdentifier"
 },
+
+
+
+-- tags for simple parameters
+-- preliminary
+----------------------------------------------------------------------------------------------
+--  uint32 parameter
+
+-- RCX_TAG_NUMERIC_PARAM_VALUE_DATA_T = {
+-- 	{"STRING", "szParamName",  desc="Parameter Description", size=32, mode="read-only"},
+--     {"UINT32", "ulMinValue",   desc="Minimum Value", editorParam={format="%d"}, mode="read-only"},
+--     {"UINT32", "ulMaxValue",   desc="Maximum Value", editorParam={format="%d"}, mode="read-only"},
+--     {"UINT32", "ulParamValue", desc="Value",         editorParam={format="%d"}},
+--     nameField = "szParamName"
+-- },
+-- ----------------------------------------------------------------------------------------------
+-- --  boolean value
+-- 
+-- RCX_TAG_BOOLEAN_PARAM_VALUE_DATA_T = {
+-- 	{"STRING", "szParamName",  desc="Identifier", size=32, mode="read-only"},
+-- 	{"UINT32",  "bParamValue",  desc="Enable", editor="checkboxedit", editorParam={onValue=1, offValue=0, otherValues=true, nBits=32}},
+-- 	nameField = "szParamName"
+-- },
 
 
 
@@ -1455,8 +1495,64 @@ RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS_DATA_T = {
 },
 
 
+
+----------------------------------------------------------------------------------------------
+-- Product Information/Device ID tags
+
+TAG_DP_DEVICEID_DATA_T = {
+	{"UINT16", "usIdentNr", desc="Ident Number"},
+},
+
+TAG_CIP_DEVICEID_DATA_T = {
+	{"UINT16", "usVendorID",    desc="Vendor ID"},
+	{"UINT16", "usDeviceType",  desc="Device Type"},
+	{"UINT16", "usProductCode", desc="Product Code"},
+	{"UINT8",  "bMajRev",       desc="Major Revision"},
+	{"UINT8",  "bMinorRev",     desc="Minor Revision"},
+	{"STRING", "abProductName", desc="Product Name", size=32},
+},
+
+TAG_CO_DEVICEID_DATA_T = {
+	{"UINT32", "ulVendorId",            desc="Vendor ID"},
+	{"UINT32", "ulProductCode",         desc="Product Code"},
+	{"UINT16", "usMajRev",              desc="Major Revision"},
+	{"UINT16", "usMinorRev",            desc="Minor Revision"},
+	{"UINT16", "usDeviceProfileNumber", desc="Device Profile Number"},
+	{"UINT16", "usAdditionalInfo",      desc="Additional Info"},
+},
+
+TAG_CCL_DEVICEID_DATA_T = {
+	{"UINT32", "ulVendorCode", desc="Vendor Code"},
+	{"UINT32", "ulModelType",  desc="Model Type"},
+	{"UINT32", "ulSwVersion",  desc="Software Version"},
+},
+
+TAG_PN_DEVICEID_DATA_T = {
+	{"UINT16", "usVendorId", desc="Vendor ID"},
+	{"UINT16", "usDevoceId", desc="Device ID"},
+},
+
+----------------------------------------------------------------------------------------------
+-- EIP/DLR configuration
+
+TAG_EIP_EDD_CONFIGURATION_DATA_T = {
+	{"UINT32", "ulEnableDLR",          desc="Enable DLR",
+		editor="checkboxedit",
+		editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}
+	},
+	{"UINT32", "ulxCType",             desc="xC Type",
+		editor="comboedit", 
+		editorParam={nBits=32, values = EIP_XC_TYPE},
+	},
+	{"UINT32", "ulSinglePortXcNumber", desc="xC Number",
+		editor="comboedit", 
+		editorParam={nBits=32, minValue=0, maxValue=3}
+	}
+} ,
+
 }
 
+    
 ---------------------------------------------------------------------------
 -- RCX_MOD_TAG definitions (mapping from tag number to type name)
 -- paramtype = the 32 bit tag number
@@ -1509,6 +1605,32 @@ RCX_TAG_LED =
 RCX_TAG_XC =
     {paramtype = 0x00001050, datatype="RCX_TAG_XC_T",                         desc="xC Unit"},
 
+-- preliminary
+-- RCX_TAG_NUMERIC_PARAM_VALUE =
+--     {paramtype = 0x00001060, datatype="RCX_TAG_NUMERIC_PARAM_VALUE_DATA_T",   desc="Number"},
+-- RCX_TAG_BOOLEAN_PARAM_VALUE =
+--     {paramtype = 0x00001061, datatype="RCX_TAG_BOOLEAN_PARAM_VALUE_DATA_T",   desc="Bool"},
+
+-- tags assigned to protocol classes
+
+-- Device ID tags
+TAG_DP_DEVICEID  = 
+    {paramtype = 0x30013000, datatype="TAG_DP_DEVICEID_DATA_T",           desc="Profibus Product Information"}, 
+TAG_EIP_DEVICEID =                                                    
+    {paramtype = 0x3000a000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="Ethernet/IP Product Information"}, 
+TAG_DEVICENET_DEVICEID =                                                    
+    {paramtype = 0x30008000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="DeviceNet Product Information"}, 
+TAG_COMPONET_DEVICEID =                                                    
+    {paramtype = 0x30006000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="CompoNet Product Information"}, 
+TAG_CO_DEVICEID  =                                                    
+    {paramtype = 0x30004000, datatype="TAG_CO_DEVICEID_DATA_T",           desc="CANopen Product Information"}, 
+TAG_CCL_DEVICEID =                                                    
+    {paramtype = 0x30005000, datatype="TAG_CCL_DEVICEID_DATA_T",          desc="CC-Link Product Information"}, 
+TAG_PN_DEVICEID  =                                                    
+    {paramtype = 0x30015000, datatype="TAG_PN_DEVICEID_DATA_T",           desc="PROFINET Product Information"}, 
+
+TAG_EIP_EDD_CONFIGURATION = 
+    {paramtype = 0x3000a001, datatype="TAG_EIP_EDD_CONFIGURATION_DATA_T", desc="Ethernet/IP EDD Configuration"}, 
 
 -- Second Stage Loader tags
 TAG_BSL_SDRAM_PARAMS =
@@ -2680,8 +2802,44 @@ example_taglist = {
 "RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS",
 "RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS",
     
+"TAG_DP_DEVICEID",
+"TAG_EIP_DEVICEID",
+"TAG_DEVICENET_DEVICEID",
+"TAG_COMPONET_DEVICEID",
+"TAG_CO_DEVICEID",
+"TAG_CCL_DEVICEID",
+"TAG_PN_DEVICEID",
+"TAG_EIP_EDD_CONFIGURATION",
 
 --"mac_address",
 --"ipv4_address",
 --"arbitrary_data",
 }
+
+
+---------------------------------------------------------------------
+--      print a list of the known tags sorted by id
+---------------------------------------------------------------------
+
+function print_tag_overview()
+	local tags = {} 
+	for k,v in pairs(rcx_mod_tags) do
+		local e = {
+			key = k,
+			id = v.paramtype,
+			desc = v.desc,
+			datatype = v.datatype
+		}
+		table.insert(tags, e)
+	end
+	
+	local function sort(e1, e2) 
+		return e1.id < e2.id
+	end
+	
+	table.sort(tags, sort)
+	
+	for i,e in ipairs(tags) do
+		print(string.format("0x%08x  %-50s %-50s %s", e.id, e.key, e.datatype, e.desc))
+	end
+end

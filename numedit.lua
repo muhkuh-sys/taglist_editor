@@ -16,6 +16,8 @@
 -- $Author$
 ---------------------------------------------------------------------------
 
+
+
 module("numedit", package.seeall)
 require("tester")
 
@@ -43,18 +45,14 @@ function binToUint(bin, pos, nBits)
 end
 
 
+
 function setValue(self, bin)
-	--print("numedit.setValue: self.m_tEditorParams=", self.m_tEditorParams)
 	local uVal = binToUint(bin, 0, self.m_nBits)
-	--local strFormat = self.m_tEditorParams.format or
-	--	string.format("0x%%0%dx", self.m_nDigits)
-	--print(strFormat)
-	--local strVal = string.format(strFormat, uVal)
 	local strVal = string.format(self.m_format, uVal)
 	assert(strVal, "numedit.setValue: failed to format value")
-	--print(strVal)
 	self.m_TextCtrl:SetValue(strVal)
 end
+
 
 function getValue(self)
 	local strVal = self.m_TextCtrl:GetValue()
@@ -140,6 +138,35 @@ function OnKey(self, event)
 	end
 end
 
+-- test
+--- Text update handler.
+-- If the new value does not parse, the old value and cursor pos
+-- stored by the key handler are used to undo the input.
+function OnTextUpdate(self, event)
+	--local str = event:GetString()
+	--print("text update")
+	--print("current value:", str)
+	--print("Last valid: ", self.m_strLastValid)
+	--print("undoUpdate: ", self.m_ignoreUpdate)
+	
+	if self.m_ignoreUpdate then
+		self.m_ignoreUpdate = nil
+	else
+		local str = event:GetString()
+		local uVal, strError = self:checkValue(str)
+		--print(str, uVal, strError)
+		if str:len()==0 or str=="0x" then
+			self.uVal = 0
+		elseif uVal then
+			self.uVal = uVal
+		else
+			self.m_ignoreUpdate = true
+			self.m_TextCtrl:SetValue(self.m_strLastValid)
+			self.m_TextCtrl:SetInsertionPoint(self.m_iLastValidPos)
+		end
+	end
+	event:Skip(false)
+end
 
 --- Text update handler.
 -- If the new value does not parse, the old value and cursor pos
