@@ -6,6 +6,8 @@
 --
 --  Changes:
 --    Date        Author        Description
+--  Mar 4, 2011   SL            fix: bug when an illegal value (e.g. 0)
+--                              was present in a tag
 ---------------------------------------------------------------------------
 --  
 ---------------------------------------------------------------------------
@@ -50,6 +52,7 @@ function setValue(self, bin)
 	local uVal = binToUint(bin, 0, self.m_nBits)
 	local strVal = string.format(self.m_format, uVal)
 	assert(strVal, "numedit.setValue: failed to format value")
+	self.m_ignoreUpdate = true
 	self.m_TextCtrl:SetValue(strVal)
 end
 
@@ -89,6 +92,8 @@ function checkValue(self, strVal)
 end
 
 -- due to the checks, the input should always be valid.
+-- If an illegal value was preset and not changed by the user, 
+-- we currently want to keep the value anyway.
 function isValid(self)
 	--local val, msg = getValue(self)
 	--return val and true or false, msg
@@ -139,6 +144,7 @@ function OnKey(self, event)
 end
 
 -- test
+--[[
 --- Text update handler.
 -- If the new value does not parse, the old value and cursor pos
 -- stored by the key handler are used to undo the input.
@@ -167,6 +173,7 @@ function OnTextUpdate(self, event)
 	end
 	event:Skip(false)
 end
+--]]
 
 --- Text update handler.
 -- If the new value does not parse, the old value and cursor pos
@@ -207,7 +214,8 @@ function new(_, tEditorParams)
 	return inst
 end
 
-function new_old(_, tEditorParams)
+--[[
+function new(_, tEditorParams)
 	--if tEditorParams then
 	--	for k,v in pairs(tEditorParams) do print(k,v) end
 	--end
@@ -231,4 +239,4 @@ function new_old(_, tEditorParams)
 	setmetatable(inst, inst)
 	return inst
 end
-
+--]]
