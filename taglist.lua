@@ -1526,7 +1526,9 @@ TAG_CO_DEVICEID_DATA_T = {
 TAG_CCL_DEVICEID_DATA_T = {
 	{"UINT32", "ulVendorCode", desc="Vendor Code"},
 	{"UINT32", "ulModelType",  desc="Model Type"},
-	{"UINT32", "ulSwVersion",  desc="Software Version"},
+	{"UINT32", "ulSwVersion",  desc="Software Version",
+		editor="numedit", editorParam={nBits=32, format="%d", minValue=0, maxValue=63}
+	},
 },
 
 TAG_PN_DEVICEID_DATA_T = {
