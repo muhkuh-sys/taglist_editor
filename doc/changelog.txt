@@ -1,6 +1,6 @@
 Change log for Tag List Editor
 
-Tag list editor 1.1.9797
+Tag list editor 1.1.9803
 
  * added TAG_DP_DEVICEID           0x30013000
          TAG_EIP_DEVICEID          0x3000a000
