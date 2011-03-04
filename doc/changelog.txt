@@ -1,5 +1,16 @@
 Change log for Tag List Editor
 
+Tag list editor 1.1.9797
+
+ * added TAG_DP_DEVICEID           0x30013000
+         TAG_EIP_DEVICEID          0x3000a000
+         TAG_DEVICENET_DEVICEID    0x30008000
+         TAG_COMPONET_DEVICEID     0x30006000
+         TAG_CO_DEVICEID           0x30004000
+         TAG_CCL_DEVICEID          0x30005000
+         TAG_PN_DEVICEID           0x30015000
+         TAG_EIP_EDD_CONFIGURATION 0x3000a001
+
 Tag list editor 1.1.9322
 
  * Added support for enabling/disabling tags to editor and tagtool
