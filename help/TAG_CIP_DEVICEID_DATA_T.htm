@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_CIP_DEVICEID_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>CIP Product Information</h2>
+
+<p>
+The following parameters define a CIP device (Ethernet/IP, DeviceNet, CompoNet).
+Except for 'Product Name', all of these parameters are used by a connection 
+originator to identify the device with certainty. 
+The parameters shall match the values defined in the corresponding EDS file.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Vendor ID</td>
+	<td>Defines the vendor of the device. Vendor IDs are managed by ODVA. <br>
+	The value of zero is not valid.
+	</td>
+</tr>
+<tr>
+	<td>Device Type</td>
+	<td>The Device Type is used to identify the device profile that the product 
+		is using. 
+		Device profiles define minimum requirements a device must implement 
+		as well as common options. 
+		The list of device types is managed by ODVA.
+	</td>
+</tr>
+<tr>
+	<td>Product Code</td>
+	<td>The Product Code identifies a product within a device type. 
+		It is assigned by the vendor. <br>
+		The value zero is not valid.<br>
+		<p>Typically, the Product Code maps to one or more catalog/model numbers.
+		Products shall have different codes if 
+		their configuration and/or runtime options are different. 
+		Such devices present a different logical view to the network.		
+		On the other hand for example, two products that are the same except 
+		for their color or mounting feet are the same logically and may share 
+		the same product code.</p>
+	</td>
+</tr>
+<tr>
+	<td>Revision </td>
+	<td>The Revision, which consists of Major and Minor Revisions, identifies 
+		the Revision of the item the Identity Object is representing.<br> 
+		The value zero is not valid for either the Major and Minor Revision fields.
+	</td>
+</tr>
+<tr>
+	<td>Product Name</td>
+	<td>This text string should contain a short description of the 
+		product/product family represented by the Product Code. 
+		The same Product Code may have a variety of product name strings. <br>
+		The maximum number of characters in this string is 32.</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

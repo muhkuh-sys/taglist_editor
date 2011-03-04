@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_CO_DEVICEID_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>CANopen Product Information</h2>
+
+<p>
+The following parameters define a CANopen slave.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Vendor ID</td>
+	<td>The Vendor ID is a unique number identifying the vendor or a department of the vendor.
+		The allocation of the Vendor ID is handled by CiA Headquarters.
+	</td>
+</tr>
+<tr>
+	<td>Product Code</td>
+	<td>The Product code identifies a specific device version. 
+		It is assigned by the manufacturer.</td>
+</tr>
+<tr>
+	<td>Revision </td>
+	<td>The manufacturer-specific Revision number consists of a major revision 
+		number (identifies a specific CANopen behavior) and a minor revision number 
+		(identifies different versions of the same CANopen behavior). 
+		If the CANopen functionality is expanded, the major revision number has 
+		to be increased.
+	</td>
+</tr>
+<tr>
+	<td>Device Profile Number and Additional Information </td>
+	<td>These two parameters form the object Device Type (Object 1000h). 
+		The Device Profile Number describes the profile that is used and the 
+		Additional Information field provides information about optional 
+		functionality of the device. 
+		The Additional Information parameter is specified in the 
+		appropriate device profile.
+		Note: These two parameters are supported from CANopen stack 
+		version 3 and higher. For earlier versions set Device Type to zero.
+</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

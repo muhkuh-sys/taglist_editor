@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_EIP_EDD_CONFIGURATION_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Ethernet/IP EDD Configuration</h2>
+
+<p>
+...
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Enable DLR </td>
+	<td>Enables the DLR (Device Level Ring) functionality. 
+		If enabled, the xC type must be set to "Ethernet DLR".</td>
+</tr>
+<tr>
+	<td>xC Type </td>
+	<td>Defines the type of xC to use:
+		<ul>
+		<li><b>Ethernet DLR:</b>
+		Standard 2 port switch with integrated DLR functionality. 
+		This XC type uses xC number 0, 1 and 3. It must be selected
+		when DLR is enabled.</li>
+		
+		<li><b>Ethernet 2 port switch:</b>
+		Standard 2 port switch.
+		This XC type uses xC number 0 and 1.</li>
+		
+		<li><b>Ethernet single port:</b>
+		Standard single port xC. The XC number can be defined in 
+		the field "Single Port xC Number".</li>
+		</ul>
+		
+		</td>
+</tr>
+<tr>
+	<td>xC number </td>
+	<td>If xC type "Ethernet single port" is used, this field defines the 
+		XC number (possible values: 0-3). The value will be 
+		ignored for other xC types.</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

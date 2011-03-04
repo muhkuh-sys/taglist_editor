@@ -9,7 +9,9 @@
 ---------------------------------------------------------------------------
 --  2011-02-23    SL            updated tag IDs
 --  2011-02-11    SL            added RCX_TAG_DP_DEVICEID 
---                                    RCX_TAG_CIP_DEVICEID
+--                                    RCX_TAG_EIP_DEVICEID
+--                                    RCX_TAG_DEVICENET_DEVICEID
+--                                    RCX_TAG_COMPONET_DEVICEID
 --                                    RCX_TAG_CO_DEVICEID 
 --                                    RCX_TAG_CCL_DEVICEID
 --                                    RCX_TAG_PN_DEVICEID 
@@ -1740,6 +1742,17 @@ HELP_MAPPING = {
     RCX_TAG_MIN_CHIP_REV                = {file="misc_tags.htm"},
     RCX_TAG_MAX_CHIP_REV                = {file="misc_tags.htm"},
     --RCX_TAG_NUM_COMM_CHANNELS           = {file="misc_tags.htm"},
+    
+    TAG_DP_DEVICEID                     = {file="TAG_DP_DEVICEID_DATA_T.htm"}, 
+    TAG_EIP_DEVICEID                    = {file="TAG_CIP_DEVICEID_DATA_T.htm"}, 
+    TAG_DEVICENET_DEVICEID              = {file="TAG_CIP_DEVICEID_DATA_T.htm"}, 
+    TAG_COMPONET_DEVICEID               = {file="TAG_CIP_DEVICEID_DATA_T.htm"}, 
+    TAG_CO_DEVICEID                     = {file="TAG_CO_DEVICEID_DATA_T.htm"}, 
+    TAG_CCL_DEVICEID                    = {file="TAG_CCL_DEVICEID_DATA_T.htm"}, 
+    TAG_PN_DEVICEID                     = {file="TAG_PN_DEVICEID_DATA_T.htm"}, 
+    TAG_EIP_EDD_CONFIGURATION           = {file="TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"}, 
+    
+    
 }
 
 
