@@ -7,6 +7,8 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+--  2011-03-14    SL            corrected type and range of device/vendor 
+--                              ID in TAG_PN_DEVICEID_DATA_T
 --  2011-02-23    SL            updated tag IDs
 --  2011-02-11    SL            added RCX_TAG_DP_DEVICEID 
 --                                    RCX_TAG_EIP_DEVICEID
@@ -1510,7 +1512,7 @@ TAG_CIP_DEVICEID_DATA_T = {
 	{"UINT16", "usDeviceType",  desc="Device Type"},
 	{"UINT16", "usProductCode", desc="Product Code"},
 	{"UINT8",  "bMajRev",       desc="Major Revision"},
-	{"UINT8",  "bMinorRev",     desc="Minor Revision"},
+	{"UINT8",  "bMinRev",       desc="Minor Revision"},
 	{"STRING", "abProductName", desc="Product Name", size=32},
 },
 
@@ -1518,7 +1520,7 @@ TAG_CO_DEVICEID_DATA_T = {
 	{"UINT32", "ulVendorId",            desc="Vendor ID"},
 	{"UINT32", "ulProductCode",         desc="Product Code"},
 	{"UINT16", "usMajRev",              desc="Major Revision"},
-	{"UINT16", "usMinorRev",            desc="Minor Revision"},
+	{"UINT16", "usMinRev",              desc="Minor Revision"},
 	{"UINT16", "usDeviceProfileNumber", desc="Device Profile Number"},
 	{"UINT16", "usAdditionalInfo",      desc="Additional Info"},
 },
@@ -1531,9 +1533,10 @@ TAG_CCL_DEVICEID_DATA_T = {
 	},
 },
 
+-- note: minValue should be 1 here, but this leads to problems when entering hex numbers
 TAG_PN_DEVICEID_DATA_T = {
-	{"UINT16", "usVendorId", desc="Vendor ID"},
-	{"UINT16", "usDevoceId", desc="Device ID"},
+	{"UINT32", "ulVendorId", desc="Vendor ID", editorParam={nBits=32, minValue=0, maxValue=0xfeff}},
+	{"UINT32", "ulDeviceId", desc="Device ID", editorParam={nBits=32, minValue=0, maxValue=0xffff}},
 },
 
 ----------------------------------------------------------------------------------------------

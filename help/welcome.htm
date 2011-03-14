@@ -29,8 +29,14 @@ from its its components:
 </p>
 <p></p>
 
-<h3>Note:</h3>
-In order to parse an NXO/NXF/2nd Stage Loader, the file must contain a common header with at least version 3.
+<h3>Notes:</h3>
+<p>In order to parse an NXO/NXF/2nd Stage Loader, the file must contain a common header with at least version 3.</p>
+
+<p>
+The input routines refuse any input outside the allowed range for a field, with one exception: 
+They will not prevent you from entering the value 0, since hex numbers always start with this digit.
+If you have loaded a tag list containing incorrect values and want to edit such a value, mark it and
+press backspace, then enter a correct value.</p>
 
 </BODY>
 </HTML>
