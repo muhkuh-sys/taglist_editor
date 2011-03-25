@@ -6,7 +6,7 @@ makenxo.bat creates an rcX loadable module in NXO format from a firmware
 stack in ELF format.
 
 Usage:
-   makenxo -o OUTPUT -h HEADER [-t TAG LIST FILE] [-v] ELFFILE
+   makenxo -o OUTPUT -H HEADER [-t TAG LIST FILE] [-v] ELFFILE
 
 Arguments:
    -o OUTPUT   Write output NO to OUTPUT
