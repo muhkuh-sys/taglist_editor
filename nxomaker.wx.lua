@@ -143,34 +143,6 @@ function makenxo(strHeaderFile, strTaglistFile, strElfFile, strNxoFile)
 	return true
 end
 
--- old variant using nxo
---[[
-function makenxo_(strHeaderFile, strTaglistFile, strElfFile, strNxoFile)
-	nxo = nxo.new()
-	local abDefaultHeader, abHeaders, abTags, abElf, abNxo, strMsg
-	
-	abHeaders, strMsg = loadBin(strHeaderFile)
-	if not abHeaders then return false, strMsg end
-	nxo:setHeadersBin(abHeaders)
-	
-	abElf, strMsg = loadBin(strElfFile)
-	if not abElf then return false, strMsg end
-	nxo:setElf(abElf)
-	
-	if strTaglistFile then
-		abTags, strMsg = loadBin(strTaglistFile)
-		if not abTags then return false, strMsg end
-		nxo:setTaglistBin(abTags)
-	end
-	
-	abNxo = nxo:buildNxoBin()
-	if not abNxo then return false, "failed to build nxo file" end
-	
-	local fSaved, strMsg = writeBin(strNxoFile, abNxo)
-	if not fSaved then return false, strMsg end
-	return true
-end
---]]
 
 local aStrUsage={
 "makenxo creates an rcX loadable module in NXO format from a binary",
@@ -184,8 +156,7 @@ local aStrUsage={
 "   -H HEADER   Load headers from binary file HEADER. The file must contain",
 "               a common header V3, usually followed by a device info block",
 "               and a module info block.",
-"   -t TAGLIST  Use binary file TAGLIST as default tag list. If no tag list ",
-"                 is specified, an empty tag list is generated",
+"   -t TAGLIST  Use binary file TAGLIST as default tag list.",
 "   -v          Verbose operation",
 "   -h          This help text."
 }
