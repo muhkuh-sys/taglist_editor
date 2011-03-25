@@ -515,9 +515,9 @@ function loadNx(strFilename)
 					local fChanged = checkEndMarker(params)
 					if fChanged then
 						abTags = taglist.paramsToBin(params)
+						fTagsOk, strMsg = m_nxfile:setTaglistBin(abTags)
+						showMessages(fOk, "Notice", "Error", strMsg)
 					end
-					fTagsOk, strMsg = m_nxfile:setTaglistBin(abTags)
-					showMessages(fOk, "Notice", "Error", strMsg)
 				end
 					
 				if fTagsOk then
