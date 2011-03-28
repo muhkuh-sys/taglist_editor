@@ -1,5 +1,9 @@
 Change log for Tag List Editor
 
+ * fixed issue 0013039: opening a file with the tag list as the last section but additional data 
+   between taglist start offset + taglist size and end of file discarded the additional data. 
+   The additional data is now kept as long as the tag list is not replaced or the end marker adapted.
+
 Tag list editor 1.1.9855
 
  * corrected type and range of device/vendor ID in TAG_PN_DEVICEID_DATA_T
