@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+--  2011-04-15    MT            added new FSU MMIO Layout (netX50)
 --  2011-03-14    SL            corrected type and range of device/vendor 
 --                              ID in TAG_PN_DEVICEID_DATA_T
 --  2011-02-23    SL            updated tag IDs
@@ -1218,9 +1219,9 @@ TAG_BSL_HWDATA_PARAMS_DATA_T = {
 --  2nd stage loader FSU parameters
 --#define BSL_FSU_MODE_DISABLED       0x00000000
 --#define BSL_FSU_MODE_ENABLE         0x00000001
---#define BSL_FSU_MODE_FOLAYOUT       0x00000002
 --#define BSL_FSU_MODE_DISABLESECMEM  0x80000000
 --  unsigned long ulFSUMode; /*!< Bitmask -> BSL_FSU_MODE_XXX */
+
 
 TAG_BSL_FSU_PARAMS_DATA_T = {
     {"UINT32", "ulEnable", desc="Enable FSU Mode",
@@ -1228,11 +1229,16 @@ TAG_BSL_FSU_PARAMS_DATA_T = {
         editor="checkboxedit",
         editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}
     },
-    {"UINT32", "ulFoLayout", desc="FO Layout",
-        offset = 0, mask = string.char(2, 0, 0, 0),
-        editor="checkboxedit",
-        editorParam={nBits = 32, offValue = 0, onValue = 2, otherValues = true}
+    {"UINT32", "ulPinning", desc="MMIO Pin Layout",
+        offset = 0, mask = string.char(0xfe, 0, 0, 0),
+        editor="comboedit",
+        editorParam={nBits = 32, values={
+          {name="0 (Standard)", value=0},
+          {name="1 (Fiberoptic ready)", value=2},
+          {name="2 (Fiberoptic ready)", value=4},
+        }}
     },
+
     {"UINT32", "ulDisableSecmem", desc="Disable SecMem",
         offset = 0, mask = string.char(0, 0, 0, 0x80),
         editor="checkboxedit",
@@ -2189,19 +2195,33 @@ function binToParams(abBin)
     vbs_print("Deserializing tag list")
 
     while (iPos <= iLen) do
-        -- ends with no end marker, 4x0 or 8x0
-        if iPos+8>=iLen and abBin:sub(iPos+1, iPos+8)==abEndMarker8 then
+        -- no end marker, 8 zero bytes or 4 zero bytes
+        if iPos==iLen then
+            abEndMarker = abEndMarker0
+            break
+        elseif abBin:sub(iPos+1, iPos+8)==abEndMarker8 then
             iPos = iPos + 8
             abEndMarker = abEndMarker8
             break
-        elseif iPos+4>=iLen and abBin:sub(iPos+1, iPos+4)==abEndMarker4 then
+        elseif abBin:sub(iPos+1, iPos+4)==abEndMarker4 then
             iPos = iPos + 4
             abEndMarker = abEndMarker4
             break
-        elseif iPos==iLen then
-            abEndMarker = abEndMarker0
-            break
         end
+        
+--        -- ends with no end marker, 4x0 or 8x0
+--        if iPos+8>=iLen and abBin:sub(iPos+1, iPos+8)==abEndMarker8 then
+--            iPos = iPos + 8
+--            abEndMarker = abEndMarker8
+--            break
+--        elseif iPos+4>=iLen and abBin:sub(iPos+1, iPos+4)==abEndMarker4 then
+--            iPos = iPos + 4
+--            abEndMarker = abEndMarker4
+--            break
+--        elseif iPos==iLen then
+--            abEndMarker = abEndMarker0
+--            break
+--        end
 
         if (iPos+8 > iLen) then
             strMsg = "Tag list truncated (in tag header)"
@@ -2393,7 +2413,7 @@ primitive_type_tostring = {
     UINT8 = function(iNum) return string.format("0x%02x", iNum) end,
     UINT16 = function(iNum) return string.format("0x%04x", iNum) end,
     UINT32 = function(iNum) return string.format("0x%08x", iNum) end,
-    STRING = function(abValue) return abValue end,
+    STRING = function(abValue) return string.format('"%s"', abValue) end,
     rcxver = function(strValue) return strValue end
 }
 

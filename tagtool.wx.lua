@@ -235,8 +235,8 @@ strCommentChar        = "#"
 strTrimPattern        = "^%s*(.+[^%s])%s*$"
 strTagNamePattern     = "^Tag[^:]*:%s*([%w_]+)"
 strStructNamePattern  =             "^([%w_]+)$"
-strMatchPattern       =     '^%s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]+)"?'
-strSetPattern         = '^SET %s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]+)"?'
+strMatchPattern       =     '^%s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]*)"?$'
+strSetPattern         = '^SET %s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]*)"?$'
 
 strSetEnabledPattern  = "^SET %s*ENABLED"
 strSetDisabledPattern = "^SET %s*DISABLED"
@@ -348,7 +348,7 @@ function parseEdits(astrLines)
 					strFieldName, strValue = string.match(strLine, strSetPattern)
 					if strFieldName and strValue then
 						table.insert(tEditRec.atEdits, {strFieldName = strFieldName, strValue = strValue, iLineNo = iLineNo})
-						dbg_printf("edit %s = %s", strFieldName, strValue)
+						dbg_printf("edit %s = >%s<", strFieldName, strValue)
 					else
 						-- anything else
 						print(">"..strLine.."<")
@@ -572,7 +572,7 @@ end
 
 function applyEdit(tEditRecord, tValue)
 	for iEdit, tEdit in ipairs(tEditRecord.atEdits) do
-		vbs_printf("applying edit entry %s = %s", tEdit.strFieldName, tEdit.strValue)
+		vbs_printf("applying edit entry %s = >%s<", tEdit.strFieldName, tEdit.strValue)
 		local tMember, strError = findLastMember(tValue, tEdit.astrMemberNames)
 		if not tMember then 
 			return false, strError

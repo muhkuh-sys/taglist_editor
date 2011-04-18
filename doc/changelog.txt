@@ -1,9 +1,13 @@
 Change log for Tag List Editor
 
+ * updated TAG_BSL_FSU_PARAMS_DATA_T (0x40000008): added new MMIO assignment for fast startup on netX50
  * fixed issue 0013039: opening a file with the tag list as the last section but additional data 
    between taglist start offset + taglist size and end of file discarded the additional data. 
    The additional data is now kept as long as the tag list is not replaced or the end marker adapted.
-
+ * bugfix: excess data between the end marker of the tag list and the end as indicated by the tag list size
+   header entry was not recognized.
+ * bugfix (tagtool): it was not possible to specify an empty string as the value of a field in an edit record
+      
 Tag list editor 1.1.9855
 
  * corrected type and range of device/vendor ID in TAG_PN_DEVICEID_DATA_T
