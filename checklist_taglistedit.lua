@@ -23,7 +23,7 @@ require("tester")
 require("gui_stuff")
 errorDialog = gui_stuff.errorDialog
 
-muhkuh.include("taglist.lua", "taglist")
+if not taglist then muhkuh.include("taglist.lua", "taglist") end
 muhkuh.include("numedit.lua", "numedit")
 muhkuh.include("stringedit.lua", "stringdit")
 muhkuh.include("hexedit.lua", "hexedit")
@@ -165,7 +165,7 @@ function createEditors(tagList)
 			print(strDesc)
 			table.insert(m_pages, {desc=strDesc, tag=tTag})
 		else
-			print(string.format("skipping unknown tag: 0x%0x", tTag.ulTag))
+			-- print(string.format("skipping unknown tag: 0x%0x", tTag.ulTag))
 		end
 	end
 	

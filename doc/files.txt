@@ -11,8 +11,9 @@ Contents of the nxo_editor directory:
 
 test_description.xml     top-level file for Muhkuh
 nxfile.lua               representation of NXF/NXO files
-taglist.lua              definitions of tags and C structures, 
-                         code to parse and assemble them
+taglist.lua              code to handle tag list and data structures
+tagdefs_*.lua            tag and structure definitions
+
 help                     HTML help pages
 
 makenxo.bat              script to build an NXO from the command line

@@ -28,6 +28,7 @@ errorDialog = gui_stuff.errorDialog
 internalErrorDialog = gui_stuff.internalErrorDialog
 require("utils")
 
+
 muhkuh.include("taglist.lua", "taglist")
 --muhkuh.include("page_taglistedit.lua", "taglistedit")
 muhkuh.include("checklist_taglistedit.lua", "taglistedit")
@@ -35,6 +36,7 @@ muhkuh.include("nxfile.lua", "nxfile")
 muhkuh.include("structedit.lua", "structedit")
 muhkuh.include("hexdump.lua", "hexdump")
 muhkuh.include("devhdredit.lua", "devhdredit")
+
 
 function createToggleButton(parentPanel, strLabel, eventFunction)
 	local id = tester.nextID()
@@ -213,9 +215,9 @@ function displayTags(atTags)
 		taglistedit.destroyEditors()
 	end
 	-- create the new controls
-	if #atTags > 0 then
+	--if #atTags > 0 then
 		taglistedit.createEditors(atTags)
-	end
+	--end
 	m_fParamsLoaded = true
 end
 
@@ -867,7 +869,7 @@ function loadConfig()
 	if fOK then
 		if tonumber(strVal) then
 			m_dSplitRatio = tonumber(strVal)
-			print("m_dSplitRatio=",m_dSplitRatio)
+			--print("m_dSplitRatio=",m_dSplitRatio)
 		else
 			print("Error parsing split_ratio value: " .. KEY_HELP_SPLIT_RATIO)
 		end

@@ -1,5 +1,8 @@
 Change log for Tag List Editor
 
+ * split tag definitions into separate files
+ * fixed issue 13586: if a file contains no tag list, changes to the device header were not saved.
+
 Tag list editor 1.1.10032
 
  * updated TAG_BSL_FSU_PARAMS_DATA_T (0x40000008): added new MMIO assignment for fast startup on netX50
