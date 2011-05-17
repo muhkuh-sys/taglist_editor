@@ -244,6 +244,9 @@ Source: nxo_editor\test_description.xml; DestDir: {app}\nxo_editor; Components: 
 
 Source: nxo_editor\nxfile.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\taglist.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\tagdefs_rcx.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\tagdefs_bsl.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\tagdefs_misc.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
