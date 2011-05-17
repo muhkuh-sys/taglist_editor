@@ -6,6 +6,8 @@
 --
 --  Changes:
 --    Date        Author        Description
+--   2011/05/16   SL        Fixed: changes to the file were not saved if
+--                          the file contained an empty tag list
 ---------------------------------------------------------------------------
 --  
 ---------------------------------------------------------------------------
