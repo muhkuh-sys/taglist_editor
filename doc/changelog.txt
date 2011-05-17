@@ -1,5 +1,7 @@
 Change log for Tag List Editor
 
+Tag list editor 1.1.10187
+
  * split tag definitions into separate files
  * fixed issue 13586: if a file contains no tag list, changes to the device header were not saved.
 
