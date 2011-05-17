@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_TAG_NETPLC_IO_HANDLER_ANALOG_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Analog I/O Configuration of the netPLC I/O Handler Facility</h2>
+
+<p>
+This tag configures the mapping between an analogue I/O and a value in the PLC I/O image.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Image Type</td>
+    <td>None, Input or Output</td>
+</tr>
+<tr>
+    <td>Converter Device Number</td>
+    <td>Range: 0 ... 1</td>
+</tr>
+<tr>
+    <td>Channel Number</td>
+    <td>Range: 0 ... 3</td>
+</tr>
+<tr>
+    <td>Number Format</td>
+    <td>The data format to appear in the PLC I/O image
+    	<ul>
+			<li>16-bit signed integer</li>    
+			<li>16-bit unsigned integer</li>  
+			<li>IEEE 10-bit signed</li>       
+			<li>IEEE 10-bit unsigned</li>     
+			<li>S7</li>                       
+		</ul>
+    </td>
+</tr>
+<tr>
+    <td>Image Offset</td>
+    <td>Start offset in the PLC I/O image (in bytes) </td>
+</tr>
+</table>
+</BODY>
+</HTML>

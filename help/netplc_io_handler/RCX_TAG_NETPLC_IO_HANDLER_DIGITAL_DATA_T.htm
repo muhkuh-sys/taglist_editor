@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_TAG_NETPLC_IO_HANDLER_DIGITAL_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Digital I/O Configuration of the netPLC I/O Handler Facility</h2>
+
+<p>
+This tag configures the mapping between a set of consecutive digital I/O pins and a value in the PLC I/O image.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Image Type</td>
+    <td>None, Input or Output</td>
+</tr>
+<tr>
+    <td>I/O Type</td>
+    <td>PIO, HIF PIO or GPIO</td>
+</tr>
+<tr>
+    <td>Index of First Bit</td>
+    <td>Index of the first PIO, HIF-PIO or GPIO that starts the set</td>
+</tr>
+<tr>
+    <td>Number of Bits</td>
+    <td>Number of consecutive PIOs, HIF-PIOs or GPIOs in the set <br>
+    	Range: 1 ... 32</td>
+</tr>
+<tr>
+    <td>Invert Mask</td>
+    <td>bit=1: invert I/O data bit after reading netX input register / before writing netX output register</td>
+</tr>
+<tr>
+    <td>Image Offset</td>
+    <td>Start offset in the PLC I/O image (in bytes) </td>
+</tr>
+<tr>
+    <td>Bit Offset</td>
+    <td>Start offset from the beginning of the first associated byte in the PLC I/O image (in bits) <br>
+    	Range: 0 ... 7</td>
+</tr>
+</table>
+</BODY>
+</HTML>
