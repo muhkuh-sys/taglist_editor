@@ -22,8 +22,6 @@ SVN_VERSION="$Revision$"
 require("taglist")
 
 
-print("tagdefs_rcx")
-
 CONSTANTS = {
     -- from rX_TagLists.h
     -- resource codes for LED tag
