@@ -1400,10 +1400,11 @@ end
 
 
 
+function include_option(strFilename, strPackage)
+	pcall(muhkuh.include, strFilename, strPackage)
+end
 
-
-
-assert(pcall(muhkuh.include, "tagdefs_rcx.lua", "tagdefs_rcx"))
-assert(pcall(muhkuh.include, "tagdefs_bsl.lua", "tagdefs_bsl"))
-assert(pcall(muhkuh.include, "tagdefs_misc.lua", "tagdefs_misc"))
-print(pcall(muhkuh.include, "tagdefs_io_handler.lua", "tagdefs_io_handler"))
+muhkuh.include("tagdefs_rcx.lua", "tagdefs_rcx")
+muhkuh.include("tagdefs_bsl.lua", "tagdefs_bsl")
+muhkuh.include("tagdefs_misc.lua", "tagdefs_misc")
+include_option("tagdefs_io_handler.lua", "tagdefs_io_handler")
