@@ -258,8 +258,8 @@ for _, e in ipairs(NETX50_MMIO_CONFIG) do
    taglist.addConstant("MMIO_CONFIG_NETX50_" .. e.name, e.value)
 end
 
--- media type for TAG_BSL_MEDIUM_PARAMS
-BSL_DEST_MEDIA = {
+-- medium type for TAG_BSL_MEDIUM_PARAMS
+BSL_DEST_MEDIUM = {
 	{name="Auto-detect Media",value=0},
 	{name="RAM Disk",         value=1},
 	{name="Serial Flash",     value=2},
@@ -276,22 +276,21 @@ BSL_DEST_MEDIUM_CONSTANTS = {
     TAG_BSL_MEDIUM_USESQIROM              =  4,
 }
 
-
-taglist.addConstants(BSL_DEST_MEDIUM_CONSTANTS)
-
 -- media type for TAG_BSL_BACKUP_POS_PARAMS
-BSL_BACKUP_MEDIA_CONSTANTS = {
+BSL_BACKUP_MEDIUM_CONSTANTS = {
 	BSL_BACKUP_POS_MEDIUM_DISABLED  = 0,
 	BSL_BACKUP_POS_MEDIUM_SERFLASH  = 1,
 	BSL_BACKUP_POS_MEDIUM_PARFLASH  = 2,
 }
 
-BSL_BACKUP_MEDIA = {
+BSL_BACKUP_MEDIUM = {
 	{name="Disabled",         value=0},
 	{name="Serial Flash",     value=1},
 	{name="Parallel Flash",   value=2},
 }
  
+taglist.addConstants(BSL_DEST_MEDIUM_CONSTANTS)
+taglist.addConstants(BSL_BACKUP_MEDIUM_CONSTANTS)
 
 BSL_TAGS={
 -- tags for configuration of 2nd stage loader
@@ -466,7 +465,7 @@ TAG_BSL_MEDIUM_PARAMS_DATA_T = {
 
     {"UINT8", "bMediumType", desc="Destination",
         editor="comboedit", 
-        editorParam={nBits=8, values=BSL_DEST_MEDIA}
+        editorParam={nBits=8, values=BSL_DEST_MEDIUM}
     },
 },
 
@@ -703,7 +702,7 @@ TAG_BSL_BACKUP_POS_PARAMS_DATA_T =
 {
     {"UINT8",  "bMedium", desc="Medium",
         editor="comboedit", 
-        editorParam={nBits=8, values=BSL_BACKUP_MEDIA}
+        editorParam={nBits=8, values=BSL_BACKUP_MEDIUM}
     },
     {"UINT8",  "bReserved0", mode = "hidden"},
     {"UINT8",  "bReserved1", mode = "hidden"},
@@ -729,7 +728,7 @@ TAG_BSL_UART_PARAMS =
 TAG_BSL_USB_PARAMS =
     {paramtype = 0x40000004, datatype="TAG_BSL_USB_PARAMS_DATA_T",            desc="USB"},
 TAG_BSL_MEDIUM_PARAMS =
-    {paramtype = 0x40000005, datatype="TAG_BSL_MEDIUM_PARAMS_DATA_T",         desc="BSL Media"},
+    {paramtype = 0x40000005, datatype="TAG_BSL_MEDIUM_PARAMS_DATA_T",         desc="BSL Medium"},
 TAG_BSL_EXTSRAM_PARAMS =
     {paramtype = 0x40000006, datatype="TAG_BSL_EXTSRAM_PARAMS_DATA_T",        desc="Ext. SRAM"},
 TAG_BSL_HWDATA_PARAMS =
