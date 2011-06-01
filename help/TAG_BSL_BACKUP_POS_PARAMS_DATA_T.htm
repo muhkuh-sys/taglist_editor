@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_BACKUP_POS_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Backup Partition</h2>
+
+<p>
+It is possible to reserve an area outside of the file system for a backup 
+firmware which is started if no firmware is found in the file system. 
+This tag defines the device, start offset and size of the backup partition.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Medium</td>
+    <td>
+    Selects whether the backup partition is turned off or located in 
+    serial or parallel flash
+    </td>
+</tr>
+<tr>
+    <td>Offset</td>
+    <td>
+    The offset of the backup partition from the beginning of the 
+    device in bytes
+    </td>
+</tr>
+<tr>
+    <td>Size</td>
+    <td>The size of the backup partition in bytes</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

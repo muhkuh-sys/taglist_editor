@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2011-06-01     SL            added TAG_BSL_BACKUP_POS_PARAMS
 -- 2011-05-12     SL            factored out from taglist.lua
 ---------------------------------------------------------------------------
 
@@ -265,7 +266,8 @@ BSL_DEST_MEDIA = {
 	{name="Parallel Flash",   value=3},
 	{name="SQI Flash",        value=4},    
 }
-    
+
+   
 BSL_DEST_MEDIUM_CONSTANTS = {
     TAG_BSL_MEDIUM_AUTODETECT             =  0,
     TAG_BSL_MEDIUM_USERAM                 =  1,
@@ -277,6 +279,19 @@ BSL_DEST_MEDIUM_CONSTANTS = {
 
 taglist.addConstants(BSL_DEST_MEDIUM_CONSTANTS)
 
+-- media type for TAG_BSL_BACKUP_POS_PARAMS
+BSL_BACKUP_MEDIA_CONSTANTS = {
+	BSL_BACKUP_POS_MEDIUM_DISABLED  = 0,
+	BSL_BACKUP_POS_MEDIUM_SERFLASH  = 1,
+	BSL_BACKUP_POS_MEDIUM_PARFLASH  = 2,
+}
+
+BSL_BACKUP_MEDIA = {
+	{name="Disabled",         value=0},
+	{name="Serial Flash",     value=1},
+	{name="Parallel Flash",   value=2},
+}
+ 
 
 BSL_TAGS={
 -- tags for configuration of 2nd stage loader
@@ -373,47 +388,6 @@ TAG_BSL_HIF_NETX10_PARAMS_DATA_T =
   {"UINT32", "ulDpm_misc_cfg",    desc="Miscellaneous DPM Configuration"},
   {"UINT32", "ulDpm_io_cfg_misc", desc="Miscellaneous DPM I/O Configuration"},
 },
-
-
-
-----------------------------------------------------------------------------------------------
---  2nd stage loader USB descriptor
-
-
-TAG_BSL_USB_DESCR_PARAMS_DATA_T =
-{
-  {"UINT8",  "bCustomSettings",   desc="Custom Settings", editor="checkboxedit", editorParam={onValue=1, offValue=0, otherValues=true, nBits=8}},
-  {"UINT8",  "bDeviceClass",      desc="Device Class", mode = "hidden"},
-  {"UINT8",  "bSubClass",         desc="Subclass", mode = "hidden"},
-  {"UINT8",  "bProtocol",         desc="Protocol", mode = "hidden"},
-  {"UINT16", "usVendorId",        desc="Vendor ID"},
-  {"UINT16", "usProductId",       desc="Product ID"},
-  {"UINT16", "usReleaseNr",       desc="Release Number"},
-  {"UINT8",  "bCharacteristics",  desc="Characteristics", editor="comboedit", editorParam={
-     nBits=8,
-     values={
-       {name="Self-powered",                 value=0x80+0x40},
-       {name="Bus-powered",                  value=0x80},
-       {name="Self-powered, remote wakeup",  value=0x80+0x40+0x20},
-       {name="Bus-powered, remote wakeup",   value=0x80+0x20},
-     }}},
-  {"UINT8",  "bMaxPower",         desc="Maximum Power", editor="numedit", editorParam={nBits=8, format="%d", minValue=0, maxValue=250}},
-  {"STRING", "szVendor",          desc="Vendor Name", size=16},
-  {"STRING", "szProduct",         desc="Product Name", size=16},
-  {"STRING", "szSerial",          desc="Serial Number", size=16},
-},
-
-
-
-----------------------------------------------------------------------------------------------
---  2nd stage loader disk position settings
-
-TAG_BSL_DISK_POS_PARAMS_DATA_T =
-{
-  {"UINT32", "ulOffset", desc="Offset"},
-  {"UINT32", "ulSize",   desc="Size"},
-},
-
 
 
 ----------------------------------------------------------------------------------------------
@@ -681,6 +655,63 @@ TAG_BSL_MMIO_NETX10_PARAMS_DATA_T = {
     {"MMIO_PIN_NETX10_T", "atMMIOCfg[22]",  desc="MMIO 22"},
     {"MMIO_PIN_NETX10_T", "atMMIOCfg[23]",  desc="MMIO 23"},
 },
+
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader USB descriptor
+
+
+TAG_BSL_USB_DESCR_PARAMS_DATA_T =
+{
+  {"UINT8",  "bCustomSettings",   desc="Custom Settings", editor="checkboxedit", editorParam={onValue=1, offValue=0, otherValues=true, nBits=8}},
+  {"UINT8",  "bDeviceClass",      desc="Device Class", mode = "hidden"},
+  {"UINT8",  "bSubClass",         desc="Subclass", mode = "hidden"},
+  {"UINT8",  "bProtocol",         desc="Protocol", mode = "hidden"},
+  {"UINT16", "usVendorId",        desc="Vendor ID"},
+  {"UINT16", "usProductId",       desc="Product ID"},
+  {"UINT16", "usReleaseNr",       desc="Release Number"},
+  {"UINT8",  "bCharacteristics",  desc="Characteristics", editor="comboedit", editorParam={
+     nBits=8,
+     values={
+       {name="Self-powered",                 value=0x80+0x40},
+       {name="Bus-powered",                  value=0x80},
+       {name="Self-powered, remote wakeup",  value=0x80+0x40+0x20},
+       {name="Bus-powered, remote wakeup",   value=0x80+0x20},
+     }}},
+  {"UINT8",  "bMaxPower",         desc="Maximum Power", editor="numedit", editorParam={nBits=8, format="%d", minValue=0, maxValue=250}},
+  {"STRING", "szVendor",          desc="Vendor Name", size=16},
+  {"STRING", "szProduct",         desc="Product Name", size=16},
+  {"STRING", "szSerial",          desc="Serial Number", size=16},
+},
+
+
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader disk position settings
+
+TAG_BSL_DISK_POS_PARAMS_DATA_T =
+{
+  {"UINT32", "ulOffset", desc="Offset"},
+  {"UINT32", "ulSize",   desc="Size"},
+},
+
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader backup partition settings
+
+TAG_BSL_BACKUP_POS_PARAMS_DATA_T =
+{
+    {"UINT8",  "bMedium", desc="Medium",
+        editor="comboedit", 
+        editorParam={nBits=8, values=BSL_BACKUP_MEDIA}
+    },
+    {"UINT8",  "bReserved0", mode = "hidden"},
+    {"UINT8",  "bReserved1", mode = "hidden"},
+    {"UINT8",  "bReserved2", mode = "hidden"},
+    {"UINT32", "ulOffset", desc="Offset"},
+    {"UINT32", "ulSize",   desc="Size"},
+},
+
 }
 
 taglist.addDataTypes(BSL_TAGS)
@@ -715,6 +746,8 @@ TAG_BSL_USB_DESCR_PARAMS =
     {paramtype = 0x4000000C, datatype="TAG_BSL_USB_DESCR_PARAMS_DATA_T",      desc="USB Descriptor"},
 TAG_BSL_DISK_POS_PARAMS =
     {paramtype = 0x4000000D, datatype="TAG_BSL_DISK_POS_PARAMS_DATA_T",       desc="Disk Position"},
+TAG_BSL_BACKUP_POS_PARAMS =
+    {paramtype = 0x4000000e, datatype="TAG_BSL_BACKUP_POS_PARAMS_DATA_T",     desc="Backup Partition"},
 })
 
 taglist.addTagHelpPages({
@@ -732,4 +765,5 @@ taglist.addTagHelpPages({
     TAG_BSL_HIF_NETX10_PARAMS           = {file="TAG_BSL_HIF_NETX10_PARAMS_DATA_T.htm"},
     TAG_BSL_USB_DESCR_PARAMS            = {file="TAG_BSL_USB_DESCR_PARAMS_DATA_T.htm"},
     TAG_BSL_DISK_POS_PARAMS             = {file="TAG_BSL_DISK_POS_PARAMS_DATA_T.htm"},
+    TAG_BSL_BACKUP_POS_PARAMS           = {file="TAG_BSL_BACKUP_POS_PARAMS_DATA_T.htm"},
 })
