@@ -1,5 +1,7 @@
 Change log for Tag List Editor
 
+ * updated description of TAG_BSL_HIF_PARAMS 0x40000001
+   note: tDpmIsaAuto is now called tDpm (relevant for tagtool)
  * added TAG_BSL_BACKUP_POS_PARAMS 0x4000000e
  * split tag definitions into separate files
  * fixed issue 13586: if a file contains no tag list, changes to the device header were not saved.

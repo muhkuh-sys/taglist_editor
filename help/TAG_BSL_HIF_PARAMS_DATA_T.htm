@@ -14,15 +14,43 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
 <table border=1>
 <tr>
-    <td>Bus Type</td>
-    <td>The external bus type: Auto, DPM, ISA, PCI or Disabled.</td>
+    <th>Bus Type</th>
+    <th>Function</th>
+</tr>
+<tr>
+    <td>Auto</td>
+    <td>The bus type is determined from the load medium (PCI/DPM):
+    	<ul>
+    	<li>PCI if DeviceClass is cifX and PCI Vendor ID != 0</li>
+    	<li>ISA if DeviceClass is cifX and PCI Vendor ID == 0</li>
+    	<li>DPM otherwise<br>
+    		<b>Note:</b> If DPM mode has been auto-detected, it is configured using built-in parameters. 
+    		The parameters under "DPM settings" are ignored.</li>
+    	</ul>
+    </td>
+</tr>
+<tr>
+    <td>DPM</td>
+    <td>Configures DPM mode using the parameters under "DPM settings".</td>
+</tr>
+<tr>
+    <td>ISA</td>
+    <td>Configures ISA mode using built-in parameters.</td>
+</tr>
+<tr>
+    <td>PCI</td>
+    <td>Configures PCI mode using the enable pin settings under "PCI settings".</td>
+</tr>
+<tr>
+    <td>Disable </td>
+    <td>Disables the external bus completely.</td>
 </tr>
 </table>
 <p></p>
 
-<h3>Settings for DPM/ISA/Auto</h3>
+<h3>Settings for DPM mode</h3>
 <p>
-The following settings are valid if the bus type is set to DPM, ISA or Auto:
+The following settings are valid if the bus type is set to DPM:
 </p>
 <p></p>
 <table border=1>
@@ -33,16 +61,15 @@ The following settings are valid if the bus type is set to DPM, ISA or Auto:
         IO_REGMODE1
     </td>
     <td>Values of the HIF timing registers. <br>
-        These values are only required for bus types DPM, ISA (and auto).
         Set the registers to 0 to use the defaults.
     </td>
 </tr>
 </table>
 <p></p>
 
-<h3>Settings for PCI/Auto</h3>
+<h3>Settings for PCI mode</h3>
 <p>
-The following settings are valid if the bus type is set to PCI or Auto:
+The following settings are valid if the bus type is set to PCI or if PCI mode has been auto-detected:
 </p>
 <p></p>
 <table border=1>
@@ -52,8 +79,8 @@ The following settings are valid if the bus type is set to PCI or Auto:
 </tr>
 <tr>
     <td>Type of enable pin</td>
-    <td>Type of enable pin. <br>
-        "Ignore" means ignore the pin and poll once.
+    <td>Type of enable pin: GPIO, PIO or HIF PIO <br>
+        "Ignore" is equivalent to disabling the pin.
     </td>
 </tr>
 <tr>

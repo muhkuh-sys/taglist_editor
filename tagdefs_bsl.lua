@@ -319,7 +319,7 @@ TAG_BSL_HIF_PARAMS_DATA_T = {
         }},
     },
 
-    {"BSL_DPM_PARAMS_T", "tDpmIsaAuto", desc="DPM/ISA settings"},
+    {"BSL_DPM_PARAMS_T", "tDpm", desc="DPM settings"},
     {"BSL_PCI_PARAMS_T", "tPci", desc="PCI settings"},
 },
 
