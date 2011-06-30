@@ -140,19 +140,33 @@ DEVICE_CLASS_COMBO_VALUES = {
 
 }
 
-
-
 TAG_CONSTANTS = {  
     -- EIP xC type
     EIP_XC_TYPE_DLR_2PORT_SWITCH          = 1,
     EIP_XC_TYPE_STD_2PORT_SWITCH          = 2,
-    EIP_XC_TYPE_STD_ETH                   = 3
+    EIP_XC_TYPE_STD_ETH                   = 3,
+    
+	-- EIF EDD type
+	-- PRELIMINARY
+	RX_EIF_EDD_TYPE_VIRTUAL              =  0,          -- virtual EDD attached to TCP stack 
+	RX_EIF_EDD_TYPE_STD_MAC              =  1,          -- single-port standard Ethernet interface
+	RX_EIF_EDD_TYPE_2PORT_SWITCH         =  2,          -- 2-port switch 
+	RX_EIF_EDD_TYPE_2PORT_HUB            =  3,          -- 2-port hub 
+    
 }
 
 EIP_XC_TYPE = {
 	{name="Ethernet DLR",             value=1},
 	{name="Ethernet 2 port switch",   value=2},
 	{name="Ethernet single port",     value=3},
+}
+
+	-- PRELIMINARY
+EIF_EDD_TYPE = {
+	--{name="Virtual EDD attached to TCP stack",       value=0},
+	{name="Single-port standard Ethernet interface", value=1},
+	{name="2-port Switch",                           value=2},
+	{name="2-port Hub",                              value=3}
 }
 
 -- MMIO pin numbers for netX 50
@@ -383,7 +397,22 @@ TAG_EIP_EDD_CONFIGURATION_DATA_T = {
 	}
 } ,
 
-}
+
+----------------------------------------------------------------------------------------------
+-- Ethernet Interface facility tags
+-- PRELIMINARY
+
+RCX_TAG_EIF_EDD_CONFIG_DATA_T = {
+	{"UINT32", "ulEddType",       desc="EDD Type" , editor="comboedit", editorParam={nBits=32, values=EIF_EDD_TYPE}},
+	{"UINT32", "ulFirstXcNumber", desc="xC number", editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=3}},
+},
+
+RCX_TAG_EIF_EDD_INSTANCE_DATA_T = {
+	{"UINT32", "ulEddInstanceNo",  desc="RTE channel number", editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=3}},
+},
+
+
+} -- end of structure defintions
 
 
 
@@ -432,8 +461,15 @@ RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS =
     {paramtype = 0x10960000, datatype="RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS_DATA_T", desc="netX100/500 Fiber Optic DMI"},
 RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS =
     {paramtype = 0x10960001, datatype="RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS_DATA_T",  desc="netX50 Fiber Optic DMI"},
-   
+
+-- facility tags: Ethernet Interface
+RCX_TAG_EIF_EDD_CONFIG =
+	{paramtype = 0x105D0000, datatype="RCX_TAG_EIF_EDD_CONFIG_DATA_T",   desc="Ethernet Config"},
+RCX_TAG_EIF_EDD_INSTANCE =
+	{paramtype = 0x105D0001, datatype="RCX_TAG_EIF_EDD_INSTANCE_DATA_T", desc="Ethernet Channel Number"},
 }
+
+
 TAG_HELP = {
     TAG_DIAG_IF_CTRL_UART               = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_USB                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
@@ -453,6 +489,9 @@ TAG_HELP = {
     TAG_CCL_DEVICEID                    = {file="TAG_CCL_DEVICEID_DATA_T.htm"}, 
     TAG_PN_DEVICEID                     = {file="TAG_PN_DEVICEID_DATA_T.htm"}, 
     TAG_EIP_EDD_CONFIGURATION           = {file="TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"}, 
+    
+    RCX_TAG_EIF_EDD_CONFIG              = {file="RCX_TAG_EIF_EDD_CONFIG_DATA_T.htm"},
+    RCX_TAG_EIF_EDD_INSTANCE            = {file="RCX_TAG_EIF_EDD_INSTANCE_DATA_T.htm"},
 }
 
 

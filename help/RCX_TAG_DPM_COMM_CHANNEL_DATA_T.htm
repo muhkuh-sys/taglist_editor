@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_TAG_DPM_COMM_CHANNEL_T</Title>
+</HEAD>
+<BODY>
+<h2>Redefining DPM communication channels</h2>
+<p>
+This tag allows the user to modify the RX_HIF_CHANNEL_Ts and the RX_HIF_CHANNEL_BLOCK_Ts describing communication channels:
+the number of communication channels used and the sizes of the input/output images of each channel.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+<td>Number of comm. channels</td><td>number of communication channels to be instantiated (1 .. DPM_MAX_COMM_CHANNELS)</td>
+</tr>
+
+<tr>
+<td>Channel <i>n</i> Input Area size</td><td>Total size of the normal priority input data area in bytes</td>
+</tr>
+<tr>
+<td>Channel <i>n</i> Output Area size</td><td>Total size of the normal priority output data area in bytes</td>
+</tr>
+
+</table>
+<p></p>
+
+<p>
+Notes:
+<ul>
+	<li>The I/O data size values REPLACE the statically defined values at system startup time, 
+		i.e. they serve as ABSOLUTE VALUES. 
+		The values are also used for calculating the start offsets of the subsequent channels and blocks.</li>
+	<li>The size of an I/O data area must be a multiple of 4 bytes.</li>
+	<li>The size of an I/O area may be 0. The maximum size is 27904.</li> 
+	<li>I/O areas of 11520 bytes or above can only be used with a 32K DPM.</li>
+	<li>The total size of each communication channel is 0x1000 bytes + input area size + output area size.</li>
+</ul>
+</p>
+
+</BODY>
+</HTML>

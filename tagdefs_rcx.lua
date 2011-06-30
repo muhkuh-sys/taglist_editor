@@ -308,7 +308,42 @@ RCX_TAG_LED_T=
     values={{name="normal", value=0},{name="inverted", value=1}}}},
   nameField = "szIdentifier"
 },
+
+
+
+----------------------------------------------------------------------------------------------
+-- PRELIMINARY
+-- DPM communication channels
+
+RCX_TAG_DPM_COMM_CHANNEL_DATA_T=
+{
+	{"UINT32", "ulNumCommChannels", desc="Number of comm. channels", editor="comboedit", editorParam={nBits=32, minValue=1, maxValue=4}},
+	{"UINT32", "ulInDataSize0",  desc="Channel 0 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+	{"UINT32", "ulOutDataSize0", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+	{"UINT32", "ulInDataSize1",  desc="Channel 1 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+	{"UINT32", "ulOutDataSize1", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+	{"UINT32", "ulInDataSize2",  desc="Channel 2 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+	{"UINT32", "ulOutDataSize2", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+	{"UINT32", "ulInDataSize3",  desc="Channel 3 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+	{"UINT32", "ulOutDataSize3", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+	
+	layout=
+		{
+			sizer="v", 
+			"ulNumCommChannels",
+			{
+				sizer="grid", cols=2, rows=4,
+				"ulInDataSize0", "ulOutDataSize0",
+				"ulInDataSize1", "ulOutDataSize1",
+				"ulInDataSize2", "ulOutDataSize2",
+				"ulInDataSize3", "ulOutDataSize3",
+			}
+		}
 }
+
+
+} -- end of structure definitions
+
 
 
 RCX_TAG_DEFS = {
@@ -343,6 +378,8 @@ RCX_TAG_LED =
     {paramtype = 0x00001040, datatype="RCX_TAG_LED_T",                        desc="LED"},
 RCX_TAG_XC =
     {paramtype = 0x00001050, datatype="RCX_TAG_XC_T",                         desc="xC Unit"},
+RCX_TAG_DPM_COMM_CHANNEL =
+    {paramtype = 0x00001060, datatype="RCX_TAG_DPM_COMM_CHANNEL_DATA_T",      desc="DPM communication channels"},
 }
 
 RCX_TAG_HELP = {
@@ -361,6 +398,7 @@ RCX_TAG_HELP = {
     RCX_TAG_UART                        = {file="RCX_TAG_UART_T.htm"},
     RCX_TAG_LED                         = {file="RCX_TAG_LED_T.htm"},
     RCX_TAG_XC                          = {file="RCX_TAG_XC_T.htm"},  
+    RCX_TAG_DPM_COMM_CHANNEL            = {file="RCX_TAG_DPM_COMM_CHANNEL_DATA_T.htm"},  
 }
 
 taglist.addConstants(CONSTANTS)
