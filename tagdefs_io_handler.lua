@@ -54,8 +54,8 @@ NETPLC_IO_HANDLER_IMAGE_TYPES = {
 -- from rX_Config.h/RX_PERIPHERAL_TYPEtag
 NETPLC_IO_HANDLER_PIO_TYPES = {
 	{name="PIO",     value=25},
-	{name="HIF PIO", value=26},
-	{name="GPIO",    value=32},
+	{name="GPIO",    value=26},
+	{name="HIF PIO", value=32},
 }
 
 -- analog data format codes for the netPLC I/O Handler facility tags 
