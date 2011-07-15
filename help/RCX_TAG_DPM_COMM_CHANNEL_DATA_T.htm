@@ -28,15 +28,31 @@ the number of communication channels used and the sizes of the input/output imag
 <p></p>
 
 <p>
-Notes:
+<b>Note:</b>
+The I/O data size values REPLACE the statically defined values at system startup time, 
+i.e. they serve as ABSOLUTE VALUES. 
+The values are also used for calculating the start offsets of the subsequent channels and blocks.
+</p>
+
+<p>
+<b>Restrictions and Calculation Rules</b>
 <ul>
-	<li>The I/O data size values REPLACE the statically defined values at system startup time, 
-		i.e. they serve as ABSOLUTE VALUES. 
-		The values are also used for calculating the start offsets of the subsequent channels and blocks.</li>
-	<li>The size of an I/O data area must be a multiple of 4 bytes.</li>
-	<li>The size of an I/O area may be 0. The maximum size is 27904.</li> 
+	<li>The I/O area byte sizes must be an integral multiple of 4 (i.e. DWORD sizes). </li>
+	<li>The minimal byte size of an I/O area is 4. (This ensures that an application can always rely on the real presence of the I/O area.) </li>
+	<li>The maximum size is 27904.</li> 
 	<li>I/O areas of 11520 bytes or above can only be used with a 32K DPM.</li>
-	<li>The total size of each communication channel is 0x1000 bytes + input area size + output area size.</li>
+	
+	<li>The total byte size of a communication channel must be an integral multiple of 256. </li>
+	<li>The total byte size of a communication channel is calculated as 4096 + output area byte size + input area byte size. </li>
+</ul>
+</p>
+<p>
+<b>Fallback Behavior of the Base Firmware</b>
+
+<ul>
+	<li>If the given I/O area byte sizes are not integral multiples of 4 (i.e. DWORD sizes), then they are rounded to the next integral multiple of 4. </li>
+	<li>If the given I/O area byte sizes are smaller than 4, then they are set to 4. </li>
+	<li>If the resulting communication channel byte size is not an integral multiple of 256, then the size of the input area is increased so that the resulting communication channel byte size becomes an integral multiple of 256. </li>
 </ul>
 </p>
 
