@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2011-07-26     SL            replaced IEEE in analog data formats with IEC
 -- 2011-07-07     SL            Fix: PIO types HIF_PIO and GPIO were swapped
 -- 2011-05-11     SL            created
 ---------------------------------------------------------------------------
@@ -39,8 +40,8 @@ NETPLC_IO_HANDLER_CONSTANTS = {
 	-- analog data format codes for the netPLC I/O Handler facility tags 
 	RCX_NETPLC_IO_HANDLER_FORMAT_SIGNED     = 0,   -- 16-bit signed integer 
 	RCX_NETPLC_IO_HANDLER_FORMAT_UNSIGNED   = 1,   -- 16-bit unsigned integer 
-	RCX_NETPLC_IO_HANDLER_FORMAT_IEEE_S     = 2,   -- IEEE 10-bit signed 
-	RCX_NETPLC_IO_HANDLER_FORMAT_IEEE_U     = 3,   -- IEEE 10-bit unsigned 
+	RCX_NETPLC_IO_HANDLER_FORMAT_IEC_S      = 2,   -- IEC signed 
+	RCX_NETPLC_IO_HANDLER_FORMAT_IEC_U      = 3,   -- IEC unsigned 
 	RCX_NETPLC_IO_HANDLER_FORMAT_S7         = 4,   -- S7 
 }
 
@@ -63,8 +64,8 @@ NETPLC_IO_HANDLER_PIO_TYPES = {
 NETPLC_IO_HANDLER_FORMATS = {
 	{name="16-bit signed integer",     value = 0},
 	{name="16-bit unsigned integer",   value = 1},
-	{name="IEEE 10-bit signed",        value = 2},
-	{name="IEEE 10-bit unsigned",      value = 3},
+	{name="IEC (signed)",              value = 2},
+	{name="IEC (unsigned)",            value = 3},
 	{name="S7",                        value = 4},
 }
 
