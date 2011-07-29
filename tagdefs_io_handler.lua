@@ -100,7 +100,7 @@ RCX_TAG_NETPLC_IO_HANDLER_DIGITAL_DATA_T = {
 	{"UINT8",  "bFirstBit",      desc="Index of First Bit", editor="numedit",   editorParam={nBits=8, format="%d"}},
 	{"UINT8",  "bNumBits",       desc="Number of Bits",     editor="comboedit",   editorParam={nBits=8, format="%d", minValue=1, maxValue=32}},
 	{"UINT32", "ulInvertMask",   desc="Invert Mask",        editor="numedit",   editorParam={nBits=32, format="0x%08x"}},
-	{"UINT32", "ulImageOffset",  desc="Image Offset",       editor="numedit",   editorParam={nBits=32, format="0x%08x"}},
+	{"UINT32", "ulImageOffset",  desc="Image Offset",       editor="numedit",   editorParam={nBits=32, format="%d"}},
 	{"UINT32", "ulBitOffset",    desc="Bit Offset",         editor="comboedit",   editorParam={nBits=32, minValue=0, maxValue=7}},
 },
 
