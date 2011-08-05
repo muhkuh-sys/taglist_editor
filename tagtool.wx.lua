@@ -6,6 +6,7 @@
 --
 --  Changes:
 --    Date        Author        Description
+--  Aug 5, 2011   SL            handle DOS/Unix/Mac style line breaks
 --  Jul 27, 2010  SL            created
 ---------------------------------------------------------------------------
 --  
@@ -230,7 +231,11 @@ end
 ----------------------------------------------------------------------------
 --                parse and perform editing instructions
 ----------------------------------------------------------------------------
-strLineBreak          = "\r\n"
+strDOSLineBreak       = "\r\n"
+strUnixLineBreak      = "\n"
+strMacLineBreak       = "\r"
+strLineBreak          = "\n"
+
 strCommentChar        = "#"
 strTrimPattern        = "^%s*(.+[^%s])%s*$"
 strTagNamePattern     = "^Tag[^:]*:%s*([%w_]+)"
@@ -247,6 +252,12 @@ strDisabledPattern    = "^DISABLED"
 function splitIntoLines(strText)
 	local astrLines = {}
 	local iLineStart = 1
+	
+	-- replace DOS/MAC line breaks with Unix line breaks,
+	-- then split the text into lines at Unix line breaks
+	strText = strText:gsub(strDOSLineBreak, strLineBreak)
+	strText = strText:gsub(strMacLineBreak, strLineBreak)
+	
 	while iLineStart do
 		-- get next line
 		local iEnd, iEnd2 = string.find(strText, strLineBreak, iLineStart, false)
