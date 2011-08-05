@@ -1,5 +1,7 @@
 Change log for Tag List Editor
 
+Tag list editor 1.1.10600
+
  * added RCX_TAG_EIF_EDD_CONFIG   0x105D0000
          RCX_TAG_EIF_EDD_INSTANCE 0x105D0001
          RCX_TAG_DPM_COMM_CHANNEL 0x00001060

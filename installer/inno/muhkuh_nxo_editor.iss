@@ -120,7 +120,7 @@ AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://muhkuh.sourceforge.net/
 AppSupportURL=http://www.sourceforge.net/projects/muhkuh
 AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
-AppCopyright=(C) 2010, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2011, Muhkuh team and Hilscher GmbH
 
 
 ; works: company, copyright, product name, product version
