@@ -14,7 +14,7 @@ the number of communication channels used and the sizes of the input/output imag
 
 <table border=1>
 <tr>
-<td>Number of comm. channels</td><td>number of communication channels to be instantiated (1 .. DPM_MAX_COMM_CHANNELS)</td>
+<td>Number of comm. channels</td><td>number of communication channels to be instantiated (1 .. 4)</td>
 </tr>
 
 <tr>
@@ -37,7 +37,7 @@ The values are also used for calculating the start offsets of the subsequent cha
 <p>
 <b>Restrictions and Calculation Rules</b>
 <ul>
-	<li>The I/O area byte sizes must be an integral multiple of 4 (i.e. DWORD sizes). </li>
+	<li>Each I/O area byte size must be an integral multiple of 4 (i.e. DWORD size). </li>
 	<li>The minimal byte size of an I/O area is 4. (This ensures that an application can always rely on the real presence of the I/O area.) </li>
 	<li>The maximum size is 27904.</li> 
 	<li>I/O areas of 11520 bytes or above can only be used with a 32K DPM.</li>
@@ -50,8 +50,8 @@ The values are also used for calculating the start offsets of the subsequent cha
 <b>Fallback Behavior of the Base Firmware</b>
 
 <ul>
-	<li>If the given I/O area byte sizes are not integral multiples of 4 (i.e. DWORD sizes), then they are rounded to the next integral multiple of 4. </li>
-	<li>If the given I/O area byte sizes are smaller than 4, then they are set to 4. </li>
+	<li>If a given I/O area byte size is not an integral multiple of 4, then it is rounded to the next integral multiple of 4. </li>
+	<li>If a given I/O area byte size is smaller than 4, then it is set to 4. </li>
 	<li>If the resulting communication channel byte size is not an integral multiple of 256, then the size of the input area is increased so that the resulting communication channel byte size becomes an integral multiple of 256. </li>
 </ul>
 </p>
