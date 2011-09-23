@@ -6,6 +6,7 @@
 --
 --  Changes:
 --    Date        Author        Description
+--  Sept 23, 2011 SL            all chars except " and # allowed in match/set
 --  Aug 5, 2011   SL            handle DOS/Unix/Mac style line breaks
 --  Jul 27, 2010  SL            created
 ---------------------------------------------------------------------------
@@ -240,8 +241,9 @@ strCommentChar        = "#"
 strTrimPattern        = "^%s*(.+[^%s])%s*$"
 strTagNamePattern     = "^Tag[^:]*:%s*([%w_]+)"
 strStructNamePattern  =             "^([%w_]+)$"
-strMatchPattern       =     '^%s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]*)"?$'
-strSetPattern         = '^SET %s*%.?([%w_%.%[%]]+)%s*=%s*"?([%w%s_]*)"?$'
+-- was: %w%s_
+strMatchPattern       =     '^%s*%.?([%w_%.%[%]]+)%s*=%s*"?([^"]*)"?$'
+strSetPattern         = '^SET %s*%.?([%w_%.%[%]]+)%s*=%s*"?([^"]*)"?$'
 
 strSetEnabledPattern  = "^SET %s*ENABLED"
 strSetDisabledPattern = "^SET %s*DISABLED"
