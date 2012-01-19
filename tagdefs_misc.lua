@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2012-01-19     SL            added device ID tags for ECS, S3S, PLS
 -- 2011-05-12     SL            factored out from taglist.lua
 ---------------------------------------------------------------------------
 
@@ -379,6 +380,27 @@ TAG_PN_DEVICEID_DATA_T = {
 	{"UINT32", "ulDeviceId", desc="Device ID", editorParam={nBits=32, minValue=0, maxValue=0xffff}},
 },
 
+
+TAG_ECS_DEVICEID_DATA_T = {
+	{"UINT32", "ulVendorId",       desc="Vendor ID"},
+	{"UINT32", "ulProductCode",    desc="Product Code"},
+	{"UINT32", "ulRevisionNumber", desc="Revision Number"},
+},
+
+
+TAG_S3S_DEVICEID_DATA_T = {
+	{"UINT16", "usVendorCode",       desc="Vendor Code"},
+	{"STRING", "abDeviceID",         desc="Device ID",    size=256},
+},
+
+
+TAG_PLS_DEVICEID_DATA_T = {
+	{"UINT32", "ulVendorId",       desc="Vendor ID"},
+	{"UINT32", "ulProductCode",    desc="Product Code"},
+	{"UINT32", "ulRevisionNumber", desc="Revision Number"},
+},
+
+
 ----------------------------------------------------------------------------------------------
 -- EIP/DLR configuration
 
@@ -434,7 +456,14 @@ TAG_CCL_DEVICEID =
     {paramtype = 0x30005000, datatype="TAG_CCL_DEVICEID_DATA_T",          desc="CC-Link Product Information"}, 
 TAG_PN_DEVICEID  =                                                    
     {paramtype = 0x30015000, datatype="TAG_PN_DEVICEID_DATA_T",           desc="PROFINET Product Information"}, 
-
+TAG_ECS_DEVICEID = 
+    {paramtype = 0x30009000, datatype="TAG_ECS_DEVICEID_DATA_T",          desc="EtherCAT Slave Product Information"}, 
+TAG_S3S_DEVICEID = 
+    {paramtype = 0x30018000, datatype="TAG_S3S_DEVICEID_DATA_T",          desc="SERCOS III Product Information"}, 
+TAG_PLS_DEVICEID = 
+    {paramtype = 0x3001a000, datatype="TAG_PLS_DEVICEID_DATA_T",          desc="POWERLINK Product Information"}, 
+    
+    
 TAG_EIP_EDD_CONFIGURATION = 
     {paramtype = 0x3000a001, datatype="TAG_EIP_EDD_CONFIGURATION_DATA_T", desc="Ethernet/IP EDD Configuration"}, 
     
@@ -488,6 +517,10 @@ TAG_HELP = {
     TAG_CO_DEVICEID                     = {file="TAG_CO_DEVICEID_DATA_T.htm"}, 
     TAG_CCL_DEVICEID                    = {file="TAG_CCL_DEVICEID_DATA_T.htm"}, 
     TAG_PN_DEVICEID                     = {file="TAG_PN_DEVICEID_DATA_T.htm"}, 
+    TAG_S3S_DEVICEID                    = {file="TAG_S3S_DEVICEID_DATA_T.htm"}, 
+    TAG_ECS_DEVICEID                    = {file="TAG_ECS_DEVICEID_DATA_T.htm"}, 
+    TAG_PLS_DEVICEID                    = {file="TAG_PLS_DEVICEID_DATA_T.htm"}, 
+    
     TAG_EIP_EDD_CONFIGURATION           = {file="TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"}, 
     
     RCX_TAG_EIF_EDD_CONFIG              = {file="RCX_TAG_EIF_EDD_CONFIG_DATA_T.htm"},

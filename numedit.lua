@@ -6,6 +6,8 @@
 --
 --  Changes:
 --    Date        Author        Description
+--  Sept 20,2011  SL            fix: bug when pasting results in illegeal value
+--                              adapted to use wxValidator for key filtering
 --  Mar 4, 2011   SL            fix: bug when an illegal value (e.g. 0)
 --                              was present in a tag
 ---------------------------------------------------------------------------
@@ -46,14 +48,40 @@ function binToUint(bin, pos, nBits)
 	end
 end
 
+function storeInsertionPoint(self)
+	self.m_iLastValidPos = self.m_TextCtrl:GetInsertionPoint()
+	-- print("last valid pos:", self.m_iLastValidPos)
+end
+
+
+function storeString(self)
+	self.m_strLastValid = self.m_TextCtrl:GetValue()
+	self.m_iLastValidPos = self.m_TextCtrl:GetInsertionPoint()
+	-- print("Last valid: ", self.m_strLastValid)
+	-- print("last valid pos:", self.m_iLastValidPos)
+end
+
+function restoreString(self)
+	if self.m_strLastValid then
+		-- print("restoreString: ", self.m_strLastValid)
+		self.m_TextCtrl:ChangeValue(self.m_strLastValid)
+	else
+		-- print("restoreString: noting stored")
+	end
+	
+	if self.m_iLastValidPos then
+		self.m_TextCtrl:SetInsertionPoint(self.m_iLastValidPos)
+	end
+end
+
 
 
 function setValue(self, bin)
 	local uVal = binToUint(bin, 0, self.m_nBits)
 	local strVal = string.format(self.m_format, uVal)
 	assert(strVal, "numedit.setValue: failed to format value")
-	self.m_ignoreUpdate = true
-	self.m_TextCtrl:SetValue(strVal)
+	self.m_TextCtrl:ChangeValue(strVal)
+	self:storeString()
 end
 
 
@@ -100,6 +128,9 @@ function isValid(self)
 	return true
 end
 
+
+--[[
+
 function create(self, parent)
 	local id = tester.nextID()
 	self.m_id = id
@@ -134,68 +165,43 @@ function OnKey(self, event)
 		key>=CHAR_AA and key<=CHAR_FF or
 		key == CHAR_X or
 		key == CHAR_XX then
-		self.m_strLastValid = self.m_TextCtrl:GetValue()
-		self.m_iLastValidPos = self.m_TextCtrl:GetInsertionPoint()
-		--print("OnKey")
-		--print("Last valid: ", self.m_strLastValid)
-		--print("last valid pos:", self.m_iLastValidPos)
+		self:storeInsertionPoint()
 		event:Skip()
 	end
 end
-
--- test
---[[
---- Text update handler.
--- If the new value does not parse, the old value and cursor pos
--- stored by the key handler are used to undo the input.
-function OnTextUpdate(self, event)
-	--local str = event:GetString()
-	--print("text update")
-	--print("current value:", str)
-	--print("Last valid: ", self.m_strLastValid)
-	--print("undoUpdate: ", self.m_ignoreUpdate)
-	
-	if self.m_ignoreUpdate then
-		self.m_ignoreUpdate = nil
-	else
-		local str = event:GetString()
-		local uVal, strError = self:checkValue(str)
-		--print(str, uVal, strError)
-		if str:len()==0 or str=="0x" then
-			self.uVal = 0
-		elseif uVal then
-			self.uVal = uVal
-		else
-			self.m_ignoreUpdate = true
-			self.m_TextCtrl:SetValue(self.m_strLastValid)
-			self.m_TextCtrl:SetInsertionPoint(self.m_iLastValidPos)
-		end
-	end
-	event:Skip(false)
-end
 --]]
 
+-- [[
+local hexDecValidator = wx.wxTextValidator(wx.wxFILTER_INCLUDE_CHAR_LIST )
+hexDecValidator:SetIncludes({"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "x"})
+
+function create(self, parent)
+	local id = tester.nextID()
+	self.m_id = id
+	self.m_TextCtrl = wx.wxTextCtrl(parent, id, "", wx.wxDefaultPosition, wx.wxDefaultSize, 0, hexDecValidator )
+	self.m_TextCtrl:Connect(id, wx.wxEVT_COMMAND_TEXT_UPDATED, function(event) self:OnTextUpdate(event) end)
+	return self.m_TextCtrl
+end
+-- ]]
+
 --- Text update handler.
--- If the new value does not parse, the old value and cursor pos
--- stored by the key handler are used to undo the input.
+-- When this event handler is called, the value of the
+-- text control has already been changed.
+-- If the new value does not parse, restore the stored 
+-- value and cursor pos to undo the change.
 function OnTextUpdate(self, event)
-	--local str = event:GetString()
-	--print("text update")
-	--print("current value:", str)
-	--print("Last valid: ", self.m_strLastValid)
-	--print("undoUpdate: ", self.m_ignoreUpdate)
+	local str = event:GetString()
+
+	-- print("text update")
+	-- print("current value:", str)
+	-- print("Last valid: ", self.m_strLastValid)
 	
-	if self.m_ignoreUpdate then
-		self.m_ignoreUpdate = nil
+	local fOk, strError = self:checkValue(str)
+	--print(str, fOk, strError)
+	if str:len()>0 and str~="0x" and not fOk then
+		self:restoreString()
 	else
-		local str = event:GetString()
-		local fOk, strError = self:checkValue(str)
-		--print(str, fOk, strError)
-		if str:len()>0 and str~="0x" and not fOk then
-			self.m_ignoreUpdate = true
-			self.m_TextCtrl:SetValue(self.m_strLastValid)
-			self.m_TextCtrl:SetInsertionPoint(self.m_iLastValidPos)
-		end
+		self:storeString()
 	end
 	event:Skip(false)
 end
@@ -213,30 +219,3 @@ function new(_, tEditorParams)
 	setmetatable(inst, inst)
 	return inst
 end
-
---[[
-function new(_, tEditorParams)
-	--if tEditorParams then
-	--	for k,v in pairs(tEditorParams) do print(k,v) end
-	--end
-	
-	local inst = {}
-	inst.m_tEditorParams = tEditorParams or {}
-	inst.m_nBits = 32
-	if tEditorParams then
-		inst.m_tEditorParams = tEditorParams
-		inst.m_nBits = tEditorParams.width or inst.m_nBits
-		inst.m_fSigned = tEditorParams.signed or inst.m_fSigned
-		inst.m_minVal = tEditorParams.minVal or 0
-		inst.m_maxVal = tEditorParams.maxVal or 2^inst.m_nBits -1
-	end
-
-	inst.m_minVal = 0
-	inst.m_maxVal = 2^inst.m_nBits -1
-	
-	inst.m_nDigits = math.ceil(inst.m_nBits / 4)
-	inst.__index = numedit
-	setmetatable(inst, inst)
-	return inst
-end
---]]
