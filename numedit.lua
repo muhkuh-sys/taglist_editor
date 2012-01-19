@@ -129,49 +129,6 @@ function isValid(self)
 end
 
 
---[[
-
-function create(self, parent)
-	local id = tester.nextID()
-	self.m_id = id
-	self.m_TextCtrl = wx.wxTextCtrl(parent, id, "")
-	self.m_TextCtrl:Connect(id, wx.wxEVT_CHAR, function(event) self:OnKey(event) end)
-	self.m_TextCtrl:Connect(id, wx.wxEVT_COMMAND_TEXT_UPDATED, function(event) self:OnTextUpdate(event) end)
-	return self.m_TextCtrl
-end
-
-local CHAR_0 = string.byte("0")
-local CHAR_9 = string.byte("9")
-local CHAR_A = string.byte("a")
-local CHAR_F = string.byte("f")
-local CHAR_X = string.byte("x")
-local CHAR_AA = string.byte("A")
-local CHAR_FF = string.byte("F")
-local CHAR_XX = string.byte("X")
-
---- Key event handler. 
--- The only keys accepted are 0-9, a-f, A-F, x/X and
--- cursor left/right, home/end and backspace. If the key is
--- accepted, the current text and cursor position are stored.
-function OnKey(self, event)
-	local key = event:GetKeyCode()
-	if key==wx.WXK_LEFT or 
-		key==wx.WXK_RIGHT or
-		key==wx.WXK_HOME or
-		key==wx.WXK_END or
-		key==wx.WXK_BACK or
-		key>=CHAR_0 and key<=CHAR_9 or
-		key>=CHAR_A and key<=CHAR_F or
-		key>=CHAR_AA and key<=CHAR_FF or
-		key == CHAR_X or
-		key == CHAR_XX then
-		self:storeInsertionPoint()
-		event:Skip()
-	end
-end
---]]
-
--- [[
 local hexDecValidator = wx.wxTextValidator(wx.wxFILTER_INCLUDE_CHAR_LIST )
 hexDecValidator:SetIncludes({"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "x"})
 
@@ -182,7 +139,6 @@ function create(self, parent)
 	self.m_TextCtrl:Connect(id, wx.wxEVT_COMMAND_TEXT_UPDATED, function(event) self:OnTextUpdate(event) end)
 	return self.m_TextCtrl
 end
--- ]]
 
 --- Text update handler.
 -- When this event handler is called, the value of the
