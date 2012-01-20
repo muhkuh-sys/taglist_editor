@@ -459,7 +459,7 @@ TAG_PN_DEVICEID  =
 TAG_ECS_DEVICEID = 
     {paramtype = 0x30009000, datatype="TAG_ECS_DEVICEID_DATA_T",          desc="EtherCAT Slave Product Information"}, 
 TAG_S3S_DEVICEID = 
-    {paramtype = 0x30018000, datatype="TAG_S3S_DEVICEID_DATA_T",          desc="SERCOS III Product Information"}, 
+    {paramtype = 0x30018000, datatype="TAG_S3S_DEVICEID_DATA_T",          desc="sercos III Product Information"}, 
 TAG_PLS_DEVICEID = 
     {paramtype = 0x3001a000, datatype="TAG_PLS_DEVICEID_DATA_T",          desc="POWERLINK Product Information"}, 
     
