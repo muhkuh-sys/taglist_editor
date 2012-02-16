@@ -29,6 +29,8 @@ associated task tokens.
 </p>
 
 <p>
+Task priorities TSK_PRIO_1 and TSK_PRIO_2 should be reserved 
+for tasks which are critical to the system.
 Please consult the rcX Configuration and the Kernel API Function
 Reference for more details about task priorities and tokens.
 </p>
@@ -40,14 +42,14 @@ Reference for more details about task priorities and tokens.
     <td>Base Priority</td>
     <td>
         Base value (= offset) added to the preconfigured task priorities of all tasks in the group. <br>
-        Value range: 2 ... (56-Task Range), if the preconfigured task priorities are 0 ... (Task Range-1)
+        Value range: TSK_PRIO_1 .. TSK_PRIO_n, where n is 56-Task Range, if the preconfigured task priorities are 0 ... (Task Range-1)
     </td>
 </tr>
 <tr>
     <td>Base Token</td>
     <td>
         Base value (= offset) added to the preconfigured task tokens of all tasks in the group. <br>
-        Value range: 2 ... (56-Task Range), if the preconfigured task tokens are 0 ... (Task Range-1)
+        Value range: TSK_TOK_1 .. TSK_TOK_n, where n is 56-Task Range, if the preconfigured task tokens are 0 ... (Task Range-1)
     </td>
 </tr>
 <tr>

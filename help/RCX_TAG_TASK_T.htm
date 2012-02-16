@@ -20,6 +20,8 @@ always use identical values for task priority the associated task token.
 </p>
 
 <p>
+Task priorities TSK_PRIO_1 and TSK_PRIO_2 should be reserved 
+for tasks which are critical to the system.
 Please consult the rcX Configuration and the Kernel API Function
 Reference for more details about task priorities and tokens.
 </p>
@@ -31,14 +33,14 @@ Reference for more details about task priorities and tokens.
     <td>Priority</td>
     <td>
         Value that replaces the preconfigured task priority. <br>
-        Range: 2 ... 55
+        Range: TSK_PRIO_1 .. TSK_PRIO_55 
     </td>
 </tr>
 <tr>
     <td>Token</td>
     <td>
         Value that replaces the preconfigured task token. <br>
-        Range: 2 ... 55
+        Range: TSK_TOK_1 .. TSK_TOK_55
     </td>
 </tr>
 </table>

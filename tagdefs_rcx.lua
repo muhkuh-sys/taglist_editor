@@ -5,9 +5,10 @@
 --   Defines tags used by rcX
 --
 --  Changes:
---    Date        Author        Description
+--    Date        Author  Description
 ---------------------------------------------------------------------------
--- 2011-05-12     SL            factored out from taglist.lua
+-- 2012-02-16     SL      added task priority/token 1        
+-- 2011-05-12     SL      factored out from taglist.lua
 ---------------------------------------------------------------------------
 
 module("tagdefs_rcx", package.seeall)
@@ -137,13 +138,12 @@ RX_FIFO_TRIGGER_LEVEL = {
 
 
 
--- add TSK_PRIO_02 ... TSK_PRIO_55 and TSK_TOK_02 ... TSK_TOK_55
--- for task priorities: TSK_PRIO_02 = 9 ... TSK_PRIO_55 = 62
--- for task tokens: TSK_TOK_02 = 9 ... TSK_TOK_55 = 62
--- local COMBO_TASKPRIO={nBits=32, minValue=1, maxValue=55}
+-- add TSK_PRIO_01 ... TSK_PRIO_55 and TSK_TOK_01 ... TSK_TOK_55
+-- for task priorities: TSK_PRIO_01 = 8 ... TSK_PRIO_55 = 62
+-- for task tokens: TSK_TOK_01 = 8 ... TSK_TOK_55 = 62
 local COMBO_TASKPRIO ={nBits=32, values={{name="-----", value=0}}}
 local COMBO_TASKTOKEN={nBits=32, values={{name="-----", value=0}}}
-for i=2, 55 do
+for i=1, 55 do
     CONSTANTS[string.format("TSK_PRIO_%02d", i)]=i+7
     CONSTANTS[string.format("TSK_TOK_%02d", i)]=i+7
     table.insert(COMBO_TASKPRIO.values, {name="TSK_PRIO_"..tonumber(i), value=i+7})

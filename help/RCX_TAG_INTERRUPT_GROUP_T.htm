@@ -24,6 +24,10 @@ The group may contain interrupts which execute as rcX tasks.
 In this case you must configure the Task Priority Base
 and the Task Token Base. (These values have no relevance
 for interrupts which do not execute as rcX tasks.)
+Task priorities TSK_PRIO_1 and TSK_PRIO_2 should be reserved 
+for tasks which are critical to the system.
+Please consult the rcX Configuration and the Kernel API Function
+Reference for more details about task priorities and tokens.
 </p>
 
 <p>
@@ -53,14 +57,14 @@ values for task priorities and for the associated task tokens.
     <td>Task Priority Base</td>
     <td>
         Base value (= offset) added to the preconfigured task priorities of all interrupts in the group that execute as rcX tasks. <br>
-        Value range: 2 ... (56-Task Range), if the preconfigured task priorities are 0 ... (Task Range-1)
+        Value range: TSK_PRIO_1 .. TSK_PRIO_n, where n is 56-Task Range, if the preconfigured task priorities are 0 ... (Task Range-1)
     </td>
 </tr>
 <tr>
     <td>Task Token Base</td>
     <td>
         Base value (= offset) added to the preconfigured task tokens of all interrupts in the group that execute as rcX tasks. <br>
-        Value range: 2 ... (56-Task Range), if the preconfigured task priorities are 0 ... (Task Range-1)
+        Value range: TSK_TOK_1 .. TSK_TOK_n, where n is 56-Task Range, if the preconfigured task priorities are 0 ... (Task Range-1)
     </td>
 </tr>
 <tr>

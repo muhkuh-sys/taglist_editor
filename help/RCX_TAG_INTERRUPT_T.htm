@@ -17,6 +17,10 @@ when adapting a standard firmware for use with specific hardware.
 If the interrupt executes as an rcX task, you must configure
 the Task Priority and the Task Token. (These values have no
 relevance for interrupts which do not execute as rcX tasks.)
+Task priorities TSK_PRIO_1 and TSK_PRIO_2 should be reserved 
+for tasks which are critical to the system.
+Please consult the rcX Configuration and the Kernel API Function
+Reference for more details about task priorities and tokens.
 </p>
 
 <p>
@@ -38,14 +42,14 @@ values for task priorities and for the associated task tokens.
     <td>Task Priority</td>
     <td>
         Value that replaces the preconfigured task priority if the interrupt executes as an rcX task. <br>
-        Range: 2 ... 55
+        Range: TSK_PRIO_1 .. TSK_PRIO_55 
     </td>
 </tr>
 <tr>
     <td>Task Token</td>
     <td>
         Value that replaces the preconfigured task token if the interrupt executes as an rcX task. <br>
-        Range: 2 ... 55
+        Range: TSK_TOK_1 .. TSK_TOK_55 
     </td>
 </tr>
 </table>
