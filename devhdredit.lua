@@ -5,9 +5,9 @@
 --   Editor for device header, component of Taglist editor
 --
 --  Changes:
---    Date        Author        Description
+--    Date        Author   Description
 ---------------------------------------------------------------------------
---  
+--  2012-02-16    SL       allow editing of HW compatibility field
 ---------------------------------------------------------------------------
 -- SVN Keywords
 --
@@ -57,7 +57,7 @@ taglist.registerStructType("DEVICE_HEADER_V1_T",
   {"UINT32", "ulStructVersion",     desc="Structure Version",     mode="read-only"},
   {"UINT16", "usManufacturer",      desc="Manufacturer Code"},
   {"UINT16", "usDeviceClass",       desc="Device Class"},
-  {"UINT8",  "bHwCompatibility",    desc="HW Compatibility",      mode="read-only"},
+  {"UINT8",  "bHwCompatibility",    desc="HW Compatibility"},
   {"UINT8",  "bChipType",           desc="Chip Type",             mode="read-only"},
   {"UINT16", "usReserved",          desc="Reserved",              mode="hidden"},
   {"UINT16", "usHWOptions_1",       desc="HW Options 1"},

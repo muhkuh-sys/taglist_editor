@@ -1,5 +1,6 @@
 Change log for Tag List Editor
 
+ * allow editing of the hardware compatibility field in the device header
  * added TSK_PRIO_1/TSK_TOK_1 to
    RCX_TAG_TASK_GROUP      0x00001000
    RCX_TAG_TASK            0x00001003
