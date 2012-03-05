@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_TAG_DPM_SETTINGS_T</Title>
+</HEAD>
+<BODY>
+<h2>Redefining DPM Settings</h2>
+<p>
+This tag allows the user to modify the RX_HIF_SET_T describing DPM location and access.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+<td>DPM Mode</td><td>8 bit, 16 bit or PCI (default)</td>
+</tr>
+
+<tr>
+<td>DPM Size</td><td>The DPM size in bytes. <br>
+The default size is 16384 bytes for comX, 32768 for other targets.</td>
+</tr>
+
+
+<tr>
+<td>DPM Base Address</td><td>The base address of the DPM in INTRAM. The default is 0x18000. </td>
+</tr>
+
+</table>
+
+<p>
+<b>Note:</b> The values REPLACE the statically defined values at system startup time, i.e. they serve as ABSOLUTE VALUES.
+</p>
+<p>
+<b>Restrictions</b>
+<ul>
+<li>DPM Base Address &gt;= 0x80 (The first 128 bytes are used by the exception vector table.)</li>
+<li>DPM Size &gt;= 0x1200 bytes (512 + 4096 bytes are needed for the system channel and a minimal communication channel.)</li>
+<li>DPM Size must be a multiple of 256 bytes</li>
+<li>DPM Base Address + DPM Size &lt;= end of the INTRAM</li>
+</ul>
+</p>
+
+</BODY>
+</HTML>

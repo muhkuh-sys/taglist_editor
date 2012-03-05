@@ -1,5 +1,8 @@
 Change log for Tag List Editor
 
+
+ * added RCX_TAG_DPM_SETTINGS 0x00001061
+
 Tag list editor 1.1.12257
 
  * allow editing of the hardware compatibility field in the device header

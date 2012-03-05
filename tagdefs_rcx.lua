@@ -7,7 +7,8 @@
 --  Changes:
 --    Date        Author  Description
 ---------------------------------------------------------------------------
--- 2012-02-16     SL      added task priority/token 1        
+-- 2012-03-01     SL      added RCX_TAG_DPM_SETTINGS 0x00001061
+-- 2012-02-16     SL      added task priority/token 1
 -- 2011-05-12     SL      factored out from taglist.lua
 ---------------------------------------------------------------------------
 
@@ -69,6 +70,14 @@ CONSTANTS = {
     RX_UART_CTS_DEFAULT     = 0,
     RX_UART_CTS_ACTIVE_HIGH = 1,
     RX_UART_CTS_ACTIVE_LOW  = 2,
+
+    -- DPM mode settings for RX_TAG_DPM_SETTINGS
+    RX_HIF_MODE_HIGH_IMPEDANCE = 0,     -- Bus drivers are not enabled, bus is floating
+    RX_HIF_MODE_EXTENSIONBUS   = 1,     -- Bus is used as extension bus to connect FLASH/RAM devices
+    RX_HIF_MODE_DPM_UP8BIT     = 2,     -- Dualport Memory Bus 8 Bit Data interface
+    RX_HIF_MODE_DPM_UP16BIT    = 3,     -- Dualport Memory Bus 16 Bit Data interface
+    RX_HIF_MODE_IO             = 4,     -- Peripheral I/O Bus
+    RX_HIF_MODE_RSRVD1         = 5,     -- reserved define for internal use
 
 }
 
@@ -135,6 +144,11 @@ RX_FIFO_TRIGGER_LEVEL = {
 
 }
 
+DPM_SETTINGS_DPM_MODE = {
+    {name="8 Bit",  value = 2},
+    {name="16 Bit", value = 3},
+    {name="PCI / Reserved1",    value = 5},
+}
 
 
 
@@ -312,35 +326,44 @@ RCX_TAG_LED_T=
 
 
 ----------------------------------------------------------------------------------------------
--- PRELIMINARY
 -- DPM communication channels
 
 RCX_TAG_DPM_COMM_CHANNEL_DATA_T=
 {
-	{"UINT32", "ulNumCommChannels", desc="Number of comm. channels", editor="comboedit", editorParam={nBits=32, minValue=1, maxValue=4}},
-	{"UINT32", "ulInDataSize0",  desc="Channel 0 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
-	{"UINT32", "ulOutDataSize0", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
-	{"UINT32", "ulInDataSize1",  desc="Channel 1 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
-	{"UINT32", "ulOutDataSize1", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
-	{"UINT32", "ulInDataSize2",  desc="Channel 2 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
-	{"UINT32", "ulOutDataSize2", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
-	{"UINT32", "ulInDataSize3",  desc="Channel 3 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
-	{"UINT32", "ulOutDataSize3", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
-	
-	layout=
-		{
-			sizer="v", 
-			"ulNumCommChannels",
-			{
-				sizer="grid", cols=2, rows=4,
-				"ulInDataSize0", "ulOutDataSize0",
-				"ulInDataSize1", "ulOutDataSize1",
-				"ulInDataSize2", "ulOutDataSize2",
-				"ulInDataSize3", "ulOutDataSize3",
-			}
-		}
-}
+    {"UINT32", "ulNumCommChannels", desc="Number of comm. channels", editor="comboedit", editorParam={nBits=32, minValue=1, maxValue=4}},
+    {"UINT32", "ulInDataSize0",  desc="Channel 0 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+    {"UINT32", "ulOutDataSize0", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+    {"UINT32", "ulInDataSize1",  desc="Channel 1 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+    {"UINT32", "ulOutDataSize1", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+    {"UINT32", "ulInDataSize2",  desc="Channel 2 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+    {"UINT32", "ulOutDataSize2", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+    {"UINT32", "ulInDataSize3",  desc="Channel 3 Input Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
+    {"UINT32", "ulOutDataSize3", desc=         "Output Area size", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=27904}},
 
+    layout=
+        {
+            sizer="v",
+            "ulNumCommChannels",
+            {
+                sizer="grid", cols=2, rows=4,
+                "ulInDataSize0", "ulOutDataSize0",
+                "ulInDataSize1", "ulOutDataSize1",
+                "ulInDataSize2", "ulOutDataSize2",
+                "ulInDataSize3", "ulOutDataSize3",
+            }
+        }
+},
+
+
+----------------------------------------------------------------------------------------------
+-- DPM settings
+
+RCX_TAG_DPM_SETTINGS_DATA_T=
+{
+    {"UINT32", "ulDpmMode",         desc="DPM Mode",         editor="comboedit", editorParam ={nBits=32, values=DPM_SETTINGS_DPM_MODE}},
+    {"UINT32", "ulDpmSize",         desc="DPM Size",         editor="numedit",   editorParam ={format="%u"}},
+    {"UINT32", "ulDpmBaseAddress",  desc="DPM Base Address", editor="numedit",   editorParam ={format="0x%08x"}},
+},
 
 } -- end of structure definitions
 
@@ -360,7 +383,7 @@ RCX_TAG_MIN_CHIP_REV =
     {paramtype = 0x804, datatype="RCX_TAG_MIN_CHIP_REV_T",                    desc="Min. Chip Revision"},
 RCX_TAG_MAX_CHIP_REV =
     {paramtype = 0x805, datatype="RCX_TAG_MAX_CHIP_REV_T",                    desc="Max. Chip Revision"},
-    
+
 -- firmware tags
 RCX_TAG_TASK_GROUP =
     {paramtype = 0x00001000, datatype="RCX_TAG_TASK_GROUP_T",                 desc="Task Group"},
@@ -379,7 +402,9 @@ RCX_TAG_LED =
 RCX_TAG_XC =
     {paramtype = 0x00001050, datatype="RCX_TAG_XC_T",                         desc="xC Unit"},
 RCX_TAG_DPM_COMM_CHANNEL =
-    {paramtype = 0x00001060, datatype="RCX_TAG_DPM_COMM_CHANNEL_DATA_T",      desc="DPM communication channels"},
+    {paramtype = 0x00001060, datatype="RCX_TAG_DPM_COMM_CHANNEL_DATA_T",      desc="DPM Communication Channels"},
+RCX_TAG_DPM_SETTINGS =
+    {paramtype = 0x00001061, datatype="RCX_TAG_DPM_SETTINGS_DATA_T",          desc="DPM Settings"},
 }
 
 RCX_TAG_HELP = {
@@ -389,7 +414,7 @@ RCX_TAG_HELP = {
     RCX_TAG_MAX_OS_VERSION              = {file="misc_tags.htm"},
     RCX_TAG_MIN_CHIP_REV                = {file="misc_tags.htm"},
     RCX_TAG_MAX_CHIP_REV                = {file="misc_tags.htm"},
-    
+
     RCX_TAG_TASK_GROUP                  = {file="RCX_TAG_TASK_GROUP_T.htm"},
     RCX_TAG_TASK                        = {file="RCX_TAG_TASK_T.htm"},
     RCX_TAG_INTERRUPT_GROUP             = {file="RCX_TAG_INTERRUPT_GROUP_T.htm"},
@@ -397,8 +422,9 @@ RCX_TAG_HELP = {
     RCX_TAG_TIMER                       = {file="RCX_TAG_TIMER_T.htm"},
     RCX_TAG_UART                        = {file="RCX_TAG_UART_T.htm"},
     RCX_TAG_LED                         = {file="RCX_TAG_LED_T.htm"},
-    RCX_TAG_XC                          = {file="RCX_TAG_XC_T.htm"},  
-    RCX_TAG_DPM_COMM_CHANNEL            = {file="RCX_TAG_DPM_COMM_CHANNEL_DATA_T.htm"},  
+    RCX_TAG_XC                          = {file="RCX_TAG_XC_T.htm"},
+    RCX_TAG_DPM_COMM_CHANNEL            = {file="RCX_TAG_DPM_COMM_CHANNEL_DATA_T.htm"},
+    RCX_TAG_DPM_SETTINGS                = {file="RCX_TAG_DPM_SETTINGS_DATA_T.htm"},
 }
 
 taglist.addConstants(CONSTANTS)
