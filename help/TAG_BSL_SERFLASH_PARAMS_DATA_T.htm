@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_SERFLASH_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Custom Serial Flash Parameters</h2>
+
+<p>
+This tag allows you to override the built-in serial flash detection of the boot loader.<br>
+
+Normally, the bootloader tries to detect the serial flash using a built-in list of serial flash types. 
+If your flash is one of the built-in types, you do not need to use this tag.
+
+When this tag is enabled, the bootloader will only try to detect the flash specified below.
+</p>
+
+<h3>About page erase/program commands</h3>
+<p>
+The used flash must support the page-erase opcode or must be able to perform a combined erase and program single page instruction.
+The bootloader supports three ways to write a page on the flash, in the following order:
+<ul>
+	<li>page erase and program: erase and write a page in a single operation</li>
+	<li>page erase + page program: erase a page, then write it</li>
+	<li>page erase + fill buffer with data + write buffer to flash: erase a page, fill a buffer with new data, then write the buffer</li>
+</ul>
+This means that the flash must support the 'page erase and program' or the 'page erase' operation. 
+In the second case, it must also support either 'page program' or 'fill buffer with data' and 'write buffer to flash'.
+</p>
+
+<h3>Note</h3>
+<p>
+Generally, an opcode or a command sequence length of 0 means that the operation is not supported by the chip or that the command should not be used.
+</p>
+
+Device identification
+Optional Init commands
+
+<p></p>
+
+<table border=1>
+<tr><td width="25%"> Enable</td>                         <td> Enable the custom flash parameter</td></tr>
+<tr><td> Name</td>                                       <td> Name of the flash, 0 terminated. <br>
+                                                              This string is not used by the software. It is, however, displayed in the Tag List Editor or a hex editor. </td></tr>
+<tr><td> Chip size</td>                                  <td> Size of the flash memory in bytes </td></tr>
+<tr><td> Maximum speed in kHz</td>                       <td> The maximum speed supported by the flash in kHz. <br>
+                                                              The SPI interface will be configured for the maximum speed supported by netX and the flash chip.
+ </td></tr>
+<tr><td> Bytes per Page</td>                             <td> Size of one page in bytes </td></tr>
+<tr><td> Pages per Sector</td>                           <td> Size of one sector in pages </td></tr>
+<tr><td> Addressing mode</td>                            <td> Addressing mode </td></tr>
+<tr><td> Opcode for 'continuous array read'</td>         <td> Opcode for 'continuous array read' command  <br>
+                                                              Please note that devices often support several read instructions for different clock speeds and 1, 2 or 4 bits per cycle.
+                                                              The read opcode must be appropriate for the maximum clock speed.
+                                                              If you enabled the Quad SPI feature, you must specify a 4 bit read command. </td></tr>
+<tr><td> Don't care bytes</td>                           <td> The number of 'Don't care' bytes inserted after read opcode and address. <br>
+                                                              In some cases, a number of bytes has to be inserted after a read array command and the address before actual data is received from the device.
+                                                              This depends on the flash type, clock speed and the read command used.</td></tr>
+<tr><td> Opcode for 'write enable' command</td>          <td> Opcode for 'write enable' command, 0x00 means no write protect mechanism </td></tr>
+<tr><td> Opcode for 'erase page'</td>                    <td> Opcode for 'erase page' </td></tr>
+<tr><td> Opcode for 'erase sector'</td>                  <td> Opcode for 'erase sector' </td></tr>
+<tr><td> Erase Chip Command Length<br>
+         Erase Chip Command</td>                         <td> 'erase chip' command sequence. Set the length to 'Disabled' if the command is not available.</td></tr>
+
+<!-- tr><td> Erase Chip Command Length</td>                  <td> Length of the 'erase chip' command, 0 means not available </td></tr>
+<tr><td> Erase Chip Command</td>                         <td> Command to erase the complete chip </td></tr -->
+<tr><td> Opcode for 'page program'</td>                  <td> Opcode for 'page program (without builtin erase)' </td></tr>
+<tr><td> Opcode for 'fill buffer with data'</td>         <td> Opcode for 'fill buffer with data' </td></tr>
+<tr><td> Opcode for 'write buffer to flash'</td>         <td> Opcode for 'write buffer to flash' </td></tr>
+<tr><td> Opcode for 'page erase & program'</td>          <td> Opcode for 'page program with builtin erase' </td></tr>
+<tr><td> Opcode for 'read status register'</td>          <td> Opcode for 'read status register' </td></tr>
+<tr><td> Bit mask for 'device busy'</td>                 <td> The bitmask indicating device busy </td></tr>
+<tr><td> Compare value for 'device busy'</td>            <td> Eor bitmask for device busy </td></tr>
+
+<tr><td> First Init Command Length<br>
+         First Init Command<br>
+         Second Init Command Length<br>
+         Second Init Command<br></td>                    <td> Two optional commands which are sent to the flash after it has been detected.</td></tr>
+
+<!-- tr><td> First Init Command Length</td>                  <td> Length of the first init command in bytes </td></tr>
+<tr><td> First Init Command </td>                        <td> First command string to init the device </td></tr>
+<tr><td> Second Init Command Length</td>                 <td> Length of the second init command in bytes </td></tr>
+<tr><td> Second Init Command</td>                        <td> Second command string to init the device </td></tr -->
+
+<tr><td> ID Sequence Length</td>                         <td> Length in bytes of the id_send, id_mask and id_magic fields </td></tr>
+<tr><td> ID command</td>                                 <td> Command string to request the id </td></tr>
+<tr><td> ID mask</td>                                    <td> Mask for the device id. the data received from the id_send command will be anded with this field </td></tr>
+<tr><td> ID compare</td>                                 <td> Magic sequence of this device </td></tr>
+<tr><td> Special Features</td>                           <td> Special features of this chip
+<ul>
+<li>Winbond Quad SPI: accesses the flash in 4 bit mode if possible. This feature is only supported by netX 50, 10 and 51 and requires a special hardware design.</li>
+</ul></td></tr>
+</table>
+
+
+</BODY>
+</HTML>

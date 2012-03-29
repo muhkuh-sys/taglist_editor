@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2012-03-28     SL            added TAG_BSL_SERFLASH_PARAMS
 -- 2011-06-01     SL            added TAG_BSL_BACKUP_POS_PARAMS
 -- 2011-05-12     SL            factored out from taglist.lua
 ---------------------------------------------------------------------------
@@ -291,6 +292,42 @@ BSL_BACKUP_MEDIUM = {
  
 taglist.addConstants(BSL_DEST_MEDIUM_CONSTANTS)
 taglist.addConstants(BSL_BACKUP_MEDIUM_CONSTANTS)
+
+
+INITCMD_LENGTH_VALUES={
+     nBits=8,
+     values={
+       {name="Disabled",  value=0},
+       {name="1 bytes", value=1},
+       {name="2 bytes", value=2},
+       {name="3 bytes", value=3}
+     } }
+
+CHIP_ERASE_CMD_LENGTH_VALUES={
+     nBits=8,
+     values={
+       {name="Disabled",  value=0},
+       {name="1 bytes", value=1},
+       {name="2 bytes", value=2},
+       {name="3 bytes", value=3},
+       {name="4 bytes", value=4}
+     } }
+
+ID_CMD_LENGTH_VALUES={
+     nBits=8,
+     values={
+       {name="0 bytes",  value=0},
+       {name="1 bytes", value=1},
+       {name="2 bytes", value=2},
+       {name="3 bytes", value=3},
+       {name="4 bytes", value=4},
+       {name="5 bytes", value=5},
+       {name="6 bytes", value=6},
+       {name="7 bytes", value=7},
+       {name="8 bytes", value=8},
+       {name="9 bytes", value=9},
+     } }
+
 
 BSL_TAGS={
 -- tags for configuration of 2nd stage loader
@@ -711,7 +748,57 @@ TAG_BSL_BACKUP_POS_PARAMS_DATA_T =
     {"UINT32", "ulSize",   desc="Size"},
 },
 
+
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader custom serial flash settings
+
+TAG_BSL_SERFLASH_PARAMS_DATA_T = {
+	{"UINT8",   "bUseCustomFlash",        desc="Enable",                                   editor="checkboxedit", editorParam={nBits=8, onValue=1, offValue=0, otherValues=true}},
+	{"STRING",  "szName",                 desc="Name",                             size=16},
+	{"UINT32",  "ulSize",                 desc="Chip size",                                editor="numedit", editorParam={nBits=32, format="0x%08x"}},
+	{"UINT32",  "ulClock",                desc="Maximum speed in kHz",                     editor="numedit", editorParam={nBits=32, format="%d"}    },
+	{"UINT32",  "ulPageSize",             desc="Bytes per Page",                           editor="numedit", editorParam={nBits=32, format="%d"}    },
+	{"UINT32",  "ulSectorPages",          desc="Pages per Sector",                         editor="numedit", editorParam={nBits=32, format="%d"}    },
+	{"UINT8",   "bAdrMode",               desc="Addressing mode",                          editor="comboedit", editorParam={
+     nBits=8,
+     values={
+       {name="Linear",  value=0},
+       {name="Shifted", value=1},
+     } } },
+	{"UINT8",   "bReadOpcode",            desc="Opcode for 'continuous array read'",       editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bReadOpcodeDCBytes",     desc="Don't care bytes",                         editor="numedit", editorParam={nBits=8, format="%d"}     },
+	{"UINT8",   "bWriteEnableOpcode",     desc="Opcode for 'write enable' command",        editor="numedit", editorParam={nBits=8, format="%d"}     },
+	{"UINT8",   "bErasePageOpcode",       desc="Opcode for 'erase page'",                  editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bEraseSectorOpcode",     desc="Opcode for 'erase sector'",                editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	
+	{"UINT8",   "bEraseChipCmdLen",       desc="Erase Chip Command Length",                editor="comboedit", editorParam=CHIP_ERASE_CMD_LENGTH_VALUES}, -- editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"bindata", "abEraseChipCmd",         desc="Erase Chip Command",               size=4, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 4, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
+	
+	{"UINT8",   "bPageProgOpcode",        desc="Opcode for 'page program'",                editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bBufferFill",            desc="Opcode for 'fill buffer with data'",       editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bBufferWriteOpcode",     desc="Opcode for 'write buffer to flash'",       editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bEraseAndPageProgOpcode",desc="Opcode for 'page erase and program'",        editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bReadStatusOpcode",      desc="Opcode for 'read status register'",        editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bStatusReadyMask",       desc="Bit mask for 'device busy'",               editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bStatusReadyValue",      desc="Compare value for 'device busy'",          editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	
+	{"UINT8",   "bInitCmd0_length",       desc="First Init Command Length",                editor="comboedit", editorParam=INITCMD_LENGTH_VALUES}, -- editor="numedit", editorParam={nBits=8, format="0x%x"}},
+	{"bindata", "abInitCmd0",             desc="First Init Command ",              size=3, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 3, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
+	{"UINT8",   "bInitCmd1_length",       desc="Second Init Command Length",               editor="comboedit", editorParam=INITCMD_LENGTH_VALUES}, -- editor="numedit", editorParam={nBits=8, format="0x%x"}},
+	{"bindata", "abInitCmd1",             desc="Second Init Command",              size=3, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 3, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
+	
+	{"UINT8",   "bIdLength",              desc="ID Sequence Length",                       editor="comboedit", editorParam=ID_CMD_LENGTH_VALUES}, -- editor="numedit", editorParam={nBits=8, format="%d"}     },
+	{"bindata", "abIdSend",               desc="ID command",                       size=9, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 9, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
+	{"bindata", "abIdMask",               desc="ID mask",                          size=9, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 9, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
+	{"bindata", "abIdMagic",              desc="ID compare",                       size=9, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 9, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
+	
+	--{"UINT32",  "ulFeatures",             desc="Special Features",                         editor="numedit", editorParam={nBits=32, format="0x%x"}    },
+	{"UINT32",  "ulFeatures",             desc="Special Features: Quad SPI",  mask=string.char(1,0,0,0),  editor="checkboxedit", editorParam={nBits=32, onValue=1, offValue=0} },
+},
+
 }
+
 
 taglist.addDataTypes(BSL_TAGS)
 
@@ -747,6 +834,8 @@ TAG_BSL_DISK_POS_PARAMS =
     {paramtype = 0x4000000D, datatype="TAG_BSL_DISK_POS_PARAMS_DATA_T",       desc="Disk Position"},
 TAG_BSL_BACKUP_POS_PARAMS =
     {paramtype = 0x4000000e, datatype="TAG_BSL_BACKUP_POS_PARAMS_DATA_T",     desc="Backup Partition"},
+TAG_BSL_SERFLASH_PARAMS =
+    {paramtype = 0x40000011, datatype="TAG_BSL_SERFLASH_PARAMS_DATA_T",       desc="Custom Serial Flash"},
 })
 
 taglist.addTagHelpPages({
@@ -765,4 +854,8 @@ taglist.addTagHelpPages({
     TAG_BSL_USB_DESCR_PARAMS            = {file="TAG_BSL_USB_DESCR_PARAMS_DATA_T.htm"},
     TAG_BSL_DISK_POS_PARAMS             = {file="TAG_BSL_DISK_POS_PARAMS_DATA_T.htm"},
     TAG_BSL_BACKUP_POS_PARAMS           = {file="TAG_BSL_BACKUP_POS_PARAMS_DATA_T.htm"},
+    TAG_BSL_SERFLASH_PARAMS             = {file="TAG_BSL_SERFLASH_PARAMS_DATA_T.htm"},
 })
+
+
+     
