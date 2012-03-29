@@ -120,12 +120,12 @@ AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://muhkuh.sourceforge.net/
 AppSupportURL=http://www.sourceforge.net/projects/muhkuh
 AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
-AppCopyright=(C) 2011, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2012, Muhkuh team and Hilscher GmbH
 
 
 ; works: company, copyright, product name, product version
 ; description goes into properties and version dialogue
-VersionInfoCopyright=(C) 2010 Muhkuh team and Hilscher GmbH
+VersionInfoCopyright=(C) 2012 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoDescription=Installer of the Hilscher Tag List Editor application
 VersionInfoProductName=Hilscher Tag List Editor
