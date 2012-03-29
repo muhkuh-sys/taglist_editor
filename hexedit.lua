@@ -6,6 +6,8 @@
 --
 --  Changes:
 --    Date        Author        Description
+--  28 mar 2012   SL            added format parameters to new()
+--                              default style = no address, 16 bytes, space separator, no Ascii, single line
 ---------------------------------------------------------------------------
 --  
 ---------------------------------------------------------------------------
@@ -485,11 +487,23 @@ function createPanel(self, parent)
 end
 --]]
 
-function new()
+-- tEditorParams = {addrFormat="", bytesPerLine = 9, byteSeparatorChar = " ", showAscii = false, multiLine = false}
+                   -- addrFormat="", bytesPerLine = 3, byteSeparatorChar = " ", showAscii = false, multiLine = false}}
+-- no address, 16 bytes, space separator, no Ascii, single line
+function new(strMemberType, tEditorParams)
 	local inst = {}
 	setmetatable(inst, inst)
 	inst.__index=hexedit
-	inst:setDefaultStyle()
+	
+	tEditorParams = tEditorParams or {}
+	inst:setStyle(
+		tEditorParams.addrFormat        or "",
+		tEditorParams.bytesPerLine      or 16,
+		tEditorParams.byteSeparatorChar or " ",
+		tEditorParams.showAscii         or false,
+		tEditorParams.multiLine  and wx.wxTE_MULTILINE or 0)
+	
+	-- inst:setDefaultStyle()
 	return inst
 end
 
