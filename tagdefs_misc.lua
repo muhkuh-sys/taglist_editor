@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2012-04-03     SL            added TAG_ECS_ENABLE_BOOTSTRAP 0x30009001
 -- 2012-01-19     SL            added device ID tags for ECS, S3S, PLS
 -- 2011-05-12     SL            factored out from taglist.lua
 ---------------------------------------------------------------------------
@@ -433,6 +434,9 @@ RCX_TAG_EIF_EDD_INSTANCE_DATA_T = {
 	{"UINT32", "ulEddInstanceNo",  desc="RTE channel number", editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=3}},
 },
 
+TAG_ECS_ENABLE_BOOTSTRAP_DATA_T = {
+	{"UINT32", "ulEnableBootstrap", desc="Enable", editor="checkboxedit", editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}}
+}
 
 } -- end of structure defintions
 
@@ -496,6 +500,10 @@ RCX_TAG_EIF_EDD_CONFIG =
 	{paramtype = 0x105D0000, datatype="RCX_TAG_EIF_EDD_CONFIG_DATA_T",   desc="Ethernet Config"},
 RCX_TAG_EIF_EDD_INSTANCE =
 	{paramtype = 0x105D0001, datatype="RCX_TAG_EIF_EDD_INSTANCE_DATA_T", desc="Ethernet Channel Number"},
+	
+-- protocol tag
+TAG_ECS_ENABLE_BOOTSTRAP =
+	{paramtype = 0x30009001, datatype="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T", desc="EtherCAT Slave Enable Bootstrap Mode"},
 }
 
 
@@ -525,6 +533,7 @@ TAG_HELP = {
     
     RCX_TAG_EIF_EDD_CONFIG              = {file="RCX_TAG_EIF_EDD_CONFIG_DATA_T.htm"},
     RCX_TAG_EIF_EDD_INSTANCE            = {file="RCX_TAG_EIF_EDD_INSTANCE_DATA_T.htm"},
+    TAG_ECS_ENABLE_BOOTSTRAP            = {file="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm"}, 
 }
 
 
