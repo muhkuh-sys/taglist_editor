@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+--  2012-04-05    SL            added handling of byte arrays in tagtool
 --  2011-05-11    SL            factored out the tag definitions, added 
 --                              functions to register tags, data types,
 --                              constants, help files
@@ -264,11 +265,11 @@ UINT16 = {size=2, editor="numedit", editorParam={nBits=16}},
 UINT8 = {size=1, editor="numedit", editorParam={nBits=8}},
 STRING = {editor="stringedit"},
 rcxver = {size=8, editor="rcxveredit"},
+bindata = {editor="hexedit"},
 
--- for unused tags
+-- currently unused
 mac = {size=6, editor="macedit"},
 ipv4 = {size=4, editor="ipv4edit"},
-bindata = {editor="hexedit"},
 }
 
 
@@ -351,6 +352,74 @@ function parseUINT(strNum, iMax)
     end
 end
 
+
+
+-- Parse an array of bytes:
+-- - values beetween 0 .. 255
+-- - decimal or hex,
+-- - separated with comma and/or space(s)
+-- - optionally in curled braces
+
+-- Notation for byte arrays
+-- A byte array is a list of values in the range 0 .. 255, decimal or hex, separated by spaces and/or commas.
+-- Optionally, the array may be enclosed in curly braces.
+-- 0, 31, 39, 1, 0
+-- 0x00 0x1f 0x27 0x01 0x00 
+-- 0x00, 0x1f, 0x27, 0x01, 0x00 
+-- {0x00, 0x1f, 0x27, 0x01, 0x00}
+
+function parseHexString(strHex)
+	-- remove outer spaces and curly brackets
+	strHex = string.match(strHex, "^%s*{([x%x,%s]+)}%s*$") or strHex
+	
+	local strBin = ""
+	local fOk = true -- assume no error
+	
+	-- skip initial spaces
+	local iStart, iEnd = string.find(strHex, "^%s*")
+	iStart = iEnd + 1
+	iEnd = strHex:len()
+	
+	while (iStart <= iEnd and fOk) do
+		-- extract the next number and skip comma/space
+		local x, y, strNum = strHex:find("([x%x]+),?%s*", iStart)
+		if x>iStart then
+			-- something has been skipped
+			fOk = false
+		else
+			local iNum = tonumber(strNum)
+			-- not a number or not in the range 0..255
+			if iNum == nil or iNum>255 then
+				fOk = false
+			else
+				strBin = strBin .. string.char(iNum)
+				iStart = y+1
+			end
+		end
+	end
+	
+	if fOk then
+		return strBin
+	else
+		return nil, "Parse error"
+	end
+end
+
+
+function binToHexString(strBin)
+	local strHex = ""
+	local iLen = strBin:len()
+	for i=1, iLen do
+		strHex = strHex .. string.format("0x%02x", strBin:byte(i))
+		if i<iLen then
+			strHex = strHex .. ", "
+		end
+	end
+	return strHex
+end
+
+function identity(x) return x end
+
 -- Note:
 -- The deserializer for strings removes anything starting from the first 0-byte, if present.
 -- The serializer does NOT pad the string with zeros, as it does not know the required size.
@@ -361,7 +430,8 @@ primitive_type_deserializers = {
     UINT16 = function(abValue) return numedit.binToUint(abValue, 0, 16) end,
     UINT32 = function(abValue) return numedit.binToUint(abValue, 0, 32) end,
     STRING = deserialize_string,
-    rcxver = rcxveredit.deserialize_version
+    rcxver = rcxveredit.deserialize_version,
+    bindata = identity,
 }
 
 primitive_type_serializers = {
@@ -369,7 +439,8 @@ primitive_type_serializers = {
     UINT16 = function(iValue) return numedit.uintToBin(iValue, 16) end,
     UINT32 = function(iValue) return numedit.uintToBin(iValue, 32) end,
     STRING = function(abValue) return abValue end,
-    rcxver = rcxveredit.serialize_version
+    rcxver = rcxveredit.serialize_version,
+    bindata = identity,
 }
 
 primitive_type_parsers = {
@@ -377,7 +448,8 @@ primitive_type_parsers = {
     UINT16 = function(strNum) return parseUINT(strNum, 2^16-1) end,
     UINT32 = function(strNum) return parseUINT(strNum, 2^32-1) end,
     STRING = function(abValue) return abValue end,
-    rcxver = function(strValue) return strValue end
+    rcxver = identity,
+    bindata = parseHexString,
 }
 
 primitive_type_tostring = {
@@ -385,7 +457,8 @@ primitive_type_tostring = {
     UINT16 = function(iNum) return string.format("0x%04x", iNum) end,
     UINT32 = function(iNum) return string.format("0x%08x", iNum) end,
     STRING = function(abValue) return string.format('"%s"', abValue) end,
-    rcxver = function(strValue) return strValue end
+    rcxver = identity,
+    bindata = binToHexString,
 }
 
 function isPrimitiveType(strTypeName)
@@ -554,7 +627,7 @@ function serialize(strTypeName, atMembers, fRecursive)
             -- pad strings to the required size. Error if this size is exceeded.
             ulMemberSize = getStructMemberSize(tMemberDef)
             ulActualSize = abMemberValue:len()
-            if strMemberType=="STRING" then
+            if strMemberType=="STRING" or strMemberType=="bindata" then
                 if ulActualSize<ulMemberSize then
                     abMemberValue = abMemberValue .. string.rep(string.char(0), ulMemberSize - ulActualSize)
                     ulActualSize = ulMemberSize
