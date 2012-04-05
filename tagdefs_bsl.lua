@@ -781,7 +781,7 @@ TAG_BSL_SERFLASH_PARAMS_DATA_T = {
 	{"UINT8",   "bEraseAndPageProgOpcode",desc="Opcode for 'page erase and program'",        editor="numedit", editorParam={nBits=8, format="0x%x"}   },
 	{"UINT8",   "bReadStatusOpcode",      desc="Opcode for 'read status register'",        editor="numedit", editorParam={nBits=8, format="0x%x"}   },
 	{"UINT8",   "bStatusReadyMask",       desc="Bit mask for 'device busy'",               editor="numedit", editorParam={nBits=8, format="0x%x"}   },
-	{"UINT8",   "bStatusReadyValue",      desc="Compare value for 'device busy'",          editor="numedit", editorParam={nBits=8, format="0x%x"}   },
+	{"UINT8",   "bStatusReadyValue",      desc="XOR value for 'device busy'",              editor="numedit", editorParam={nBits=8, format="0x%x"}   },
 	
 	{"UINT8",   "bInitCmd0_length",       desc="First Init Command Length",                editor="comboedit", editorParam=INITCMD_LENGTH_VALUES}, -- editor="numedit", editorParam={nBits=8, format="0x%x"}},
 	{"bindata", "abInitCmd0",             desc="First Init Command ",              size=3, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 3, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
