@@ -1,7 +1,8 @@
 Change log for Tag List Editor
 
-Tag list editor 1.1.12561
+Tag list editor 1.1.12585
 
+ * added byte arrays to tagtool
  * added TAG_ECS_ENABLE_BOOTSTRAP 0x30009001
  * added TAG_BSL_SERFLASH_PARAMS 0x40000011
 
