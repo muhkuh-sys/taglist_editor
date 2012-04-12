@@ -240,6 +240,7 @@ Source: nxo_editor\page_taglistedit.lua; DestDir: {app}\nxo_editor; Components: 
 Source: nxo_editor\checklist_taglistedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\structedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\nxoeditor.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\tester_nextid.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\test_description.xml; DestDir: {app}\nxo_editor; Components: modulator
 
 Source: nxo_editor\nxfile.lua; DestDir: {app}\nxo_editor; Components: modulator
@@ -308,10 +309,10 @@ Name: lua_scripts; Description: Lua scripts; Types: full
 [Files]
 ;Source: "bin\lua\mmio.lua";                 DestDir: "{app}\application\lua"; Components: lua_scripts
 Source: bin\lua\muhkuh_system.lua; DestDir: {app}\application\lua; Components: lua_scripts
-Source: bin\lua\select_plugin.lua; DestDir: {app}\application\lua; Components: lua_scripts
-Source: bin\lua\plugin_handler.lua; DestDir: {app}\application\lua; Components: lua_scripts
+;Source: bin\lua\select_plugin.lua; DestDir: {app}\application\lua; Components: lua_scripts
+;Source: bin\lua\plugin_handler.lua; DestDir: {app}\application\lua; Components: lua_scripts
 ;Source: "bin\lua\serialnr.lua";             DestDir: "{app}\application\lua"; Components: lua_scripts
-Source: bin\lua\tester.lua; DestDir: {app}\application\lua; Components: lua_scripts
+;Source: bin\lua\tester.lua; DestDir: {app}\application\lua; Components: lua_scripts
 ;Source: "bin\lua\tester_multifile.lua";     DestDir: "{app}\application\lua"; Components: lua_scripts
 Source: bin\lua\utils.lua; DestDir: {app}\application\lua; Components: lua_scripts
 

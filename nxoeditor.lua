@@ -6,6 +6,7 @@
 --
 --  Changes:
 --    Date        Author        Description
+--   2012/04/12   SL        replaced tester with tester_nextid
 --   2011/05/16   SL        Fixed: changes to the file were not saved if
 --                          the file contained an empty tag list
 ---------------------------------------------------------------------------
@@ -20,7 +21,7 @@
 
 module("nxoeditor", package.seeall)
 
-require("tester")
+muhkuh.include("tester_nextid.lua", "tester")
 require("gui_stuff")
 createButton = gui_stuff.createButton
 createRadioButton = gui_stuff.createRadioButton
