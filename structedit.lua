@@ -5,7 +5,8 @@
 --   Structure editor for Taglist Editor
 --
 --  Changes:
---    Date        Author        Description
+--    Date        Author  Description
+--  2012/04/18    SL      set tab order of edit controls     
 ---------------------------------------------------------------------------
 --  
 ---------------------------------------------------------------------------
@@ -79,7 +80,6 @@ function updateMemberValues(origList, newvalues)
 	end
 	-- unless some error occurred, the newvalues list must now be empty.
 	if next(newvalues) then
-	--if #newvalues >0 then
 		for strMemberName, val in pairs(newvalues) do 
 			print("Could not update struct member: " .. strMemberName) 
 		end
@@ -179,7 +179,9 @@ function create(self, parent)
 		end
 	end
 	
-	local structSizer = doLayout(structPanel, elements, tStructDef.layout) 
+	local atEditCtrls = {}
+	local structSizer = doLayout(structPanel, elements, tStructDef.layout, atEditCtrls) 
+	setTabOrder(atEditCtrls)
 	structPanel:SetSizer(structSizer)
 	self.m_panel = structPanel
 	self.m_sizer = structSizer
@@ -205,6 +207,18 @@ function disableControl(control)
 	end
 end
 
+
+function setTabOrder(atEditCtrls)
+	local iNumCtrls = #atEditCtrls
+	local tCtrl1
+	local tCtrl2
+	for i=1, iNumCtrls-1 do
+		tCtrl1 = atEditCtrls[i]
+		tCtrl2 = atEditCtrls[i+1]
+		tCtrl2:MoveAfterInTabOrder(tCtrl1)
+	end 
+end
+
 --- Lay out the structure elements.
 -- @param parent the parent window (used for static boxes)
 -- @param elements a list containing the elements to lay out,
@@ -214,19 +228,21 @@ end
 --  "h" or "v" for a box sizer,
 --  "grid" for a grid sizer, 
 --  nil for a vertical default layout
+-- @param atEditCtrls a list to add the edit controls to
 -- @return sizer a sizer with the laid out structure elements
-function doLayout(parent, elements, layout)
-	--print("custom layout")
+function doLayout(parent, elements, layout, atEditCtrls)
 	if layout == nil then
-		return doDefaultLayout(structPanel, elements)
+		return doDefaultLayout(structPanel, elements, atEditCtrls)
 	elseif layout.sizer == "h" or layout.sizer == "v" then
-		return combineWithBoxSizer(parent, elements, layout)
+		return combineWithBoxSizer(parent, elements, layout, atEditCtrls)
 	elseif layout.sizer == "grid" then
-		return combineWithGrid(parent, elements, layout)
+		return combineWithGrid(parent, elements, layout, atEditCtrls)
 	else
 		error ("unsupported layout: " .. (layout.sizer or "?"))
 	end
 end
+
+
 
 --- Lay out elements using a box sizer.
 -- @param parent the parent window (used for static boxes)
@@ -237,8 +253,9 @@ end
 -- layout=  {sizer="v", "tIdentifier",  
 --                     {sizer="h", "tMode", "tDirection"},
 --                     {sizer="h", "tSet", "tClear", "tInput"}}
+-- @param atEditCtrls a list to add the edit controls to
 -- @return sizer
-function combineWithBoxSizer(parent, elements, layout)
+function combineWithBoxSizer(parent, elements, layout, atEditCtrls)
 	local iOrientation = layout.sizer=="v" and wx.wxVERTICAL or wx.wxHORIZONTAL
 	local sizer, esizer, element
 	if type(layout.box)=="string" then
@@ -257,12 +274,16 @@ function combineWithBoxSizer(parent, elements, layout)
 			esizer:Add(element.staticText, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxRIGHT, 3)
 			esizer:Add(element.editCtrl)
 			sizer:Add(esizer, 0, iAlignment, 3)
+			table.insert(atEditCtrls, element.editCtrl)
+			
 		elseif type(x)=="table" then
-			sizer:Add(doLayout(parent, elements, x), 0, iAlignment, 3)
+			local subsizer = doLayout(parent, elements, x, atEditCtrls)
+			sizer:Add(subsizer, 0, iAlignment, 3)
 		elseif x==nil then
 			-- do nothing
 		end
 	end
+	
 	return sizer
 end
 
@@ -277,9 +298,10 @@ end
 --  "usHWOptions_1", "usHWOptions_2", "usHWOptions_3", "usHWOptions_4",
 --  "ulLicenseFlags1", "ulLicenseFlags2", "usNetXLicenseID", "usNetXLicenseFlags"
 -- }
+-- @param atEditCtrls a list to add the edit controls to
 -- @return sizer
 
-function combineWithGrid(parent, elements, layout)
+function combineWithGrid(parent, elements, layout, atEditCtrls)
 	--print("combine as grid")
 	local rows, cols = layout.rows or 0, 2*(layout.cols or 1)
 	-- print("rows: ", rows, "cols: ", cols, "elements: ", #elements)
@@ -292,10 +314,11 @@ function combineWithGrid(parent, elements, layout)
 			element = elements[x]
 			sizer:Add(element.staticText, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALIGN_RIGHT)
 			sizer:Add(element.editCtrl, 0, wx.wxALIGN_LEFT)
+			table.insert(atEditCtrls, element.editCtrl)
 		elseif type(x)=="table" then
-			sizer:Add(doLayout(parent, elements, x))
+			local subsizer = doLayout(parent, elements, x, atEditCtrls)
+			sizer:Add(subsizer)
 		elseif x==nil then
-			-- print("nil")
 			sizer:AddSpacer(0)
 			sizer:AddSpacer(0)
 		end
@@ -311,7 +334,7 @@ function combineWithGrid(parent, elements, layout)
 end
 
 
-function doDefaultLayout(parent, elements)
+function doDefaultLayout(parent, elements, atEditCtrls)
 	local sizer = wx.wxFlexGridSizer(0, 2, 3, 3)
 	local element
 	for _, strElementName in ipairs(elements) do
@@ -320,6 +343,7 @@ function doDefaultLayout(parent, elements)
 		if isControl(element.editCtrl) then
 			sizer:Add(element.staticText, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALIGN_RIGHT)
 			sizer:Add(element.editCtrl, 0, wx.wxEXPAND + wx.wxALIGN_LEFT)
+			table.insert(atEditCtrls, element.editCtrl)
 		else
 			sizer:Add(element.staticText, 0, wx.wxALIGN_RIGHT)
 			sizer:Add(element.editCtrl, 0, wx.wxALIGN_RIGHT)
