@@ -1,11 +1,12 @@
 ---------------------------------------------------------------------------
--- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+-- Copyright (C) 2012 Hilscher Gesellschaft für Systemautomation mbH
 --
 -- Description:
 --   Hex editor component for Taglist editor
 --
 --  Changes:
 --    Date        Author        Description
+--  19 apr 2012   SL            remove cursors when focus is lost
 --  28 mar 2012   SL            added format parameters to new()
 --                              default style = no address, 16 bytes, space separator, no Ascii, single line
 ---------------------------------------------------------------------------
@@ -175,6 +176,9 @@ function OnHexKey(self, event)
 	end
 end
 
+function OnKillFocus(self, event)
+	self:removeCursors()
+end
 
 
 -- write a hex digit at the cursor position, and move the cursor one digit to the right
@@ -204,7 +208,6 @@ function writeDigit(self, nibble)
 	end
 	
 	hexCtrl:SetInsertionPoint(pos)
-	--setCursors()
 	self:moveCursor(wx.WXK_RIGHT)
 end
 
@@ -384,6 +387,21 @@ function setCursors(self, x,y)
 	--mHexCtrl:Refresh()
 end
 
+
+-- used when the control loses focus
+function removeCursors(self)
+	if self.iByteCursorPos then
+		self:removeCursor(self.iByteCursorPos, 2)
+		self.iByteCursorPos = nil
+	end
+	
+	if self.mfShowAscii and self.miCharCursorPos then
+		self:removeCursor(self.miCharCursorPos, 1)
+		self.miCharCursorPos = nil
+	end
+end
+
+-- paint a single cursor
 function paintCursor(self,iPos, iLen)
 	--print("paintCursor", iPos, iLen)
 	if not self.cursorStyle then
@@ -398,6 +416,7 @@ function paintCursor(self,iPos, iLen)
 	--print(fOk and "OK" or "fail")
 end
 
+-- remove a single cursor
 function removeCursor(self,iPos, iLen)
 	--print("removeCursor", iPos, iLen)
 	if not self.defaultStyle then
@@ -449,43 +468,39 @@ end
 
 function create(self, parent)
 	local id = tester.nextID()
+	
+	-- control is skipped by tab, tabbing out works, control does not get tab event
+	local iStyle = self.miMultiline + wx.wxTE_READONLY + wx.wxTE_RICH2
+	 
+	--local iStyle = self.miMultiline + wx.wxTE_READONLY + wx.wxTE_RICH2 + wx.wxWANTS_CHARS + wx.wxTE_PROCESS_TAB
+	
+	--local iStyle = self.miMultiline + wx.wxTE_RICH2 + wx.wxWANTS_CHARS
+	
+	--local iStyle = self.miMultiline  + wx.wxTE_PROCESS_TAB
+
+	-- control is entered by tab, tabbing out works, control does get tab event, contents can be destroyed using delete, paste works
+	--local iStyle = self.miMultiline + wx.wxTE_RICH2:
+	
+	-- control is entered by tab, tabbing out works, control does not get tab event, no blue cursor
+	--local iStyle = self.miMultiline + wx.wxTE_READONLY
+	
+	-- control is entered by tab, tabbing out works, control does get tab event, contents can be destroyed using delete, paste works
+	-- local iStyle = self.miMultiline 
+	
 	local hexCtrl = wx.wxTextCtrl(parent, id, "",
 		wx.wxDefaultPosition, wx.wxDefaultSize,
-		self.miMultiline + wx.wxTE_READONLY + wx.wxTE_RICH2)
+		iStyle)
 	hexCtrl:Connect(id, wx.wxEVT_CHAR, function (event) hexedit.OnHexKey(self, event) end)
 	hexCtrl:Connect(id, wx.wxEVT_LEFT_DOWN, function (event) hexedit.OnHexLeftDown(self, event) end)
+	hexCtrl:Connect(id, wx.wxEVT_KILL_FOCUS, function (event) hexedit.OnKillFocus(self, event) end)
 	local font = wx.wxFont(9, wx.wxFONTFAMILY_MODERN, wx.wxFONTSTYLE_NORMAL, wx.wxFONTWEIGHT_NORMAL,
 		false, "")
 	hexCtrl:SetFont(font)
-	
 	self.mPanel = parent
 	self.mHexCtrl = hexCtrl
 	return hexCtrl
 end
 
---[[
-function createPanel(self, parent)
-	local panel = wx.wxPanel(parent, wx.wxID_ANY)
-	local id = tester.nextID()
-	hexCtrl = wx.wxTextCtrl(panel, id, strInitMsg,
-		wx.wxDefaultPosition, wx.wxDefaultSize,
-		wx.wxTE_MULTILINE + wx.wxTE_READONLY + wx.wxTE_RICH2 + wx.wxHSCROLL)
-	hexCtrl:Connect(id, wx.wxEVT_CHAR, function (event) hexedit.OnHexKey(self, event) end)
-	hexCtrl:Connect(id, wx.wxEVT_LEFT_DOWN, function (event) hexedit.OnHexLeftDown(self, event) end)
-	local font = wx.wxFont(9, wx.wxFONTFAMILY_MODERN, wx.wxFONTSTYLE_NORMAL, wx.wxFONTWEIGHT_NORMAL,
-		false, "")
-	hexCtrl:SetFont(font)
-	
-	local mainSizer = wx.wxBoxSizer(wx.wxHORIZONTAL)
-	mainSizer:Add(hexCtrl, 1, wx.wxEXPAND + wx.wxALL, 3)
-	panel:SetSizer(mainSizer)
-	
-	self.mPanel = panel
-	self.mHexCtrl = hexCtrl
-	self:setDefaultStyle()
-	return panel
-end
---]]
 
 -- tEditorParams = {addrFormat="", bytesPerLine = 9, byteSeparatorChar = " ", showAscii = false, multiLine = false}
                    -- addrFormat="", bytesPerLine = 3, byteSeparatorChar = " ", showAscii = false, multiLine = false}}
