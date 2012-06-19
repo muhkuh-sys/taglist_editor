@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>RCX_TAG_IOPIN_T</Title>
+</HEAD>
+<BODY>
+<h2>IO Pin Definition</h2>
+
+<p>
+This tag defines an IO pin.
+</p>
+
+<p>
+<table border=1>
+<tr><td>Resource Type</td><td>The type of I/O (PIO, GPIO)</td></tr>
+<tr><td>Pin Number</td><td>The number of the pin</td></tr>
+<tr><td>Polarity</td><td>The polarity (normal or inverted)</td></tr>
+</table>
+</p>
+
+
+<p>
+The function of the pin and its direction (input/output) is defined by the firmware and is indicated by the identifier string:
+</p>
+
+<p>
+<table border=1>
+<tr> <th><b>Identifier </b></td>   <th><b>Direction</b></td> <th><b>Function</b></td>                       </tr>
+<tr> <td>Ready</td>                <td>Output</td>           <td>Indicates if the device is ready</td>        </tr>
+<tr> <td>Start/Stop Com</td>       <td>Input</td>            <td>Tells the device to start or stop communication </td>             </tr>
+</table>
+</p>
+
+</BODY>
+</HTML>

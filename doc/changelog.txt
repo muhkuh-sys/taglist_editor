@@ -1,5 +1,7 @@
 Change log for Tag List Editor
 
+ * added RCX_TAG_IOPIN 0x00001041
+
 Tag list editor 1.1.12585
 
  * added byte arrays to tagtool
