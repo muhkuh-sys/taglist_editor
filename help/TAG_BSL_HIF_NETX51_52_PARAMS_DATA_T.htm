@@ -1,0 +1,4199 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_HIF_NETX51_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>netX 51/52 HIF/DPM Parameters</h2>
+<a name="top"></a>
+<p>
+DPM parameters for netX51/52 can be set using this tag.
+If no parameters are given the 2nd Stage Loader will use the default settings.
+</p>
+<p></p>
+
+
+
+
+<table border=1>
+<tr>
+    <td>Bus Type </td>
+    <td>The external bus type: Auto, DPM or Disabled.<br>
+    Devices based on netX 52 can use either the parallel host interface or SDRAM.
+    By default, the host interface is enabled and the use of SDRAM is disabled.
+    In order to activate the SDRAM interface, set Bus Type to Disabled.
+     </td>
+</tr>
+<tr>
+    <td>I/O Configuration </td>
+    <td>Register <a href="#hif_io_ctrl_hif_io_cfg">hif_io_cfg</a> </td>
+</tr>
+<tr>
+    <td>DPM Configuration Register 0 </td>
+    <td>Register <a href="#dpm_dpm_cfg0x0">dpm_cfg0x0</a> </td>
+</tr>
+<tr>
+    <td>DPM Interface Configuration </td>
+    <td>Register <a href="#dpm_dpm_if_cfg">dpm_if_cfg</a> </td>
+</tr>
+<tr>
+    <td>DPM PIO Configuration 0 </td>
+    <td>Register <a href="#dpm_dpm_pio_cfg0">dpm_pio_cfg0</a> </td>
+</tr>
+<tr>
+    <td>DPM PIO Configuration 1 </td>
+    <td>Register <a href="#dpm_dpm_pio_cfg1">dpm_pio_cfg1</a> </td>
+</tr>
+<tr>
+    <td>DPM Address </td>
+    <td>Register <a href="#dpm_dpm_addr_cfg">dpm_addr_cfg</a> </td>
+</tr>
+<tr>
+    <td>DPM Timing </td>
+    <td>Register <a href="#dpm_dpm_timing_cfg">dpm_timing_cfg</a> </td>
+</tr>
+<tr>
+    <td>DPM Ready Configuration </td>
+    <td>Register <a href="#dpm_dpm_rdy_cfg">dpm_rdy_cfg</a> </td>
+</tr>
+<tr>
+    <td>DPM I/O Configuration </td>
+    <td>Register <a href="#dpm_dpm_misc_cfg">dpm_misc_cfg</a> </td>
+</tr>
+<tr>
+    <td>Miscellaneous DPM I/O Configuration </td>
+    <td>Register <a href="#dpm_dpm_io_cfg_misc">dpm_io_cfg_misc</a> </td>
+</tr>
+</table>
+
+
+ 
+
+
+ 
+ 
+ 
+ 
+  
+
+ 
+ 
+
+ 
+ <a name="hif_io_ctrl_hif_io_cfg" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>hif_io_cfg</b></font><br><font size="-2">(NETX_IO_CFG)</font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> IO Config Register:<br>
+       Selects of HIF pin multiplexing.<br>
+       See pin table in the netX51 Technical Reference Guide for details.<br>
+       This configuration must be set up according to external netX connection before any access to external logic.<br>
+       This register is protected by the netX access key mechanism; changing this register is only possible by the following sequence:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 1.:  </td>
+       <td valign="top"> read out access key from ACCESS_KEY register (ASIC_CTRL address area)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 2.:  </td>
+       <td valign="top"> write back access key to ACCESS_KEY register (ASIC_CTRL address area)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 3.:  </td>
+       <td valign="top"> write desired value to this register (ASIC_CTRL address area)  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Attention: Be very careful programming this register. False settings may cause permanent damage to netX or devices connected to HIF-IOs.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c540
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31 </td>
+   <td>"0" </td>
+   <td>netx50_io_comp_ro </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Status (read-only) of current netx50-IO-compatibility setting.<br>
+       netX50 compatibility setting basically protects netX51/52 IOs HIF_AHI0 and HIF_AHI1 when used for netX50-drop-in-replacement of existing netX50 designs. False programming could cause permanent damage to netX51/52.<br>
+       State of net50 IO comptibility setting affects HIF IO signal mapping. IO compatibility setting can be changed inside 'misc_asic_ctrl' register of ASIC_CTRL address area. For further details view 'misc_asic_ctrl' register description.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>30-26  </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>25 </td>
+   <td>"0" </td>
+   <td>en_hif_wdg_sys_hif_d19 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Enable 'wdg_active'/'WDGACT'-signal of netx system watchdog on HIF_D19.<br>
+       When this bit is set HIF_D19 will be set to output mode and provide watchdog-active signal. However this will have no effect when HIF_D19 is used for another function. For parallel DPM with watchdog HIF_D19 must be set to PIO mode inside DPM module.<br>
+       Note: netX system watch can be programmed inside address area 'WATCHDOG'/'NETX_WDG_AREA'.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>24 </td>
+   <td>"1" </td>
+   <td>en_hif_rdy_pio_mi </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Enable HIF_RDY for PIO usage.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> This bit must be disabled if HIF_RDY is used as EXT_BUS RDY (extension bus ready input).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> This bit is ignored if HIF is DPM. Use DPM RDY configuration if HIF_RDY should<br>be used as PIO together with DPM functionallity.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>23-12 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>11-8 </td>
+   <td>"0000" </td>
+   <td>sel_hif_a_width </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Select HIF MI address width.<br>
+       Selecting smaller address bus width will allow PIO usage on related IOs when not used otherwise (e.g. as SDRAM control signals, see en_hif_sdram_mi). HIF-MI address lines above A15 are shared on high data lines. They are only available when hif_mi_cfg is set for 8 or 16 bit data MI, not for 32 bit data interface. Additionally address signal mapping depends on programmed netX50 compatibility setting (netx50_io_comp_ro):netX50b IOs HIF_AHI0,1 are not available in netX50 compatibility mode.<br>
+       Following settings are valid for all modes:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top">   </td>
+       <td valign="top"> Lines  </td>
+       <td valign="top"> Range  </td>
+       <td valign="top"> netX50b IOs  </td>
+       <td valign="top"> Function  </td>
+       <td valign="top"> Comment  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0000:  </td>
+       <td valign="top"> 11  </td>
+       <td valign="top"> 2k  </td>
+       <td valign="top"> HIF_A0..10  </td>
+       <td valign="top"> A0..A10  </td>
+       <td valign="top"> ext_a0..ext_a10  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0001:  </td>
+       <td valign="top"> 12  </td>
+       <td valign="top"> 4k  </td>
+       <td valign="top"> HIF_A0..11  </td>
+       <td valign="top"> A0..A11  </td>
+       <td valign="top"> + ext_a11  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0010:  </td>
+       <td valign="top"> 13  </td>
+       <td valign="top"> 8k  </td>
+       <td valign="top"> HIF_A0..12  </td>
+       <td valign="top"> A0..A12  </td>
+       <td valign="top"> + ext_a12  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0011:  </td>
+       <td valign="top"> 14  </td>
+       <td valign="top"> 16k  </td>
+       <td valign="top"> HIF_A0..13  </td>
+       <td valign="top"> A0..A13  </td>
+       <td valign="top"> + ext_a13  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0100:  </td>
+       <td valign="top"> 15  </td>
+       <td valign="top"> 32k  </td>
+       <td valign="top"> HIF_A0..14  </td>
+       <td valign="top"> A0..A14  </td>
+       <td valign="top"> + ext_a14  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0101:  </td>
+       <td valign="top"> 16  </td>
+       <td valign="top"> 64k  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top"> + ext_a15  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Following settings are only for 32 bit data when netX50 compatibility is disabled (A0,1 are rather byte-enable signals BE0 and BE2 than address lines here):  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top">   </td>
+       <td valign="top"> Lines  </td>
+       <td valign="top"> Range  </td>
+       <td valign="top"> netX50b IOs  </td>
+       <td valign="top"> Function  </td>
+       <td valign="top"> Comment  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0110:  </td>
+       <td valign="top"> 17  </td>
+       <td valign="top"> 128k  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top"> ext_a0..ext_a15  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_AHI0  </td>
+       <td valign="top"> A16  </td>
+       <td valign="top"> + ext_a16_d32  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0111:  </td>
+       <td valign="top"> 18  </td>
+       <td valign="top"> 256k  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_AHI0,1  </td>
+       <td valign="top"> A16,A17  </td>
+       <td valign="top"> + ext_a17_d32  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Following settings are valid for all 8 or 16 bit data modes but not for 32 bit data and do not depend on netX50 compatibility setting:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top">   </td>
+       <td valign="top"> Lines  </td>
+       <td valign="top"> Range  </td>
+       <td valign="top"> netX50b IOs  </td>
+       <td valign="top"> Function  </td>
+       <td valign="top"> Comment  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0110:  </td>
+       <td valign="top"> 17  </td>
+       <td valign="top"> 128k  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top"> ext_a0..ext_a15  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20  </td>
+       <td valign="top"> A16  </td>
+       <td valign="top"> + ext_a16  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0111:  </td>
+       <td valign="top"> 18  </td>
+       <td valign="top"> 256k  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20,21  </td>
+       <td valign="top"> A16,A17  </td>
+       <td valign="top"> + ext_a17  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1000:  </td>
+       <td valign="top"> 19  </td>
+       <td valign="top"> 512k  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..22  </td>
+       <td valign="top"> A16..18  </td>
+       <td valign="top"> + ext_a18  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1001:  </td>
+       <td valign="top"> 20  </td>
+       <td valign="top"> 1M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..23  </td>
+       <td valign="top"> A16..19  </td>
+       <td valign="top"> + ext_a19  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1010:  </td>
+       <td valign="top"> 21  </td>
+       <td valign="top"> 2M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..24  </td>
+       <td valign="top"> A16..20  </td>
+       <td valign="top"> + ext_a20  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1011:  </td>
+       <td valign="top"> 22  </td>
+       <td valign="top"> 4M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..25  </td>
+       <td valign="top"> A16..21  </td>
+       <td valign="top"> + ext_a21  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Following settings are valid for 8 or 16 bit data mode when netX50-compatibility is activated:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top">   </td>
+       <td valign="top"> Lines  </td>
+       <td valign="top"> Range  </td>
+       <td valign="top"> netX50b IOs  </td>
+       <td valign="top"> Function  </td>
+       <td valign="top"> Comment  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1100:  </td>
+       <td valign="top"> 23  </td>
+       <td valign="top"> 8M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top"> ext_a0..ext_a15  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..25  </td>
+       <td valign="top"> A16..21  </td>
+       <td valign="top"> ext_a16..ext_a21  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D26  </td>
+       <td valign="top"> A22  </td>
+       <td valign="top"> + ext_a22_nx50  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1101:  </td>
+       <td valign="top"> 24  </td>
+       <td valign="top"> 16M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..25  </td>
+       <td valign="top"> A16..21  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D26,27  </td>
+       <td valign="top"> A22,A23  </td>
+       <td valign="top"> + ext_a23_nx50  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1110:  </td>
+       <td valign="top"> 25  </td>
+       <td valign="top"> 32M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..25  </td>
+       <td valign="top"> A16..21  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D26,27  </td>
+       <td valign="top"> A22,A23  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D18  </td>
+       <td valign="top"> A24  </td>
+       <td valign="top"> + ext_a24_nx50  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Following settings are valid for 8 or 16 bit data mode when not in netX50-compatibility mode:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top">   </td>
+       <td valign="top"> Lines  </td>
+       <td valign="top"> Range  </td>
+       <td valign="top"> netX50b IOs  </td>
+       <td valign="top"> Function  </td>
+       <td valign="top"> Comment  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1100:  </td>
+       <td valign="top"> 23  </td>
+       <td valign="top"> 8M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top"> ext_a0..ext_a15  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..25  </td>
+       <td valign="top"> A16..21  </td>
+       <td valign="top"> ext_a16..ext_a21  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_AHI0  </td>
+       <td valign="top"> A22  </td>
+       <td valign="top"> + ext_a22  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1101:  </td>
+       <td valign="top"> 24  </td>
+       <td valign="top"> 16M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..25  </td>
+       <td valign="top"> A16..21  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_AHI0,1  </td>
+       <td valign="top"> A22,A23  </td>
+       <td valign="top"> + ext_a23  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1110:  </td>
+       <td valign="top"> 25  </td>
+       <td valign="top"> 32M  </td>
+       <td valign="top"> HIF_A0..15  </td>
+       <td valign="top"> A0..A15  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_D20..25  </td>
+       <td valign="top"> A16..21  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_AHI0,1  </td>
+       <td valign="top"> A22,A23  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> HIF_BHE3  </td>
+       <td valign="top"> A24  </td>
+       <td valign="top"> + ext_a24  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> CS3 and A24 are shared on HIF_BHE3 when not in netX50-compatibility mode. CS3 must be disabled when A24 shall be used. If CS3 shall be used, A24 must not be used (i.e. 1110 is forbidden) and HIF_BHE3 must be programmed as high driven output by PIO registers additionally (to ensure inactive signal state when CS3 is used as chip-select but not enabled by software yet).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> To use high HIF_D lines as PIOs, select non-32bit HIF MI (hif_mi_cfg) and limit address width here.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> When 'en_hif_sdram_mi' bit is set, HIF_A13..15 and HIF_AHI0,1 are not available as PIOs even if according bits are set here. They are used for SDRAM controlling.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> For parallel DPM, address line PIO usage depends on programmed DPM address range (config inside area DPM).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> To use all address lines as PIOs, MI function can be disabled (set 'hif_mi_cfg' to '11').  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>7 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>6 </td>
+   <td>"0" </td>
+   <td>en_hif_sdram_mi </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Enable HIF IOs for SDRAM Memory Interface configuration.<br>
+       The netX50 compatibility mode must be disable before SDRAM can be used on HIF IOs.<br>
+       HIF-SDRAM Chip-Select is generated on HIF_CS0N when this bit is set. ExtBus Chip-Select area 0 is not available then. Ready-Signal for ExtBus is never available when SDRAM is enabled here.<br>
+       If enabled following IOs are used as outputs for SDRAM (netX51/52, partial shared with SRAM/FLASH ctrl signals):  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> netX51/52 IO  </td>
+       <td valign="top"> Function  </td>
+       <td valign="top"> Comment  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A0..12  </td>
+       <td valign="top"> SD_A0..12  </td>
+       <td valign="top"> Shared SDRAM/FLASH/SRAM address lines, small SDRAM devices do not need all lines.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D0..31  </td>
+       <td valign="top"> SD_D0..31  </td>
+       <td valign="top"> Shared SDRAM/FLASH/SRAM data lines. Detailed data signal mapping depends  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> on selected data width. View table at hif_mi_cfg for details.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A14  </td>
+       <td valign="top"> SD_BA0  </td>
+       <td valign="top"> Only during SDRAM access, usable as FLASH/SRAM A14 simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A15  </td>
+       <td valign="top"> SD_BA1  </td>
+       <td valign="top"> Only during SDRAM access, usable as FLASH/SRAM A15 simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_AHI0  </td>
+       <td valign="top"> SD_RASN  </td>
+       <td valign="top"> Only during SDRAM access, usable as FLASH/SRAM A16 simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_AHI1  </td>
+       <td valign="top"> SD_CASN  </td>
+       <td valign="top"> Only during SDRAM access, usable as FLASH/SRAM A17 simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A13  </td>
+       <td valign="top"> SD_DQM0N  </td>
+       <td valign="top"> Only during SDRAM access, usable as FLASH/SRAM A13 simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_BHE1  </td>
+       <td valign="top"> SD_DQM1N  </td>
+       <td valign="top"> Only during SDRAM access, usable as FLASH/SRAM BHE1 simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_RDN  </td>
+       <td valign="top"> SD_DQM2N  </td>
+       <td valign="top"> Only for 32bit data during SDRAM access, usable as FLASH/SRAM nRD simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_BHE3  </td>
+       <td valign="top"> SD_DQM3N  </td>
+       <td valign="top"> Only for 32bit data during SDRAM access, usable as FLASH/SRAM BHE3 simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_WRN  </td>
+       <td valign="top"> SD_WEN  </td>
+       <td valign="top"> Only during SDRAM access, usable as FLASH/SRAM nWR simultaneously.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_CS0N  </td>
+       <td valign="top"> SD_CSN  </td>
+       <td valign="top"> ExtBus CS0 not available  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_RDY  </td>
+       <td valign="top"> SD_CKE  </td>
+       <td valign="top"> ExtBus Ready never available when SDRAM enabled  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_SDCLK  </td>
+       <td valign="top"> SD_CLK  </td>
+       <td valign="top"> HIF SDRAM clock  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> For SDRAM usage, 'hif_mi_cfg' must be configured for 16 or 32 bit MI. SDRAM is not available when set to 8bit MI.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> HIF_A lines used for SDRAM will always be driven when this bit is set. This does not depend on programmed value of 'sel_hif_a_width' bit field. However 'sel_hif_a_width' must be set wide enough for SDRAM row and column addressing (depending on used SDRAM device).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>5-4 </td>
+   <td>"11" </td>
+   <td>hif_mi_cfg </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Global HIF IO Memory Interface usage configuration.<br>
+       Extensionbus/HIF-Memory-Interface and must be enabled and data width selected here before memory devices like SRAM/FLASH/SDRAM-lite can be used on HIF.<br>
+       Settings:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 00:  </td>
+       <td valign="top"> HIF IOs are used as 8 bit MI.<br>
+       Used HIF IOs: HIF_D7..0, HIF_A10..0, HIF_RDN, HIF_WRN.<br>
+       Other HIF IOs can be used as PIOs, serial DPM or Ethernet MAC simultaneously. <br>
+       SDRAM function is not available as SDRAM always requires 16 or 32 data lines.<br>
+       Up to 4 Chip-Selects are provided (they are PIO by default, view notes): Ready (HIF_RDY) and IRQ (HIF_DIRQ) input can be used optionally.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01:  </td>
+       <td valign="top"> HIF IOs are used as 16 bit MI (together with serial DPM possible).<br>
+       Used HIF IOs: Same as in 8 bit mode (setting '00') plus D15..8 and HIF_BHE1. <br>
+       However location of data line 8 to 15 depends on setting of netX50 compatibility (view table above).<br>
+       SDRAM function is available when netX50 compatibility is disabled.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 10:  </td>
+       <td valign="top"> HIF IOs are used as 32 bit MI (no DPM and no Ethernet possible).<br>
+       Used HIF IOs: HIF_D31..0, HIF_A10..0, HIF_RDN, HIF_WRN, HIF_BHE1, HIF_BHE3. All others can be used as PIOs.<br>
+       Only 2 Chip-Selects are provided in 32bit data mode (CS2 and CS3 are not available):<br>
+       CS0: HIF_CS0N (SDRAM or ExtBus CS0)<br>
+       CS1: HIF_DIRQ (ExtBus CS1)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 11:  </td>
+       <td valign="top"> No MI usage. HIF IOs can be used as PIOs or for parallel DPM.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> HIF Extension-bus signal mapping for SRAM/FLASH or SDRAM function depends on current netX50-compatibility setting and data width selection of this bit-field:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> netX51/52 IO  </td>
+       <td valign="top"> 8 bit data  </td>
+       <td valign="top"> 16 bit data  </td>
+       <td valign="top"> 8 bit data  </td>
+       <td valign="top"> 16 bit data  </td>
+       <td valign="top"> SDRAM  </td>
+       <td valign="top"> 32 bit data  </td>
+       <td valign="top"> SDRAM  </td>
+       <td valign="top"> comment  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top"> netX50 comp.  </td>
+       <td valign="top"> netX50 comp.  </td>
+       <td valign="top"> not netX50  </td>
+       <td valign="top"> not netX50  </td>
+       <td valign="top"> 16bit  </td>
+       <td valign="top"> not netX50.  </td>
+       <td valign="top"> 32bit  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A0  </td>
+       <td valign="top"> A0  </td>
+       <td valign="top"> BE0/A0  </td>
+       <td valign="top"> A0  </td>
+       <td valign="top"> BE0/A0  </td>
+       <td valign="top"> A0  </td>
+       <td valign="top"> BE0  </td>
+       <td valign="top"> A0  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A1  </td>
+       <td valign="top"> A1  </td>
+       <td valign="top"> A1  </td>
+       <td valign="top"> A1  </td>
+       <td valign="top"> A1  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> BE2  </td>
+       <td valign="top"> A1  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A2  </td>
+       <td valign="top"> A2  </td>
+       <td valign="top"> A2  </td>
+       <td valign="top"> A2  </td>
+       <td valign="top"> A2  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A2  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A3  </td>
+       <td valign="top"> A3  </td>
+       <td valign="top"> A3  </td>
+       <td valign="top"> A3  </td>
+       <td valign="top"> A3  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A3  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A4  </td>
+       <td valign="top"> A4  </td>
+       <td valign="top"> A4  </td>
+       <td valign="top"> A4  </td>
+       <td valign="top"> A4  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A4  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A5  </td>
+       <td valign="top"> A5  </td>
+       <td valign="top"> A5  </td>
+       <td valign="top"> A5  </td>
+       <td valign="top"> A5  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A5  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A6  </td>
+       <td valign="top"> A6  </td>
+       <td valign="top"> A6  </td>
+       <td valign="top"> A6  </td>
+       <td valign="top"> A6  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A6  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A7  </td>
+       <td valign="top"> A7  </td>
+       <td valign="top"> A7  </td>
+       <td valign="top"> A7  </td>
+       <td valign="top"> A7  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A7  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A8  </td>
+       <td valign="top"> A8  </td>
+       <td valign="top"> A8  </td>
+       <td valign="top"> A8  </td>
+       <td valign="top"> A8  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A8  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A9  </td>
+       <td valign="top"> A9  </td>
+       <td valign="top"> A9  </td>
+       <td valign="top"> A9  </td>
+       <td valign="top"> A9  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A9  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A10  </td>
+       <td valign="top"> A10  </td>
+       <td valign="top"> A10  </td>
+       <td valign="top"> A10  </td>
+       <td valign="top"> A10  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A10  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A11  </td>
+       <td valign="top"> A11  </td>
+       <td valign="top"> A11  </td>
+       <td valign="top"> A11  </td>
+       <td valign="top"> A11  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> A11  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A12  </td>
+       <td valign="top"> (n2)A12  </td>
+       <td valign="top"> (n2)A12  </td>
+       <td valign="top"> (n2)A12  </td>
+       <td valign="top"> (n2)A12  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n2)A12  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A13  </td>
+       <td valign="top"> (n2)A13  </td>
+       <td valign="top"> (n2)A13  </td>
+       <td valign="top"> (n2)A13  </td>
+       <td valign="top"> (n2)A13  </td>
+       <td valign="top"> DQM0  </td>
+       <td valign="top"> (n2)A13  </td>
+       <td valign="top"> DQM0  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A14  </td>
+       <td valign="top"> (n2)A14  </td>
+       <td valign="top"> (n2)A14  </td>
+       <td valign="top"> (n2)A14  </td>
+       <td valign="top"> (n2)A14  </td>
+       <td valign="top"> BA0  </td>
+       <td valign="top"> (n2)A14  </td>
+       <td valign="top"> BA0  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_A15  </td>
+       <td valign="top"> (n2)A15  </td>
+       <td valign="top"> (n2)A15  </td>
+       <td valign="top"> (n2)A15  </td>
+       <td valign="top"> (n2)A15  </td>
+       <td valign="top"> BA1  </td>
+       <td valign="top"> (n2)A15  </td>
+       <td valign="top"> BA1  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_AHI0  </td>
+       <td valign="top"> -  </td>
+       <td valign="top"> -  </td>
+       <td valign="top"> A22  </td>
+       <td valign="top"> A22  </td>
+       <td valign="top"> RAS  </td>
+       <td valign="top"> A16  </td>
+       <td valign="top"> RAS  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_AHI1  </td>
+       <td valign="top"> -  </td>
+       <td valign="top"> -  </td>
+       <td valign="top"> A23  </td>
+       <td valign="top"> A23  </td>
+       <td valign="top"> CAS  </td>
+       <td valign="top"> A17  </td>
+       <td valign="top"> CAS  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D0  </td>
+       <td valign="top"> D0  </td>
+       <td valign="top"> D0  </td>
+       <td valign="top"> D0  </td>
+       <td valign="top"> D0  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D0  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D1  </td>
+       <td valign="top"> D1  </td>
+       <td valign="top"> D1  </td>
+       <td valign="top"> D1  </td>
+       <td valign="top"> D1  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D1  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D2  </td>
+       <td valign="top"> D2  </td>
+       <td valign="top"> D2  </td>
+       <td valign="top"> D2  </td>
+       <td valign="top"> D2  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D2  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D3  </td>
+       <td valign="top"> D3  </td>
+       <td valign="top"> D3  </td>
+       <td valign="top"> D3  </td>
+       <td valign="top"> D3  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D3  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D4  </td>
+       <td valign="top"> D4  </td>
+       <td valign="top"> D4  </td>
+       <td valign="top"> D4  </td>
+       <td valign="top"> D4  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D4  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D5  </td>
+       <td valign="top"> D5  </td>
+       <td valign="top"> D5  </td>
+       <td valign="top"> D5  </td>
+       <td valign="top"> D5  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D5  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D6  </td>
+       <td valign="top"> D6  </td>
+       <td valign="top"> D6  </td>
+       <td valign="top"> D6  </td>
+       <td valign="top"> D6  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D6  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D7  </td>
+       <td valign="top"> D7  </td>
+       <td valign="top"> D7  </td>
+       <td valign="top"> D7  </td>
+       <td valign="top"> D7  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D7  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D8  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D8  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D16  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D9  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D9  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D17  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D10  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D10  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D18  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D11  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D11  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D19  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D12  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D12  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D26  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D13  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D13  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D27  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D14  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D14  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D30  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D15  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D15  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top"> (n1)  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D31  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D16  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> D8  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D8  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D17  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> D9  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D9  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D18  </td>
+       <td valign="top"> (n2)A24  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> D10  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D10  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D19  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> D11  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D11  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D20  </td>
+       <td valign="top"> (n2)A16  </td>
+       <td valign="top"> (n2)A16  </td>
+       <td valign="top"> (n2)A16  </td>
+       <td valign="top"> (n2)A16  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D20  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D21  </td>
+       <td valign="top"> (n2)A17  </td>
+       <td valign="top"> (n2)A17  </td>
+       <td valign="top"> (n2)A17  </td>
+       <td valign="top"> (n2)A17  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D21  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D22  </td>
+       <td valign="top"> (n2)A18  </td>
+       <td valign="top"> (n2)A18  </td>
+       <td valign="top"> (n2)A18  </td>
+       <td valign="top"> (n2)A18  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D22  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D23  </td>
+       <td valign="top"> (n2)A19  </td>
+       <td valign="top"> (n2)A19  </td>
+       <td valign="top"> (n2)A19  </td>
+       <td valign="top"> (n2)A19  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D23  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D24  </td>
+       <td valign="top"> (n2)A20  </td>
+       <td valign="top"> (n2)A20  </td>
+       <td valign="top"> (n2)A20  </td>
+       <td valign="top"> (n2)A20  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D24  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D25  </td>
+       <td valign="top"> (n2)A21  </td>
+       <td valign="top"> (n2)A21  </td>
+       <td valign="top"> (n2)A21  </td>
+       <td valign="top"> (n2)A21  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D25  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D26  </td>
+       <td valign="top"> (n2)A22  </td>
+       <td valign="top"> (n2)A22  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D12  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D12  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D27  </td>
+       <td valign="top"> (n2)A23  </td>
+       <td valign="top"> (n2)A23  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D13  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D13  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D28  </td>
+       <td valign="top"> CS2  </td>
+       <td valign="top"> CS2  </td>
+       <td valign="top"> CS2  </td>
+       <td valign="top"> CS2  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D28  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D29  </td>
+       <td valign="top"> CS1  </td>
+       <td valign="top"> CS1  </td>
+       <td valign="top"> CS1  </td>
+       <td valign="top"> CS1  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D29  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D30  </td>
+       <td valign="top"> CS3  </td>
+       <td valign="top"> CS3  </td>
+       <td valign="top">   </td>
+       <td valign="top"> D14  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D14  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_D31  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> D15  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> D15  </td>
+       <td valign="top"> (n4)  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_BHE1  </td>
+       <td valign="top">   </td>
+       <td valign="top"> BHE/BE1  </td>
+       <td valign="top">   </td>
+       <td valign="top"> BHE/BE1  </td>
+       <td valign="top"> DQM1  </td>
+       <td valign="top"> BHE/BE1  </td>
+       <td valign="top"> DQM1  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_BHE3  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> (n6)A24/CS3  </td>
+       <td valign="top"> (n6)A24/CS3  </td>
+       <td valign="top">   </td>
+       <td valign="top"> BE3  </td>
+       <td valign="top"> DQM3  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_CSN  </td>
+       <td valign="top"> CS0  </td>
+       <td valign="top"> CS0  </td>
+       <td valign="top"> CS0  </td>
+       <td valign="top"> CS0  </td>
+       <td valign="top"> CSN  </td>
+       <td valign="top"> CS0  </td>
+       <td valign="top"> CSN  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_RDN  </td>
+       <td valign="top"> RDN  </td>
+       <td valign="top"> RDN  </td>
+       <td valign="top"> RDN  </td>
+       <td valign="top"> RDN  </td>
+       <td valign="top">   </td>
+       <td valign="top"> RDN  </td>
+       <td valign="top"> DQM2  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_WRN  </td>
+       <td valign="top"> WRN  </td>
+       <td valign="top"> WRN  </td>
+       <td valign="top"> WRN  </td>
+       <td valign="top"> WRN  </td>
+       <td valign="top"> WEN  </td>
+       <td valign="top"> WRN  </td>
+       <td valign="top"> WEN  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_RDY  </td>
+       <td valign="top"> (n2)RDY  </td>
+       <td valign="top"> (n2)RDY  </td>
+       <td valign="top"> (n2)RDY  </td>
+       <td valign="top"> (n2)RDY  </td>
+       <td valign="top"> CKE  </td>
+       <td valign="top"> (n2)RDY  </td>
+       <td valign="top"> CKE  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_DIRQ  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> CS1  </td>
+       <td valign="top">   </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> HIF_SDCLK  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> CLK  </td>
+       <td valign="top">   </td>
+       <td valign="top"> CLK  </td>
+       <td valign="top"> (n3)  </td>
+      </tr>
+      
+      <!-- tr>
+       <td valign="top"> <hr noshade> 
+                         Comment </td>
+       <td valign="top"> <hr noshade> 
+                         Should only be used for netX50 drop-in-re- placement  </td>
+       <td valign="top"> <hr noshade> 
+                         Should only be used for netX50 drop-in-re- placement. <br>
+                         Byte address  </td>
+       <td valign="top"> <hr noshade> 
+                         sDPM, MMIO or HIF-ETH can be used with this </td>
+       <td valign="top"> <hr noshade> 
+                         sDPM, MMIO or HIF-ETH can be used with this. <br> 
+                         Byte address  </td>
+       <td valign="top"> <hr noshade> 
+                         word addr., no RDY </td>
+       <td valign="top"> <hr noshade> 
+                         all IOs used, no sDPM, no MMIO, no ETH. <br>
+                         Byte address only. <br>
+                         2 CS  </td>
+       <td valign="top"> <hr noshade> 
+                         word address<br>
+                         no RDY </td>
+       <td valign="top"> <hr noshade> 
+                         </td>
+      </tr -->
+     </tbody></table>
+
+                              
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 
+       Table Notes:<br>
+       (n1): IOs could be used for serial DPM, MMIO or as part of HIF-Ethernet MAC in current mode.<br>
+       (n2): Optional, (depends on further configuration, e.g. 'sel_hif_a_width' bit-field).<br>
+       (n3): Attention: Mapping of data-lines is reorderd and does not match Naming of HIF_D IOs.<br>
+       (n4): for SDRAM same function like '16 bit data not netX50' column.<br>
+       (n5): for SDRAM same function like '32 bit data not netX50' column.<br>
+       (n6): Must be configured for one of these functions. Not possible at the same time.<br>  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody>
+       <tr> <th valign="top"> Configuration            </th> <th valign="top"> Comment </th> </tr>
+       <tr> <td valign="top"> 8 bit data  netX50 comp. </td> <td valign="top"> Should only be used for netX50 drop-in replacement. </td> </tr>
+       <tr> <td valign="top"> 16 bit data netX50 comp. </td> <td valign="top"> Should only be used for netX50 drop-in replacement. <br> 
+                                                                               Byte address </td> </tr>
+       <tr> <td valign="top"> 8 bit data  not netX50   </td> <td valign="top"> sDPM, MMIO or HIF-ETH can be used with this. </td> </tr>
+       <tr> <td valign="top"> 16 bit data not netX50   </td> <td valign="top"> sDPM, MMIO or HIF-ETH can be used with this. <br> 
+                                                                               Byte address </td> </tr>
+       <tr> <td valign="top"> SDRAM       16bit        </td> <td valign="top"> Word address, no RDY </td> </tr>
+       <tr> <td valign="top"> 32 bit data not netX50.  </td> <td valign="top"> All IOs used, no sDPM, no MMIO, no ETH. <br>
+                                                                               Byte address <br>
+                                                                               Only 2 CS  </td> </tr>
+       <tr> <td valign="top"> SDRAM       32bit        </td> <td valign="top"> Word address<br>
+                                                                               No RDY </td> </tr>
+     </tbody></table>
+     
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> When netX50 compatible, 8 and 16 bit devices can be shared.<br>
+                         When not netX50 compatible, 8 and 16 and 32 bit devices can be shared.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Configuration of single SRAM/FLASH Chip-Select usage must be done additionally in HIF related ASYNCMEM_CTRL address area. By default, all Chip-Selects are disabled and available for PIO usage. If any external memory is used, Chip-Select configuration must be done before the first access to external memory. Otherwise netX or memory devices could be damaged. In HIF related ASYNCMEM_CTRL no data width must be configured which exceeds globally enabled data width of this bit-field.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> If upper address lines above HIF_A10 are not used as PIOs, this must be configured in bits 'sel_hif_a_width'.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> If HIF is configured as parallel DPM ('sel_hif_dpm' set and 'sel_dpm_serial' not set), HIF IOs are not available for Memory Interface usage and programmed value of 'hif_mi_cfg'-bits is ignored.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> If HIF is configured as serial DPM ('sel_hif_dpm' set and 'sel_dpm_serial' set), HIF IOs are not available for 32 bit Memory Interface. Programmed value '10' will be ignored in this case.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> SDRAM Chip-Select is multiplext with SRAM/FLASH Chip-Select 0 on HIF_CSN. If 'en_hif_sdram_mi' is set and SRAM/FLASH Chip-Select 0 enabled in HIF related ASYNCMEM_CTRL address area, SDRAM Chip-Select gains priority and SRAM/FLASH Chip-Select 0 will not be available.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>3 </td>
+   <td>"0" </td>
+   <td>sel_dpm_serial_spo </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> select serial DPM mode SPI clock polarity (sel_hif_dpm and sel_dpm_serial must be set).  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> Serial clock idle state is low.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> Serial clock idle state is high.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>2 </td>
+   <td>"0" </td>
+   <td>sel_dpm_serial_sph </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> select serial DPM mode SPI clock phase (sel_hif_dpm and sel_dpm_serial must be set).  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> Serial data sampling on first serial clock edge.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> Serial data sampling on second serial clock edge.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>1 </td>
+   <td>"0" </td>
+   <td>sel_dpm_serial </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Select serial (SPI) DPM mode (ignored if sel_hif_dpm not set).  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Serial DPM is mapped to HIF_D8..11 with optional IRQs on HIF_D12..15. It can be used together with 8 or 16 bit Memory Interface or Ethernet on HIF IOs but not with 32bit HIF MI (hif_mi_cfg) or HIF-MMIOs (serial DPM: MMIO40..43, serial DPM IRQs: MMIO44, 45). PIO usage of HIF_D12..15 is configured inside DPM 'dpm_pio_cfg' registers. PIO function of all other HIF IOs result from other bit fields of 'hif_io_cfg' register.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> For serial DPM host IRQs can be generated on HIF_D30 and HIF_D31 IOs.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>0 </td>
+   <td>"0" </td>
+   <td>sel_hif_dpm </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> select HIF pins for DPM  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> For parallel DPM IO configuration use config registers in address area DPM.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> Parallel DPM fast/service IRQ functionallity (SIRQ/FIQ) on HIF_SDCLK is controlled by en_hif_sdram_mi bit  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> For parallel DPM host IRQs can be generated on HIF_DIRQ and HIF_SDCLK IOs.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:  </td>
+       <td valign="top"> For parallel DPM HIF PIO function muse be configured inside 'dpm_pio_cfg' registers for all HIF IOs.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+ </tbody></table>
+ <br>
+ 
+ 
+ 
+  
+  
+
+ 
+  
+ 
+  
+ <a name="dpm_dpm_cfg0x0" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_cfg0x0</b></font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM IO Control Register 0.<br>
+       This register is accessible in any DPM-mode (8, 16, 32 bit, SRAM, Intel, Motorola, little endian, big endian) by access to DPM address 0.<br>
+       Basic DPM settings are configurable here to make higher addresses accessible.<br>
+       To avoid instable system configurations, global changes of important configuration registers must be confirmed by (re)writing the 'mode' bit field of this register. View 'mode' description for details.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c000
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31-6 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>5-4 </td>
+   <td>"00" </td>
+   <td>endian </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Endianess of 32 bit (DWord) address alignment (B0: least significant byte, B3: most significant byte):  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> coding  </td>
+       <td valign="top"> Address  </td>
+       <td valign="top"> A+3  </td>
+       <td valign="top"> A+2  </td>
+       <td valign="top"> A+1  </td>
+       <td valign="top"> A+0  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 00  </td>
+       <td valign="top"> little endian  </td>
+       <td valign="top"> B3  </td>
+       <td valign="top"> B2  </td>
+       <td valign="top"> B1  </td>
+       <td valign="top"> B0  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01  </td>
+       <td valign="top"> 16 bit big endian  </td>
+       <td valign="top"> B2  </td>
+       <td valign="top"> B3  </td>
+       <td valign="top"> B0  </td>
+       <td valign="top"> B1  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 10  </td>
+       <td valign="top"> 32 bit big endian  </td>
+       <td valign="top"> B0  </td>
+       <td valign="top"> B1  </td>
+       <td valign="top"> B2  </td>
+       <td valign="top"> B3  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 11  </td>
+       <td valign="top"> reserved  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Little endian is used netX inside. If big endian host device is used, set to this 01 or 10 according to host device data width.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>3-0 </td>
+   <td>"0000" </td>
+   <td>mode </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td colspan="2" valign="top"> Basic DPM interface mode:<br>
+       Additionally writing to this bit field will confirm global interface configuration changes:<br>
+       Interface configuration can not always be written one single access (e.g. in 8 bit data mode changing of 'dpm_if_cfg' is not possible 
+       in one single access as there are more than 8 bits for congifuration). However changing interface configuration by more than one 
+       single access could lead to instable interfaces. This is avoided by following procedure:<br>
+       For proper interface configuration, values of important interface configuration registers are buffered in temporary registers first. 
+       Interface configuration is changed finally by (re)writing 'mode' bits. There is no need to really change a prior programmed 'mode' >setting, 
+       interface change is done when low byte of this registers is target of a write acceess.<br>
+       Temporary registers which must be confirmed by this are:<br>
+       - All bits of 'dpm_if_cfg' register.<br>
+       - Address compartor configuration: All 'addr_cmp_a*' bit fields in 'dpm_addr_cfg' register.<td></tr>
+       </tbody></table>
+       <table border="0" cellspacing="1">
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Interface configuration confirm must be done regardless wether programmed by host via external interfaces or by internal ARM via internal INTLOGIC configuration channel.<br>
+       DPM interface mode must be further configured in 'dpm_if_cfg' register. Data width and address multiplexing mode must be configure here.<br>
+       Supported basic DPM modes are:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0000  </td>
+       <td valign="top"> 8 bit data non multiplexed mode.<br>
+       DPM_D7..0 are used as data lines, DPM_D31..8 can be used as PIOs (+24 PIOs). DPM_D17 can be used as Address-Enable DPM_AEN/DPM_ALE.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0001  </td>
+       <td valign="top"> reserved.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0010  </td>
+       <td valign="top"> 8 bit data multiplexed mode.<br>
+       DPM_D7..0 are used as address and data lines, DPM_D17 as ALE. DPM_A7..0 and DPM_D31..8 can be used as PIOs (+31 PIOs). DPM_A10..8 will used as address lines.<br>DPM_A19..11 can used as address lines (depending on selectde 'addr_range'.<br>
+       High address lines will be sampled at the same time when lower address bits are latched from DPM_D7..0.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0011  </td>
+       <td valign="top"> reserved.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0100  </td>
+       <td valign="top"> 16 bit data non multiplexed mode.<br>
+       DPM_D15..0 are used as data lines, DPM_D31..16 can be used as PIOs (+16 PIOs). DPM_D17 can be used as Address-Enable DPM_AEN/DPM_ALE.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0101  </td>
+       <td valign="top"> reserved.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0110 </td>
+       <td valign="top"> 16 bit data multiplexed mode with 2 byte-enables on separated lines.<br>
+       DPM_D15..0 are used as address and data lines, DPM_D17 as ALE. DPM_A15..0 and DPM_D31..16 can be used as PIOs (+31 PIOs).<br>
+       Two byte-enable signals can be used additionally. View register 'dpm_if_cfg' 'be_sel'.<br>
+       DPM_A19..16 can used as address lines (depending on selectde 'addr_range'.<br>
+       High address lines will be sampled at the same time when lower address bits are latched from DPM_D15..0.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0111  </td>
+       <td valign="top"> reserved  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1000 </td>
+       <td valign="top"> 32 bit data non multiplexed mode.<br>
+       DPM_D0..32 are used as data lines.<br>
+       DPM_A15 or DPM_AH1 can be used as Address-Enable DPM_AEN/DPM_ALE.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1001  </td>
+       <td valign="top"> reserved.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1010  </td>
+       <td valign="top"> 32 bit data multiplexed mode with 4 byte-enables on separated lines.<br>
+       DPM_D31..0 are used as address and data lines, DPM_A15 or DPM_AH1 as ALE.<br>
+       Four byte-enable signals can be used additionally. View register 'dpm_if_cfg' 'be_sel'.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> :  </td>
+       <td valign="top"> reserved.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1111  </td>
+       <td valign="top"> reserved.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> For DPM modes with less than 32 bit data, write data could not written immediate to netX memory or registers ('byte_area' and 'dis_rd_latch' of 'dpm_win1_map' register).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+ </tbody></table><br>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a name="dpm_dpm_if_cfg" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_if_cfg</b></font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM interface configuration register.<br>
+       DPM interface mode must be basically configured in 'dpm_cfg0x0' register. 
+       Interface configuration is split up into two registers to support setup from external host CPU when DPM 
+       is in 8 bit non-multiplexed default mode after reset.<br>
+       However this does not work for all interfaces. E.g. for modes where DPM_WRN is not write trigger this is not possible. 
+       Interface setup must be done by netX internal CPU then. To avoid instable system configurations, changes of this 
+       register must be confirmed by (re)writing the 'mode' bit field of the dpm_cfg0x0 register. 
+       View 'mode' description there for details.  </td>
+      </tr>
+     </tbody></table>
+
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c004
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31-25 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>24 </td>
+   <td>"0" </td>
+   <td>isa_bhe3_is_<br>memcs16n </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> ISA usage of BHE3 signal.<br>
+       Warning:<br>
+       ISA memcs16n signal is an ISA slave output signal. I.e. it is drive by netX when this bit is enabled. This could cause permanent damage to netX or host when interface is not ISA.<br>
+       Settings:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> BHE3 is used as byte-enable or PIO and input by default.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> BHE3 is used as ISA memcs16n signal and driven by netX.<br>
+       Signal is driven low when DPM is selected by Chip-Select decoding logic (cs_ctrl) and 16 bit data mode is selected. Signal is never driven active high. High level is reached by external pull up resistor.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>23-19 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>18-16 </td>
+   <td>"000" </td>
+   <td>cs_ctrl </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Chip-Select controlling.<br>
+       Chip access can be additionally controlled for all settings by address comparator. View 'addr_cmp_a*' bit fields of 'dpm_addr_cfg' register.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 000:  </td>
+       <td valign="top"> Use 1 low active Chip-Select signal (DPM_CSN).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 001:  </td>
+       <td valign="top"> Use 2 low active Chip-Select signals (DPM_CSN or DPM_BHE1n must be low).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 010:  </td>
+       <td valign="top"> Use high active Chip-Select signal (DPM_CSN).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 011:  </td>
+       <td valign="top"> Use 2 low active Chip-Select signals (DPM_CSN or DPM_BHE1n must be high).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 100:  </td>
+       <td valign="top"> No Chip-Select signal. Behaves like DPM_CSN is permanent active.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 111:  </td>
+       <td valign="top"> Chip access is disabled. Address comparator is ignored.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> others:  </td>
+       <td valign="top"> reserved  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Internal address-comparator is part of netX DPM Chip-Select decoding logic. View 'addr_cmp_a*' bit fields of 'dpm_addr_cfg' register. Set address comparator mask to '0' to disable.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>15 </td>
+   <td>"0" </td>
+   <td>addr_sh </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address is Byte address or shifted according to selected data size.<br>
+       This bit is irrelevant in 8 bit data modes. Address comparator logic works always with unshifted address.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0 </td>
+       <td valign="top"> Address is always Byte address (not shifted).<br>
+       In 16 bit data modes: Address bit 0 can be used as low byte-enable or can be ignored.<br>
+       In 32 bit data modes: Address bits 1,0 can be used as byte-enables or can be ignored. Use 'be_sel' to select byte-enables and 'be_wr_dis' or 'be_rd_dis' to ignore them.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1 </td>
+       <td valign="top"> Address is shifted according to programmed data width.<br>
+       In 16 bit data modes: Address from host starting at A0 (or AD0 when multiplexed) is 16 bit word address.<br>
+       In 32 bit data modes: Address from host starting at A0 (or AD0 when multiplexed) is 32 bit word address.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>14 </td>
+   <td>"0" </td>
+   <td>aen_pol </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address-Enable active level polarity.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> Address is latched while ALE-signal is low (i.e. low active ALE/AEN).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> Address is latched while ALE-signal is high (i.e. high active ALE/AEN).  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> In non-multiplexed modes, address is only latched when chip-select is additionally active (as programmed in 'cs_ctrl').<br>
+       In multiplexed modes, address latching is not controlled by chip-select. Address is latched all time when ALE is active then. </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>13-12 </td>
+   <td>"00" </td>
+   <td>aen_sel </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address-Enable (AEN-modes) or Address-Latch-Enable (multiplexed modes) Control.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 00:  </td>
+       <td valign="top"> No additional Address controlling function.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01:  </td>
+       <td valign="top"> netx50 compatibe Address controlling signal selection:  <br>
+       For 8 or 16 bit data modes: AEN on DPM_D17.<br>
+       For 32 bit data modes: AEN on HIF_A15 (up to 32kB address space for non-multiplexed modes).
+       </td>
+      </tr>
+      <tr>
+       <td valign="top"> 10:  </td>
+       <td valign="top"> Not netx50 compatibe Address controlling signal selection for 32 bit data modes:<br>
+       For 8 or 16 bit data modes: identical to setting '01': AEN on DPM_D17.<br>
+       For 32 bit data modes: AEN on HIF_AHI1 (up to 128kB address space for non-multiplexed modes).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 11:  </td>
+       <td valign="top"> reserved.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tr>       
+       <td valign="top"> Note: </td>
+       <td valign="top"> In multiplexed modes read or write access will not be started netX internally while address-phase is active. ALE signal must return to idle state first.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>11-8 </td>
+   <td>"0000" </td>
+   <td>be_pol </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM access byte-enable active level polarity.<br>
+       byte-enable active polarity can be set for each data byte separately. <br>
+       byte-enable signals can be selected by 'be_sel'. </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody>
+      <tr>
+       <td valign="top"> Bits inside this bit field are associated as follows:  </td>
+      </tr>
+     </tbody></table>
+     
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Bit  </td>
+       <td valign="top"> data lines  </td>
+      </tr>
+      <tr>
+       <td valign="top"> be_pol[0]  </td>
+       <td valign="top"> D[7:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> be_pol[1]  </td>
+       <td valign="top"> D[15:8]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> be_pol[2]  </td>
+       <td valign="top"> D[23:16]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> be_pol[3]  </td>
+       <td valign="top"> D[31:24]  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Function:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> BE signals are low active byte-enables.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> BE signals are high active byte-enables (e.g. 8 bit Motorola 6800).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>7 </td>
+   <td>"0" </td>
+   <td>be_wr_dis </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM write access byte-enable configuration.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> byte-enables will be used on write access, only data lines of enabled bytes will be written.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> byte-enables will be ignored on write access, all used data lines will be written.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Do not set this bit when 'dir_ctrl' is set to nWR-mode ('01'). Byte-Write-Strobes are essential in this case.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> This bit is ignored for 8 bit data modes when 'be_sel' bit is not set.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>6 </td>
+   <td>"0" </td>
+   <td>be_rd_dis </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM read access byte-enable configuration.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> byte-enables will be used on read access, only data lines of enabled bytes will be driven.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> byte-enables will be ignored on read access, all used data lines will be driven.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Do not set this bit when 'dir_ctrl' is set to nRW-mode ('10'). Byte-Write-Strobes are essential in this case.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> This bit is ignored for 8 bit data modes when 'be_sel' bit is not set.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>5 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>4 </td>
+   <td>"0" </td>
+   <td>be_sel </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM access byte-enable signal selection.<br>
+       byte-enables can be located on different netX IOs - netx50 compatibility. Basically BE signals depend on selected data width (cfg0x0).  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> setting  </td>
+       <td valign="top"> data width  </td>
+       <td valign="top"> D[31:24]  </td>
+       <td valign="top"> D[23:16]  </td>
+       <td valign="top"> D[15:8]  </td>
+       <td valign="top"> D[7:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 8bit  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> -  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 16bit  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> BHE1n  </td>
+       <td valign="top"> A0  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 32bit  </td>
+       <td valign="top"> BHE3n  </td>
+       <td valign="top"> A1  </td>
+       <td valign="top"> BHE1n  </td>
+       <td valign="top"> A0  </td>
+      </tr>
+      <tr>
+       <td valign="top"> ---------  </td>
+       <td valign="top"> -------------  </td>
+       <td valign="top"> -----------  </td>
+       <td valign="top"> -----------  </td>
+       <td valign="top"> ----------  </td>
+       <td valign="top"> --------  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 8bit  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> BHE1n  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 16bit  </td>
+       <td valign="top">   </td>
+       <td valign="top">   </td>
+       <td valign="top"> BHE3n  </td>
+       <td valign="top"> WRn  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 32bit  </td>
+       <td valign="top"> BHE3n  </td>
+       <td valign="top"> A1  </td>
+       <td valign="top"> BHE1n  </td>
+       <td valign="top"> A0  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> For 32 bit data interfaces only following byte-enable combinatzions are valid - others will cause unpredictable behaviour (na: not active):  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> BE3  </td>
+       <td valign="top"> BE2  </td>
+       <td valign="top"> BE1  </td>
+       <td valign="top"> BE0  </td>
+       <td valign="top"> netX internal write access width  </td>
+      </tr>
+      <tr>
+       <td valign="top"> active  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> 32 bit access to 32 bit word address  </td>
+      </tr>
+      <tr>
+       <td valign="top"> active  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> 16 bit access to 32 bit word address + 2  </td>
+      </tr>
+      <tr>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> 16 bit access to 32 bit word address  </td>
+      </tr>
+      <tr>
+       <td valign="top"> active  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> 8 bit access to 32 bit word address + 3  </td>
+      </tr>
+      <tr>
+       <td valign="top"> na  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> 8 bit access to 32 bit word address + 2  </td>
+      </tr>
+      <tr>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> 8 bit access to 32 bit word address + 1  </td>
+      </tr>
+      <tr>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> active  </td>
+       <td valign="top"> 8 bit access to 32 bit word address  </td>
+      </tr>
+      <tr>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> na  </td>
+       <td valign="top"> access ignored  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Target address in table above is related to little endianess. Offsets inside a 32 bit data word will be different for other endianess settings (view 'dpm_cfg0x0' register).</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> For 8 bit data modes this bit must only be set when an additional byte-enable Signal is required (e.g. Motorola 6800). Do not set 'be_sel' and ignore for read and write (be_wr_dis, be_rd_dis) - DPM Ready geneartion will care for BHE1n anyhow.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> This bit is irrelevant for 32 bit data modes.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note: </td>
+       <td valign="top"> Internal read access data width is always 32 bit.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>3-2 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>1-0 </td>
+   <td>"00" </td>
+   <td>dir_ctrl </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM access direction control.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 00:  </td>
+       <td valign="top"> dedicated low active read- and write control signals (RDn + WRn) with optional byte-enables.<br>
+       byte-enables have address character i.e. they must be stable while read- or write-control signal is active. byte-enables are not used as Strobe signals.<br>
+       A read-access is started when RDn signal becomes active low at access start. Address, Chip-Select and byte-enable signals must be stable then.<br>
+       A write-access is done when WRn becomes inactive high at access end. Address, Chip-Select, data and byte-enable signals must be stable then.<br>
+       Ready/Busy signal is asserted when RDn or WRn is active. This setting can be used for standard SRAM interfaces.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01:  </td>
+       <td valign="top"> RDn is direction signal nRW (signal high: write, low: read).<br>
+       For read byte-enables have address character i.e. they must be stable when RDn becomes low.<br>
+       For write byte-enables have strobe character i.e. Address, Data and RDn must be stable when they become inactive at access end..<br>
+       A read-access is started when RDn signal becomes low at access start. Address, Chip-Select and byte-enable signals must be stable then.<br>
+       A write-access is done when byte-enables becomes inactive at access end. Address, Chip-Select, data and RDn signals must be stable then.<br>
+       Ready/Busy signal is asserted when RDn is low or byte-enables are active. This setting is typically used for Intel-like interfaces with Byte-Write-Strope signals..  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 10:  </td>
+       <td valign="top"> RDn is direction signal nWR (signal low: write, high: read).<br>
+       byte-enables have strobe character for both read and write i.e. Address, and RDn must be stable when they become active at access start. These signals must remain stable until byte-enables become inactive at access end. For write data must be stable then.<br>
+       Ready/Busy signal is asserted when at least one byte-enables is active. This setting is typically used for Motorola-like interfaces with Byte-Write-Strope signals.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+ </tbody></table><br>
+ 
+     <h2> Examples </h2>
+ 
+     <table border="1" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Host connection  </td>
+       <td valign="top"> isa_bhe3_<br>memcs16n </td>
+       <td valign="top"> cs_ctrl  </td>
+       <td valign="top"> addr_sh  </td>
+       <td valign="top"> aen_pol  </td>
+       <td valign="top"> aen_sel  </td>
+       <td valign="top"> be_wr<br>_dis </td>
+       <td valign="top"> be_rd<br>_dis </td>
+       <td valign="top"> be_pol  </td>
+       <td valign="top"> be_sel  </td>
+       <td valign="top"> dir_ctrl  </td>
+       <td valign="top"> cfg_0x0.mode  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 8bit (SRAM)  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x0  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 16bit,byte-write  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0x4  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 16bit,byte-enable (SRAM)  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x4  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 32bit,byte-write  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0x8  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 32bit,byte-enable (SRAM)  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x8  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 8bit multiplexed  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x2  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 16bit mul. netx50: no BEs  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x6  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 16bit mul. byte-write  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0x6  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 16bit mul. 2BEs, byte-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x6  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 16bit mul. 2BEs, word-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x6  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 32bit mul. netx50: byte-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0xa  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 32bit mul. byte-write DWord-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0xa  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 32bit mul. 4BEs, byte-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0xa  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Intel, 32bit mul. 4BEs, DWord-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0xa  </td>
+      </tr>
+      <tr>
+       <td valign="top"> TI OMAP, 16bit non-multiplexed  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x4  </td>
+      </tr>
+      <tr>
+       <td valign="top"> TI OMAP, 16bit multiplexed  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x6  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 8bit (6800)  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0x0  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 16bit  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0x4  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 16bit (68000)  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0x4  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 32bit  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0x8  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 8bit multiplexed  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0x2  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 16bit mul.netx50: byte-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0x6  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 16bit mul.word-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0x6  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 32bit mul.netx50: byte-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0xa  </td>
+      </tr>
+      <tr>
+       <td valign="top"> Motorola, 32bit mul.DWord-addr  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 2  </td>
+       <td valign="top"> 0xa  </td>
+      </tr>
+      <tr>
+       <td valign="top"> ISA, 8bit  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 4  </td>
+       <td valign="top"> x  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x0  </td>
+      </tr>
+      <tr>
+       <td valign="top"> ISA, 16bit  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 4  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 1  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0  </td>
+       <td valign="top"> 0x4  </td>
+      </tr>
+     </tbody></table>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a name="dpm_dpm_pio_cfg0" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_pio_cfg0</b></font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM PIO Configuration Register0.<br>
+       Signals to be used as PIOs when netX DPM is active must be selected here or in 'dpm_pio_cfg1' register. 
+       Since netX51/52 PIO function will not be automatically activated depending on other settings. 
+       E.g. DPM_D31..8 can not be used automatically when 8 bit data mode is selected.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c008
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31-0 </td>
+   <td>0x0 </td>
+   <td>sel_d_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use related DPM_D-pin as PIO pin.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+ </tbody></table><br>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a name="dpm_dpm_pio_cfg1" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_pio_cfg1</b></font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM PIO Configuration Register1.<br>
+       PIO usage of DPM_SIRQ, DPM_DIRQ and DPM_RDY has moved from 'dpm_io_cfg_misc' to this register since netX51/52.<br>
+       Signals to be used as PIOs when netX DPM is active must be selected here or in 'dpm_pio_cfg0' register.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c00c
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31 </td>
+   <td>"1" </td>
+   <td>sel_sirq_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_SIRQ-pin as PIO pin.</td>
+      </tr>
+     </tbody></table>
+     
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top">For serial DPM this bit is related to netX51/52 IO HIF_D13. 
+       Setting of for HIF_D13 inside 'dpm_pio_cfg0 register is ignored then. 
+       I.e. this bit must be programmed to '0' for DPM_SIRQ/FIQ usage regardless whether serial or parallel DPM is used.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>30 </td>
+   <td>"1" </td>
+   <td>sel_dirq_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_DIRQ-pin as PIO pin.</td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top">Note:</td>
+       <td valign="top">For serial DPM this bit is related to netX51/52 IO HIF_D12. 
+       Setting of for HIF_D12 inside 'dpm_pio_cfg0 register is ignored then. 
+       I.e. this bit must be programmed to '0' for DPM_DIRQ/IRQ usage regardless whether serial or parallel DPM is used.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>29 </td>
+   <td>"1" </td>
+   <td>sel_rdy_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_RDY-pin as PIO pin. RDY is by default PIO to avoid RDY-conflicts during reset.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>28 </td>
+   <td>"0" </td>
+   <td>sel_wrn_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_WRN-pin as PIO pin.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>27 </td>
+   <td>"0" </td>
+   <td>sel_rdn_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_RDN-pin as PIO pin.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>26 </td>
+   <td>"0" </td>
+   <td>sel_csn_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_CSN-pin as PIO pin.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>25 </td>
+   <td>"0" </td>
+   <td>sel_bhe3_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_BHE3-pin as PIO pin.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>24 </td>
+   <td>"0" </td>
+   <td>sel_bhe1_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Use DPM_BHE1-pin as PIO pin.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>23-20 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>19-0 </td>
+   <td>0x0 </td>
+   <td>sel_a_pio </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody>
+      <tr>
+       <td valign="top"> Use related DPM_A-pin as PIO pin. </td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top">Note:</td>
+       <td valign="top">PIO selects for DPM_A19..18 are only used for test purpose here. 
+       To select PIO function of high DPM_A lines which are multiplexed on DPM_D23..22 use related bits of 'sel_d_pio' Bit field in 'dpm_pio_cfg0' register. 
+       DPM_A17..16 are treated in the same way in netx50 compatibility mode (located on DPM_D21..20 then). 
+       However they are located on HIF_AHI1..0 when netx50 compatibility is globally disabled (ASIC_CTRL-area). </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+ </tbody></table><br>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a name="dpm_dpm_addr_cfg" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_addr_cfg</b></font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody>
+      <tr>
+       <td valign="top"> DPM External Address Configuration Register. </td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Address compare logic as part of netX DPM Chip-Select decoding logic is a new netX51/52 feature.</td>
+      </tr>
+     </tbody></table>     
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c010
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31-30 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a19 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A19.<br>
+       Like netx50 an internal address comparator is provided by netX51/52 DPM.<br>
+       Address compare logic is compatible to netx50 address comparator; however programming differs:<br>
+       Programming for each address line must be done by a 2-bit field. Additionally A11 is included now. Related input DPM_SEL_A11 is located on HIF_D31 for netX51/52.<br>
+       -----------------------------------------------------------------------<br>
+       To avoid instable system configurations, changes of 'addr_cmp_a*' bit fields of this registers must be confirmed by (re)writing 'mode' bit field of dpm_cfg0x0 register. View 'mode' description there for details.<br>
+       -----------------------------------------------------------------------<br>
+       Supported settings for each address line of address compare are:  </td>
+      </tr>
+     </tbody></table>
+     
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> coding  </td>
+       <td valign="top"> compare  </td>
+       <td valign="top"> compare with  </td>
+       <td valign="top"> comment  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 00  </td>
+       <td valign="top"> disabled  </td>
+       <td valign="top"> -  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01  </td>
+       <td valign="top"> enabled  </td>
+       <td valign="top"> netX input  </td>
+       <td valign="top"> input state of DPM_SEL_A19 (HIF_D18)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 10  </td>
+       <td valign="top"> enabled  </td>
+       <td valign="top"> logic 0  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> 11  </td>
+       <td valign="top"> enabled  </td>
+       <td valign="top"> logic 1  </td>
+       <td valign="top">   </td>
+      </tr>
+     </tbody></table>
+     
+     <table border="0" cellspacing="1">
+      <tbody>
+      <tr>
+       <td valign="top"> Set all 'addr_cmp_a*' bit fields to '00' to disable address comparator for Chip-Select decoding logic.<br>
+       Whole address comparator result will be always true then. </td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Address comparator is not affected by programmed 'addr_range'. Address bits exceeding selected address range 'addr_range' will also be compared when mask bits are set here.</td>
+      </tr>
+     </tbody></table>
+     
+     
+ </td>
+  </tr>
+  <tr>
+   <td>29-28 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a18 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A18.<br>
+       Programming is done like described for 'addr_cmp_a19' bit field.<br>
+       Related compare input for A18 is DPM_SEL_A18 (located on HIF_D30).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>27-26 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a17 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A17.<br>
+       Programming is done like described for 'addr_cmp_a19' bit field.<br>
+       Related compare input for A17 is DPM_SEL_A17 (located on HIF_D29).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>25-24 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a16 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A16.<br>
+       Programming is done like described for 'addr_cmp_a19' bit field.<br>
+       Related compare input for A16 is DPM_SEL_A16 (located on HIF_D28).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>23-22 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a15 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A15.<br>
+       Programming is done like described for 'addr_cmp_a19' bit field.<br>
+       Related compare input for A15 is DPM_SEL_A15 (located on HIF_D27).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>21-20 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a14 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A14.<br>
+       Programming is done like described for 'addr_cmp_a19' bit field.<br>
+       Related compare input for A14 is DPM_SEL_A14 (located on HIF_D26).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>19-18 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a13 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A13.<br>
+       Programming is done like described for 'addr_cmp_a19' bit field.<br>
+       Related compare input for A13 is DPM_SEL_A13 (located on HIF_D25).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>17-16 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a12 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A12.<br>
+       Programming is done like described for 'addr_cmp_a19' bit field.<br>
+       Related compare input for A12 is DPM_SEL_A12 (located on HIF_D24).  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>15-14 </td>
+   <td>"00" </td>
+   <td>addr_cmp_a11 </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address comparator controlling for DPM_A11.<br>
+       Programming is done like described for 'addr_cmp_a19' bit field.<br>
+       Related compare input for A11 is DPM_SEL_A11 (located on HIF_D31).<br>
+       Note: A11 is not part of netx50 address compare logic.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>13-6 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>5-4 </td>
+   <td>"00" </td>
+   <td>cfg_win_addr_cfg </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Configuration of External DPM Configuration Window 0.<br>S
+       upported settings are:  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 00:  </td>
+       <td valign="top"> Configuration Window is located in the first 256 bytes of external DPM address range (0x0 to 0xff). 
+       It is located before the next enabled Window (1 to 4).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01:  </td>
+       <td valign="top"> Configuration Window is located in the last 256 bytes of external DPM address range. 
+       It is located after the last enabled Window (1 to 4).  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Example: 'addr_range' is 8kB: Configuration Window is located in 0x1F00..0x1FFF.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 10:  </td>
+       <td valign="top"> reserved.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 11:  </td>
+       <td valign="top"> Configuration Window is disabled for external DPM access. Full DPM address range can be used for Windows 1 to 4.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Configuration Window 0 access detection has higher priority than normal DPM Window detection 
+       but lower priority than Access Tunnel access detection.</td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>3-0 </td>
+   <td>"0010" </td>
+   <td>addr_range </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM external address range.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> coding  </td>
+       <td valign="top"> Byte Address range  </td>
+       <td valign="top"> address used signals  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0000  </td>
+       <td valign="top"> reserved  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0001  </td>
+       <td valign="top"> reserved  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0010  </td>
+       <td valign="top"> 2KB address range  </td>
+       <td valign="top"> DPM_A[10:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0011  </td>
+       <td valign="top"> 4KB address range  </td>
+       <td valign="top"> DPM_A[11:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0100  </td>
+       <td valign="top"> 8KB address range  </td>
+       <td valign="top"> DPM_A[12:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0101  </td>
+       <td valign="top"> 16KB address range  </td>
+       <td valign="top"> DPM_A[13:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0110  </td>
+       <td valign="top"> 32KB address range  </td>
+       <td valign="top"> DPM_A[14:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0111  </td>
+       <td valign="top"> 64KB address range  </td>
+       <td valign="top"> DPM_A[15:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1000  </td>
+       <td valign="top"> 128KB address range  </td>
+       <td valign="top"> DPM_A[16:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1001  </td>
+       <td valign="top"> 256KB address range  </td>
+       <td valign="top"> DPM_A[17:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1010  </td>
+       <td valign="top"> 512KB address range  </td>
+       <td valign="top"> DPM_A[18:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1011  </td>
+       <td valign="top"> 1024KB address range  </td>
+       <td valign="top"> DPM_A[19:0]  </td>
+      </tr>
+      <tr>
+       <td valign="top"> :  </td>
+       <td valign="top"> reserved  </td>
+       <td valign="top">   </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1111  </td>
+       <td valign="top"> reserved  </td>
+       <td valign="top">   </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 
+         This setting is related to Byte address. I.e. it is not possible to expand address rage by setting the 'addr_sh' bit inside the 'dpm_if_cfg' register. 
+         However required address lines will decrease by 1 (16 bit data modes) or 2 (32 bit data modes) when the 'addr_sh' bit is set.<br>
+         <br>
+         For chip-select generation by internal address compare logic:<br>
+         Address lines used for chip-select decoding ('addr_cmp' bit fields) must not be regarded for this setting.<br>
+         Example:<br>
+         16kB (A[13:0]) DPM, A[17:14] for chip-select generation, A[19:18] unused:<br>
+         Set 'addr_range' to 5, 'addr_cmp_a17' to 'addr_cmp_a14' to '10' or '11' (depending on your compare value) and all other 'addr_cmp_a*' bit fields to '00'.<br>
+         <br>
+         For multiplexed modes:<br>
+         If programmed address range exceeds number of data lines, high address bits will be sampled from DPM_A lines starting above last used data line. 
+         High address will be sampled at the same moment when low address bits are sampled from data lines.<br>
+         Example 1:<br>
+         8 bit data multiplexed mode, 1024KB address range programmed and 'aen_pol' is set to 0:<br>
+         Address bits A7..0 are sampled from DPM_D7..0 before DPM_ALE is released to 1. <br>
+         Address bits A19..8 are sampled from DPM_A19..8 also before DPM_ALE is released to 1.<br>
+         Example 2:<br>
+         16 bit data multiplexed mode, 1024KB address range programmed, 'aen_pol' is set to 0 and 'addr_sh' is set to 1:<br>
+         Address bits A16..1 are sampled from DPM_D15..0 before DPM_ALE is released to 1.  <br>
+         Address bits A19..17 are sampled from DPM_A18..16 also before DPM_ALE is released to 1.  <br>
+         I.e. a 19 bit word address is carried on DPM_D15..0 and DPM_A18..16 and is left-shifted internally by 1 to resolve a byte address.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+ </tbody></table><br>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a name="dpm_dpm_timing_cfg" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center">
+   <font size="+2"><b>dpm_timing_cfg</b></font><br>
+   <font size="-2">(dpm_access_cfg)</font> 
+   </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM timing and access configuration register.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c014
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31 </td>
+   <td>"0" </td>
+   <td>sdpm_miso_early </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Serial DPM early MISO (read-data) generation.<br>
+       Serial DPM based on standard SPI changes read data on the edge following the sampling clock edge, 
+       i.e. works on both serial clock edges. 
+       That avoids hold timing errors on MISO-data but decreases maximum serial data rate on the other hand. 
+       Hence, for fast serial data rates this bit must be set.<br>
+       MISO hold times will always be positive but could get very short then. For details view netX timing characteristics.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> Change MISO on the clock edge following the sampling edge.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> Change MISO on the sampling edge.  </td>
+      </tr>
+     </tbody></table>
+
+     
+     <table border="0" cellspacing="1">
+      <tbody>
+      <tr>
+       <td valign="top">  </td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Sampling and generating clock edges are determined by serial DPM mode (clock phase and polarity).
+       Related configuration must be done outside DPM module.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Hold timings can be relaxed by decreasing serial clock rate when this bit is not set. 
+       When this bit is set, MISO hold timing does not depend on serial clock rate.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This is a new netX51/52 feature.</td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>30 </td>
+   <td>"0" </td>
+   <td>en_dpm_serial_sqi </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody>
+      <tr>
+       <td valign="top"> When DPM ist in serial mode ('dpm_status.sel_dpm_serial' active), serial DPM can be switched to SQI-compatible 4-bit mode. </td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Netx DPM changes serial configuration immediately when this bit is changed. Hence do not change this bit by a longer serial sequence from host.<br>
+       E.g.: Change from SPI to SQI from host-side when host: </td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 1.:  </td>
+       <td valign="top"> Set this bit by SPI write sequence from host.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 2.:  </td>
+       <td valign="top"> Terminate sequence after the byte containing this bit was written.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 3.:  </td>
+       <td valign="top"> Ensure that host has completed writing this byte serially (host transfer could last even when related commands are already finished, e.g. due to FIFOs inside host SPI module).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 4.:  </td>
+       <td valign="top"> Change host to SQI.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 5.:  </td>
+       <td valign="top"> Continue acessing netX DPM in SQI mode.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This bit has no effect when DPM is in parallel mode.</td>
+      </tr>
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This is a new netX51/52 feature.</td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>29-8 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>7 </td>
+   <td>"0" </td>
+   <td>rd_burst_en </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Read burst enable.<br>
+       Read bursts are subsequent read accesses without toggeling chip-select or read-enable in between.<br>
+       They are supported for non-multiplexed modes only.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>6-4 </td>
+   <td>"010" </td>
+   <td>t_rds </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Read data setup time (in steps of 10ns).<br>
+       If DPM_RDY is used (rdy_mode != 0), DPM_RDY is generated t_rds*10ns after read data is stored on data bus.<br>
+       Without DPM_RDY use (rdy_mode == 0) read access error is detected if access terminates before t_rds*10ns passed after read data generation.<br>
+       Valid settings are: 0..7.
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Read data access time will increased by t_rds * 10ns if t_rds is not 0.</td>
+      </tr>
+     </tbody></table> </td>
+  </tr>
+  <tr>
+   <td>3 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>2 </td>
+   <td>"1" </td>
+   <td>filter </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Filter DPM Control Signals.<br>
+       If this bit is set, DPM signals Chip-Select, Read-Enable and Write-Enable (and Address latch enable if multiplexed Parallel DPM modes are used) 
+       are filtered for spike suppression.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> no spike suppression.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> Spikes &lt; 10ns are suppressed, read data access time increased by 10ns.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Data, address and byte-enable inputs are not filtered and must be stable when sampled. I.e. during the last 20ns of a write access and at the first 10ns of read access start.</td>
+      </tr>
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Read data access time is increased by 10ns if this bit is set.</td>
+      </tr>
+     </tbody></table>
+   </td>
+  </tr>
+  <tr>
+   <td>1-0 </td>
+   <td>"11" </td>
+   <td>t_osa </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Address Setup Time (t_osa * 10ns).<br>
+       Address sampling can be delayed for read and write accesses by this parameter.<br>
+       E.g. host device asserts Chip-Select, Read-Enable and address lines simultaneously but some address lines are not stable 
+       while Chip-Select and Read-Enable are both low, set t_osa to delay address sampling by t_osa * 10ns.<br>
+       When data direction is controlled by RDn line ('if_cfg.dir_ctrl' not '00') and byte-enables are used for read ('if_cfg.be_rd_dis' not set), 
+       a read access is initiated when active byte-enable signals are detected stable for t_osa netX clock periods.<br>
+       Valid settings are: 0..3.
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Read data access time will increased by t_osa * 10ns if t_osa is not 0.</td>
+      </tr>
+     </tbody></table> 
+   </td>
+  </tr>
+ </tbody></table>
+ <br><br>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a name="dpm_dpm_rdy_cfg" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_rdy_cfg</b></font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM Ready (DPM_RDY) Signal Configuration Register.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c018
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31-6 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>5-4 </td>
+   <td>"00" </td>
+   <td>rdy_to_cfg </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Ready Timeout Configuration.<br>
+       Ready Timeout detection can controlled this bit. For further information see descrition of rdy_to_err bit of dpm_status register.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 00:  </td>
+       <td valign="top"> Ready Timeout after 2048 netx system clock cycles (i.e. 20.48us, not netx50 compatible)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01:  </td>
+       <td valign="top"> Ready Timeout after 256 netx system clock cycles (i.e. 2.56us, netx50 compatible)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 10:  </td>
+       <td valign="top"> reserved  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 11:  </td>
+       <td valign="top"> Ready Timeout disabled.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> The value programmed here is ignored for serial DPM with stream-type 'ready-polling'. 
+       In this mode no ready-timeout will be generated to avoid additional status checking. 
+       A ready-polling timeout counter should be implemented in serial DPM host application.</td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This is a new netX51/52 feature.</td>
+      </tr>
+     </tbody></table> </td>
+  </tr>
+  <tr>
+   <td>3 </td>
+   <td>"0" </td>
+   <td>rdy_sig_mode </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Ready signal mode.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 1:<br><br>  </td>
+       <td valign="top"> DPM_RDY is generated as ready/acknowledge pulse.<br>
+       In this mode, DPM_RDY is only in active state at access end to sign that host device is allowed to finish the current access. 
+       If no access to DPM is done or if host device runs DPM access but is not allowed to finish it yet, DPM_RDY will remain in inactive state.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0:<br><br>  </td>
+       <td valign="top"> DPM_RDY is generated as wait/busy state signal.<br>
+       In this mode, DPM_RDY becomes active at access start and will remain active while host device is not allowed to finish the current access. 
+       If no access to DPM is done or if host device runs DPM access and allowed to finish it and continue access generation, DPM_RDY will be in inactive state.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>2-1 </td>
+   <td>"00" </td>
+   <td>rdy_drv_mode </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Ready generation mode.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 00:  </td>
+       <td valign="top"> ready signal generation is disabled (High-Impedance mode).  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 01:  </td>
+       <td valign="top"> ready is driven when active and inactive. Never highZ. (Push-Pull mode)  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 10: </td>
+       <td valign="top"> ready is driven when active and for a short time when inactive-phase starts for fast busy to ready signal state change (Sustain-Tristate mode).<br>
+       Inactive-phase ready driving time (tRPm02, tRPm12) depends on rdy_sig_mode:<br>
+       For rdy_sig_mode=0 this time (tRPm02) is 10ns.<br>
+       For rdy_sig_mode=1 this time (tRPm12) depends on programmed input signal filtering (register dpm_timing_cfg bit filter): <br>
+       If filtering is disabled tRPm12 is 20ns to 30ns,<br>
+       if input filtering is enabled,tRPm12 is 30ns to 40ns.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 11:  </td>
+       <td valign="top"> ready is only driven when cycle active (Open-Drain/Open-Source mode).  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> Mode 2 and 3 are reordered in comparison to netX100/500/50.</td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>0 </td>
+   <td>"1" </td>
+   <td>rdy_pol </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Ready signal ready-state polarity.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> DPM is ready when external RDY-signal is high.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> DPM is busy when external RDY-signal is high.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+ </tbody></table><br><br>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a name="dpm_dpm_misc_cfg" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_misc_cfg</b></font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM Configuration Register for some Special Functions.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c028
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31-3 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>2 </td>
+   <td>"1" </td>
+   <td>dis_bus_conflict_<br>err_detect </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> This bit controls bus-error-detection.<br>
+       When this bit is set, detected bus errors will only be flagged inside 'dpm_status' register without further action. <br>
+       When this bit is cleared, dpm-error IRQ will be asserted and erroneous accesses are terminated (or ignored) in error case additionally.<br>
+       View also 'bus_conflict' status bits and description of 'dpm_status' register for details.</td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This bit is set by default, but it is strongly recommended to clear it. However keeping this bit set could be helpful for debugging, netx50 compatibility or when DPM configuration window 0 is disabled and not available for error handling.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This bit could become necessary to be set for modes with direction signal where byte-enables change (nearly) simultanously to direction signal (e.g. old Motorola 8bit CPUs). In this case DPM could detect an error at read access end when direction line is already sampled inactive while byte-enables are still sampled active.</td>
+      </tr>
+     <tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This is a new netX51/52 feature.</td>
+      </tr>
+     </tbody></table> </td>
+  </tr>
+  <tr>
+   <td>1 </td>
+   <td>"1" </td>
+   <td>dis_access_err_halt </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Disable halt after access-errors where detected.<br>
+       When this bit is set access-error-detection ('rd_err', 'wr_err' and 'rdy_to_err' status bits of 'dpm_status' register) will be set in error case but following accesses to netX internal address area will not be blocked. Error IRQs will be generated.</td>
+      </tr>
+     </tbody></table>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This bit is set by default, but it is strongly recommended to clear it. However keeping this bit set could be helpful for debugging, netx50 compatibility or when DPM configuration window 0 is disabled and not available for error handling.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> IRQ 'dpm_err' is asserted in case of access-errors even when this bit is set.</td>
+      </tr>
+      <tr>
+       <td valign="top"> Note:</td>
+       <td valign="top"> This is a new netX51/52 feature.</td>
+      </tr>
+     </tbody></table> </td>
+  </tr>
+  <tr>
+   <td>0 </td>
+   <td>"0" </td>
+   <td>enable_flag_reset_on_rd </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> Enable Status Flag Reset by reading the 'dpm_status_err_reset' register.<br>
+       When enable_flag_reset_on_rd-bit is set to '1', there is only one access necessary for error detection and clearing the error status bits. In cases where internal access time is not predictable and host provides no ready function, it is recommended to enable reset-on-read-function to minimize traffic.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+ </tbody></table><br><br>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a name="dpm_dpm_io_cfg_misc" href="#top">Top</a>
+ <table border="" cellpadding="2">
+  <tbody><tr>
+   <td colspan="3" align="center"><font size="+2"><b>dpm_io_cfg_misc</b></font> </td>
+   <td align="left">
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> DPM IO Configuration Register.<br>
+       PIO usage of DPM_SIRQ, DPM_DIRQ and DPM_RDY has moved from this register to register'dpm_pio_cfg1' since netX51/52.<br>
+       Signals which should be used as PIOs when netX DPM is active must be selected there.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td colspan="2" align="center">R/W </td>
+   <td colspan="2" align="left">
+   Address:0x1018c02c
+    </td>
+  </tr>
+   <tr><th bgcolor="#ccffcc">Bits</th>
+   <th bgcolor="#ccffcc">Reset value</th>
+   <th bgcolor="#ccffcc">Name</th>
+   <th bgcolor="#ccffcc">Description</th>
+  </tr><tr>
+   <td>31-8 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+  <tr>
+   <td>7 </td>
+   <td>"1" </td>
+   <td>fiq_oec </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> FIQ/SIRQ output enable controlled.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> FIQ/SIRQ signal is always driven.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> FIQ/SIRQ signal is only driven when active. Inactive level must be realized by external pull-up or pull-down resistor.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>6 </td>
+   <td>"0" </td>
+   <td>fiq_pol </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> FIQ/SIRQ signal polarity.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> FIQ/SIRQ is active low.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> FIQ/SIRQ is active high.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>5 </td>
+   <td>"1" </td>
+   <td>irq_oec </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> IRQ output enable controlled.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> IRQ/DIRQ signal is always driven.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> IRQ/DIRQ signal is only driven when active. Inactive level must be realized by external pull-up or pull-down resistor.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>4 </td>
+   <td>"0" </td>
+   <td>irq_pol </td>
+   <td>
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> IRQ/DIRQ signal polarity.  </td>
+      </tr>
+     </tbody></table>
+
+     <table border="0" cellspacing="1">
+      <tbody><tr>
+       <td valign="top"> 0:  </td>
+       <td valign="top"> IRQ/DIRQ is active low.  </td>
+      </tr>
+      <tr>
+       <td valign="top"> 1:  </td>
+       <td valign="top"> IRQ/DIRQ is active high.  </td>
+      </tr>
+     </tbody></table>
+ </td>
+  </tr>
+  <tr>
+   <td>3-0 </td>
+   <td>0 </td>
+   <td>- </td>
+   <td>reserved </td>
+  </tr>
+ </tbody></table><br><br>
+
+
+
+ 
+</BODY>
+</HTML>

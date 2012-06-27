@@ -1,12 +1,14 @@
 ---------------------------------------------------------------------------
--- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+-- Copyright (C) 2012 Hilscher Gesellschaft für Systemautomation mbH
 --
 -- Description:
---   Defines tags used by 2nd Stage Loader
+--   Definitions of tags used by 2nd Stage Loader
 --
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2012-06-26     SL            added TAG_BSL_HIF_NETX51_52_PARAMS 0x40000010 
+--                              added TAG_BSL_MMIO_NETX51_52_PARAMS 0x4000000f
 -- 2012-03-28     SL            added TAG_BSL_SERFLASH_PARAMS
 -- 2011-06-01     SL            added TAG_BSL_BACKUP_POS_PARAMS
 -- 2011-05-12     SL            factored out from taglist.lua
@@ -250,6 +252,116 @@ NETX50_MMIO_CONFIG = {
 }
 
 
+-- MMIO function codes for netX 51
+NETX51_52_MMIO_CONFIG = {
+    {name = "XM0_IO0"           , value = 0x00},
+    {name = "XM0_IO1"           , value = 0x01},
+    {name = "XM0_IO2"           , value = 0x02},
+    {name = "XM0_IO3"           , value = 0x03},
+    {name = "XM0_IO4"           , value = 0x04},
+    {name = "XM0_IO5"           , value = 0x05},
+    {name = "XM0_RX"            , value = 0x06},
+    {name = "XM0_TX_OUT"        , value = 0x07},
+    {name = "XM1_IO0"           , value = 0x08},
+    {name = "XM1_IO1"           , value = 0x09},
+    {name = "XM1_IO2"           , value = 0x0a},
+    {name = "XM1_IO3"           , value = 0x0b},
+    {name = "XM1_IO4"           , value = 0x0c},
+    {name = "XM1_IO5"           , value = 0x0d},
+    {name = "XM1_RX"            , value = 0x0e},
+    {name = "XM1_TX_OUT"        , value = 0x0f},
+    {name = "GPIO0"             , value = 0x10},
+    {name = "GPIO1"             , value = 0x11},
+    {name = "GPIO2"             , value = 0x12},
+    {name = "GPIO3"             , value = 0x13},
+    {name = "GPIO4"             , value = 0x14},
+    {name = "GPIO5"             , value = 0x15},
+    {name = "GPIO6"             , value = 0x16},
+    {name = "GPIO7"             , value = 0x17},
+    {name = "GPIO8"             , value = 0x18},
+    {name = "GPIO9"             , value = 0x19},
+    {name = "GPIO10"            , value = 0x1a},
+    {name = "GPIO11"            , value = 0x1b},
+    {name = "GPIO12"            , value = 0x1c},
+    {name = "GPIO13"            , value = 0x1d},
+    {name = "GPIO14"            , value = 0x1e},
+    {name = "GPIO15"            , value = 0x1f},
+    {name = "GPIO16"            , value = 0x20},
+    {name = "GPIO17"            , value = 0x21},
+    {name = "GPIO18"            , value = 0x22},
+    {name = "GPIO19"            , value = 0x23},
+    {name = "GPIO20"            , value = 0x24},
+    {name = "GPIO21"            , value = 0x25},
+    {name = "GPIO22"            , value = 0x26},
+    {name = "GPIO23"            , value = 0x27},
+    {name = "GPIO24"            , value = 0x28},
+    {name = "GPIO25"            , value = 0x29},
+    {name = "GPIO26"            , value = 0x2a},
+    {name = "GPIO27"            , value = 0x2b},
+    {name = "GPIO28"            , value = 0x2c},
+    {name = "GPIO29"            , value = 0x2d},
+    {name = "GPIO30"            , value = 0x2e},
+    {name = "GPIO31"            , value = 0x2f},
+    {name = "PHY0_LED0"         , value = 0x30},
+    {name = "PHY0_LED1"         , value = 0x31},
+    {name = "PHY0_LED2"         , value = 0x32},
+    {name = "PHY0_LED3"         , value = 0x33},
+    {name = "PHY1_LED0"         , value = 0x34},
+    {name = "PHY1_LED1"         , value = 0x35},
+    {name = "PHY1_LED2"         , value = 0x36},
+    {name = "PHY1_LED3"         , value = 0x37},
+    {name = "MII_MDC"           , value = 0x38},
+    {name = "MII_MDIO"          , value = 0x39},
+    {name = "SPI0_CS2N"         , value = 0x3a},
+    {name = "SPI0_SIO2_MMIO"    , value = 0x3b},
+    {name = "SPI0_SIO3_MMIO"    , value = 0x3c},
+    {name = "SPI1_CLK"          , value = 0x3d},
+    {name = "SPI1_CS0N"         , value = 0x3e},
+    {name = "SPI1_CS1N"         , value = 0x3f},
+    {name = "SPI1_CS2N"         , value = 0x40},
+    {name = "SPI1_MISO"         , value = 0x41},
+    {name = "SPI1_MOSI"         , value = 0x42},
+    {name = "I2C0_SCL_MMIO"     , value = 0x43},
+    {name = "I2C0_SDA_MMIO"     , value = 0x44},
+    {name = "I2C1_SCL"          , value = 0x45},
+    {name = "I2C1_SDA"          , value = 0x46},
+    {name = "XC_SAMPLE0"        , value = 0x47},
+    {name = "XC_SAMPLE1"        , value = 0x48},
+    {name = "XC_TRIGGER0"       , value = 0x49},
+    {name = "XC_TRIGGER1"       , value = 0x4a},
+    {name = "UART0_CTS"         , value = 0x4b},
+    {name = "UART0_RTS"         , value = 0x4c},
+    {name = "UART0_RXD"         , value = 0x4d},
+    {name = "UART0_TXD"         , value = 0x4e},
+    {name = "UART1_CTS"         , value = 0x4f},
+    {name = "UART1_RTS"         , value = 0x50},
+    {name = "UART1_RXD"         , value = 0x51},
+    {name = "UART1_TXD"         , value = 0x52},
+    {name = "UART2_CTS"         , value = 0x53},
+    {name = "UART2_RTS"         , value = 0x54},
+    {name = "UART2_RXD"         , value = 0x55},
+    {name = "UART2_TXD"         , value = 0x56},
+    {name = "CAN_RX"            , value = 0x57},
+    {name = "CAN_TX"            , value = 0x58},
+    {name = "MEM_RDY"           , value = 0x59},
+    {name = "PIO0"              , value = 0x5a},
+    {name = "PIO1"              , value = 0x5b},
+    {name = "PIO2"              , value = 0x5c},
+    {name = "PIO3"              , value = 0x5d},
+    {name = "PIO4"              , value = 0x5e},
+    {name = "PIO5"              , value = 0x5f},
+    {name = "PIO6"              , value = 0x60},
+    {name = "PIO7"              , value = 0x61},
+    {name = "PIO_MODE"          , value = 0x7f},
+}
+
+
+NETX51_52_MMIO_CONFIG_40_47 = {}
+for i = 1, 0x62 do
+	NETX51_52_MMIO_CONFIG_40_47[i] = NETX51_52_MMIO_CONFIG[i]
+end
+NETX51_52_MMIO_CONFIG_40_47[0x63] = {name = "DISABLED", value = 0x7f}
+
 -- add MMIO config constants
 for _, e in ipairs(NETX10_MMIO_CONFIG) do
    taglist.addConstant("MMIO_CONFIG_NETX10_" .. e.name, e.value)
@@ -259,13 +371,19 @@ for _, e in ipairs(NETX50_MMIO_CONFIG) do
    taglist.addConstant("MMIO_CONFIG_NETX50_" .. e.name, e.value)
 end
 
+for _, e in ipairs(NETX51_52_MMIO_CONFIG) do
+   taglist.addConstant("MMIO_CONFIG_NETX51_52_" .. e.name, e.value)
+end
+
+taglist.addConstant("MMIO_CONFIG_NETX51_52_DISABLED", 0x7f)
+
 -- medium type for TAG_BSL_MEDIUM_PARAMS
 BSL_DEST_MEDIUM = {
 	{name="Auto-detect Media",value=0},
 	{name="RAM Disk",         value=1},
 	{name="Serial Flash",     value=2},
 	{name="Parallel Flash",   value=3},
-	{name="SQI Flash",        value=4},    
+	{name="SQIROM",           value=4},    
 }
 
    
@@ -418,6 +536,38 @@ TAG_BSL_HIF_NETX10_PARAMS_DATA_T =
   },
   {"UINT32", "ulHifIoCfg",        desc="I/O Configuration"},
   {"UINT32", "ulDpmCfg0",         desc="DPM Configuration Register 0"},
+  {"UINT32", "ulDpm_addr_cfg",    desc="DPM Address"},
+  {"UINT32", "ulDpm_timing_cfg",  desc="DPM Timing"},
+  {"UINT32", "ulDpm_rdy_cfg",     desc="DPM Ready Configuration"},
+  {"UINT32", "ulDpm_misc_cfg",    desc="Miscellaneous DPM Configuration"},
+  {"UINT32", "ulDpm_io_cfg_misc", desc="Miscellaneous DPM I/O Configuration"},
+},
+
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader HIF/DPM settings for netx 51
+
+TAG_BSL_HIF_NETX51_52_PARAMS_DATA_T =
+{
+  {
+    "UINT32", "ulBusType", desc="Bus Type",
+    editor="comboedit",
+    editorParam=
+    {
+      nBits=32,
+      values=
+      {
+        {name="Auto", value=0},
+        {name="DPM", value=1},
+        {name="Disabled", value=0xffffffff}
+      }
+    },
+  },
+  {"UINT32", "ulHifIoCfg",        desc="I/O Configuration"},
+  {"UINT32", "ulDpmCfg0",         desc="DPM Configuration Register 0"},
+  {"UINT32", "ulDpm_if_cfg",      desc="DPM Interface Configuration"},
+  {"UINT32", "ulDpm_pio_cfg0",    desc="DPM PIO Configuration 0"},
+  {"UINT32", "ulDpm_pio_cfg1",    desc="DPM PIO Configuration 1"},      
   {"UINT32", "ulDpm_addr_cfg",    desc="DPM Address"},
   {"UINT32", "ulDpm_timing_cfg",  desc="DPM Timing"},
   {"UINT32", "ulDpm_rdy_cfg",     desc="DPM Ready Configuration"},
@@ -693,6 +843,85 @@ TAG_BSL_MMIO_NETX10_PARAMS_DATA_T = {
 },
 
 
+
+----------------------------------------------------------------------------------------------
+--  2nd stage loader MMIO parameters for netX 51
+
+
+MMIO_PIN_NETX51_52_T = {
+    {"UINT8", "bConfig", desc="Function", editor="comboedit", editorParam={nBits=8, values = NETX51_52_MMIO_CONFIG}},
+    {"UINT8", "bFlags", desc="Flags", editor="comboedit", editorParam={nBits=8, values = MMIO_FLAGS}},
+
+    layout={
+        sizer="grid", rows=1, cols=2,
+        "bConfig",    "bFlags",
+    },
+},
+
+MMIO_PIN_NETX51_52_40_47_T = {
+    {"UINT8", "bConfig", desc="Function", editor="comboedit", editorParam={nBits=8, values = NETX51_52_MMIO_CONFIG_40_47}},
+    {"UINT8", "bFlags", desc="Flags", editor="comboedit", editorParam={nBits=8, values = MMIO_FLAGS}},
+
+    layout={
+        sizer="grid", rows=1, cols=2,
+        "bConfig",    "bFlags",
+    },
+},
+
+
+TAG_BSL_MMIO_NETX51_52_PARAMS_DATA_T = {
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[0]",   desc="MMIO 0"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[1]",   desc="MMIO 1"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[2]",   desc="MMIO 2"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[3]",   desc="MMIO 3"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[4]",   desc="MMIO 4"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[5]",   desc="MMIO 5"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[6]",   desc="MMIO 6"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[7]",   desc="MMIO 7"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[8]",   desc="MMIO 8"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[9]",   desc="MMIO 9"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[10]",  desc="MMIO 10"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[11]",  desc="MMIO 11"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[12]",  desc="MMIO 12"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[13]",  desc="MMIO 13"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[14]",  desc="MMIO 14"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[15]",  desc="MMIO 15"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[16]",  desc="MMIO 16"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[17]",  desc="MMIO 17"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[18]",  desc="MMIO 18"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[19]",  desc="MMIO 19"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[20]",  desc="MMIO 20"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[21]",  desc="MMIO 21"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[22]",  desc="MMIO 22"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[23]",  desc="MMIO 23"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[24]",  desc="MMIO 24"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[25]",  desc="MMIO 25"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[26]",  desc="MMIO 26"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[27]",  desc="MMIO 27"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[28]",  desc="MMIO 28"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[29]",  desc="MMIO 29"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[30]",  desc="MMIO 30"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[31]",  desc="MMIO 31"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[32]",  desc="MMIO 32"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[33]",  desc="MMIO 33"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[34]",  desc="MMIO 34"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[35]",  desc="MMIO 35"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[36]",  desc="MMIO 36"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[37]",  desc="MMIO 37"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[38]",  desc="MMIO 38"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[39]",  desc="MMIO 39"},
+    {"MMIO_PIN_NETX51_52_40_47_T", "atMMIOCfg[40]",  desc="MMIO 40"},
+    {"MMIO_PIN_NETX51_52_40_47_T", "atMMIOCfg[41]",  desc="MMIO 41"},
+    {"MMIO_PIN_NETX51_52_40_47_T", "atMMIOCfg[42]",  desc="MMIO 42"},
+    {"MMIO_PIN_NETX51_52_40_47_T", "atMMIOCfg[43]",  desc="MMIO 43"},
+    {"MMIO_PIN_NETX51_52_40_47_T", "atMMIOCfg[44]",  desc="MMIO 44"},
+    {"MMIO_PIN_NETX51_52_40_47_T", "atMMIOCfg[45]",  desc="MMIO 45"},
+    {"MMIO_PIN_NETX51_52_40_47_T", "atMMIOCfg[46]",  desc="MMIO 46"},
+    {"MMIO_PIN_NETX51_52_40_47_T", "atMMIOCfg[47]",  desc="MMIO 47"},
+    {"MMIO_PIN_NETX51_52_T", "atMMIOCfg[48]",  desc="MMIO 48"},
+},
+
+
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader USB descriptor
 
@@ -797,6 +1026,10 @@ TAG_BSL_SERFLASH_PARAMS_DATA_T = {
 	{"UINT32",  "ulFeatures",             desc="Special Features: Quad SPI",  mask=string.char(1,0,0,0),  editor="checkboxedit", editorParam={nBits=32, onValue=1, offValue=0} },
 },
 
+
+
+
+
 }
 
 
@@ -834,8 +1067,15 @@ TAG_BSL_DISK_POS_PARAMS =
     {paramtype = 0x4000000D, datatype="TAG_BSL_DISK_POS_PARAMS_DATA_T",       desc="Disk Position"},
 TAG_BSL_BACKUP_POS_PARAMS =
     {paramtype = 0x4000000e, datatype="TAG_BSL_BACKUP_POS_PARAMS_DATA_T",     desc="Backup Partition"},
+TAG_BSL_MMIO_NETX51_52_PARAMS =
+    {paramtype = 0x4000000f, datatype="TAG_BSL_MMIO_NETX51_52_PARAMS_DATA_T",    desc="netX 51/52 MMIO"},
+TAG_BSL_HIF_NETX51_52_PARAMS =
+    {paramtype = 0x40000010, datatype="TAG_BSL_HIF_NETX51_52_PARAMS_DATA_T",     desc="netX 51/52 HIF/DPM"},
 TAG_BSL_SERFLASH_PARAMS =
     {paramtype = 0x40000011, datatype="TAG_BSL_SERFLASH_PARAMS_DATA_T",       desc="Custom Serial Flash"},
+    
+    
+ 
 })
 
 taglist.addTagHelpPages({
@@ -854,7 +1094,10 @@ taglist.addTagHelpPages({
     TAG_BSL_USB_DESCR_PARAMS            = {file="TAG_BSL_USB_DESCR_PARAMS_DATA_T.htm"},
     TAG_BSL_DISK_POS_PARAMS             = {file="TAG_BSL_DISK_POS_PARAMS_DATA_T.htm"},
     TAG_BSL_BACKUP_POS_PARAMS           = {file="TAG_BSL_BACKUP_POS_PARAMS_DATA_T.htm"},
+    TAG_BSL_MMIO_NETX51_52_PARAMS          = {file="TAG_BSL_MMIO_NETX51_52_PARAMS_DATA_T.htm"},
+    TAG_BSL_HIF_NETX51_52_PARAMS           = {file="TAG_BSL_HIF_NETX51_52_PARAMS_DATA_T.htm"},    
     TAG_BSL_SERFLASH_PARAMS             = {file="TAG_BSL_SERFLASH_PARAMS_DATA_T.htm"},
+        
 })
 
 
