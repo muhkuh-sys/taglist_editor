@@ -16,7 +16,7 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 <table border=1>
 <tr>
     <td>Bus Type</td>
-    <td>The external bus type: Auto, DPM or Disabled<br><br>
+    <td>The external bus type: Auto, DPM or Disabled<br>
     Devices based on netX 10 can use either the host interface or SDRAM.
     By default, the host interface is enabled and the use of SDRAM is disabled.
     In order to activate the SDRAM interface, set Bus Type to Disabled.
@@ -68,7 +68,10 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
    <td align="left">
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> IO Config Register:<br>Selects of HIF pin multiplexing.<br>See Excel pinning sheet for details.<br>This configuration must be set up according to external netX connection before any access to external logic.<br>This register is protected by the netX access key mechanism; changing this register is only possible by the following sequence: </td>
+       <td valign="top"> IO Config Register: Selects of HIF pin multiplexing.<br>
+       See pin table in the netX10 Technical Reference Guide for details.<br>
+       This configuration must be set up according to external netX connection before any access to external logic.<br>
+       This register is protected by the netX access key mechanism; changing this register is only possible by the following sequence: </td>
 
       </tr>
      </tbody></table>
@@ -92,16 +95,16 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> Attention: Be very careful programming this register. False settings may cause permanent damage on netX or devices connected<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to HIF-IOs. </td>
+       <td valign="top"> Attention: Be very careful programming this register. False settings may cause permanent damage on netX or devices connected to HIF-IOs. </td>
 
       </tr>
      </tbody></table>
 </td>
   </tr>
   <tr>
-   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="center">R/W</td>
    <td colspan="2" align="left">
-   Address&nbsp;:&nbsp;0x101c0c40<br>
+   Address: 0x101c0c40
 
    </td>
   </tr>
@@ -111,15 +114,15 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
    <th bgcolor="#ccffcc">Description</th>
   </tr><tr>
 
-   <td>31&nbsp;-&nbsp;25</td>
-   <td>0</td>
-   <td>-</td>
+   <td>31&nbsp;-&nbsp;25 </td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
   <tr>
 
-   <td>24</td>
-   <td>"1"</td>
+   <td>24 </td>
+   <td>"1" </td>
    <td>en_hif_rdy_pio_mi</td>
    <td>
      <table border="0" cellspacing="1">
@@ -137,23 +140,23 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
       </tr>
       <tr>
        <td valign="top"> Note: </td>
-       <td valign="top"> This bit is ignored if HIF is DPM. Use DPM RDY configuration if HIF_RDY should<br>be used as PIO together with DPM functionallity. </td>
+       <td valign="top"> This bit is ignored if HIF is DPM. Use DPM RDY configuration if HIF_RDY should be used as PIO together with DPM functionallity. </td>
       </tr>
      </tbody></table>
 
 </td>
   </tr>
   <tr>
-   <td>23&nbsp;-&nbsp;21</td>
-   <td>0</td>
-   <td>-</td>
+   <td>23&nbsp;-&nbsp;21 </td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
 
   </tr>
   <tr>
-   <td>20&nbsp;-&nbsp;8</td>
-   <td>0x1fff<br></td>
-   <td>en_hif_a23to11_pio_mi<br></td>
+   <td>20&nbsp;-&nbsp;8 </td>
+   <td>0x1fff </td>
+   <td>en_hif_a23to11_pio_mi </td>
    <td>
 
      <table border="0" cellspacing="1">
@@ -182,21 +185,22 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
   </tr>
   <tr>
-   <td>7</td>
-   <td>0<br></td>
-   <td>-<br></td>
+   <td>7 </td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
 
   <tr>
-   <td>6</td>
-   <td>"0"<br></td>
-   <td>en_hif_sdram_mi<br></td>
+   <td>6 </td>
+   <td>"0" </td>
+   <td>en_hif_sdram_mi </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
 
-       <td valign="top"> Enable HIF IOs for SDRAM Memory Interface configuration.<br>If enabled following IOs are used as outputs for SDRAM (netx10, partial shared with SRAM/FLASH ctrl signals): </td>
+       <td valign="top"> Enable HIF IOs for SDRAM Memory Interface configuration.<br>
+       If enabled following IOs are used as outputs for SDRAM (netx10, partial shared with SRAM/FLASH ctrl signals): </td>
       </tr>
      </tbody></table>
 
@@ -270,7 +274,7 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
       <tr>
        <td valign="top"> Note: </td>
-       <td valign="top"> If this bit is set, HIF_A18..14 are not available as PIOs even if according bits are set<br>in 'en_a23to11_pio'. </td>
+       <td valign="top"> If this bit is set, HIF_A18..14 are not available as PIOs even if according bits are set in 'en_a23to11_pio'. </td>
       </tr>
       <tr>
        <td valign="top"> Note: </td>
@@ -283,12 +287,15 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   <tr>
    <td>5&nbsp;-&nbsp;4</td>
 
-   <td>"11"<br></td>
-   <td>hif_mi_cfg<br></td>
+   <td>"11" </td>
+   <td>hif_mi_cfg </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> HIF IO Memory Interface usage configuration.<br>Note: Configuration of SRAM/FLASH Chip-Select usage must be done additionally in<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ASYNCMEM_CTRL address area. By default, all Chip-Selects are configured for PIO usage.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If any external memory is used, Chip-Select configuration must be done<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;before the first access to external memory. Otherwise netX or memory<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;devices may be damaged.<br>Settings: </td>
+       <td valign="top"> HIF IO Memory Interface usage configuration.<br>
+       Note: Configuration of SRAM/FLASH Chip-Select usage must be done additionally in ASYNCMEM_CTRL address area. By default, all Chip-Selects are configured for PIO usage.<br>
+       If any external memory is used, Chip-Select configuration must be done before the first access to external memory. Otherwise netX or memory devices may be damaged.<br>
+       Settings: </td>
 
       </tr>
      </tbody></table>
@@ -296,12 +303,14 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
      <table border="0" cellspacing="1">
       <tbody><tr>
        <td valign="top"> &nbsp;00: </td>
-       <td valign="top"> HIF IOs are used as 8 bit MI (together with serial DPM possible).<br>Used HIF IOs: HIF_D7..0, HIF_A10..0, HIF_RDN, HIF_WRN. </td>
+       <td valign="top"> HIF IOs are used as 8 bit MI (together with serial DPM possible).<br>
+       Used HIF IOs: HIF_D7..0, HIF_A10..0, HIF_RDN, HIF_WRN. </td>
 
       </tr>
       <tr>
        <td valign="top"> &nbsp;01: </td>
-       <td valign="top"> HIF IOs are used as 16 bit MI (no DPM possible).<br>Used HIF IOs (add. to '00' setting): HIF_D15..8, HIF_BHEN. </td>
+       <td valign="top"> HIF IOs are used as 16 bit MI (no DPM possible).<br>
+       Used HIF IOs (add. to '00' setting): HIF_D15..8, HIF_BHEN. </td>
       </tr>
       <tr>
 
@@ -318,22 +327,22 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
      <table border="0" cellspacing="1">
       <tbody><tr>
        <td valign="top"> Note: </td>
-       <td valign="top"> If upper address lines HIF_A23...11 are not used as PIOs, this must be configured in<br>bits 'en_a23to11'. </td>
+       <td valign="top"> If upper address lines HIF_A23...11 are not used as PIOs, this must be configured in bits 'en_a23to11'. </td>
 
       </tr>
       <tr>
        <td valign="top"> Note: </td>
-       <td valign="top"> If HIF is configured as parallel DPM ('sel_hif_dpm' set and 'sel_dpm_serial' not set), HIF IOs are<br>not available for Memory Interface usage programmed value is ignored. </td>
+       <td valign="top"> If HIF is configured as parallel DPM ('sel_hif_dpm' set and 'sel_dpm_serial' not set), HIF IOs are not available for Memory Interface usage programmed value is ignored. </td>
       </tr>
       <tr>
 
        <td valign="top"> Note: </td>
-       <td valign="top"> If HIF is configured as serial DPM ('sel_hif_dpm' set and 'sel_dpm_serial' set), HIF IOs are<br>not available for 16 bit Memory Interface. Programmed value '01' will be ignored in this case. </td>
+       <td valign="top"> If HIF is configured as serial DPM ('sel_hif_dpm' set and 'sel_dpm_serial' set), HIF IOs are not available for 16 bit Memory Interface. Programmed value '01' will be ignored in this case. </td>
       </tr>
       <tr>
-       <td valign="top"> Note:<br> </td>
+       <td valign="top"> Note:  </td>
 
-       <td valign="top"> SDRAM Chip-Select is multiplext with SRAM/FLASH Chip-Select 1 on HIF_DIRQ. If 'en_hif_sdram_mi'<br>is set and SRAM/FLASH Chip-Select 1 enabled in ASYNCMEM_CTRL address area, SDRAM Chip-Select<br>gains priority and SRAM/FLASH Chip-Select 1 will not be mapped to HIF_DIRQ. </td>
+       <td valign="top"> SDRAM Chip-Select is multiplext with SRAM/FLASH Chip-Select 1 on HIF_DIRQ. If 'en_hif_sdram_mi' is set and SRAM/FLASH Chip-Select 1 enabled in ASYNCMEM_CTRL address area, SDRAM Chip-Select gains priority and SRAM/FLASH Chip-Select 1 will not be mapped to HIF_DIRQ. </td>
       </tr>
      </tbody></table>
 </td>
@@ -341,8 +350,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   <tr>
    <td>3</td>
 
-   <td>"0"<br></td>
-   <td>sel_dpm_serial_spo<br></td>
+   <td>"0" </td>
+   <td>sel_dpm_serial_spo </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
@@ -367,8 +376,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
   <tr>
    <td>2</td>
-   <td>"0"<br></td>
-   <td>sel_dpm_serial_sph<br></td>
+   <td>"0" </td>
+   <td>sel_dpm_serial_sph </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
@@ -393,8 +402,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>1</td>
-   <td>"0"<br></td>
-   <td>sel_dpm_serial<br></td>
+   <td>"0" </td>
+   <td>sel_dpm_serial </td>
    <td>
 
      <table border="0" cellspacing="1">
@@ -419,8 +428,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>0</td>
-   <td>"0"<br></td>
-   <td>sel_hif_dpm<br></td>
+   <td>"0" </td>
+   <td>sel_hif_dpm </td>
 
    <td>
      <table border="0" cellspacing="1">
@@ -438,7 +447,7 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
       <tr>
        <td valign="top"> Note: </td>
 
-       <td valign="top"> Parallel DPM fast/service IRQ functionallity (SIRQ/FIQ) on HIF_SDCLK is controlled by<br>en_hif_sdram_mi bit. </td>
+       <td valign="top"> Parallel DPM fast/service IRQ functionallity (SIRQ/FIQ) on HIF_SDCLK is controlled by en_hif_sdram_mi bit. </td>
      </tr>
      </tbody>
     </table>
@@ -463,7 +472,9 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
    <td align="left">
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> DPM IO Control Register 0.<br>This register is accessible in any DPM-mode (8, 16, 32 bit, SRAM, Intel, Motorola, little endian, big endian) by access to DPM address 0.<br>Basic DPM settings are configurable here to make higher addresses accessible. </td>
+       <td valign="top"> DPM IO Control Register 0.<br>
+       This register is accessible in any DPM-mode (8, 16, 32 bit, SRAM, Intel, Motorola, little endian, big endian) by access to DPM address 0.<br>
+       Basic DPM settings are configurable here to make higher addresses accessible. </td>
 
       </tr>
      </tbody>
@@ -472,9 +483,9 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   
   <tr>
-   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="center">R/W </td>
    <td colspan="2" align="left">
-   Address&nbsp;:&nbsp;0x101c1200<br>
+   Address: 0x101c1200 
    </td>
   </tr>
   
@@ -487,15 +498,15 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   
   <tr>
    <td>31&nbsp;-&nbsp;6</td>
-   <td>0<br></td>
-   <td>-<br></td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
   
   <tr>
    <td>5&nbsp;-&nbsp;4</td>
-   <td>"00"<br></td>
-   <td>endian<br></td>
+   <td>"00" </td>
+   <td>endian </td>
    <td>
    
      <table border="0" cellspacing="1">
@@ -558,7 +569,7 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> Little endian is used netX inside. If big endian host device is used, set to this 01 or 10 according to<br>host device data width. </td>
+       <td valign="top"> Little endian is used netX inside. If big endian host device is used, set to this 01 or 10 according to host device data width. </td>
       </tr>
      </tbody>
      </table>
@@ -568,13 +579,18 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   
   <tr>
    <td>3&nbsp;-&nbsp;0</td>
-   <td>"0000"<br></td>
-   <td>mode<br></td>
+   <td>"0000" </td>
+   <td>mode </td>
    <td>
 
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> DPM access mode:<br>Chip-select, output-enable, write-enable and byte-enables are always low active (i.e.: nCS, nOE, nWE, nBE*, nBHE).<br>8 bit modes use D[7:0], 16 bit modes use D[15:0].<br>For DPM modes with less than 32 bit data, write data may not written immediate to netX memory or<br>registers (view dpm_win1_map register).<br>Internal access size decision depends on external DPM data size:<br>Supported DPM modes are: </td>
+       <td valign="top"> DPM access mode: <br>
+       Chip-select, output-enable, write-enable and byte-enables are always low active (i.e.: nCS, nOE, nWE, nBE*, nBHE).<br>
+       8 bit modes use D[7:0], 16 bit modes use D[15:0].<br>
+       For DPM modes with less than 32 bit data, write data may not written immediate to netX memory or registers (view dpm_win1_map register).<br>
+       Internal access size decision depends on external DPM data size:<br>
+       Supported DPM modes are: </td>
       </tr>
      </tbody>
      </table>
@@ -582,7 +598,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
      <table border="0" cellspacing="1">
       <tbody><tr>
        <td valign="top"> &nbsp;0000: </td>
-       <td valign="top"> 8 bit SRAM (write data/address valid at positive edge nWR).<br>DPM_D0..7 are used as data lines, DPM_D8..31 can be used as PIOs (+24 PIOs). </td>
+       <td valign="top"> 8 bit SRAM (write data/address valid at positive edge nWR).<br>
+       DPM_D0..7 are used as data lines, DPM_D8..31 can be used as PIOs (+24 PIOs). </td>
       </tr>
       <tr>
        <td valign="top"> &nbsp;&nbsp;&nbsp;: </td>
@@ -591,7 +608,7 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
       
       <tr>
        <td valign="top"> &nbsp;0100: </td>
-       <td valign="top"> 16 bit SRAM (address 16 bit aligned, 2 byte enables) or<br>Intel (byte address with byte-high enable) mode. </td>
+       <td valign="top"> 16 bit SRAM (address 16 bit aligned, 2 byte enables) or Intel (byte address with byte-high enable) mode. </td>
       </tr>
       
       <tr>
@@ -639,16 +656,17 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
    <td align="left">
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> DPM External Address Range Configuration Register.<br>Unused address lines can be used as PIOs. </td>
+       <td valign="top"> DPM External Address Range Configuration Register.<br>
+       Unused address lines can be used as PIOs. </td>
       </tr>
 
      </tbody></table>
 </td>
   </tr>
   <tr>
-   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="center">R/W </td>
    <td colspan="2" align="left">
-   Address&nbsp;:&nbsp;0x101c1210<br>
+   Address: 0x101c1210 
 
    </td>
   </tr>
@@ -659,20 +677,21 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr><tr>
 
    <td>31&nbsp;-&nbsp;6</td>
-   <td>0<br></td>
-   <td>-<br></td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
   <tr>
 
    <td>5&nbsp;-&nbsp;4</td>
-   <td>"00"<br></td>
-   <td>cfg_win_addr_cfg<br></td>
+   <td>"00" </td>
+   <td>cfg_win_addr_cfg </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
 
-       <td valign="top"> Configuration of External DPM Configuration Window 0.<br>Supported settings are: </td>
+       <td valign="top"> Configuration of External DPM Configuration Window 0.<br>
+       Supported settings are: </td>
       </tr>
      </tbody></table>
 
@@ -680,11 +699,12 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
       <tbody><tr>
        <td valign="top"> &nbsp;00: </td>
 
-       <td valign="top"> Configuration Window is located in the first 256 bytes of external DPM address<br>range (0x0 to 0xff). It is located before the next enabled Window (1 to 4). </td>
+       <td valign="top"> Configuration Window is located in the first 256 bytes of external DPM address range (0x0 to 0xff). It is located before the next enabled Window (1 to 4). </td>
       </tr>
       <tr>
-       <td valign="top"> &nbsp;01:<br> </td>
-       <td valign="top"> Configuration Window is located in the last 256 bytes of external DPM address<br>range. It is located after the last enabled Window (1 to 4).<br>Example: 'addr_range' is 8kB: Configuration Window is located in 0x1F00..0x1FFF. </td>
+       <td valign="top"> &nbsp;01:  </td>
+       <td valign="top"> Configuration Window is located in the last 256 bytes of external DPM address range. It is located after the last enabled Window (1 to 4).<br>
+       Example: 'addr_range' is 8kB: Configuration Window is located in 0x1F00..0x1FFF. </td>
 
       </tr>
       <tr>
@@ -694,7 +714,7 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
       <tr>
        <td valign="top"> &nbsp;11: </td>
 
-       <td valign="top"> Configuration Window is disabled for external DPM access. Full DPM address<br>range can be used for Windows 1 to 4. </td>
+       <td valign="top"> Configuration Window is disabled for external DPM access. Full DPM address range can be used for Windows 1 to 4. </td>
       </tr>
      </tbody></table>
 </td>
@@ -702,8 +722,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   <tr>
    <td>3&nbsp;-&nbsp;0</td>
 
-   <td>"0010"<br></td>
-   <td>addr_range<br></td>
+   <td>"0010" </td>
+   <td>addr_range </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
@@ -833,9 +853,9 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 </td>
   </tr>
   <tr>
-   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="center">R/W </td>
    <td colspan="2" align="left">
-  Address&nbsp;:&nbsp;0x101c1214<br>
+  Address: 0x101c1214 
 
    </td>
   </tr>
@@ -846,15 +866,15 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr><tr>
 
    <td>31&nbsp;-&nbsp;8</td>
-   <td>0<br></td>
-   <td>-<br></td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
   <tr>
 
    <td>7</td>
-   <td>"0"<br></td>
-   <td>rd_burst_en<br></td>
+   <td>"0" </td>
+   <td>rd_burst_en </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
@@ -866,13 +886,17 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>6&nbsp;-&nbsp;4</td>
-   <td>"010"<br></td>
+   <td>"010" </td>
 
-   <td>t_rds<br></td>
+   <td>t_rds </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> Read data setup time (in steps of 10ns).<br>If DPM_RDY is used (rdy_mode != 0), DPM_RDY is generated t_rds*10ns after read data is stored on data bus.<br>Without DPM_RDY use (rdy_mode == 0) read access error is detected if access terminates before t_rds*10ns<br>passed after read data generation.<br>Valid settings are: 0..7.<br>Note:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read data access time will increased by t_rds * 10ns if t_rds is not 0. </td>
+       <td valign="top"> Read data setup time (in steps of 10ns).<br>
+       If DPM_RDY is used (rdy_mode != 0), DPM_RDY is generated t_rds*10ns after read data is stored on data bus.<br>
+       Without DPM_RDY use (rdy_mode == 0) read access error is detected if access terminates before t_rds*10ns passed after read data generation.<br>
+       Valid settings are: 0..7.<br>
+       Note: Read data access time will increased by t_rds * 10ns if t_rds is not 0. </td>
 
       </tr>
      </tbody></table>
@@ -880,20 +904,21 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>3</td>
-   <td>0<br></td>
-   <td>-<br></td>
+   <td>0 </td>
+   <td>- </td>
 
    <td>&nbsp;reserved</td>
   </tr>
   <tr>
    <td>2</td>
-   <td>"1"<br></td>
-   <td>filter<br></td>
+   <td>"1" </td>
+   <td>filter </td>
    <td>
 
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> Filter DPM Control Signals.<br>If this bit is set, DPM signals Chip-Select, Read-Enable and Write-Enable (and Address latch enable if multiplexed<br>Parallel DPM modes are used) are filtered for spike suppression. </td>
+       <td valign="top"> Filter DPM Control Signals.<br>
+       If this bit is set, DPM signals Chip-Select, Read-Enable and Write-Enable (and Address latch enable if multiplexed Parallel DPM modes are used) are filtered for spike suppression. </td>
       </tr>
      </tbody></table>
 
@@ -912,7 +937,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> Note: Data, address and byte-enable inputs are not filtered and must be stable when sampled. I.e. during<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the last 10ns of a read access and at the first 10ns of read access start.<br>Note:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read data access time is increased by 10ns if this bit is set. </td>
+       <td valign="top"> Note: Data, address and byte-enable inputs are not filtered and must be stable when sampled. I.e. during the last 10ns of a read access and at the first 10ns of read access start.<br>
+       Note: Read data access time is increased by 10ns if this bit is set. </td>
 
       </tr>
      </tbody></table>
@@ -920,13 +946,17 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>1&nbsp;-&nbsp;0</td>
-   <td>"11"<br></td>
+   <td>"11" </td>
 
-   <td>t_osa<br></td>
+   <td>t_osa </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> Address Setup Time (t_osa * 10ns).<br>Address sampling can be delayed for read and write accesses by this parameter.<br>E.g. host device asserts Chip-Select, Read-Enable and address lines simultaneously but<br>some address lines are not stable while Chip-Select and Read-Enable are both low, set t_osa<br>to delay address sampling by t_osa * 10ns.<br>Valid settings are: 0..3.<br>Note:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read data access time will increased by t_osa * 10ns if t_osa is not 0. </td>
+       <td valign="top"> Address Setup Time (t_osa * 10ns).<br>
+       Address sampling can be delayed for read and write accesses by this parameter.<br>
+       E.g. host device asserts Chip-Select, Read-Enable and address lines simultaneously but some address lines are not stable while Chip-Select and Read-Enable are both low, set t_osa to delay address sampling by t_osa * 10ns.<br>
+       Valid settings are: 0..3.<br>
+       Note: Read data access time will increased by t_osa * 10ns if t_osa is not 0. </td>
       </tr>
 
      </tbody></table>
@@ -959,9 +989,9 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 </td>
   </tr>
   <tr>
-   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="center">R/W </td>
    <td colspan="2" align="left">
-   Address&nbsp;:&nbsp;0x101c1218<br>
+   Address: 0x101c1218 
 
    </td>
   </tr>
@@ -971,16 +1001,16 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
    <th bgcolor="#ccffcc">Description</th>
   </tr><tr>
 
-   <td>31&nbsp;-&nbsp;4</td>
-   <td>0<br></td>
-   <td>-<br></td>
+   <td>31&nbsp;-&nbsp;4 </td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
   <tr>
 
-   <td>3</td>
-   <td>"0"<br></td>
-   <td>rdy_sig_mode<br></td>
+   <td>3 </td>
+   <td>"0" </td>
+   <td>rdy_sig_mode </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
@@ -991,22 +1021,24 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> 1:<br><br> </td>
-       <td valign="top"> DPM_RDY is generated as ready/acknowledge pulse.<br>In this mode, DPM_RDY is only in active state at access end to sign that host device is allowed to finish the<br>current access. If no access to DPM is done or if host device runs DPM access but is not allowed to finish it yet,<br>DPM_RDY will remain in inactive state. </td>
+       <td valign="top"> 1:   </td>
+       <td valign="top"> DPM_RDY is generated as ready/acknowledge pulse.<br>
+       In this mode, DPM_RDY is only in active state at access end to sign that host device is allowed to finish the current access. If no access to DPM is done or if host device runs DPM access but is not allowed to finish it yet, DPM_RDY will remain in inactive state. </td>
 
       </tr>
       <tr>
-       <td valign="top"> 0:<br><br> </td>
-       <td valign="top"> DPM_RDY is generated as wait/busy state signal.<br>In this mode, DPM_RDY becomes active at access start and will remain active while host device is not allowed to finish the<br>current access. If no access to DPM is done or if host device runs DPM access and allowed to finish it and continue<br>access generation, DPM_RDY will be in inactive state. </td>
+       <td valign="top"> 0:   </td>
+       <td valign="top"> DPM_RDY is generated as wait/busy state signal.<br>
+       In this mode, DPM_RDY becomes active at access start and will remain active while host device is not allowed to finish the current access. If no access to DPM is done or if host device runs DPM access and allowed to finish it and continue access generation, DPM_RDY will be in inactive state. </td>
       </tr>
 
      </tbody></table>
 </td>
   </tr>
   <tr>
-   <td>2&nbsp;-&nbsp;1</td>
-   <td>"00"<br></td>
-   <td>rdy_drv_mode<br></td>
+   <td>2&nbsp;-&nbsp;1 </td>
+   <td>"00" </td>
+   <td>rdy_drv_mode </td>
 
    <td>
      <table border="0" cellspacing="1">
@@ -1027,8 +1059,10 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
        <td valign="top"> ready is driven when active and inactive. Never highZ. (Push-Pull mode) </td>
       </tr>
       <tr>
-       <td valign="top"> 10:<br><br><br><br><br> </td>
-       <td valign="top"> ready is driven when active and for a short time when inactive-phase starts for fast<br>busy to ready signal state change (Sustain-Tristate mode).<br>Inactive-phase ready driving time (tRPm02, tRPm12) depends on rdy_sig_mode:<br>For rdy_sig_mode=0 this time (tRPm02) is 10ns.<br>For rdy_sig_mode=1 this time (tRPm12) depends on programmed input signal<br>filtering (register dpm_timing_cfg bit filter): If filtering is disabled tRPm12 is 20ns to 30ns,<br>if input filtering is enabled,&nbsp;&nbsp;tRPm12 is 30ns to 40ns. </td>
+       <td valign="top"> 10: </td>
+       <td valign="top"> ready is driven when active and for a short time when inactive-phase starts for fast busy to ready signal state change (Sustain-Tristate mode). Inactive-phase ready driving time (tRPm02, tRPm12) depends on rdy_sig_mode:<br>
+       For rdy_sig_mode=0 this time (tRPm02) is 10ns.<br>
+       For rdy_sig_mode=1 this time (tRPm12) depends on programmed input signal filtering (register dpm_timing_cfg bit filter): If filtering is disabled tRPm12 is 20ns to 30ns, if input filtering is enabled,&nbsp;&nbsp;tRPm12 is 30ns to 40ns. </td>
 
       </tr>
       <tr>
@@ -1039,16 +1073,16 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> Note:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mode 2 and 3 are reordered in comparison to netX100/500/50. </td>
+       <td valign="top"> Note: Mode 2 and 3 are reordered in comparison to netX100/500/50. </td>
       </tr>
      </tbody></table>
 </td>
   </tr>
   <tr>
 
-   <td>0</td>
-   <td>"1"<br></td>
-   <td>rdy_pol<br></td>
+   <td>0 </td>
+   <td>"1" </td>
+   <td>rdy_pol </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
@@ -1090,9 +1124,9 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 </td>
   </tr>
   <tr>
-   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="center">R/W </td>
    <td colspan="2" align="left">
-   Address&nbsp;:&nbsp;0x101c1228<br>
+   Address: 0x101c1228 
 
    </td>
   </tr>
@@ -1102,20 +1136,21 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
    <th bgcolor="#ccffcc">Description</th>
   </tr><tr>
 
-   <td>31&nbsp;-&nbsp;1</td>
-   <td>0<br></td>
-   <td>-<br></td>
+   <td>31&nbsp;-&nbsp;1 </td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
   <tr>
 
    <td>0</td>
-   <td>"0"<br></td>
-   <td>enable_flag_reset_on_rd<br></td>
+   <td>"0" </td>
+   <td>enable_flag_reset_on_rd </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> Enable Status Flag Reset by Reading this register.<br>If enable_flag_reset_on_rd-bit is 0, there is only one access necessary for<br>error detection and clearing the error status bits. In cases where internal access time is<br>not predictable and host provides no ready function, it is recommended to enable reset-on-read-function<br>to minimize traffic. </td>
+       <td valign="top"> Enable Status Flag Reset by Reading this register.<br>
+       If enable_flag_reset_on_rd-bit is 0, there is only one access necessary for error detection and clearing the error status bits. In cases where internal access time is not predictable and host provides no ready function, it is recommended to enable reset-on-read-function to minimize traffic. </td>
       </tr>
 
      </tbody></table>
@@ -1140,16 +1175,17 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
    <td align="left">
      <table border="0" cellspacing="1">
       <tbody><tr>
-       <td valign="top"> DPM IO Configuration Register 0.<br>Unused DPM IOs can be used as PIOs. </td>
+       <td valign="top"> DPM IO Configuration Register 0.<br>
+       Unused DPM IOs can be used as PIOs. </td>
       </tr>
 
      </tbody></table>
 </td>
   </tr>
   <tr>
-   <td colspan="2" align="center">R/W<br></td>
+   <td colspan="2" align="center">R/W </td>
    <td colspan="2" align="left">
-   Address&nbsp;:&nbsp;0x101c122c<br>
+   Address: 0x101c122c 
 
    </td>
   </tr>
@@ -1159,16 +1195,16 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
    <th bgcolor="#ccffcc">Description</th>
   </tr><tr>
 
-   <td>31&nbsp;-&nbsp;8</td>
-   <td>0<br></td>
-   <td>-<br></td>
+   <td>31&nbsp;-&nbsp;8 </td>
+   <td>0 </td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
   <tr>
 
-   <td>7</td>
-   <td>"1"<br></td>
-   <td>fiq_oec<br></td>
+   <td>7 </td>
+   <td>"1" </td>
+   <td>fiq_oec </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
@@ -1193,8 +1229,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>6</td>
-   <td>"0"<br></td>
-   <td>fiq_pol<br></td>
+   <td>"0" </td>
+   <td>fiq_pol </td>
    <td>
      <table border="0" cellspacing="1">
 
@@ -1219,8 +1255,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>5</td>
-   <td>"1"<br></td>
-   <td>irq_oec<br></td>
+   <td>"1" </td>
+   <td>irq_oec </td>
    <td>
 
      <table border="0" cellspacing="1">
@@ -1245,8 +1281,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>4</td>
-   <td>"0"<br></td>
-   <td>irq_pol<br></td>
+   <td>"0" </td>
+   <td>irq_pol </td>
 
    <td>
      <table border="0" cellspacing="1">
@@ -1271,15 +1307,15 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>3</td>
-   <td>0<br></td>
+   <td>0 </td>
 
-   <td>-<br></td>
+   <td>- </td>
    <td>&nbsp;reserved</td>
   </tr>
   <tr>
    <td>2</td>
-   <td>"1"<br></td>
-   <td>sel_sirq_pio<br></td>
+   <td>"1" </td>
+   <td>sel_sirq_pio </td>
 
    <td>
      <table border="0" cellspacing="1">
@@ -1292,8 +1328,8 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
 
   <tr>
    <td>1</td>
-   <td>"1"<br></td>
-   <td>sel_dirq_pio<br></td>
+   <td>"1" </td>
+   <td>sel_dirq_pio </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
@@ -1305,9 +1341,9 @@ If no parameters are given the 2nd Stage Loader will use the default settings.
   </tr>
   <tr>
    <td>0</td>
-   <td>"1"<br></td>
+   <td>"1" </td>
 
-   <td>sel_rdy_pio<br></td>
+   <td>sel_rdy_pio </td>
    <td>
      <table border="0" cellspacing="1">
       <tbody><tr>
