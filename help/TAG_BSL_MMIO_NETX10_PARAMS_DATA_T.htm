@@ -22,5 +22,69 @@ This tag can be used to adapt the Second Stage Loader's MMIO configuration setti
 </tr>
 </table>
 
+<p></p>
+<table border=1>
+<tr><th>Coding</th><th> Signal        </th><th> Signal Type           </th><th> Signal Group              </th></tr>
+<tr><td> 0x00 </td><td> XM0_IO0       </td><td> bidirectional         </td><td> Fieldbus0                 </td></tr>
+<tr><td> 0x01 </td><td> XM0_IO1       </td><td> bidirectional         </td><td> Fieldbus0                 </td></tr>
+<tr><td> 0x02 </td><td> XM0_IO2       </td><td> bidirectional         </td><td> Fieldbus0                 </td></tr>
+<tr><td> 0x03 </td><td> XM0_IO3       </td><td> bidirectional         </td><td> Fieldbus0                 </td></tr>
+<tr><td> 0x04 </td><td> XM0_IO4       </td><td> bidirectional         </td><td> Fieldbus0                 </td></tr>
+<tr><td> 0x05 </td><td> XM0_IO5       </td><td> bidirectional         </td><td> Fieldbus0                 </td></tr>
+<tr><td> 0x06 </td><td> XM0_RX        </td><td> input                 </td><td> Fieldbus0                 </td></tr>
+<tr><td> 0x07 </td><td> GPIO0         </td><td> bidirectional         </td><td> GPIO                      </td></tr>
+<tr><td> 0x08 </td><td> GPIO1         </td><td> bidirectional         </td><td> GPIO                      </td></tr>
+<tr><td> 0x09 </td><td> GPIO2         </td><td> bidirectional         </td><td> GPIO                      </td></tr>
+<tr><td> 0x0a </td><td> GPIO3         </td><td> bidirectional         </td><td> GPIO                      </td></tr>
+<tr><td> 0x0b </td><td> GPIO4         </td><td> bidirectional         </td><td> GPIO                      </td></tr>
+<tr><td> 0x0c </td><td> GPIO5         </td><td> bidirectional         </td><td> GPIO                      </td></tr>
+<tr><td> 0x0d </td><td> GPIO6         </td><td> bidirectional         </td><td> GPIO                      </td></tr>
+<tr><td> 0x0e </td><td> GPIO7         </td><td> bidirectional         </td><td> GPIO                      </td></tr>
+<tr><td> 0x0f </td><td> PHY0_LED0     </td><td> nontristatable output </td><td> int PHY0 Status           </td></tr>
+<tr><td> 0x10 </td><td> PHY0_LED1     </td><td> nontristatable output </td><td> int PHY0 Status           </td></tr>
+<tr><td> 0x11 </td><td> PHY0_LED2     </td><td> nontristatable output </td><td> int PHY0 Status           </td></tr>
+<tr><td> 0x12 </td><td> PHY0_LED3     </td><td> nontristatable output </td><td> int PHY0 Status           </td></tr>
+<tr><td> 0x13 </td><td> SPI0_CS1N     </td><td> bidirectional         </td><td> SPI0 2nd chip select      </td></tr>
+<tr><td> 0x14 </td><td> SPI0_CS2N     </td><td> bidirectional         </td><td> SPI0 3rd chip select      </td></tr>
+<tr><td> 0x15 </td><td> SPI1_CLK      </td><td> bidirectional         </td><td> SPI1                      </td></tr>
+<tr><td> 0x16 </td><td> SPI1_CS0N     </td><td> bidirectional         </td><td> SPI1                      </td></tr>
+<tr><td> 0x17 </td><td> SPI1_CS1N     </td><td> bidirectional         </td><td> SPI1                      </td></tr>
+<tr><td> 0x18 </td><td> SPI1_CS2N     </td><td> bidirectional         </td><td> SPI1                      </td></tr>
+<tr><td> 0x19 </td><td> SPI1_MISO     </td><td> bidirectional         </td><td> SPI1                      </td></tr>
+<tr><td> 0x1a </td><td> SPI1_MOSI     </td><td> bidirectional         </td><td> SPI1                      </td></tr>
+<tr><td> 0x1b </td><td> I2C_SCL       </td><td> bidirectional         </td><td> I2C                       </td></tr>
+<tr><td> 0x1c </td><td> I2C_SDA       </td><td> bidirectional         </td><td> I2C                       </td></tr>
+<tr><td> 0x1d </td><td> UART0_CTSn    </td><td> input                 </td><td> UART 0                    </td></tr>
+<tr><td> 0x1e </td><td> UART0_RTSn    </td><td> tristatable output    </td><td> UART 0                    </td></tr>
+<tr><td> 0x1f </td><td> UART0_RXD     </td><td> input                 </td><td> UART 0                    </td></tr>
+<tr><td> 0x20 </td><td> UART0_TXD     </td><td> tristatable output    </td><td> UART 0                    </td></tr>
+<tr><td> 0x21 </td><td> UART1_CTSn    </td><td> input                 </td><td> UART 1                    </td></tr>
+<tr><td> 0x22 </td><td> UART1_RTSn    </td><td> tristatable output    </td><td> UART 1                    </td></tr>
+<tr><td> 0x23 </td><td> UART1_RXD     </td><td> input                 </td><td> UART 1                    </td></tr>
+<tr><td> 0x24 </td><td> UART1_TXD     </td><td> tristatable output    </td><td> UART 1                    </td></tr>
+<tr><td> 0x25 </td><td> PWM_FAILURE_N </td><td> input                 </td><td> PWM                       </td></tr>
+<tr><td> 0x26 </td><td> POS_ENC0_A    </td><td> input                 </td><td> Encoder                   </td></tr>
+<tr><td> 0x27 </td><td> POS_ENC0_B    </td><td> input                 </td><td> Encoder                   </td></tr>
+<tr><td> 0x28 </td><td> POS_ENC0_N    </td><td> input                 </td><td> Encoder                   </td></tr>
+<tr><td> 0x29 </td><td> POS_ENC1_A    </td><td> input                 </td><td> Encoder                   </td></tr>
+<tr><td> 0x2a </td><td> POS_ENC1_B    </td><td> input                 </td><td> Encoder                   </td></tr>
+<tr><td> 0x2b </td><td> POS_ENC1_N    </td><td> input                 </td><td> Encoder                   </td></tr>
+<tr><td> 0x2c </td><td> POS_MP0       </td><td> input                 </td><td> Encoder                   </td></tr>
+<tr><td> 0x2d </td><td> POS_MP1       </td><td> input                 </td><td> Encoder                   </td></tr>
+<tr><td> 0x2e </td><td> IO_LINK0_IN   </td><td> input                 </td><td> IO-Link                   </td></tr>
+<tr><td> 0x2f </td><td> IO_LINK0_OUT  </td><td> nontristatable output </td><td> IO-Link                   </td></tr>
+<tr><td> 0x30 </td><td> IO_LINK0_OE   </td><td> nontristatable output </td><td> IO-Link                   </td></tr>
+<tr><td> 0x31 </td><td> IO_LINK1_IN   </td><td> input                 </td><td> IO-Link                   </td></tr>
+<tr><td> 0x32 </td><td> IO_LINK1_OUT  </td><td> nontristatable output </td><td> IO-Link                   </td></tr>
+<tr><td> 0x33 </td><td> IO_LINK1_OE   </td><td> nontristatable output </td><td> IO-Link                   </td></tr>
+<tr><td> 0x34 </td><td> IO_LINK2_IN   </td><td> input                 </td><td> IO-Link                   </td></tr>
+<tr><td> 0x35 </td><td> IO_LINK2_OUT  </td><td> nontristatable output </td><td> IO-Link                   </td></tr>
+<tr><td> 0x36 </td><td> IO_LINK2_OE   </td><td> nontristatable output </td><td> IO-Link                   </td></tr>
+<tr><td> 0x37 </td><td> IO_LINK3_IN   </td><td> input                 </td><td> IO-Link                   </td></tr>
+<tr><td> 0x38 </td><td> IO_LINK3_OUT  </td><td> nontristatable output </td><td> IO-Link                   </td></tr>
+<tr><td> 0x39 </td><td> IO_LINK3_OE   </td><td> nontristatable output </td><td> IO-Link                   </td></tr>
+<tr><td> 0x3f </td><td> PIO           </td><td> no special function <br> use MMIO line registers   </td><td>   </td></tr>
+</table>
+
 </BODY>
 </HTML>
