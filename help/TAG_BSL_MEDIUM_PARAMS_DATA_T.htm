@@ -14,7 +14,7 @@ bootloader.
 
 <table border=1>
 <tr>
-    <td>Flash Bootloader</td>
+    <td>Flash Bootloader </td>
     <td>
     If this flag is enabled and the 2nd Stage Loader is downloaded via DPM/PCI or the serial console, it will flash itself
     to the destination device.
@@ -37,7 +37,7 @@ bootloader.
         <li>Serial Flash: Use a file system in serial flash</li>
         <li>Parallel Flash: No file system will be available.
             Only a single file can be downloaded and will always be stored at location 0xc0040000.</li>
-        <li>SQI Flash - netX10 only: Use a file system in flash for configuration files.<br>
+        <li>SQIROM - netX10 and netX51/52 only: Use a file system in flash for configuration files.<br>
             <ul>
                 <li>The area from offset 0 to 0x1ffff is reserved for the Second Stage Loader.</li>
                 <li>The area from offset 0x20000 to 0x1fffff holds a single firmware file.</li>
