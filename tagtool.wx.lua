@@ -6,6 +6,7 @@
 --
 --  Changes:
 --    Date        Author        Description
+--  Jun 29, 2012  SL            Load dummy tester_nextid
 --  Sept 23, 2011 SL            all chars except " and # allowed in match/set
 --  Aug 5, 2011   SL            handle DOS/Unix/Mac style line breaks
 --  Jul 27, 2010  SL            created
@@ -30,6 +31,7 @@ print = print_lua
 muhkuh = {}
 function muhkuh.include(strFile, strPackage) require(strPackage) end
 
+require("tester_nextid") -- load dummy tester package
 require("nxfile")
 require("taglist")
 require("devhdredit")
