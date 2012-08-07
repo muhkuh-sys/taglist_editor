@@ -1,5 +1,10 @@
 Change log for Tag List Editor
 
+
+ * renamed fields in device header dialog: Manufacturer, Firmware/Device/Serial Number
+
+Tag list editor 1.1.13286
+
  * added TAG_BSL_MMIO_NETX51_52_PARAMS 0x4000000f 
  * added TAG_BSL_HIF_NETX51_52_PARAMS 0x40000010 
  * added RCX_TAG_IOPIN 0x00001041
