@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author   Description
 ---------------------------------------------------------------------------
+--  2012-08-07    SL       renamed: Manufacturer, Firmware/Device/Serial Number
 --  2012-02-16    SL       allow editing of HW compatibility field
 ---------------------------------------------------------------------------
 -- SVN Keywords
@@ -55,7 +56,7 @@ UINT32	     "	reserved, set to zero
 taglist.registerStructType("DEVICE_HEADER_V1_T", 
 {
   {"UINT32", "ulStructVersion",     desc="Structure Version",     mode="read-only"},
-  {"UINT16", "usManufacturer",      desc="Manufacturer Code"},
+  {"UINT16", "usManufacturer",      desc="Manufacturer"},
   {"UINT16", "usDeviceClass",       desc="Device Class"},
   {"UINT8",  "bHwCompatibility",    desc="Hardware Compatibility"},
   {"UINT8",  "bChipType",           desc="Chip Type",             mode="read-only"},
@@ -72,9 +73,9 @@ taglist.registerStructType("DEVICE_HEADER_V1_T",
   {"UINT16", "ulFwVersion_Minor",   desc="Minor",                 mode="read-only", editorParam={format="%u"}},
   {"UINT16", "ulFwVersion_Build",   desc="Build",                 mode="read-only", editorParam={format="%u"}},
   {"UINT16", "ulFwVersion_Revision",desc="Revision",              mode="read-only", editorParam={format="%u"}},
-  {"UINT32", "ulFwNumber",          desc="Firmware Product Code", mode="read-only", editorParam={format="%u"}},
-  {"UINT32", "ulDeviceNumber",      desc="Device Product Code",                     editorParam={format="%u"}},  
-  {"UINT32", "ulSerialNumber",      desc="Device Serial Number",                    editorParam={format="%u"}},  
+  {"UINT32", "ulFwNumber",          desc="Firmware Number",       mode="read-only", editorParam={format="%u"}},
+  {"UINT32", "ulDeviceNumber",      desc="Device Number",                           editorParam={format="%u"}},  
+  {"UINT32", "ulSerialNumber",      desc="Serial Number",                           editorParam={format="%u"}},  
   {"UINT32", "ulReserved1",         desc="Reserved",              mode="hidden"},
   {"UINT32", "ulReserved2",         desc="Reserved",              mode="hidden"},
   {"UINT32", "ulReserved3",         desc="Reserved",              mode="hidden"},
@@ -88,7 +89,7 @@ taglist.registerStructType("DEVICE_HEADER_V1_T",
 			"usManufacturer", "usDeviceClass", "bHwCompatibility", "bChipType"},
         {sizer="grid", box="Hardware Options",
         	"usHWOptions_1", "usHWOptions_2", "usHWOptions_3", "usHWOptions_4"},  
-        {sizer="grid", box="Procuct Codes/Serial Number",
+        {sizer="grid", box="Firmware/Device/Serial Number",
         	"ulFwNumber", "ulDeviceNumber", "ulSerialNumber"}
      },
      {sizer="h",     
