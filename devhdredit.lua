@@ -8,6 +8,7 @@
 --    Date        Author   Description
 ---------------------------------------------------------------------------
 --  2012-08-07    SL       renamed: Manufacturer, Firmware/Device/Serial Number
+--                                  Hardware Assembly Options
 --  2012-02-16    SL       allow editing of HW compatibility field
 ---------------------------------------------------------------------------
 -- SVN Keywords
@@ -61,10 +62,10 @@ taglist.registerStructType("DEVICE_HEADER_V1_T",
   {"UINT8",  "bHwCompatibility",    desc="Hardware Compatibility"},
   {"UINT8",  "bChipType",           desc="Chip Type",             mode="read-only"},
   {"UINT16", "usReserved",          desc="Reserved",              mode="hidden"},
-  {"UINT16", "usHWOptions_1",       desc="HW Options 1"},
-  {"UINT16", "usHWOptions_2",       desc="HW Options 2"},
-  {"UINT16", "usHWOptions_3",       desc="HW Options 3"},
-  {"UINT16", "usHWOptions_4",       desc="HW Options 4"},
+  {"UINT16", "usHWOptions_1",       desc="Hardware Option 1 (xC Port 0)"},
+  {"UINT16", "usHWOptions_2",       desc="Hardware Option 2 (xC Port 1)"},
+  {"UINT16", "usHWOptions_3",       desc="Hardware Option 3 (xC Port 2)"},
+  {"UINT16", "usHWOptions_4",       desc="Hardware Option 4 (xC Port 3)"},
   {"UINT32", "ulLicenseFlags1",     desc="License Flags 1",       mode="read-only"},
   {"UINT32", "ulLicenseFlags2",     desc="License Flags 2",       mode="read-only"},
   {"UINT16", "usNetXLicenseID",     desc="netX License Id",       mode="read-only"},
@@ -87,7 +88,7 @@ taglist.registerStructType("DEVICE_HEADER_V1_T",
      {sizer="h",
         {sizer="grid", box="Device",
 			"usManufacturer", "usDeviceClass", "bHwCompatibility", "bChipType"},
-        {sizer="grid", box="Hardware Options",
+        {sizer="grid", box="Hardware Assembly Options",
         	"usHWOptions_1", "usHWOptions_2", "usHWOptions_3", "usHWOptions_4"},  
         {sizer="grid", box="Firmware/Device/Serial Number",
         	"ulFwNumber", "ulDeviceNumber", "ulSerialNumber"}
