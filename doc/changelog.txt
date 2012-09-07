@@ -1,6 +1,6 @@
 Change log for Tag List Editor
 
-
+ * added RCX_TAG_SWAP_LNK_ACT_LED 0x00001042
  * renamed fields in device header dialog: Manufacturer, Firmware/Device/Serial Number
 
 Tag list editor 1.1.13286

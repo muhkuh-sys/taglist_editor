@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author  Description
 ---------------------------------------------------------------------------
+-- 2012-09-05     SL      added RCX_TAG_SWAP_LNK_ACT_LED 0x00001042 
 -- 2012-06-18     SL      added RCX_TAG_IOPIN 0x00001041 
 -- 2012-03-01     SL      added RCX_TAG_DPM_SETTINGS 0x00001061
 -- 2012-02-16     SL      added task priority/token 1
@@ -351,6 +352,17 @@ RCX_TAG_IOPIN_T=
 
 
 ----------------------------------------------------------------------------------------------
+-- Swap Link/Activity LED
+
+RCX_TAG_SWAP_LNK_ACT_LED_T=
+{
+    {"UINT32", "bSwapLnkActLeds", desc="Swap Link/Activity LEDs",
+        editor="checkboxedit",
+        editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}
+    },
+},
+
+----------------------------------------------------------------------------------------------
 -- DPM communication channels
 
 RCX_TAG_DPM_COMM_CHANNEL_DATA_T=
@@ -428,13 +440,15 @@ RCX_TAG_LED =
     {paramtype = 0x00001040, datatype="RCX_TAG_LED_T",                        desc="LED"},
 RCX_TAG_IOPIN =
     {paramtype = 0x00001041, datatype="RCX_TAG_IOPIN_T",                      desc="IO"},
-    RCX_TAG_XC =
+RCX_TAG_SWAP_LNK_ACT_LED =
+    {paramtype = 0x00001042, datatype="RCX_TAG_SWAP_LNK_ACT_LED_T",           desc="Swap Link/Activity LEDs"},
+RCX_TAG_XC =
     {paramtype = 0x00001050, datatype="RCX_TAG_XC_T",                         desc="xC Unit"},
 RCX_TAG_DPM_COMM_CHANNEL =
     {paramtype = 0x00001060, datatype="RCX_TAG_DPM_COMM_CHANNEL_DATA_T",      desc="DPM Communication Channels"},
 RCX_TAG_DPM_SETTINGS =
     {paramtype = 0x00001061, datatype="RCX_TAG_DPM_SETTINGS_DATA_T",          desc="DPM Settings"},
-    
+
 }
 
 RCX_TAG_HELP = {
@@ -452,6 +466,8 @@ RCX_TAG_HELP = {
     RCX_TAG_TIMER                       = {file="RCX_TAG_TIMER_T.htm"},
     RCX_TAG_UART                        = {file="RCX_TAG_UART_T.htm"},
     RCX_TAG_LED                         = {file="RCX_TAG_LED_T.htm"},
+    RCX_TAG_SWAP_LNK_ACT_LED            = {file="RCX_TAG_SWAP_LNK_ACT_LED_T.htm"},
+        
     RCX_TAG_IOPIN                       = {file="RCX_TAG_IOPIN_T.htm"},
     RCX_TAG_XC                          = {file="RCX_TAG_XC_T.htm"},
     RCX_TAG_DPM_COMM_CHANNEL            = {file="RCX_TAG_DPM_COMM_CHANNEL_DATA_T.htm"},
