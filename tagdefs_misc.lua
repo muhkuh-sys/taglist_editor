@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2012-09-27     SL            added RCX_TAG_EIF_NDIS_ENABLE 0x105D0002 
 -- 2012-04-03     SL            added TAG_ECS_ENABLE_BOOTSTRAP 0x30009001
 -- 2012-01-19     SL            added device ID tags for ECS, S3S, PLS
 -- 2011-05-12     SL            factored out from taglist.lua
@@ -434,6 +435,10 @@ RCX_TAG_EIF_EDD_INSTANCE_DATA_T = {
 	{"UINT32", "ulEddInstanceNo",  desc="RTE channel number", editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=3}},
 },
 
+RCX_TAG_EIF_NDIS_ENABLE_DATA_T = {
+	{"UINT32", "ulNDISEnable",  desc="Enable NDIS Support", editor="checkboxedit", editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}}
+},
+
 TAG_ECS_ENABLE_BOOTSTRAP_DATA_T = {
 	{"UINT32", "ulEnableBootstrap", desc="Enable", editor="checkboxedit", editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}}
 }
@@ -500,6 +505,8 @@ RCX_TAG_EIF_EDD_CONFIG =
 	{paramtype = 0x105D0000, datatype="RCX_TAG_EIF_EDD_CONFIG_DATA_T",   desc="Ethernet Config"},
 RCX_TAG_EIF_EDD_INSTANCE =
 	{paramtype = 0x105D0001, datatype="RCX_TAG_EIF_EDD_INSTANCE_DATA_T", desc="Ethernet Channel Number"},
+RCX_TAG_EIF_NDIS_ENABLE =
+	{paramtype = 0x105D0002, datatype="RCX_TAG_EIF_NDIS_ENABLE_DATA_T",  desc="Ethernet NDIS Support"},
 	
 -- protocol tag
 TAG_ECS_ENABLE_BOOTSTRAP =
@@ -533,6 +540,8 @@ TAG_HELP = {
     
     RCX_TAG_EIF_EDD_CONFIG              = {file="RCX_TAG_EIF_EDD_CONFIG_DATA_T.htm"},
     RCX_TAG_EIF_EDD_INSTANCE            = {file="RCX_TAG_EIF_EDD_INSTANCE_DATA_T.htm"},
+    RCX_TAG_EIF_NDIS_ENABLE             = {file="RCX_TAG_EIF_NDIS_ENABLE_DATA_T.htm"},
+    
     TAG_ECS_ENABLE_BOOTSTRAP            = {file="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm"}, 
 }
 
