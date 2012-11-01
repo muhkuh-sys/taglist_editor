@@ -166,13 +166,13 @@ TAG_CONSTANTS = {
 	RX_EIF_EDD_TYPE_2PORT_HUB            =  3,          -- 2-port hub 
     
 	-- ECS Select SoE or CoE
-	ECS_SELECT_COE = 0,
-	ECS_SELECT_SOE = 1,
+	ECS_STACK_VARIANT_COE = 0,
+	ECS_STACK_VARIANT_SOE = 1,
 	
     -- ECS EoE Config
-	ECS_EOE_CONFIG_DISABLED = 0,
-	ECS_EOE_CONFIG_TCPIP    = 1,
-	ECS_EOE_CONFIG_RAW      = 2,
+	ECS_EOE_MODE_DISABLED = 0,
+	ECS_EOE_MODE_TCPIP    = 1,
+	ECS_EOE_MODE_RAW      = 2,
 
 	-- ECS Mailbox Size
 	ECS_MBX_SIZE_128_128 = 0,
@@ -198,12 +198,12 @@ EIF_EDD_TYPE = {
 	{name="2-port Hub",                              value=3}
 }
 
-ECS_SELECT_SOE_COE = {
+ECS_STACK_VARIANT = {
 	{name="CoE", value=0},
 	{name="SoE", value=1},
 }
 
-ECS_EOE_CONFIG = {
+ECS_EOE_MODE = {
 	{name = "EoE disabled",                     value = 0},
 	{name = "EoE (TCP/IP mode) enabled",        value = 1},
 	{name = "EoE (Raw Ethernet mode) enabled",  value = 2},
@@ -323,11 +323,11 @@ TAG_ECS_ENABLE_BOOTSTRAP_DATA_T = {
 },
 
 TAG_ECS_SELECT_SOE_COE_DATA_T = {
-	{"UINT32", "ulSelectSoECoE", desc="Select SoE or CoE", editor="comboedit",  editorParam={nBits=32, values = ECS_SELECT_SOE_COE}}
+	{"UINT32", "ulECSStackVariant", desc="Stack Variant", editor="comboedit",  editorParam={nBits=32, values = ECS_STACK_VARIANT}}
 },
 
 TAG_ECS_CONFIG_EOE_DATA_T = {
-	{"UINT32", "ulEoEConfig", desc="EoE Configuration", editor="comboedit",  editorParam={nBits=32, values = ECS_EOE_CONFIG}}
+	{"UINT32", "ulEoEMode", desc="EoE Mode", editor="comboedit",  editorParam={nBits=32, values = ECS_EOE_MODE}}
 },
 
 TAG_ECS_MBX_SIZE_DATA_T = {
@@ -562,13 +562,14 @@ TAG_PLS_DEVICEID =
 TAG_EIP_EDD_CONFIGURATION = 
     {paramtype = 0x3000a001, datatype="TAG_EIP_EDD_CONFIGURATION_DATA_T", desc="Ethernet/IP EDD Configuration"}, 
 
+    
 -- protocol tags: EtherCAT Slave
 TAG_ECS_ENABLE_BOOTSTRAP =
 	{paramtype = 0x30009001, datatype="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T", desc="EtherCAT Slave Enable Bootstrap Mode"},
 TAG_ECS_SELECT_SOE_COE =
-	{paramtype = 0x30009002, datatype="TAG_ECS_SELECT_SOE_COE_DATA_T",    desc="EtherCAT Slave Select SoE or CoE"},
+	{paramtype = 0x30009002, datatype="TAG_ECS_SELECT_SOE_COE_DATA_T",    desc="EtherCAT Slave Stack Variant"},
 TAG_ECS_CONFIG_EOE =                                                      
-	{paramtype = 0x30009003, datatype="TAG_ECS_CONFIG_EOE_DATA_T",        desc="EtherCAT Slave Configure EoE"},
+	{paramtype = 0x30009003, datatype="TAG_ECS_CONFIG_EOE_DATA_T",        desc="EtherCAT Slave EoE Mode"},
 TAG_ECS_MBX_SIZE =                                                        
 	{paramtype = 0x30009004, datatype="TAG_ECS_MBX_SIZE_DATA_T",          desc="EtherCAT Slave Mailbox Size"},
         
