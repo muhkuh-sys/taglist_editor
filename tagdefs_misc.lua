@@ -180,7 +180,7 @@ TAG_CONSTANTS = {
 	ECS_MBX_SIZE_332_332 = 2,
 	ECS_MBX_SIZE_396_396 = 3,
 	ECS_MBX_SIZE_524_524 = 4,
-	ECS_MBX_SIZE_780_780 = 5,
+--	ECS_MBX_SIZE_780_780 = 5,
 	
 }
 
@@ -215,7 +215,7 @@ ECS_MBX_SIZE = {
 	{name = "332 bytes RX / 332 bytes TX", value = 2},
 	{name = "396 bytes RX / 396 bytes TX", value = 3},
 	{name = "524 bytes RX / 524 bytes TX", value = 4},
-	{name = "780 bytes RX / 780 bytes TX", value = 5},
+--	{name = "780 bytes RX / 780 bytes TX", value = 5},
 }
 
 
