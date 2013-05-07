@@ -7,7 +7,20 @@
 <h2>SDRAM Parameters</h2>
 
 <p>
-SDRAM parameters can be set using this tag. If no parameters are given the 2nd Stage Loader will use the data provided from security memory (alternatively from the NXF Header of the firmware).
+SDRAM parameters can be set using this tag.
+</p>
+
+<p>
+<b>Note</b>:<br> 
+There are multiple locations in which SDRAM parameters may be stored. 
+If more than one of them contains parameters, the selection depends on the 2nd Stage Loader.
+The current versions (1.4.x) check the the following locations, and use the first set of parameters found:
+<ol>
+<li>The security memory                             </li>
+<li>The SDRAM tag of the 2nd Stage Loader (this tag)</li>
+<li>The boot header of the firmware                 </li>
+</ol>
+
 </p>
 
 <p></p>
