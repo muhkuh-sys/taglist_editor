@@ -1,5 +1,7 @@
 Change log for Tag List Editor
 
+ * added TAG_TCP_PORT_NUMBERS 0x30019000 (disabled, not for general use)
+
 Tag list editor 1.1.13807
 
  * added RCX_TAG_EIF_NDIS_ENABLE   0x105D0002

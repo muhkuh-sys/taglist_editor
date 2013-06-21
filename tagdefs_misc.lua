@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------
--- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+-- Copyright (C) 2013 Hilscher Gesellschaft für Systemautomation mbH
 --
 -- Description:
---   Defines tags 
+--   Defines tags
 --   - Device ID
 --   - Diagnostics and Remote Access
 --   - Ethernet
@@ -13,11 +13,13 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2013-06-14     SL            added TAG_TCP_PORT_NUMBERS 0x30019000 
+--                              (disabled, not for general use)
 -- 2012-10-31     SL            added RCX_TAG_SERVX_PORT_NUMBER 0x10920001
 --                                    TAG_ECS_SELECT_SOE_COE    0x30009002
 --                                    TAG_ECS_CONFIG_EOE        0x30009003
 --                                    TAG_ECS_MBX_SIZE          0x30009004
--- 2012-09-27     SL            added RCX_TAG_EIF_NDIS_ENABLE   0x105D0002 
+-- 2012-09-27     SL            added RCX_TAG_EIF_NDIS_ENABLE   0x105D0002
 -- 2012-04-03     SL            added TAG_ECS_ENABLE_BOOTSTRAP  0x30009001
 -- 2012-01-19     SL            added device ID tags for ECS, S3S, PLS
 -- 2011-05-12     SL            factored out from taglist.lua
@@ -152,23 +154,23 @@ DEVICE_CLASS_COMBO_VALUES = {
 
 }
 
-TAG_CONSTANTS = {  
+TAG_CONSTANTS = {
     -- EIP xC type
     EIP_XC_TYPE_DLR_2PORT_SWITCH          = 1,
     EIP_XC_TYPE_STD_2PORT_SWITCH          = 2,
     EIP_XC_TYPE_STD_ETH                   = 3,
-    
+
 	-- EIF EDD type
 	-- PRELIMINARY
-	RX_EIF_EDD_TYPE_VIRTUAL              =  0,          -- virtual EDD attached to TCP stack 
+	RX_EIF_EDD_TYPE_VIRTUAL              =  0,          -- virtual EDD attached to TCP stack
 	RX_EIF_EDD_TYPE_STD_MAC              =  1,          -- single-port standard Ethernet interface
-	RX_EIF_EDD_TYPE_2PORT_SWITCH         =  2,          -- 2-port switch 
-	RX_EIF_EDD_TYPE_2PORT_HUB            =  3,          -- 2-port hub 
-    
+	RX_EIF_EDD_TYPE_2PORT_SWITCH         =  2,          -- 2-port switch
+	RX_EIF_EDD_TYPE_2PORT_HUB            =  3,          -- 2-port hub
+
 	-- ECS Select SoE or CoE
 	ECS_STACK_VARIANT_COE = 0,
 	ECS_STACK_VARIANT_SOE = 1,
-	
+
     -- ECS EoE Config
 	ECS_EOE_MODE_DISABLED = 0,
 	ECS_EOE_MODE_TCPIP    = 1,
@@ -181,7 +183,7 @@ TAG_CONSTANTS = {
 	ECS_MBX_SIZE_396_396 = 3,
 	ECS_MBX_SIZE_524_524 = 4,
 --	ECS_MBX_SIZE_780_780 = 5,
-	
+
 }
 
 EIP_XC_TYPE = {
@@ -222,7 +224,7 @@ ECS_MBX_SIZE = {
 -- MMIO pin numbers for netX 50
 NETX50_MMIO_NUMBERS = {}
 for i=0, 39 do
-	table.insert(NETX50_MMIO_NUMBERS, 
+	table.insert(NETX50_MMIO_NUMBERS,
 		{name=string.format("MMIO %2d", i), value = i})
 end
 
@@ -304,11 +306,11 @@ TAG_EIP_EDD_CONFIGURATION_DATA_T = {
 		editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}
 	},
 	{"UINT32", "ulxCType",             desc="xC Type",
-		editor="comboedit", 
+		editor="comboedit",
 		editorParam={nBits=32, values = EIP_XC_TYPE},
 	},
 	{"UINT32", "ulSinglePortXcNumber", desc="xC Number",
-		editor="comboedit", 
+		editor="comboedit",
 		editorParam={nBits=32, minValue=0, maxValue=3}
 	}
 } ,
@@ -335,6 +337,61 @@ TAG_ECS_MBX_SIZE_DATA_T = {
 },
 
 
+----------------------------------------------------------------------------------------------
+-- TCP Port Numbers 
+TAG_TCP_PORT_NUMBERS_DATA_T = {
+	{"UINT32", "ulPortStart",                   desc="TCP/UDP Port Range (First Port)", editor="numedit", editorParam={nBits=32, format="%d", minValue=0,    maxValue=0xefff}},
+	{"UINT32", "ulPortEnd",                     desc="TCP/UDP Port Range (Last Port)",  editor="numedit", editorParam={nBits=32, format="%d", minValue=0,    maxValue=0xefff}},
+	{"UINT32", "ulNumberOfProtocolStackPorts",  desc="Number of Protocol Stack Ports", 
+	                                                                mode = "read-only", editor="numedit", editorParam={nBits=32, format="%d", minValue=0,    maxValue=20}},
+	{"UINT32", "ulNumberOfUserPorts",           desc="Number of Additional Ports",      editor="numedit", editorParam={nBits=32, format="%d", minValue=0,    maxValue=20}},
+	{"UINT16", "ausPortList_0",                 desc="Port 1",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_1",                 desc="Port 2",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_2",                 desc="Port 3",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_3",                 desc="Port 4",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_4",                 desc="Port 5",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_5",                 desc="Port 6",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_6",                 desc="Port 7",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_7",                 desc="Port 8",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_8",                 desc="Port 9",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_9",                 desc="Port 10",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_10",                desc="Port 11",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_11",                desc="Port 12",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_12",                desc="Port 13",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_13",                desc="Port 14",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_14",                desc="Port 15",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_15",                desc="Port 16",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_16",                desc="Port 17",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_17",                desc="Port 18",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_18",                desc="Port 19",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_19",                desc="Port 20",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+
+	layout = {
+		sizer = "v",
+		{
+			sizer = "v", box = "Port Range",
+			"ulPortStart",  
+			"ulPortEnd",    
+		},
+		{
+			sizer = "v", box = "Additional Ports",
+			
+			{
+				sizer="grid", cols = 1, 
+				"ulNumberOfProtocolStackPorts",  
+				"ulNumberOfUserPorts",    
+			},
+			{
+				sizer="grid", cols = 4,
+				"ausPortList_0",  "ausPortList_1",  "ausPortList_2", "ausPortList_3",  
+				"ausPortList_4",  "ausPortList_5",  "ausPortList_6", "ausPortList_7",  
+				"ausPortList_8",  "ausPortList_9",  "ausPortList_10", "ausPortList_11", 
+				"ausPortList_12", "ausPortList_13", "ausPortList_14", "ausPortList_15", 
+				"ausPortList_16", "ausPortList_17", "ausPortList_18", "ausPortList_19", 
+			}
+		}
+	}	
+},
 
 ----------------------------------------------------------------------------------------------
 -- tags for netX Diagnostics and Remote Access component
@@ -483,11 +540,11 @@ RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS_DATA_T = {
         editor="checkboxedit",
         editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
     },
-    {"UINT8", "bSelectPinIdx", desc="Pin Number", 
+    {"UINT8", "bSelectPinIdx", desc="Pin Number",
         editor="numedit", editorParam={nBits=8, format="%d", minValue=0, maxValue=84}
     },
     {"UINT8", "bReserved",     desc="Reserved", mode = "hidden", editorParam={format="0x%02x"}},
-    
+
     layout = {
     	sizer="grid",
     	"bSelectPinType",
@@ -537,42 +594,46 @@ RCX_TAG_SERVX_PORT_NUMBER_DATA_T = {
 TAG_DEFS = {
 
 -- protocol tags: Device ID
-TAG_DP_DEVICEID  = 
-    {paramtype = 0x30013000, datatype="TAG_DP_DEVICEID_DATA_T",           desc="Profibus Product Information"}, 
-TAG_EIP_DEVICEID =                                                    
-    {paramtype = 0x3000a000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="Ethernet/IP Product Information"}, 
-TAG_DEVICENET_DEVICEID =                                                    
-    {paramtype = 0x30008000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="DeviceNet Product Information"}, 
-TAG_COMPONET_DEVICEID =                                                    
-    {paramtype = 0x30006000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="CompoNet Product Information"}, 
-TAG_CO_DEVICEID  =                                                    
-    {paramtype = 0x30004000, datatype="TAG_CO_DEVICEID_DATA_T",           desc="CANopen Product Information"}, 
-TAG_CCL_DEVICEID =                                                    
-    {paramtype = 0x30005000, datatype="TAG_CCL_DEVICEID_DATA_T",          desc="CC-Link Product Information"}, 
-TAG_PN_DEVICEID  =                                                    
-    {paramtype = 0x30015000, datatype="TAG_PN_DEVICEID_DATA_T",           desc="PROFINET Product Information"}, 
-TAG_ECS_DEVICEID = 
-    {paramtype = 0x30009000, datatype="TAG_ECS_DEVICEID_DATA_T",          desc="EtherCAT Slave Product Information"}, 
-TAG_S3S_DEVICEID = 
-    {paramtype = 0x30018000, datatype="TAG_S3S_DEVICEID_DATA_T",          desc="sercos III Product Information"}, 
-TAG_PLS_DEVICEID = 
-    {paramtype = 0x3001a000, datatype="TAG_PLS_DEVICEID_DATA_T",          desc="POWERLINK Product Information"}, 
-    
--- protocol tag: EIP EDD Config
-TAG_EIP_EDD_CONFIGURATION = 
-    {paramtype = 0x3000a001, datatype="TAG_EIP_EDD_CONFIGURATION_DATA_T", desc="Ethernet/IP EDD Configuration"}, 
+TAG_DP_DEVICEID  =
+    {paramtype = 0x30013000, datatype="TAG_DP_DEVICEID_DATA_T",           desc="Profibus Product Information"},
+TAG_EIP_DEVICEID =
+    {paramtype = 0x3000a000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="Ethernet/IP Product Information"},
+TAG_DEVICENET_DEVICEID =
+    {paramtype = 0x30008000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="DeviceNet Product Information"},
+TAG_COMPONET_DEVICEID =
+    {paramtype = 0x30006000, datatype="TAG_CIP_DEVICEID_DATA_T",          desc="CompoNet Product Information"},
+TAG_CO_DEVICEID  =
+    {paramtype = 0x30004000, datatype="TAG_CO_DEVICEID_DATA_T",           desc="CANopen Product Information"},
+TAG_CCL_DEVICEID =
+    {paramtype = 0x30005000, datatype="TAG_CCL_DEVICEID_DATA_T",          desc="CC-Link Product Information"},
+TAG_PN_DEVICEID  =
+    {paramtype = 0x30015000, datatype="TAG_PN_DEVICEID_DATA_T",           desc="PROFINET Product Information"},
+TAG_ECS_DEVICEID =
+    {paramtype = 0x30009000, datatype="TAG_ECS_DEVICEID_DATA_T",          desc="EtherCAT Slave Product Information"},
+TAG_S3S_DEVICEID =
+    {paramtype = 0x30018000, datatype="TAG_S3S_DEVICEID_DATA_T",          desc="sercos III Product Information"},
+TAG_PLS_DEVICEID =
+    {paramtype = 0x3001a000, datatype="TAG_PLS_DEVICEID_DATA_T",          desc="POWERLINK Product Information"},
 
-    
+-- protocol tag: EIP EDD Config
+TAG_EIP_EDD_CONFIGURATION =
+    {paramtype = 0x3000a001, datatype="TAG_EIP_EDD_CONFIGURATION_DATA_T", desc="Ethernet/IP EDD Configuration"},
+
+
 -- protocol tags: EtherCAT Slave
 TAG_ECS_ENABLE_BOOTSTRAP =
 	{paramtype = 0x30009001, datatype="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T", desc="EtherCAT Slave Enable Bootstrap Mode"},
 TAG_ECS_SELECT_SOE_COE =
 	{paramtype = 0x30009002, datatype="TAG_ECS_SELECT_SOE_COE_DATA_T",    desc="EtherCAT Slave Stack Variant"},
-TAG_ECS_CONFIG_EOE =                                                      
+TAG_ECS_CONFIG_EOE =
 	{paramtype = 0x30009003, datatype="TAG_ECS_CONFIG_EOE_DATA_T",        desc="EtherCAT Slave EoE Mode"},
-TAG_ECS_MBX_SIZE =                                                        
+TAG_ECS_MBX_SIZE =
 	{paramtype = 0x30009004, datatype="TAG_ECS_MBX_SIZE_DATA_T",          desc="EtherCAT Slave Mailbox Size"},
-        
+
+-- TAG_TCP_PORT_NUMBERS =
+--	{paramtype = 0x30019000, datatype="TAG_TCP_PORT_NUMBERS_DATA_T",      desc="Ethernet Interface TCP Port Numbers"},
+
+
 -- facility tags: netX Diagnostics and Remote Access component
 TAG_DIAG_IF_CTRL_UART =
     {paramtype = 0x10820000, datatype="TAG_DIAG_IF_CTRL_UART_DATA_T",          desc="UART Diagnostics Interface"},
@@ -586,7 +647,7 @@ TAG_DIAG_TRANSPORT_CTRL_PACKET =
     {paramtype = 0x10820011, datatype="TAG_DIAG_TRANSPORT_CTRL_PACKET_DATA_T", desc="Remote Access via rcX Packets"},
 
 -- facility tags: netX Ethernet and Fiber Optic Interface
--- This tag is assigned to the DRV_EDD facility (0x00f), but is handled 
+-- This tag is assigned to the DRV_EDD facility (0x00f), but is handled
 -- by each individual realtime ethernet protocol
 RCX_TAG_ETHERNET_PARAMS =
     {paramtype = 0x100f0000, datatype="RCX_TAG_ETHERNET_PARAMS_DATA_T",                   desc="Ethernet and Fiber Optic IF"},
@@ -603,12 +664,12 @@ RCX_TAG_EIF_EDD_INSTANCE =
 	{paramtype = 0x105D0001, datatype="RCX_TAG_EIF_EDD_INSTANCE_DATA_T", desc="Ethernet Channel Number"},
 RCX_TAG_EIF_NDIS_ENABLE =
 	{paramtype = 0x105D0002, datatype="RCX_TAG_EIF_NDIS_ENABLE_DATA_T",  desc="Ethernet NDIS Support"},
-	
+
 -- facility tag: servX web server
 RCX_TAG_SERVX_PORT_NUMBER =
 	{paramtype = 0x10920000, datatype="RCX_TAG_SERVX_PORT_NUMBER_DATA_T", desc="servX TCP Port Number"},
-	
-	
+
+
 }
 
 
@@ -620,24 +681,25 @@ RCX_TAG_SERVX_PORT_NUMBER =
 
 TAG_HELP = {
 
-    TAG_DP_DEVICEID                     = {file="TAG_DP_DEVICEID_DATA_T.htm"}, 
-    TAG_EIP_DEVICEID                    = {file="TAG_CIP_DEVICEID_DATA_T.htm"}, 
-    TAG_DEVICENET_DEVICEID              = {file="TAG_CIP_DEVICEID_DATA_T.htm"}, 
-    TAG_COMPONET_DEVICEID               = {file="TAG_CIP_DEVICEID_DATA_T.htm"}, 
-    TAG_CO_DEVICEID                     = {file="TAG_CO_DEVICEID_DATA_T.htm"}, 
-    TAG_CCL_DEVICEID                    = {file="TAG_CCL_DEVICEID_DATA_T.htm"}, 
-    TAG_PN_DEVICEID                     = {file="TAG_PN_DEVICEID_DATA_T.htm"}, 
-    TAG_S3S_DEVICEID                    = {file="TAG_S3S_DEVICEID_DATA_T.htm"}, 
-    TAG_ECS_DEVICEID                    = {file="TAG_ECS_DEVICEID_DATA_T.htm"}, 
-    TAG_PLS_DEVICEID                    = {file="TAG_PLS_DEVICEID_DATA_T.htm"}, 
-    
-    TAG_EIP_EDD_CONFIGURATION           = {file="TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"}, 
-    
-    TAG_ECS_ENABLE_BOOTSTRAP            = {file="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm"}, 
-    TAG_ECS_SELECT_SOE_COE              = {file="TAG_ECS_SELECT_SOE_COE_DATA_T.htm"}, 
-    TAG_ECS_CONFIG_EOE                  = {file="TAG_ECS_CONFIG_EOE_DATA_T.htm"},                                   
-    TAG_ECS_MBX_SIZE                    = {file="TAG_ECS_MBX_SIZE_DATA_T.htm"},                                       
-    
+    TAG_DP_DEVICEID                     = {file="TAG_DP_DEVICEID_DATA_T.htm"},
+    TAG_EIP_DEVICEID                    = {file="TAG_CIP_DEVICEID_DATA_T.htm"},
+    TAG_DEVICENET_DEVICEID              = {file="TAG_CIP_DEVICEID_DATA_T.htm"},
+    TAG_COMPONET_DEVICEID               = {file="TAG_CIP_DEVICEID_DATA_T.htm"},
+    TAG_CO_DEVICEID                     = {file="TAG_CO_DEVICEID_DATA_T.htm"},
+    TAG_CCL_DEVICEID                    = {file="TAG_CCL_DEVICEID_DATA_T.htm"},
+    TAG_PN_DEVICEID                     = {file="TAG_PN_DEVICEID_DATA_T.htm"},
+    TAG_S3S_DEVICEID                    = {file="TAG_S3S_DEVICEID_DATA_T.htm"},
+    TAG_ECS_DEVICEID                    = {file="TAG_ECS_DEVICEID_DATA_T.htm"},
+    TAG_PLS_DEVICEID                    = {file="TAG_PLS_DEVICEID_DATA_T.htm"},
+
+    TAG_EIP_EDD_CONFIGURATION           = {file="TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"},
+
+    TAG_ECS_ENABLE_BOOTSTRAP            = {file="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm"},
+    TAG_ECS_SELECT_SOE_COE              = {file="TAG_ECS_SELECT_SOE_COE_DATA_T.htm"},
+    TAG_ECS_CONFIG_EOE                  = {file="TAG_ECS_CONFIG_EOE_DATA_T.htm"},
+    TAG_ECS_MBX_SIZE                    = {file="TAG_ECS_MBX_SIZE_DATA_T.htm"},
+	TAG_TCP_PORT_NUMBERS                = {file="TAG_TCP_PORT_NUMBERS_DATA_T.htm"},
+
     TAG_DIAG_IF_CTRL_UART               = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_USB                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_TCP                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
@@ -647,14 +709,14 @@ TAG_HELP = {
     RCX_TAG_ETHERNET_PARAMS                     = {file="RCX_TAG_ETHERNET_PARAMS_T.htm"},
     RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS    = {file="RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS_T.htm"},
     RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS   = {file="RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS_T.htm"},
-    
+
     RCX_TAG_EIF_EDD_CONFIG              = {file="RCX_TAG_EIF_EDD_CONFIG_DATA_T.htm"},
     RCX_TAG_EIF_EDD_INSTANCE            = {file="RCX_TAG_EIF_EDD_INSTANCE_DATA_T.htm"},
     RCX_TAG_EIF_NDIS_ENABLE             = {file="RCX_TAG_EIF_NDIS_ENABLE_DATA_T.htm"},
-    
-    RCX_TAG_SERVX_PORT_NUMBER           = {file="RCX_TAG_SERVX_PORT_NUMBER_DATA_T.htm"}, 
-    
-    
+
+    RCX_TAG_SERVX_PORT_NUMBER           = {file="RCX_TAG_SERVX_PORT_NUMBER_DATA_T.htm"},
+
+
 }
 
 
