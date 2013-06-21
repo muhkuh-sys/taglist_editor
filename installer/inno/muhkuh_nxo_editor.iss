@@ -120,7 +120,7 @@ AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://muhkuh.sourceforge.net/
 AppSupportURL=http://www.sourceforge.net/projects/muhkuh
 AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
-AppCopyright=(C) 2012, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2013, Muhkuh team and Hilscher GmbH
 
 
 ; works: company, copyright, product name, product version
@@ -252,7 +252,8 @@ Source: nxo_editor\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modul
 Source: nxo_editor\makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
-Source: "H:\Manual netX Products\Tools\TagListEditor\man.003\Tag List Editor - Viewing and Editing Tags OI 03 EN.pdf"; DestDir: {app}\doc; Components: modulator
+;Source: "H:\Manual netX Products\Tools\TagListEditor\man.003\Tag List Editor - Viewing and Editing Tags OI 03 EN.pdf"; DestDir: {app}\doc; Components: modulator
+Source: "H:\Manual netX Products\Tools\TagListEditor\man.004\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf"; DestDir: {app}\doc; Components: modulator
 ;Source: nxo_editor\doc\readme.txt; DestDir: {app}\doc; Components: modulator
 ;Source: nxo_editor\doc\readme_cmdline.txt; DestDir: {app}\doc; Components: modulator
 ;Source: nxo_editor\doc\readme_tagtool.txt; DestDir: {app}\doc; Components: modulator
