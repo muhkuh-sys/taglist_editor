@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_TCP_PORT_NUMBERS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>TCP Port Numbers</h2>
+
+<p>
+This tag is used to specify whether incoming TCP/UDP frames are handled by the TCP/IP stack or the Ethernet Interface module.<br>
+
+Usually, unless the Ethernet Interface module is used, the TCP/IP stack handles all incoming TCP/UDP frames by itself.
+If the Ethernet Interface module is used, the destination port number of a frame determines whether it is handled by the
+TCP/IP stack or forwarded to the Ethernet Interface module.<br>
+
+This tag defines the ports which are to be handled by the TCP/IP stack. It specifies a range of ports and a list of additional port numbers.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>TCP/UDP Port Range (First Port)</td>
+	<td>The first port of the TCP/UDP-Port range. The minimum value is 1024.
+</td>
+</tr>
+<tr>
+	<td>TCP/UDP Port Range (Last Port)</td>
+	<td>The last port of the TCP/UDP-Port range. The range must contain at least 1024 ports, i.e. last port - first port &gt;= 1024.</td>
+</tr>
+<tr>
+	<td>Number of Protocol Stack Ports</td>
+	<td>This is the number of entries from the beginning of the port list which are used by the the protocol stack. <br>
+		<b>These entries are required by the protocol stack. They are shown for information only and must not be changed.</b></td>
+</tr>
+<tr>
+	<td>Number of Additional Ports</td>
+	<td>This is the number of valid entries which have been added by the user. 
+		<!-- 
+		<br>
+		<b>Example: </b><br>
+		If "Number of Protocol Stack Ports" is 5 and "Number of Additional Ports" is 2, 
+		Entries 1-5 are predefined by the protocol, entries 6 and 7 have been added by the user and any further entries are ignored. -->
+	</td>
+</tr>
+<tr>
+	<td>Port 1 <br> .. <br> Port 20</td>
+	<td>A list of port numbers, interpreted according to "Number of Protocol Stack Ports" and "Number of Additional Ports". <br>
+		<b>Example: </b> "Number of Protocol Stack Ports" is 5 and "Number of Additional Ports" is 2.<br>
+		Entries 1-5 are predefined by the protocol. <b>These entries must not be changed.</b><br>
+		Entries 6 and 7 have been added by the user. <br>
+		Any further entries are ignored.
+	</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>
+
+
