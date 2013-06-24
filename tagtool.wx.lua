@@ -6,6 +6,7 @@
 --
 --  Changes:
 --    Date        Author        Description
+--  Jun 24, 2013  SL            typo ín listdiffs (missing tag definition)
 --  Jun 29, 2012  SL            Load dummy tester_nextid
 --  Sept 23, 2011 SL            all chars except " and # allowed in match/set
 --  Aug 5, 2011   SL            handle DOS/Unix/Mac style line breaks
@@ -849,7 +850,7 @@ function listdiffs(strInputFile, strInputFile2)
 				print()
 			else
 				-- the binary values differ, but we can't print the structures
-				printf("# Tag %d (0x%08x) differs - no structure definition available", iTag, tTag.ulTag)
+				printf("# Tag %d (0x%08x) differs, but cannot be compared (no structure definition)", iTag, tTag1.ulTag)
 				print()
 				print()
 			end
