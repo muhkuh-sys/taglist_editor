@@ -8,10 +8,11 @@
 --    Date        Author  Description
 --  2013/06/25    SL      setValue calls configureGui callback in struct def
 --                        create sets m_atElements/m_tStructDef
+--                        disableControl calls SetEditable()
 --                        added DisableElement for configureGui callback
---  2012/04/18    SL      set tab order of edit controls     
+--  2012/04/18    SL      set tab order of edit controls
 ---------------------------------------------------------------------------
---  
+--
 ---------------------------------------------------------------------------
 -- SVN Keywords
 --
@@ -38,18 +39,18 @@ function setValue(self, bin)
 		--print(strMemberName, abValue)
 		if editor then editor:setValue(abValue) end
 	end
-	
+
 	fnConfigureGui = self.m_tStructDef.configureGui
 	if fnConfigureGui then
 		local tStruct = taglist.deserialize_as_struct(self.strTypeName, bin, true)
 		--fnConfigureGui(tStruct, self.m_atElements)
 		fnConfigureGui(tStruct, self)
-	end	
+	end
 end
 
 
 
---- read back the values of the edit controls and collect error 
+--- read back the values of the edit controls and collect error
 -- messages if values do not parse, or are out of range.
 -- @param self the instance
 -- @return fValid true if no errors occurred, false otherwise
@@ -62,7 +63,7 @@ function readEditorValues(self)
 	local allErrors = {}
 	local fValid = true
 	local fOk, strMsg, abParVal = nil, nil, nil
-	
+
 	for strMemberName, editor in pairs(self.m_editorAssoc) do
 		fOk, errors = editor:isValid()
 		if fOk then
@@ -73,27 +74,27 @@ function readEditorValues(self)
 			table.insert(allErrors, {strMemberName, errors})
 		end
 	end
-	
+
 	return fValid, newvals, allErrors
 end
 
 
---- Update values in a struct member list. 
--- @param origList the original member list. 
--- @param newvalues values to update. 
+--- Update values in a struct member list.
+-- @param origList the original member list.
+-- @param newvalues values to update.
 -- Entries have the form newvalues[strMemberName]=value.
 function updateMemberValues(origList, newvalues)
 	for _, entry in pairs(origList) do
 		local strMemberName = entry.strName
-		if newvalues[strMemberName] then 
-			entry.abValue = newvalues[strMemberName] 
+		if newvalues[strMemberName] then
+			entry.abValue = newvalues[strMemberName]
 			newvalues[strMemberName] = nil
 		end
 	end
 	-- unless some error occurred, the newvalues list must now be empty.
 	if next(newvalues) then
-		for strMemberName, val in pairs(newvalues) do 
-			print("Could not update struct member: " .. strMemberName) 
+		for strMemberName, val in pairs(newvalues) do
+			print("Could not update struct member: " .. strMemberName)
 		end
 		error("Could not update all members: ")
 	end
@@ -117,7 +118,7 @@ function isValid(self)
 	local allErrors = {}
 	local fValid = true
 	local fOk, strMsg = nil, nil
-	
+
 	for strMemberName, editor in pairs(self.m_editorAssoc) do
 		fOk, errors = editor:isValid()
 		if not fOk then
@@ -125,7 +126,7 @@ function isValid(self)
 			table.insert(allErrors, {strMemberName, errors})
 		end
 	end
-	
+
 	return fValid, allErrors
 end
 
@@ -142,26 +143,26 @@ function create(self, parent)
 	self.m_controls = {}
 	self.m_editorAssoc = {}
 	local tStructDef = taglist.getStructDef(self.strTypeName)
-	
+
 	assert(tStructDef, "no struct def for "..self.strTypeName)
 	-- create panel/main sizer
 	local structPanel = wx.wxPanel(parent, wx.wxID_ANY)
 	local strMemberName, strMemberType, strMemberDesc
 	local tMemberTypeDef
-	-- loop through the struct members 
+	-- loop through the struct members
 	local elements = {}
-	
+
 	for _, member in ipairs(tStructDef) do
-	
+
 		-- skip invisible members
 		if not taglist.isHidden(member) then
-			
+
 			-- get name/type/mode
 			strMemberName, strMemberType = member[2], member[1]
 			strMemberDesc = member.desc or strMemberName
 			-- get editor
 			strEditorName, tEditorParams = taglist.getStructMemberEditorInfo(member)
-		
+
 			if strEditorName then
 				--print(strMemberName, strEditorName)
 				-- instantiate editor
@@ -174,16 +175,16 @@ function create(self, parent)
 					-- print("disabling ", strMemberName)
 					disableControl(editCtrl)
 				end
-		
+
 				-- put name and editor into sub-sizer, add to main sizer
 				local statictext = wx.wxStaticText(structPanel, wx.wxID_ANY, strMemberDesc)
 				elements[strMemberName] = {staticText=statictext, editCtrl=editCtrl}
 				table.insert(elements, strMemberName) -- order of elements, used for default layout
 				--{strMemberName=strMembername, staticText=statictext, editCtrl=editCtrl})
-			
+
 				-- store association: name->edit control
 				self.m_editorAssoc[strMemberName] = editor
-		
+
 				-- store static text and edit control in list
 				table.insert(self.m_controls, statictext)
 				table.insert(self.m_controls, editCtrl)
@@ -192,16 +193,16 @@ function create(self, parent)
 			end
 		end
 	end
-	
+
 	local atEditCtrls = {}
-	local structSizer = doLayout(structPanel, elements, tStructDef.layout, atEditCtrls) 
+	local structSizer = doLayout(structPanel, elements, tStructDef.layout, atEditCtrls)
 	setTabOrder(atEditCtrls)
 	structPanel:SetSizer(structSizer)
-	
+
 	-- for configureGui
 	self.m_atElements = elements
 	self.m_tStructDef = tStructDef
-	
+
 	self.m_panel = structPanel
 	self.m_sizer = structSizer
 	return structPanel
@@ -219,7 +220,7 @@ end
 
 function disableControl(control)
 	if isTextCtrl(control) then
-		control:Connect(control:GetId(), wx.wxEVT_CHAR, function() end)
+		control:SetEditable(false)
 		control:SetBackgroundColour(wx.wxLIGHT_GREY)
 	elseif isControl(control) then
 		control:Enable(false)
@@ -244,7 +245,7 @@ function setTabOrder(atEditCtrls)
 		tCtrl1 = atEditCtrls[i]
 		tCtrl2 = atEditCtrls[i+1]
 		tCtrl2:MoveAfterInTabOrder(tCtrl1)
-	end 
+	end
 end
 
 --- Lay out the structure elements.
@@ -252,9 +253,9 @@ end
 -- @param elements a list containing the elements to lay out,
 -- mapping member names to pairs of label and edit control
 -- e.g. elements["tMode"]={staticText=wxStaticText, editCtrl=wxTextCtrl}
--- @param layout the layout description: 
+-- @param layout the layout description:
 --  "h" or "v" for a box sizer,
---  "grid" for a grid sizer, 
+--  "grid" for a grid sizer,
 --  nil for a vertical default layout
 -- @param atEditCtrls a list to add the edit controls to
 -- @return sizer a sizer with the laid out structure elements
@@ -278,7 +279,7 @@ end
 -- mapping member names to pairs of label and edit control
 -- e.g. elements["tMode"]={staticText=wxStaticText, editCtrl=wxTextCtrl}
 -- @param layout the layout description
--- layout=  {sizer="v", "tIdentifier",  
+-- layout=  {sizer="v", "tIdentifier",
 --                     {sizer="h", "tMode", "tDirection"},
 --                     {sizer="h", "tSet", "tClear", "tInput"}}
 -- @param atEditCtrls a list to add the edit controls to
@@ -291,7 +292,7 @@ function combineWithBoxSizer(parent, elements, layout, atEditCtrls)
 	else
 		sizer = wx.wxBoxSizer(iOrientation)
 	end
-	
+
 	local iAlignment = (iOrientation == wx.wxHORIZONTAL and wx.wxRIGHT) or wx.wxBOTTOM
 	local x
 	for i = 1, #layout do
@@ -303,7 +304,7 @@ function combineWithBoxSizer(parent, elements, layout, atEditCtrls)
 			esizer:Add(element.editCtrl)
 			sizer:Add(esizer, 0, iAlignment, 3)
 			table.insert(atEditCtrls, element.editCtrl)
-			
+
 		elseif type(x)=="table" then
 			local subsizer = doLayout(parent, elements, x, atEditCtrls)
 			sizer:Add(subsizer, 0, iAlignment, 3)
@@ -311,7 +312,7 @@ function combineWithBoxSizer(parent, elements, layout, atEditCtrls)
 			-- do nothing
 		end
 	end
-	
+
 	return sizer
 end
 
@@ -351,7 +352,7 @@ function combineWithGrid(parent, elements, layout, atEditCtrls)
 			sizer:AddSpacer(0)
 		end
 	end
-	
+
 	if type(layout.box)=="string" then
 		local mainsizer = wx.wxStaticBoxSizer(wx.wxHORIZONTAL, parent, layout.box)
 		mainsizer:Add(sizer, 1, wx.wxEXPAND)
