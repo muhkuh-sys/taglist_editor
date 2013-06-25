@@ -25,30 +25,25 @@ This tag defines the ports which are to be handled by the TCP/IP stack. It speci
 </tr>
 <tr>
 	<td>TCP/UDP Port Range (Last Port)</td>
-	<td>The last port of the TCP/UDP-Port range. The range must contain at least 1024 ports, i.e. last port - first port &gt;= 1024.</td>
+	<td>The last port of the TCP/UDP-Port range. The range must contain at least 1024 ports, i.e. last port - first port &gt;= 1023.</td>
 </tr>
 <tr>
 	<td>Number of Protocol Stack Ports</td>
 	<td>This is the number of entries from the beginning of the port list which are used by the the protocol stack. <br>
-		<b>These entries are required by the protocol stack. They are shown for information only and must not be changed.</b></td>
+	 These entries are required by the protocol stack. They are shown for information only and must not be changed.</td>
 </tr>
 <tr>
 	<td>Number of Additional Ports</td>
-	<td>This is the number of valid entries which have been added by the user. 
-		<!-- 
-		<br>
-		<b>Example: </b><br>
-		If "Number of Protocol Stack Ports" is 5 and "Number of Additional Ports" is 2, 
-		Entries 1-5 are predefined by the protocol, entries 6 and 7 have been added by the user and any further entries are ignored. -->
-	</td>
+	<td>This is the number of valid entries which have been added by the user. </td>
 </tr>
 <tr>
 	<td>Port 1 <br> .. <br> Port 20</td>
 	<td>A list of port numbers, interpreted according to "Number of Protocol Stack Ports" and "Number of Additional Ports". <br>
-		<b>Example: </b> "Number of Protocol Stack Ports" is 5 and "Number of Additional Ports" is 2.<br>
-		Entries 1-5 are predefined by the protocol. <b>These entries must not be changed.</b><br>
+		<b>Example: </b><br> 
+		"Number of Protocol Stack Ports" is 5 and "Number of Additional Ports" is 2.<br>
+		Entries 1 - 5 are predefined by the protocol and must not be changed.<br>
 		Entries 6 and 7 have been added by the user. <br>
-		Any further entries are ignored.
+		Entries 8 - 20 are ignored.
 	</td>
 </tr>
 </table>
