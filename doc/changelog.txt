@@ -1,8 +1,8 @@
 Change log for Tag List Editor
 
-Tag list editor 1.1.14960
+Tag list editor 1.1.14969
 
- * added TAG_TCP_PORT_NUMBERS 0x30019000 (disabled, not for general use)
+ * added TAG_TCP_PORT_NUMBERS 0x30019000 
 
 Tag list editor 1.1.13807
 
