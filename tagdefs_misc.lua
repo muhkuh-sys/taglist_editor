@@ -13,6 +13,8 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2013-06-25     SL            GUI configuration for TAG_TCP_PORT_NUMBERS
+--                              TAG_TCP_PORT_NUMBERS enabled
 -- 2013-06-14     SL            added TAG_TCP_PORT_NUMBERS 0x30019000 
 --                              (disabled, not for general use)
 -- 2012-10-31     SL            added RCX_TAG_SERVX_PORT_NUMBER 0x10920001
@@ -382,7 +384,7 @@ TAG_TCP_PORT_NUMBERS_DATA_T = {
 				"ulNumberOfUserPorts",    
 			},
 			{
-				sizer="grid", cols = 4,
+				sizer="grid", cols = 2,
 				"ausPortList_0",  "ausPortList_1",  "ausPortList_2", "ausPortList_3",  
 				"ausPortList_4",  "ausPortList_5",  "ausPortList_6", "ausPortList_7",  
 				"ausPortList_8",  "ausPortList_9",  "ausPortList_10", "ausPortList_11", 
@@ -390,7 +392,17 @@ TAG_TCP_PORT_NUMBERS_DATA_T = {
 				"ausPortList_16", "ausPortList_17", "ausPortList_18", "ausPortList_19", 
 			}
 		}
-	}	
+	},
+	
+	-- Disable the first ulNumberOfProtocolStackPorts entries of ausPortList in the GUI.
+	configureGui = function(tStruct, tStructedit)
+		local ulNumPorts = tStruct.ulNumberOfProtocolStackPorts
+		if ulNumPorts >=0 and ulNumPorts <= 20 then
+			for i = 0, ulNumPorts-1 do
+				tStructedit:DisableElement("ausPortList_" .. i)
+			end
+		end
+	end,
 },
 
 ----------------------------------------------------------------------------------------------
@@ -630,8 +642,8 @@ TAG_ECS_CONFIG_EOE =
 TAG_ECS_MBX_SIZE =
 	{paramtype = 0x30009004, datatype="TAG_ECS_MBX_SIZE_DATA_T",          desc="EtherCAT Slave Mailbox Size"},
 
--- TAG_TCP_PORT_NUMBERS =
---	{paramtype = 0x30019000, datatype="TAG_TCP_PORT_NUMBERS_DATA_T",      desc="Ethernet Interface TCP Port Numbers"},
+TAG_TCP_PORT_NUMBERS =
+	{paramtype = 0x30019000, datatype="TAG_TCP_PORT_NUMBERS_DATA_T",      desc="Ethernet Interface TCP Port Numbers"},
 
 
 -- facility tags: netX Diagnostics and Remote Access component

@@ -1,11 +1,14 @@
 ---------------------------------------------------------------------------
--- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+-- Copyright (C) 2013 Hilscher Gesellschaft für Systemautomation mbH
 --
 -- Description:
 --   Structure editor for Taglist Editor
 --
 --  Changes:
 --    Date        Author  Description
+--  2013/06/25    SL      setValue calls configureGui callback in struct def
+--                        create sets m_atElements/m_tStructDef
+--                        added DisableElement for configureGui callback
 --  2012/04/18    SL      set tab order of edit controls     
 ---------------------------------------------------------------------------
 --  
@@ -35,7 +38,16 @@ function setValue(self, bin)
 		--print(strMemberName, abValue)
 		if editor then editor:setValue(abValue) end
 	end
+	
+	fnConfigureGui = self.m_tStructDef.configureGui
+	if fnConfigureGui then
+		local tStruct = taglist.deserialize_as_struct(self.strTypeName, bin, true)
+		--fnConfigureGui(tStruct, self.m_atElements)
+		fnConfigureGui(tStruct, self)
+	end	
 end
+
+
 
 --- read back the values of the edit controls and collect error 
 -- messages if values do not parse, or are out of range.
@@ -130,6 +142,7 @@ function create(self, parent)
 	self.m_controls = {}
 	self.m_editorAssoc = {}
 	local tStructDef = taglist.getStructDef(self.strTypeName)
+	
 	assert(tStructDef, "no struct def for "..self.strTypeName)
 	-- create panel/main sizer
 	local structPanel = wx.wxPanel(parent, wx.wxID_ANY)
@@ -137,6 +150,7 @@ function create(self, parent)
 	local tMemberTypeDef
 	-- loop through the struct members 
 	local elements = {}
+	
 	for _, member in ipairs(tStructDef) do
 	
 		-- skip invisible members
@@ -183,6 +197,11 @@ function create(self, parent)
 	local structSizer = doLayout(structPanel, elements, tStructDef.layout, atEditCtrls) 
 	setTabOrder(atEditCtrls)
 	structPanel:SetSizer(structSizer)
+	
+	-- for configureGui
+	self.m_atElements = elements
+	self.m_tStructDef = tStructDef
+	
 	self.m_panel = structPanel
 	self.m_sizer = structSizer
 	return structPanel
@@ -204,6 +223,15 @@ function disableControl(control)
 		control:SetBackgroundColour(wx.wxLIGHT_GREY)
 	elseif isControl(control) then
 		control:Enable(false)
+	end
+end
+
+-- for configureGui callback in struct definition
+-- Sets the element with the given name to disabled
+function DisableElement(self, strElementName)
+	local tControl = self.m_atElements[strElementName]
+	if tControl then
+		disableControl(tControl.editCtrl)
 	end
 end
 

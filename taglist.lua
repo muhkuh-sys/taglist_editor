@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+--  2013-06-24    SL            added deserialize_as_struct
 --  2012-04-05    SL            added handling of byte arrays in tagtool
 --  2011-05-11    SL            factored out the tag definitions, added 
 --                              functions to register tags, data types,
@@ -698,6 +699,44 @@ function deserialize(strTypeName, abValue, fRecursive)
     end
     return atMembers
 end
+
+-- convert abValue to a key-value list
+-- key __type is set to the type name.
+function deserialize_as_struct(strTypeName, abValue, fRecursive)
+    if isPrimitiveType(strTypeName) then
+        return deserializePrimitiveType(strTypeName, abValue)
+    end
+    local tStructDef = getStructDef(strTypeName)
+    if not tStructDef then
+        return abValue
+    end
+
+    local atMembers = {}
+    atMembers.__type = strTypeName
+    
+    local iPos = 0 -- position inside abValue
+    local strMemberName, strMemberType, ulMemberSize, abMemberValue, tMemberValue
+    for index, tMemberDef in ipairs(tStructDef) do
+        strMemberName, strMemberType = tMemberDef[2], tMemberDef[1]
+        ulMemberSize = getStructMemberSize(tMemberDef)
+        
+        iPos = tMemberDef.offset or iPos
+        abMemberValue = string.sub(abValue, iPos+1, iPos+ulMemberSize)
+        if tMemberDef.mask then
+            abMemberValue = stringAnd(abMemberValue, tMemberDef.mask)
+        end
+        
+        tMemberValue = fRecursive and deserialize_as_struct(strMemberType, abMemberValue, fRecursive) or nil
+        atMembers[strMemberName] = tMemberValue
+        iPos = iPos + ulMemberSize
+    end
+
+    if tStructDef.fBinToStruct then
+        atMembers = tStructDef.fBinToStruct(abValue, atMembers)
+    end
+    return atMembers
+end
+
 
 
 ---------------------------------------------------------------------
