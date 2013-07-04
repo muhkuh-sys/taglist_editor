@@ -1,4 +1,4 @@
-; Inno Setup Cfg for NXO Editor
+                                                                                                   ; Inno Setup Cfg for NXO Editor
 
 ; call batch file to get the svnversion of the nxo_editor directory.
 #define ExitCode
@@ -58,16 +58,6 @@
 	#endif
 #endsub
 
-;#expr ChangelogFile = "..\..\changelog.txt"
-;#expr ReadChangelog
-;#define ModulatorChangelog Changelog
-;#pragma message ModulatorChangelog
-
-;#expr ChangelogFile = "..\..\..\changelog.txt"
-;#expr ReadChangelog
-;#define MuhkuhChangelog Changelog
-;#pragma message MuhkuhChangelog
-
 #define AppName "netX Tag List Editor/NXO Builder"
 ;#define AppVersion GetFileVersion("..\..\..\bin\muhkuh.exe")
 #define AppVersion "1.1."+SVNVersion+".0"
@@ -88,59 +78,47 @@
 
 ; include the common muhkuh settings
 ;-------------------------------------------------------------------------
-;#include "..\..\..\installer\inno\muhkuh_common.iss"
 [Setup]
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppVerName}
-OutputBaseFilename={#InstallerName}
+AppPublisher=Muhkuh team and Hilscher GmbH
+AppPublisherURL=http://www.hilscher.com
+;AppSupportURL=http://www.sourceforge.net/projects/muhkuh
+;AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
+AppCopyright=(C) 2013, Muhkuh team and Hilscher GmbH
+
+; works: company, copyright, product name, product version
+; description goes into properties and version dialogue
 VersionInfoTextVersion={#AppVersion}
+VersionInfoDescription=Installer of the Hilscher Tag List Editor application
+VersionInfoCopyright=(C) 2013 Muhkuh team and Hilscher GmbH
+VersionInfoCompany=Hilscher GmbH
+VersionInfoProductName=Hilscher Tag List Editor
 VersionInfoVersion={#AppVersion}
 
 Compression=lzma/max
 SolidCompression=yes
+AllowNoIcons=yes
+LicenseFile=nxo_editor\doc\licenses.txt
 
 SourceDir={#SourceDir}
 OutputDir={#OutputDir}
-
-AllowNoIcons=yes
-ChangesAssociations=yes
-LicenseFile=nxo_editor\doc\licenses.txt
-
-
-;-------------------------------------------------------------------------
-
-
+OutputBaseFilename={#InstallerName}
 
 DefaultDirName ={pf}\Hilscher GmbH\Tag List Editor
 DefaultGroupName =Hilscher GmbH\Tag List Editor
 
-; misc info
-AppPublisher=Muhkuh team and Hilscher GmbH
-AppPublisherURL=http://muhkuh.sourceforge.net/
-AppSupportURL=http://www.sourceforge.net/projects/muhkuh
-AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
-AppCopyright=(C) 2013, Muhkuh team and Hilscher GmbH
-
-
-; works: company, copyright, product name, product version
-; description goes into properties and version dialogue
-VersionInfoCopyright=(C) 2012 Muhkuh team and Hilscher GmbH
-VersionInfoCompany=Hilscher GmbH
-VersionInfoDescription=Installer of the Hilscher Tag List Editor application
-VersionInfoProductName=Hilscher Tag List Editor
-; VersionInfoProductVersion=Version Info Product Version
-; VersionInfoVersion=1.2.3.4 already set by muhkuh installer script
-
 ; icon stuff
-SetupIconFile=nxo_editor\modulator.ico
-UninstallDisplayIcon={app}\nxo_editor\modulator.ico
+SetupIconFile=nxo_editor\netX.ico
+UninstallDisplayIcon={app}\nxo_editor\netX.ico
 
-WizardImageFile=nxo_editor\installer\inno\bootwizard_install_logo.bmp
+WizardImageFile=nxo_editor\installer\inno\Screen-netX_164x314px.bmp
 WizardImageStretch=no
 WizardImageBackColor=$ffffff
 
 ; notify Windows of the changes to the environment
+ChangesAssociations=yes
 ChangesEnvironment=yes
 
 [Messages]
@@ -204,7 +182,6 @@ end;
 
 [Types]
 Name: full; Description: Full installation
-;Name: "compact"; Description: "Only install the base system without plugins"
 Name: custom; Description: Custom installation; Flags: iscustom
 
 ;-------------------------------------------------------------------------
@@ -223,7 +200,7 @@ Source: bin\wx.dll; DestDir: {app}\application; Components: muhkuh
 Source: nxo_editor\help\*.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 
 Source: nxo_editor\Modulator.cfg; DestDir: {app}\application; Components: modulator
-Source: nxo_editor\modulator.ico; DestDir: {app}\nxo_editor; Components: modulator
+Source: nxo_editor\netX.ico; DestDir: {app}\nxo_editor; Components: modulator
 
 Source: nxo_editor\comboedit.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\checkboxedit.lua; DestDir: {app}\nxo_editor; Components: modulator
@@ -253,10 +230,6 @@ Source: nxo_editor\makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: "H:\Manual netX Products\Tools\TagListEditor\man.004\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf"; DestDir: {app}\doc; Components: modulator
-;Source: nxo_editor\doc\readme.txt; DestDir: {app}\doc; Components: modulator
-;Source: nxo_editor\doc\readme_cmdline.txt; DestDir: {app}\doc; Components: modulator
-;Source: nxo_editor\doc\readme_tagtool.txt; DestDir: {app}\doc; Components: modulator
-;Source: nxo_editor\doc\files.txt; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
 Source: nxo_editor\doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 
@@ -270,15 +243,13 @@ Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 01 E
 ; Muhkuh Files
 ;-------------------------------------------------------------------------
 [Components]
-;Name: muhkuh; Description: Muhkuh base application; Types: full compact custom; Flags: fixed
 Name: muhkuh; Description: Muhkuh base application; Types: full
-;#include "..\..\..\installer\inno\muhkuh_app.iss"
 
 [Files]
 Source: bin\muhkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
 Source: bin\serverkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
 Source: bin\muhkuh_tips.txt; DestDir: {app}\application; Components: muhkuh
-Source: icons\custom\muhkuh_uninstall.ico; DestDir: {app}\application; Components: muhkuh
+;Source: icons\custom\muhkuh_uninstall.ico; DestDir: {app}\application; Components: muhkuh
 
 ; system dlls
 ;Source: bin\msvcr71.dll; DestDir: {app}\application; Components: muhkuh
@@ -297,7 +268,6 @@ Source: bin\wxlua_msw28_*.dll; DestDir: {app}\application; Components: muhkuh
 Source: bin\mhash.dll; DestDir: {app}\application; Components: muhkuh
 
 ; the docs
-;Source: docs\gpl-2.0.txt; DestDir: {app}\docs; Components: muhkuh
 Source: changelog.txt; DestDir: {app}\docs; Components: muhkuh
 
 
@@ -306,18 +276,10 @@ Source: changelog.txt; DestDir: {app}\docs; Components: muhkuh
 ; Muhkuh Lua scripts
 ;-------------------------------------------------------------------------
 [Components]
-;Name: lua_scripts;              Description: "Lua scripts";              Types: full compact
 Name: lua_scripts; Description: Lua scripts; Types: full
-;#include "..\..\..\installer\inno\lua_scripts.iss"
 
 [Files]
-;Source: "bin\lua\mmio.lua";                 DestDir: "{app}\application\lua"; Components: lua_scripts
 Source: bin\lua\muhkuh_system.lua; DestDir: {app}\application\lua; Components: lua_scripts
-;Source: bin\lua\select_plugin.lua; DestDir: {app}\application\lua; Components: lua_scripts
-;Source: bin\lua\plugin_handler.lua; DestDir: {app}\application\lua; Components: lua_scripts
-;Source: "bin\lua\serialnr.lua";             DestDir: "{app}\application\lua"; Components: lua_scripts
-;Source: bin\lua\tester.lua; DestDir: {app}\application\lua; Components: lua_scripts
-;Source: "bin\lua\tester_multifile.lua";     DestDir: "{app}\application\lua"; Components: lua_scripts
 Source: bin\lua\utils.lua; DestDir: {app}\application\lua; Components: lua_scripts
 
 
@@ -336,22 +298,18 @@ Name: envpath; Description: Set the PATH_NXOEDITOR environment variable (require
 
 [Icons]
 ; Desktop icon
-Name: {userdesktop}\Tag List Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator; Tasks: desktopicon
+Name: {userdesktop}\Tag List Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: desktopicon
 
 ; Quick launch
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator; Tasks: quicklaunchicon
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: quicklaunchicon
 
 ; link in the application directory
-Name: {app}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator
+Name: {app}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator
 
 ; start menu entry
-Name: {group}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator; Tasks: startmenu
+Name: {group}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
 Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf; Components: modulator; Tasks: startmenu
-; Name: {group}\Readme; Filename: {app}\doc\readme.txt; Components: modulator; Tasks: startmenu
-; Name: {group}\Using makenxo.bat; Filename: {app}\doc\readme_cmdline.txt; Components: modulator; Tasks: startmenu
-; Name: {group}\Using tagtool.bat; Filename: {app}\doc\readme_tagtool.txt; Components: modulator; Tasks: startmenu
-; Name: {group}\Files and directories; Filename: {app}\doc\files.txt; Components: modulator; Tasks: startmenu
-Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\modulator.ico; Components: modulator; Tasks: startmenu
+Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
 
 [Registry]
 ; set PATH_NXOEDITOR
@@ -363,7 +321,7 @@ Root: HKCR; Subkey: netXOptionModule; ValueType: string; ValueName: ; ValueData:
 
 ; use the serverkuh icon for NXO files
 ;Root: HKCR; Subkey: netXOptionModule\DefaultIcon; ValueType: string; ValueName: ; ValueData: {app}\application\serverkuh.exe,0
-Root: HKCR; Subkey: netXOptionModule\DefaultIcon; ValueType: string; ValueName: ; ValueData: {app}\nxo_editor\modulator.ico
+Root: HKCR; Subkey: netXOptionModule\DefaultIcon; ValueType: string; ValueName: ; ValueData: {app}\nxo_editor\netX.ico
 
 ; start the editor when an nxo file is double-clicked
 ; Root: HKCR; Subkey: netXOptionModule\shell\open\command; ValueType: string; ValueName: ; ValueData: """{app}\application\serverkuh.exe"" ""-c"" ""{app}\application\Modulator.cfg"" ""-i"" ""0"" ""{app}\nxo_editor\test_description.xml"" ""--"" ""%1"""
