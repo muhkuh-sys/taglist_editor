@@ -9,16 +9,16 @@ windows-1252=-1
 [wxWindows/FontMapper/Charsets/Aliases]
 windows-1252=
 [ConfigFrame]
-x=440
-y=387
-w=490
-h=409
+x=50
+y=50
+w=500
+h=400
 
 [ServerFrame]
-x=241
-y=187
-w=930
-h=736
+x=30
+y=30
+w=900
+h=700
 maximized=0
 customtitle=__CUSTOMTITLE__
 customicon=../nxo_editor/netX.ico
