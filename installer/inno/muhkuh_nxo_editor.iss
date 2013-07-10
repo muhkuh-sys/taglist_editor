@@ -1,4 +1,4 @@
-                                                                                                   ; Inno Setup Cfg for NXO Editor
+; Inno Setup Cfg for NXO Editor
 
 ; call batch file to get the svnversion of the nxo_editor directory.
 #define ExitCode
@@ -237,7 +237,7 @@ Source: nxo_editor\doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 03 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 02 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 01 EN.pdf"
-
+Type: files; Name: "{group}\Tag_List_Editor.lnk"
 
 ;-------------------------------------------------------------------------
 ; Muhkuh Files
@@ -307,9 +307,11 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tag_List_Editor; Fi
 Name: {app}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator
 
 ; start menu entry
-Name: {group}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
+Name: {group}\Tag List Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
 Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf; Components: modulator; Tasks: startmenu
 Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
+;Name: {group}\Tag List Editor Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf; Components: modulator; Tasks: startmenu
+;Name: {group}\Uninstall Tag List Editor; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
 
 [Registry]
 ; set PATH_NXOEDITOR
