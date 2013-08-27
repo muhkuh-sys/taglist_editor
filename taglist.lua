@@ -7,30 +7,31 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+--  2013-08-27    SL            include tagdefs_io_handler as mandatory
 --  2013-06-24    SL            added deserialize_as_struct
 --  2012-04-05    SL            added handling of byte arrays in tagtool
---  2011-05-11    SL            factored out the tag definitions, added 
+--  2011-05-11    SL            factored out the tag definitions, added
 --                              functions to register tags, data types,
 --                              constants, help files
 --  2011-04-15    MT            added new FSU MMIO Layout (netX50)
---  2011-03-14    SL            corrected type and range of device/vendor 
+--  2011-03-14    SL            corrected type and range of device/vendor
 --                              ID in TAG_PN_DEVICEID_DATA_T
 --  2011-02-23    SL            updated tag IDs
---  2011-02-11    SL            added RCX_TAG_DP_DEVICEID 
+--  2011-02-11    SL            added RCX_TAG_DP_DEVICEID
 --                                    RCX_TAG_EIP_DEVICEID
 --                                    RCX_TAG_DEVICENET_DEVICEID
 --                                    RCX_TAG_COMPONET_DEVICEID
---                                    RCX_TAG_CO_DEVICEID 
+--                                    RCX_TAG_CO_DEVICEID
 --                                    RCX_TAG_CCL_DEVICEID
---                                    RCX_TAG_PN_DEVICEID 
+--                                    RCX_TAG_PN_DEVICEID
 --                                    RCX_TAG_EIP_EDD_CONFIGURATION
---  2010-10-14    SL/YZ         added RCX_TAG_ETHERNET_PARAMS, 
+--  2010-10-14    SL/YZ         added RCX_TAG_ETHERNET_PARAMS,
 --                                    RCX_TAG_FIBER_OPTIC_IF_DMI_NETX50_PARAMS
 --                                    RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS
 --  2010-09-13    MS            added TAG_BSL_DISK_POS_PARAMS
 --  2010-09-08    MS            added TAG_BSL_MMIO_NETX50_PARAMS
---                                    TAG_BSL_MMIO_NETX10_PARAMS 
---                                    TAG_BSL_HIF_NETX10_PARAMS 
+--                                    TAG_BSL_MMIO_NETX10_PARAMS
+--                                    TAG_BSL_HIF_NETX10_PARAMS
 --                                    TAG_BSL_USB_DESCR_PARAMS
 --  2010-08-27    MS            added RCX_TAG_TASK_T
 --                                    RCX_TAG_INTERRUPT_T
@@ -365,22 +366,22 @@ end
 -- A byte array is a list of values in the range 0 .. 255, decimal or hex, separated by spaces and/or commas.
 -- Optionally, the array may be enclosed in curly braces.
 -- 0, 31, 39, 1, 0
--- 0x00 0x1f 0x27 0x01 0x00 
--- 0x00, 0x1f, 0x27, 0x01, 0x00 
+-- 0x00 0x1f 0x27 0x01 0x00
+-- 0x00, 0x1f, 0x27, 0x01, 0x00
 -- {0x00, 0x1f, 0x27, 0x01, 0x00}
 
 function parseHexString(strHex)
 	-- remove outer spaces and curly brackets
 	strHex = string.match(strHex, "^%s*{([x%x,%s]+)}%s*$") or strHex
-	
+
 	local strBin = ""
 	local fOk = true -- assume no error
-	
+
 	-- skip initial spaces
 	local iStart, iEnd = string.find(strHex, "^%s*")
 	iStart = iEnd + 1
 	iEnd = strHex:len()
-	
+
 	while (iStart <= iEnd and fOk) do
 		-- extract the next number and skip comma/space
 		local x, y, strNum = strHex:find("([x%x]+),?%s*", iStart)
@@ -398,7 +399,7 @@ function parseHexString(strHex)
 			end
 		end
 	end
-	
+
 	if fOk then
 		return strBin
 	else
@@ -634,9 +635,9 @@ function serialize(strTypeName, atMembers, fRecursive)
                     ulActualSize = ulMemberSize
                 elseif ulActualSize>ulMemberSize then
                     return nil, string.format(
-                        "string too long: %s max. size = %d actual size = %d", 
+                        "string too long: %s max. size = %d actual size = %d",
                         strMemberName, ulMemberSize, ulActualSize)
-                end 
+                end
             end
             assert(ulMemberSize == abMemberValue:len(),
                 string.format("struct member size has changed: actual = %u, correct = %u",
@@ -713,19 +714,19 @@ function deserialize_as_struct(strTypeName, abValue, fRecursive)
 
     local atMembers = {}
     atMembers.__type = strTypeName
-    
+
     local iPos = 0 -- position inside abValue
     local strMemberName, strMemberType, ulMemberSize, abMemberValue, tMemberValue
     for index, tMemberDef in ipairs(tStructDef) do
         strMemberName, strMemberType = tMemberDef[2], tMemberDef[1]
         ulMemberSize = getStructMemberSize(tMemberDef)
-        
+
         iPos = tMemberDef.offset or iPos
         abMemberValue = string.sub(abValue, iPos+1, iPos+ulMemberSize)
         if tMemberDef.mask then
             abMemberValue = stringAnd(abMemberValue, tMemberDef.mask)
         end
-        
+
         tMemberValue = fRecursive and deserialize_as_struct(strMemberType, abMemberValue, fRecursive) or nil
         atMembers[strMemberName] = tMemberValue
         iPos = iPos + ulMemberSize
@@ -863,7 +864,7 @@ end
 
 
 
-     
+
 ---------------------------------------------------------------------------
 -- RCX_MOD_TAG definitions (mapping from tag number to type name)
 -- paramtype = the 32 bit tag number
@@ -972,7 +973,7 @@ end
 -- desc = desc
 -- datatype = datatype
 function get_tags_by_id()
-	local tags = {} 
+	local tags = {}
 	for k,v in pairs(rcx_mod_tags) do
 		local e = {
 			key = k,
@@ -982,11 +983,11 @@ function get_tags_by_id()
 		}
 		table.insert(tags, e)
 	end
-	
-	local function sort(e1, e2) 
+
+	local function sort(e1, e2)
 		return e1.id < e2.id
 	end
-	
+
 	table.sort(tags, sort)
 	return tags
 end
@@ -1022,15 +1023,15 @@ end
 
 function listKnownTags()
 	local atTags = get_tags_by_id()
-	
+
 	print()
 	print("Name                            Tag Id      Description")
 	print("-------------------------------------------------------------------")
-	
+
 	for iTag, tTag in ipairs(atTags) do
 		printf("%-48s (0x%08x) %s", tTag.key, tTag.id, tTag.desc)
 		for strAltTagname, strTagname in pairs(TAGNAME_ALIASES) do
-		
+
 			-- list the aliases, if any
 			if strTagname == tTag.key then
 				printf("  Alias: %s", strAltTagname)
@@ -1389,7 +1390,7 @@ function binToParams(abBin)
         -- get tag type and size
         ulTag = uint32(abBin, iPos)
         iPos = iPos + 4
-        
+
         ulSize = uint32(abBin, iPos)
         iPos = iPos + 4
 
@@ -1401,7 +1402,7 @@ function binToParams(abBin)
         	fDisabled = false
         end
 
-        vbs_printf("pos: 0x%08x, tag: 0x%08x, size: 0x%08x %s", iPos-8, ulTag, ulSize, 
+        vbs_printf("pos: 0x%08x, tag: 0x%08x, size: 0x%08x %s", iPos-8, ulTag, ulSize,
         	fDisabled and "disabled" or "enabled")
 
         -- if the tag is known, its value size must be either equal to the
@@ -1519,4 +1520,4 @@ end
 muhkuh.include("tagdefs_rcx.lua", "tagdefs_rcx")
 muhkuh.include("tagdefs_bsl.lua", "tagdefs_bsl")
 muhkuh.include("tagdefs_misc.lua", "tagdefs_misc")
-include_option("tagdefs_io_handler.lua", "tagdefs_io_handler")
+muhkuh.include("tagdefs_io_handler.lua", "tagdefs_io_handler")

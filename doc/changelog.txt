@@ -1,5 +1,11 @@
 Change log for Tag List Editor
 
+Tag list editor 1.1.x
+
+ * added RCX_TAG_NETPLC_IO_HANDLER_ENABLE  0x10A30000
+         RCX_TAG_NETPLC_IO_HANDLER_DIGITAL 0x10A30001
+         RCX_TAG_NETPLC_IO_HANDLER_ANALOG  0x10A30002
+
 Tag list editor 1.1.15005
 
  * added TAG_TCP_PORT_NUMBERS 0x30019000 

@@ -10,7 +10,7 @@
 --   2011/05/16   SL        Fixed: changes to the file were not saved if
 --                          the file contained an empty tag list
 ---------------------------------------------------------------------------
---  
+--
 ---------------------------------------------------------------------------
 -- SVN Keywords
 --
@@ -79,10 +79,10 @@ end
 -- ... may be any strings or lists of strings.
 function showMessages(fOk, strInfoTitle, strErrTitle, ...)
 	if not ... then return end
-	
+
 	strInfoTitle = strInfoTitle or "Notice"
 	strErrTitle = strErrTitle or "Error"
-	
+
 	local messages = {}
 	for _, v in pairs({...}) do
 		if #messages > 0 then
@@ -96,10 +96,10 @@ function showMessages(fOk, strInfoTitle, strErrTitle, ...)
 			end
 		end
 	end
-	
+
 	--for k,v in pairs(messages) do print(k,v) end
 	local strMsg = table.concat(messages, "\n")
-	
+
 	if fOk and #messages > 0 then
 		messageDialog(strInfoTitle, strMsg)
 	elseif not fOk  and #messages > 0 then
@@ -109,7 +109,7 @@ function showMessages(fOk, strInfoTitle, strErrTitle, ...)
 	end
 end
 
--- DEBUG = true 
+-- DEBUG = true
 m_nxfile = nil
 
 m_headerFilebar = nil
@@ -122,7 +122,7 @@ m_buttonDeleteTags = nil
 m_buttonSizer = nil
 
 -- the muhkuh panel for all gui objects
-m_panel = nil 
+m_panel = nil
 -- the tag list
 m_paramPanel = nil
 -- static box around the load/save buttons
@@ -170,7 +170,7 @@ end
 
 -- debug
 local function OnCreateTags()
-	-- local bin = string.rep(string.char(0), 8) 
+	-- local bin = string.rep(string.char(0), 8)
 	local bin = taglist.makeEmptyParblock()
 	local fTagsOk, params, iLen, strMsg = taglist.binToParams(bin)
 	nxoeditor.displayTags(params)
@@ -186,7 +186,7 @@ local function OnDeleteTags()
 end
 
 ---------------------------------------------------------------------
--- 
+--
 ---------------------------------------------------------------------
 
 
@@ -239,7 +239,7 @@ function setButtons() -- should be adapt_GUI or something
 	local fTags = m_nxfile:hasTaglist()
 	local fComplete = m_nxfile:isComplete()
 
-	
+
 	m_headerFilebar:enableButtons(true, fHeaders, fHeaders)
 	m_elfFilebar:enableButtons(true, fElf, fElf)
 	m_tagsFilebar:enableButtons(true, fTags, fTags)
@@ -249,7 +249,7 @@ function setButtons() -- should be adapt_GUI or something
 		m_buttonCreateTags:Enable(not fTags)
 		m_buttonDeleteTags:Enable(fTags)
 	end
-	
+
 	-- If file type is nxo, show all four filebars.
 	-- For other file types, show only taglist and nx* filebars
 	local fShow_Hdr_Elf = m_nxfile:isNxo()
@@ -263,7 +263,7 @@ function setButtons() -- should be adapt_GUI or something
 	-- show edit device header button if device header V1 is present
 	local fDevHdr = m_nxfile:hasDeviceHeaderV1()
 	m_buttonEditDevHdr:Enable(fDevHdr)
-	
+
 	m_leftPanel:Layout()
 	m_leftPanel:Refresh()
 	--m_leftPanel:Update()
@@ -283,10 +283,10 @@ strDefaultFilenameFilters = "All Files (*)|*"
 
 function loadFileDialog(parent, strTitle, strFilters)
 	local fileDialog = wx.wxFileDialog(
-		parent, 
+		parent,
 		strTitle or "Select file to load",
 		"",
-		"", 
+		"",
 		strFilters or strDefaultFilenameFilters,
 		wx.wxFD_OPEN + wx.wxFD_FILE_MUST_EXIST)
 	local iResult = fileDialog:ShowModal()
@@ -300,10 +300,10 @@ end
 
 function saveFileDialog(parent, strTitle, strFilters)
 	local fileDialog = wx.wxFileDialog(
-		parent, 
+		parent,
 		strTitle or "Select file to save to",
 		"",
-		"", 
+		"",
 		strFilters or strDefaultFilenameFilters,
 		wx.wxFD_SAVE + wx.wxFD_OVERWRITE_PROMPT)
 	local iResult = fileDialog:ShowModal()
@@ -318,13 +318,13 @@ end
 
 function loadFile(strFilename)
 	local strBin, strMsg = utils.loadBin(strFilename)
-	if strBin then 
-		return STATUS_OK, strBin 
+	if strBin then
+		return STATUS_OK, strBin
 	else
 		errorDialog("Load error", strMsg)
 		return STATUS_LOAD_ERROR
 	end
-	
+
 end
 
 function saveFile(strFilename, strBin)
@@ -338,13 +338,13 @@ function saveFile(strFilename, strBin)
 end
 
 function checkOverwrite(strFilename)
-	if not wx.wxFileExists(strFilename) then 
-		return true 
+	if not wx.wxFileExists(strFilename) then
+		return true
 	else
 		local iRes = wx.wxMessageBox(
 			"The file " .. strFilename .. "\nalready exists. Do you want to overwrite it?",
-			"Overwrite file?", 
-			wx.wxICON_EXCLAMATION + wx.wxYES_NO, 
+			"Overwrite file?",
+			wx.wxICON_EXCLAMATION + wx.wxYES_NO,
 			m_panel);
 		return iRes == wx.wxYES
 	end
@@ -357,7 +357,7 @@ function saveFile1(filebar, strFilename, strTitle, strFilenameFilters, abBin)
 		strFilename = saveFileDialog(m_panel, strTitle, strFilenameFilters)
 		if not strFilename then return end
 	end
-	
+
 	local iStatus = saveFile(strFilename, abBin)
 	if iStatus==STATUS_OK then
 		filebar:setFilename(strFilename)
@@ -431,7 +431,7 @@ function loadTags(strFilename)
 		-- parse tag list
 		local fOk, params, iLen, strMsg = taglist.binToParams(abBin)
 		showMessages(fOk, "Notice", "Error parsing tag list", strMsg)
-		
+
 		-- replace tag list
 		if fOk then
 			local fChanged = checkEndMarker(params)
@@ -441,7 +441,7 @@ function loadTags(strFilename)
 			fOk, strMsg = m_nxfile:setTaglistBin(abBin)
 			showMessages(fOk, "Notice", "Error", strMsg)
 		end
-		
+
 		-- update GUI
 		if fOk then
 			m_tagsFilebar:setFilename(strFilename)
@@ -461,10 +461,10 @@ function saveTags(strFilename)
 end
 
 -- Check if the end marker is 0 or 4 bytes long.
--- If it is, and it can be replaced with an 8 byte end marker, 
+-- If it is, and it can be replaced with an 8 byte end marker,
 -- offer to do so and replace it if the user choses yes.
 -- If it cannot be replaced, just notify the user.
--- 
+--
 -- Returns true if the end marker was changed, false otherwise
 function checkEndMarker(atTags)
 	-- check/correct end marker
@@ -485,7 +485,7 @@ function checkEndMarker(atTags)
 				fChanged = true
 			end
 		else
-			messageDialog( 
+			messageDialog(
 				"Notice",
 				"The tag list has a non-standard ending:\n"..
 				strMsg.."\n"..
@@ -493,7 +493,7 @@ function checkEndMarker(atTags)
 				)
 		end
 	end
-	
+
 	return fChanged
 end
 
@@ -504,10 +504,10 @@ function loadNx(strFilename)
 	-- loaded successfully
 	if iStatus==STATUS_OK then
 		emptyNxo()
-		
+
 		local fOk, astrMsgs = m_nxfile:parseBin(abBin)
 		showMessages(fOk, "Warning", "Error parsing file", astrMsgs)
-		
+
 		-- overall file structure is ok, now look after the tag list.
 		if fOk then
 			-- file has tag list
@@ -515,7 +515,7 @@ function loadNx(strFilename)
 				local abTags = m_nxfile:getTaglistBin()
 				local fTagsOk, params, iLen, strMsg = taglist.binToParams(abTags)
 				showMessages(fTagsOk, "Notice", "Error parsing tag list", strMsg)
-				
+
 				if fTagsOk then
 					local fChanged = checkEndMarker(params)
 					if fChanged then
@@ -524,7 +524,7 @@ function loadNx(strFilename)
 						showMessages(fOk, "Notice", "Error", strMsg)
 					end
 				end
-					
+
 				if fTagsOk then
 					displayTags(params)
 					m_nxFilebar:setFilename(strFilename)
@@ -553,9 +553,9 @@ function saveNx(strFilename)
 			return
 		end
 		-- true = replace tag list, but keep any gap data behind the tag list
-		m_nxfile:setTaglistBin(abTags, true) 
+		m_nxfile:setTaglistBin(abTags, true)
 	end
-	
+
 	-- build nxo file
 	local abNxFile = m_nxfile:buildNXFile()
 	if not abNxFile then
@@ -564,11 +564,11 @@ function saveNx(strFilename)
 	end
 
 	local strFilter, strTitle
-	if m_nxfile:isNxf() then 
-		strFilter = strNxfFilenameFilters 
+	if m_nxfile:isNxf() then
+		strFilter = strNxfFilenameFilters
 		strTitle = "Save NXF/BIN file as"
 	elseif m_nxfile:isNxo() then
-		strFilter = strNxoFilenameFilters 
+		strFilter = strNxoFilenameFilters
 		strTitle = "Save NXO file as"
 	else
 		strFilter = strsaveNxFilenameFilters
@@ -627,20 +627,20 @@ function insertFilebar(parent, sizer, strStaticText, fnLoad, fnSave)
 	-- add to sizer
 	sizer:Add(label, 0, wx.wxALIGN_CENTER_VERTICAL)
 	sizer:Add(textctrl, 1, wx.wxEXPAND + wx.wxALIGN_CENTER_VERTICAL)
-	if buttonLoad then 
-		sizer:Add(buttonLoad, 0, wx.wxALIGN_CENTER_VERTICAL) 
+	if buttonLoad then
+		sizer:Add(buttonLoad, 0, wx.wxALIGN_CENTER_VERTICAL)
 	else
 		print("spacer")
 		sizer:AddSpacer(0)
 	end
-	if buttonSaveAs then 
-		sizer:Add(buttonSaveAs, 0, wx.wxALIGN_CENTER_VERTICAL) 
+	if buttonSaveAs then
+		sizer:Add(buttonSaveAs, 0, wx.wxALIGN_CENTER_VERTICAL)
 	else
 		print("spacer")
 		sizer:AddSpacer(0)
 	end
-	if buttonSave then 
-		sizer:Add(buttonSave, 0, wx.wxALIGN_CENTER_VERTICAL) 
+	if buttonSave then
+		sizer:Add(buttonSave, 0, wx.wxALIGN_CENTER_VERTICAL)
 	else
 		print("spacer")
 		sizer:AddSpacer(0)
@@ -671,7 +671,7 @@ m_panel sizer:mainSizer
 			load/save buttons etc.
 			m_paramPanel
 		m_helpWindow
-		
+
 	buttonSizer
 	m_buttonQuit
 	m_checkboxHelp
@@ -681,13 +681,13 @@ m_panel sizer:mainSizer
 Sizer Hierarchy:
 	mainSizer
 		m_splitterPanel
-		
+
 		m_buttonSizer
 			m_buttonQuit
 			m_checkboxHelp
 			m_buttonCreateTags
 			m_buttonDeleteTags
-			
+
 	leftSizer
 		m_paramPanel
 		inputSizer
@@ -702,7 +702,7 @@ function createPanel()
 	-- Tag editor
 	local parent = m_leftPanel
 	m_paramPanel = taglistedit.createTaglistPanel(parent)
-	
+
 	-- Filename/load/save
 	local inputSizer = wx.wxStaticBoxSizer(wx.wxHORIZONTAL, parent, "Load/Save")
 	m_fileBox = inputSizer:GetStaticBox()
@@ -713,10 +713,10 @@ function createPanel()
 	m_elfFilebar = insertFilebar(parent, fileSizer, "ELF", loadElf, saveElf)
 	m_tagsFilebar = insertFilebar(parent, fileSizer, "Tag list", loadTags, saveTags)
 	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF", loadNx, saveNx)
-	
+
 	-- HTML help window
 	m_helpWindow = wx.wxHtmlWindow(m_splitterPanel)
-	
+
 	-- quit / create Params / delete params buttons
 	m_buttonQuit = createButton(m_panel, "Quit", OnQuit)
 	m_checkboxHelp = createCheckBox(m_panel, "Display Help", m_fShowHelp, OnHelp)
@@ -727,33 +727,33 @@ function createPanel()
 	m_buttonSizer:Add(m_checkboxHelp, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
 	m_buttonSizer:Add(m_buttonClear, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
 	m_buttonSizer:Add(m_buttonEditDevHdr, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
-	
+
 	if DEBUG then
 		m_buttonCreateTags = createButton(m_panel, "Create Empty Parameters", OnCreateTags)
 		m_buttonDeleteTags = createButton(m_panel, "Delete Parameters", OnDeleteTags)
 		m_buttonSizer:Add(m_buttonCreateTags, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
 		m_buttonSizer:Add(m_buttonDeleteTags, 0, wx.wxALIGN_CENTER_VERTICAL + wx.wxALL, 3)
 	end
-	
-	-- combine 
+
+	-- combine
 	local leftSizer = wx.wxBoxSizer(wx.wxVERTICAL)
 	leftSizer:Add(m_paramPanel, 1, wx.wxEXPAND + wx.wxALL, 3)
 	leftSizer:Add(inputSizer, 0, wx.wxEXPAND + wx.wxALL, 3)
 	m_leftPanel:SetSizer(leftSizer)
-	
+
 	m_splitterPanel:SetSashGravity(0.3)
 	m_splitterPanel:SetMinimumPaneSize(20)
 	m_splitterPanel:SplitVertically(m_leftPanel, m_helpWindow)
-	
+
 	local mainSizer = wx.wxBoxSizer(wx.wxVERTICAL)
 	mainSizer:Add(m_splitterPanel, 1, wx.wxEXPAND + wx.wxALL, 3)
 	mainSizer:Add(m_buttonSizer, 0, wx.wxALL, 3)
-	
+
 	setButtons()
 	m_panel:SetSizer(mainSizer)
 	m_panel:Layout()
 	m_panel:Refresh()
-	
+
 end
 
 
@@ -765,7 +765,7 @@ m_fShowHelp = true
 m_dSplitRatio = 0.5
 
 -- stores the last requested and the last displayed tag help
--- used to ensure that the correct help page is shown when 
+-- used to ensure that the correct help page is shown when
 -- help display is turned on
 m_tLastRequestedTagHelp = nil
 m_tLastDisplayedTagHelp = nil
@@ -798,18 +798,18 @@ end
 
 function showTagHelp(tTagDesc)
 	m_tLastRequestedTagHelp = tTagDesc
-	
-	if not tTagDesc or 
-		not m_fShowHelp or 
+
+	if not tTagDesc or
+		not m_fShowHelp or
 		(m_tLastRequestedTagHelp == m_tLastDisplayedTagHelp) then
 		return
 	end
-	
+
 	local strPageFilename, strAnchor = taglist.getTagHelp(tTagDesc)
 	if not strPageFilename then
 		return
 	end
-	
+
 	showHelpPage("help/"..strPageFilename, strAnchor)
 end
 
@@ -817,11 +817,11 @@ function showHelpPage(strPageFilename, strAnchor)
 	local strPageSource = muhkuh.load(strPageFilename)
 	if strPageSource then
 		m_helpWindow:SetPage(strPageSource)
-	
+
 		if strAnchor then
 			m_helpWindow:LoadPage(strAnchor)
 		end
-		
+
 		m_tLastDisplayedTagHelp = tTagDesc
 	else
 		print("error loading help page: page = ", strPageFilename)
@@ -852,22 +852,22 @@ function loadConfig()
 		print("Error accessing config.")
 		return
 	end
-	
+
 	if not config:HasGroup(CONFIG_PATH) then
 		print("Group " .. CONFIG_PATH .. " not found in config. Using default values.")
 		return
 	end
-	
+
 	print("reading config")
-	
+
 	config:SetPath(CONFIG_PATH)
-	
+
 	local fOK, strVal
 	fOK, strVal = config:Read(KEY_HELP)
 	if fOK then
 		m_fShowHelp = strVal == "true"
 	end
-	
+
 	fOK, strVal = config:Read(KEY_HELP_SPLIT_RATIO)
 	if fOK then
 		if tonumber(strVal) then
@@ -893,7 +893,7 @@ function saveConfig()
 	print("writing config")
 	config:DeleteGroup(CONFIG_PATH)
 	config:SetPath(CONFIG_PATH)
-	
+
 	if config:Write(KEY_HELP, tostring(m_fShowHelp)) and
 		config:Write(KEY_HELP_SPLIT_RATIO, tostring(m_dSplitRatio)) then
 		print("OK")
@@ -957,16 +957,16 @@ function run()
 	m_nxfile = nxfile.new()
 	m_nxfile:initNxo()
 	loadConfig()
-	
+
 	m_panel = __MUHKUH_PANEL
 	createPanel()
 	local dSplitRatio = m_dSplitRatio
 	displayHelp(m_fShowHelp)
 	m_dSplitRatio = dSplitRatio
-	
+
 	if arg and arg[1] then
 		loadNx(arg[1])
 	end
-	
+
 	showWelcomePage()
 end

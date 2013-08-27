@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2013-08-27     SL            changed paths to HTML files
 -- 2011-07-26     SL            replaced IEEE in analog data formats with IEC
 -- 2011-07-07     SL            Fix: PIO types HIF_PIO and GPIO were swapped
 -- 2011-05-11     SL            created
@@ -31,22 +32,22 @@ NETPLC_IO_HANDLER_CONSTANTS = {
 	RCX_NETPLC_IO_HANDLER_IMAGE_TYPE_NONE   = 0,
 	RCX_NETPLC_IO_HANDLER_IMAGE_TYPE_INPUT  = 1,
 	RCX_NETPLC_IO_HANDLER_IMAGE_TYPE_OUTPUT = 2,
-	
+
 	-- from rX_Config.h/RX_PERIPHERAL_TYPEtag
 	RX_PERIPHERAL_TYPE_PIO                  = 25,
 	RX_PERIPHERAL_TYPE_GPIO                 = 26,
 	RX_PERIPHERAL_TYPE_HIFPIO               = 32,
-	
-	-- analog data format codes for the netPLC I/O Handler facility tags 
-	RCX_NETPLC_IO_HANDLER_FORMAT_SIGNED     = 0,   -- 16-bit signed integer 
-	RCX_NETPLC_IO_HANDLER_FORMAT_UNSIGNED   = 1,   -- 16-bit unsigned integer 
-	RCX_NETPLC_IO_HANDLER_FORMAT_IEC_S      = 2,   -- IEC signed 
-	RCX_NETPLC_IO_HANDLER_FORMAT_IEC_U      = 3,   -- IEC unsigned 
-	RCX_NETPLC_IO_HANDLER_FORMAT_S7         = 4,   -- S7 
+
+	-- analog data format codes for the netPLC I/O Handler facility tags
+	RCX_NETPLC_IO_HANDLER_FORMAT_SIGNED     = 0,   -- 16-bit signed integer
+	RCX_NETPLC_IO_HANDLER_FORMAT_UNSIGNED   = 1,   -- 16-bit unsigned integer
+	RCX_NETPLC_IO_HANDLER_FORMAT_IEC_S      = 2,   -- IEC signed
+	RCX_NETPLC_IO_HANDLER_FORMAT_IEC_U      = 3,   -- IEC unsigned
+	RCX_NETPLC_IO_HANDLER_FORMAT_S7         = 4,   -- S7
 }
 
 
--- PLC I/O image type codes for the netPLC I/O Handler facility tags 
+-- PLC I/O image type codes for the netPLC I/O Handler facility tags
 NETPLC_IO_HANDLER_IMAGE_TYPES = {
 	{name="None",   value=0},
 	{name="Input",  value=1},
@@ -60,7 +61,7 @@ NETPLC_IO_HANDLER_PIO_TYPES = {
 	{name="HIF PIO", value=32},
 }
 
--- analog data format codes for the netPLC I/O Handler facility tags 
+-- analog data format codes for the netPLC I/O Handler facility tags
 NETPLC_IO_HANDLER_FORMATS = {
 	{name="16-bit signed integer",     value = 0},
 	{name="16-bit unsigned integer",   value = 1},
@@ -95,7 +96,7 @@ RCX_TAG_NETPLC_IO_HANDLER_ENABLE_DATA_T = {
 --  UINT32 ulBitOffset;   start offset from the beginning of the first associated byte in the PLC I/O image (in bits) */
 
 RCX_TAG_NETPLC_IO_HANDLER_DIGITAL_DATA_T = {
-	{"UINT8",  "bImageType",     desc="Image Type",         editor="comboedit", editorParam={nBits=8, values = NETPLC_IO_HANDLER_IMAGE_TYPES}}, 
+	{"UINT8",  "bImageType",     desc="Image Type",         editor="comboedit", editorParam={nBits=8, values = NETPLC_IO_HANDLER_IMAGE_TYPES}},
 	{"UINT8",  "bType",          desc="I/O Type",           editor="comboedit", editorParam={nBits=8, values = NETPLC_IO_HANDLER_PIO_TYPES}},
 	{"UINT8",  "bFirstBit",      desc="Index of First Bit", editor="numedit",   editorParam={nBits=8, format="%d"}},
 	{"UINT8",  "bNumBits",       desc="Number of Bits",     editor="comboedit",   editorParam={nBits=8, format="%d", minValue=1, maxValue=32}},
@@ -118,7 +119,7 @@ RCX_TAG_NETPLC_IO_HANDLER_DIGITAL_DATA_T = {
 
 RCX_TAG_NETPLC_IO_HANDLER_ANALOG_DATA_T = {
 	{"UINT8",  "bImageType",    desc="Image Type",              editor="comboedit", editorParam={nBits=8, values = NETPLC_IO_HANDLER_IMAGE_TYPES}},
-	{"UINT8",  "bDevice",       desc="Converter Device Number", editor="comboedit", editorParam={nBits=8, minValue=0, maxValue=1}}, 
+	{"UINT8",  "bDevice",       desc="Converter Device Number", editor="comboedit", editorParam={nBits=8, minValue=0, maxValue=1}},
 	{"UINT8",  "bChannel",      desc="Channel Number",          editor="comboedit", editorParam={nBits=8, minValue=0, maxValue=3}},
 	{"UINT8",  "bFormat",       desc="Number Format",           editor="comboedit", editorParam={nBits=8, values = NETPLC_IO_HANDLER_FORMATS} },
 	{"UINT32", "ulImageOffset", desc="Image Offset",            editor="numedit",   editorParam={nBits=32, format="%d"}},
@@ -137,8 +138,8 @@ RCX_TAG_NETPLC_IO_HANDLER_ANALOG =
 })
 
 taglist.addTagHelpPages({
-    RCX_TAG_NETPLC_IO_HANDLER_ENABLE    = {file="netplc_io_handler/RCX_TAG_NETPLC_IO_HANDLER_ENABLE_DATA_T.htm"},
-    RCX_TAG_NETPLC_IO_HANDLER_DIGITAL   = {file="netplc_io_handler/RCX_TAG_NETPLC_IO_HANDLER_DIGITAL_DATA_T.htm"},
-    RCX_TAG_NETPLC_IO_HANDLER_ANALOG    = {file="netplc_io_handler/RCX_TAG_NETPLC_IO_HANDLER_ANALOG_DATA_T.htm"},
+    RCX_TAG_NETPLC_IO_HANDLER_ENABLE    = {file="RCX_TAG_NETPLC_IO_HANDLER_ENABLE_DATA_T.htm"},
+    RCX_TAG_NETPLC_IO_HANDLER_DIGITAL   = {file="RCX_TAG_NETPLC_IO_HANDLER_DIGITAL_DATA_T.htm"},
+    RCX_TAG_NETPLC_IO_HANDLER_ANALOG    = {file="RCX_TAG_NETPLC_IO_HANDLER_ANALOG_DATA_T.htm"},
 })
 
