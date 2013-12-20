@@ -13,6 +13,8 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2013-10-31     SL            updated RCX_TAG_ETHERNET_PARAMS 0x100f0000: 
+--                              enable Fiber optic for ports 0/1 individually 
 -- 2013-06-25     SL            GUI configuration for TAG_TCP_PORT_NUMBERS
 --                              TAG_TCP_PORT_NUMBERS enabled
 -- 2013-06-14     SL            added TAG_TCP_PORT_NUMBERS 0x30019000 
@@ -173,7 +175,7 @@ TAG_CONSTANTS = {
 	ECS_STACK_VARIANT_COE = 0,
 	ECS_STACK_VARIANT_SOE = 1,
 
-    -- ECS EoE Config
+	-- ECS EoE Config
 	ECS_EOE_MODE_DISABLED = 0,
 	ECS_EOE_MODE_TCPIP    = 1,
 	ECS_EOE_MODE_RAW      = 2,
@@ -185,6 +187,12 @@ TAG_CONSTANTS = {
 	ECS_MBX_SIZE_396_396 = 3,
 	ECS_MBX_SIZE_524_524 = 4,
 --	ECS_MBX_SIZE_780_780 = 5,
+
+	-- Ethernet Params Fiberoptic Mode on/off
+	RCX_TAG_ETHERNET_FIBEROPTICMODE_OFF      = 0,
+	RCX_TAG_ETHERNET_FIBEROPTICMODE_ON       = 1,
+	RCX_TAG_ETHERNET_FIBEROPTICMODE_PORT0_ON = 2,
+	RCX_TAG_ETHERNET_FIBEROPTICMODE_PORT1_ON = 3,
 
 }
 
@@ -506,14 +514,22 @@ RCX_TAG_ETHERNET_PARAMS_DATA_T = {
         editor="comboedit",
         editorParam={nBits=8,
             values={
-                {name="PORT0 only",         value=1},
-                {name="PORT1 only",         value=2},
-                {name="PORT0 and PORT1",    value=3},
+                {name="Port 0 only",         value=1},
+                {name="Port 1 only",         value=2},
+                {name="Port 0 and Port 1",   value=3},
         }},
     },
     {"UINT8", "bFiberOpticMode", desc="Enable Fiber Optic Interface support",
-        editor="checkboxedit",
-        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+        editor="comboedit",
+        editorParam={nBits=8,
+            values={
+            	{name="Off",                value=0},
+                {name="Port 0 only",        value=2},
+                {name="Port 1 only",        value=3},
+                {name="Port 0 and Port 1",  value=1},
+        }},
+--        editor="checkboxedit",
+--        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
     },
     {"UINT8", "bReserved1", desc="Reserved1", mode = "hidden", editorParam={format="0x%02x"}},
     {"UINT8", "bReserved2", desc="Reserved2", mode = "hidden", editorParam={format="0x%02x"}},
