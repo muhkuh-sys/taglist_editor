@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2014-10-31     SL            added constants for BSL custom serial flash tag
 -- 2012-06-26     SL            added TAG_BSL_HIF_NETX51_52_PARAMS 0x40000010 
 --                              added TAG_BSL_MMIO_NETX51_52_PARAMS 0x4000000f
 -- 2012-03-28     SL            added TAG_BSL_SERFLASH_PARAMS
@@ -445,6 +446,15 @@ ID_CMD_LENGTH_VALUES={
        {name="8 bytes", value=8},
        {name="9 bytes", value=9},
      } }
+
+BSL_CUSTOMFLASH_CONSTANTS = {
+    TAG_BSL_SERFLASH_PARAMS_ADRMODE_LINEAR            = 0, -- linear addressing
+    TAG_BSL_SERFLASH_PARAMS_ADRMODE_PAGESIZE_BITSHIFT = 1, -- bitshift derived from the pagesize
+    
+    TAG_BSL_SERFLASH_PARAMS_FEATURES_NONE             = 0,
+    TAG_BSL_SERFLASH_PARAMS_FEATURES_WINBOND_QUADSPI  = 1,
+    }
+taglist.addConstants(BSL_CUSTOMFLASH_CONSTANTS)
 
 
 BSL_TAGS={
