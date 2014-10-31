@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2014-10-30     SL            added RCX_TAG_PROFINET_FEATURES 0x30015001
 -- 2013-10-31     SL            updated RCX_TAG_ETHERNET_PARAMS 0x100f0000: 
 --                              enable Fiber optic for ports 0/1 individually 
 -- 2013-06-25     SL            GUI configuration for TAG_TCP_PORT_NUMBERS
@@ -413,6 +414,60 @@ TAG_TCP_PORT_NUMBERS_DATA_T = {
 	end,
 },
 
+
+----------------------------------------------------------------------------------------------
+-- Profinet protocol tags
+
+-- typedef struct
+-- {
+--   uint8_t      bNumAdditionalIoAR;     /* 0: only 1 cyclic Profinet connection is possible, allowed values 0 - 4, refer to PNS API Manual for details */
+--   uint8_t      bIoSupervisorSupported; /* 0: IO Supervisor communication is not accepted by firmware / 1: IO Supervisor communication is accepted by firmware */
+--   uint8_t      bIRTSupported;          /* 0: IRT communication is not accepted by firmware / 1: IRT communication is accepted by firmware */
+--   uint8_t      bReserved;
+--   uint16_t     usMinDeviceInterval;    /* the MinDeviceInterval according to GSDML file of the product (allowed values: Power of two in range [8 - 4096]) */
+--   uint8_t      abReserved[2];
+-- } RCX_TAG_PROFINET_FEATURES_DATA_T;
+
+TAG_PROFINET_FEATURES_DATA_T = {
+    {"UINT8",  "bNumAdditionalIoAR",         desc = "NumAdditionalIoAR",
+        editor="comboedit",
+        editorParam={nBits=8,
+            values={
+                {name="0",    value=0},
+                {name="1",    value=1},
+                {name="2",    value=2},
+                {name="3",    value=3},
+                {name="4",    value=4},
+    } } },
+    {"UINT8",  "bIoSupervisorSupported",     desc = "IO Supervisor communication accepted",
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+    },
+    {"UINT8",  "bIRTSupported",              desc = "IRT Communication accepted",
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+    },
+    {"UINT8",  "bReserved",                  desc = "reserved",                              mode = "hidden",   },
+    {"UINT16", "usMinDeviceInterval",        desc = "MinDeviceInterval",
+        editor="comboedit",
+        editorParam={nBits=16,
+            values={
+                {name="8",      value=8},
+                {name="16",     value=16},
+                {name="32",     value=32},
+                {name="64",     value=64},
+                {name="128",    value=128},
+                {name="256",    value=256},
+                {name="512",    value=512},
+                {name="1024",   value=1024},
+                {name="2048",   value=2048},
+                {name="4096",   value=4096},
+                
+        } } },
+    {"UINT8",  "abReserved1",                desc = "reserved",                              mode = "hidden",   },
+    {"UINT8",  "abReserved2",                desc = "reserved",                              mode = "hidden",   },
+},
+
 ----------------------------------------------------------------------------------------------
 -- tags for netX Diagnostics and Remote Access component
 
@@ -658,6 +713,9 @@ TAG_ECS_CONFIG_EOE =
 TAG_ECS_MBX_SIZE =
 	{paramtype = 0x30009004, datatype="TAG_ECS_MBX_SIZE_DATA_T",          desc="EtherCAT Slave Mailbox Size"},
 
+TAG_PROFINET_FEATURES = 
+	{paramtype = 0x30015001, datatype="TAG_PROFINET_FEATURES_DATA_T",     desc="Profinet Features"},
+	
 TAG_TCP_PORT_NUMBERS =
 	{paramtype = 0x30019000, datatype="TAG_TCP_PORT_NUMBERS_DATA_T",      desc="Ethernet Interface TCP Port Numbers"},
 
@@ -726,7 +784,9 @@ TAG_HELP = {
     TAG_ECS_SELECT_SOE_COE              = {file="TAG_ECS_SELECT_SOE_COE_DATA_T.htm"},
     TAG_ECS_CONFIG_EOE                  = {file="TAG_ECS_CONFIG_EOE_DATA_T.htm"},
     TAG_ECS_MBX_SIZE                    = {file="TAG_ECS_MBX_SIZE_DATA_T.htm"},
-	TAG_TCP_PORT_NUMBERS                = {file="TAG_TCP_PORT_NUMBERS_DATA_T.htm"},
+    TAG_TCP_PORT_NUMBERS                = {file="TAG_TCP_PORT_NUMBERS_DATA_T.htm"},
+
+    TAG_PROFINET_FEATURES               = {file="TAG_PROFINET_FEATURES_DATA_T.htm"},
 
     TAG_DIAG_IF_CTRL_UART               = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_USB                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
