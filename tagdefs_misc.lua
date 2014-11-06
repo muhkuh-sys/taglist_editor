@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2014-11-06     SL            updated TAG_PROFINET_FEATURES_DATA_T
 -- 2014-10-30     SL            added RCX_TAG_PROFINET_FEATURES 0x30015001
 -- 2013-10-31     SL            updated RCX_TAG_ETHERNET_PARAMS 0x100f0000: 
 --                              enable Fiber optic for ports 0/1 individually 
@@ -429,7 +430,7 @@ TAG_TCP_PORT_NUMBERS_DATA_T = {
 -- } RCX_TAG_PROFINET_FEATURES_DATA_T;
 
 TAG_PROFINET_FEATURES_DATA_T = {
-    {"UINT8",  "bNumAdditionalIoAR",         desc = "NumAdditionalIoAR",
+    {"UINT8",  "bNumAdditionalIoAR",         desc = "Number of additional IO Connections (ARs)",
         editor="comboedit",
         editorParam={nBits=8,
             values={
@@ -437,7 +438,6 @@ TAG_PROFINET_FEATURES_DATA_T = {
                 {name="1",    value=1},
                 {name="2",    value=2},
                 {name="3",    value=3},
-                {name="4",    value=4},
     } } },
     {"UINT8",  "bIoSupervisorSupported",     desc = "IO Supervisor communication accepted",
         editor="checkboxedit",
