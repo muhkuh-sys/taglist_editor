@@ -1,68 +1,73 @@
 ; Inno Setup Cfg for NXO Editor
 
-; call batch file to get the svnversion of the nxo_editor directory.
+; ; call batch file to get the svnversion of the nxo_editor directory.
+; #define ExitCode
+; #expr ExitCode = Exec("get_svnversion.bat")
+; #pragma message "exit code of batch file: "+str(ExitCode)
+; 
+; ; read the output of the batch file into SVNVersion
+; #define FileHandle
+; #define SVNVersion "0000"
+; #expr FileHandle = FileOpen("modulator_version.txt");
+; #if FileHandle
+; #expr SVNVersion = FileRead(FileHandle)
+; #pragma message "SVN version = " + SVNVersion
+; #expr FileClose(FileHandle)
+; #endif
+; 
+; ; remove the letters M, P or S from SVNVersion
+; #define iPos
+; #expr iPos = Pos("M", SVNVersion);
+; #if (iPos > 0)
+; #expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
+; #endif
+; #expr iPos = Pos("P", SVNVersion);
+; #if (iPos > 0)
+; #expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
+; #endif
+; #expr iPos = Pos("S", SVNVersion);
+; #if (iPos > 0)
+; #expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
+; #endif
+; 
+; ; if SVNVersion if of the form 1234:1236, strip the first number
+; #expr iPos = Pos(":", SVNVersion);
+; #if (iPos > 0)
+; #expr SVNVersion = Copy(SVNVersion, iPos+1)
+; #endif
+; #pragma message "numeric SVN version: "+SVNVersion
+; 
+; 
+; ; read change logs (not used)
+; #define Changelog ""
+; #define FileLine
+; #sub AppendChangelogLine
+; 	#define iPos
+; 	#for {iPos = Pos("'", FileLine); iPos>0 ; iPos = Pos("'", FileLine)} FileLine = Copy(FileLine, 1, iPos-1) + "''" + Copy(FileLine, iPos+1)
+; 	#pragma message FileLine
+; 	#expr Changelog = Changelog + "\n" + FileLine
+; #endsub
+; 
+; #define ChangelogFile
+; #sub ReadChangelog
+; 	#expr FileLine = ""
+; 	#expr Changelog = ""
+; 	#for {FileHandle = FileOpen(ChangelogFile); FileHandle && !FileEof(FileHandle); FileLine = FileRead(FileHandle)} AppendChangelogLine
+; 	#if FileHandle
+; 		#expr FileClose(FileHandle)
+; 	#endif
+; #endsub
+
+; comment out if ExitCode was defined above when getting the SVN version
 #define ExitCode
-#expr ExitCode = Exec("get_svnversion.bat")
-#pragma message "exit code of batch file: "+str(ExitCode)
-
-; read the output of the batch file into SVNVersion
-#define FileHandle
-#define SVNVersion "0000"
-#expr FileHandle = FileOpen("modulator_version.txt");
-#if FileHandle
-#expr SVNVersion = FileRead(FileHandle)
-#pragma message "SVN version = " + SVNVersion
-#expr FileClose(FileHandle)
-#endif
-
-; remove the letters M, P or S from SVNVersion
-#define iPos
-#expr iPos = Pos("M", SVNVersion);
-#if (iPos > 0)
-#expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
-#endif
-#expr iPos = Pos("P", SVNVersion);
-#if (iPos > 0)
-#expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
-#endif
-#expr iPos = Pos("S", SVNVersion);
-#if (iPos > 0)
-#expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
-#endif
-
-; if SVNVersion if of the form 1234:1236, strip the first number
-#expr iPos = Pos(":", SVNVersion);
-#if (iPos > 0)
-#expr SVNVersion = Copy(SVNVersion, iPos+1)
-#endif
-#pragma message "numeric SVN version: "+SVNVersion
-
-
-; read change logs (not used)
-#define Changelog ""
-#define FileLine
-#sub AppendChangelogLine
-	#define iPos
-	#for {iPos = Pos("'", FileLine); iPos>0 ; iPos = Pos("'", FileLine)} FileLine = Copy(FileLine, 1, iPos-1) + "''" + Copy(FileLine, iPos+1)
-	#pragma message FileLine
-	#expr Changelog = Changelog + "\n" + FileLine
-#endsub
-
-#define ChangelogFile
-#sub ReadChangelog
-	#expr FileLine = ""
-	#expr Changelog = ""
-	#for {FileHandle = FileOpen(ChangelogFile); FileHandle && !FileEof(FileHandle); FileLine = FileRead(FileHandle)} AppendChangelogLine
-	#if FileHandle
-		#expr FileClose(FileHandle)
-	#endif
-#endsub
 
 #define AppName "netX Tag List Editor/NXO Builder"
 ;#define AppVersion GetFileVersion("..\..\..\bin\muhkuh.exe")
-#define AppVersion "1.1."+SVNVersion+".0"
+;#define AppVersion "1.1."+SVNVersion+".0"
+#define AppVersion "1.2.0.0"
 #define AppVerName AppName+" "+AppVersion
 #define InstallerName "tag_list_editor_"+AppVersion+"_setup"
+
 
 ; make .cfg file with AppVerName as customtitle
 #define NXOEditorDir "..\.."
