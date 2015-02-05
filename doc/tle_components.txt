@@ -1,0 +1,125 @@
+Components used in Tag List Editor 1.2.0.0
+===========================================
+
+Muhkuh_V1.x         https://svn.code.sf.net/p/muhkuh/svn/muhkuh/branches/v1.x/                       1569
+Muhkuh_V2           http://hg.code.sf.net/p/muhkuh/code                                              a7d2e163c826
+lua_hilscher        svn://netx01/public/muhkuh/lua_hilscher/trunk                                    13890
+nxoeditor           svn://netx01/public/muhkuh/nxo_editor/trunk                                      16418
+
+wxWidgets 2.8.9.0 VC8 (wxmsw28_stc_vc_custom.dll is older)
+wxLua 2.8.10 VC8
+Microsoft.VC80.CRT 8.0.50608.0
+
+<Installdir>\application
+                                                                         Muhkuh_V2 a7d2e163c826
+03.05.2013  09:04            10.752 lua.exe
+03.05.2013  09:03           139.264 lua5.1.dll
+03.05.2013  09:05           208.896 mhash.dll
+
+                                                                         nxoeditor 16418
+02.02.2015  18:15               924 Modulator.cfg                        (generated from .m4 file)
+
+                                                                         Muhkuh_V1.x 1.0.1562.0
+27.11.2013  12:05           724.992 muhkuh.exe
+15.04.2008  16:37             1.235 muhkuh_tips.txt
+
+                                                                         Muhkuh_V1.x 1.0.1480.0
+12.04.2012  08:19           417.792 serverkuh.exe
+
+                                                                         wxWidgets 2.8.9.0, wxLua 2.8.10
+10.09.2009  16:14            16.384 wx.dll
+22.01.2009  12:38           135.168 wxbase28_net_vc.dll
+22.01.2009  12:40           110.592 wxbase28_odbc_vc.dll
+22.01.2009  12:37         1.179.648 wxbase28_vc.dll
+22.01.2009  12:40           135.168 wxbase28_xml_vc.dll
+10.09.2009  16:14           356.352 wxlua_msw28_wxbindadv.dll
+10.09.2009  16:14           188.416 wxlua_msw28_wxbindaui.dll
+10.09.2009  16:14           421.888 wxlua_msw28_wxbindbase.dll
+10.09.2009  16:14         1.511.424 wxlua_msw28_wxbindcore.dll
+10.09.2009  16:14            40.960 wxlua_msw28_wxbindgl.dll
+10.09.2009  16:14           139.264 wxlua_msw28_wxbindhtml.dll
+10.09.2009  16:14            45.056 wxlua_msw28_wxbindmedia.dll
+10.09.2009  16:14            69.632 wxlua_msw28_wxbindnet.dll
+10.09.2009  16:14           208.896 wxlua_msw28_wxbindstc.dll
+10.09.2009  16:14            31.744 wxlua_msw28_wxbindxml.dll
+10.09.2009  16:14            24.576 wxlua_msw28_wxbindxrc.dll
+10.09.2009  16:14           176.128 wxlua_msw28_wxlua.dll
+10.09.2009  16:14           143.360 wxlua_msw28_wxluadebug.dll
+10.09.2009  16:14           114.688 wxlua_msw28_wxluasocket.dll
+22.01.2009  12:40           712.704 wxmsw28_adv_vc.dll
+22.01.2009  12:41           335.872 wxmsw28_aui_vc.dll
+22.01.2009  12:40         2.998.272 wxmsw28_core_vc.dll
+22.01.2009  12:40            30.720 wxmsw28_dbgrid_vc.dll
+22.01.2009  12:53            35.840 wxmsw28_gl_vc.dll
+22.01.2009  12:40           499.712 wxmsw28_html_vc.dll
+22.01.2009  12:40           106.496 wxmsw28_media_vc.dll
+22.01.2009  12:40           110.592 wxmsw28_qa_vc.dll
+22.01.2009  12:41           774.144 wxmsw28_richtext_vc.dll
+08.09.2009  08:55           532.480 wxmsw28_stc_vc_custom.dll
+22.01.2009  12:53         6.488.064 wxmsw28_vc.dll
+22.01.2009  12:41           516.096 wxmsw28_xrc_vc.dll
+
+<Installdir>\application\lua
+                                                                         Muhkuh_V1.x bin/lua 1556 = 1558 = 1569
+15.02.2010  09:30            17.304 muhkuh_system.lua
+13.04.2011  16:51            19.868 utils.lua
+
+<Installdir>\application\lua_hilscher
+                                                                         lua_hilscher 13890 = 15026
+12.11.2009  17:39            12.536 gui_stuff.lua
+30.03.2012  15:41            43.412 netx_fileheader.lua
+
+<Installdir>\application\Microsoft.VC80.CRT
+                                                                         Microsoft.VC80.CRT 8.0.50608.0
+22.09.2005  22:22               522 Microsoft.VC80.CRT.manifest
+23.09.2005  05:56           479.232 msvcm80.dll
+22.09.2005  22:05           548.864 msvcp80.dll
+22.09.2005  22:05           626.688 msvcr80.dll
+
+<Installdir>\docs
+                                                                         Muhkuh_V1.x 1569
+21.07.2014  10:27            11.496 changelog.txt
+
+<Installdir>\doc
+                                                                         nxoeditor doc 16418
+01.04.2010  15:34            76.563 licenses.txt
+02.02.2015  18:11             7.682 modulator_changelog.txt
+18.02.2013  11:20           580.838 Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf
+
+
+<Installdir>\nxo_editor
+                                                                         nxoeditor 16418
+29.06.2010  09:00             2.610 checkboxedit.lua
+17.05.2011  09:31             9.952 checklist_taglistedit.lua
+29.06.2010  09:00             3.702 comboedit.lua
+07.08.2012  15:08            10.110 devhdredit.lua
+29.06.2010  09:00             2.799 hexdump.lua
+19.06.2012  08:48            17.726 hexedit.lua
+29.06.2010  09:00             2.406 ipv4edit.lua
+29.06.2010  09:00             2.420 macedit.lua
+29.06.2010  09:00               768 makenxo.bat
+28.02.2013  20:06            45.126 netX.ico
+19.01.2012  12:35             5.399 numedit.lua
+16.08.2010  13:46            12.184 nxfile.lua
+27.08.2013  08:47            28.394 nxoeditor.lua
+25.03.2011  18:19             6.875 nxomaker.wx.lua
+21.10.2010  15:54             9.590 page_taglistedit.lua
+05.08.2010  11:24             2.924 rcxveredit.lua
+29.06.2010  09:00             1.573 stringedit.lua
+25.06.2013  16:22            13.210 structedit.lua
+31.10.2014  10:23            51.945 tagdefs_bsl.lua
+27.08.2013  08:47             7.464 tagdefs_io_handler.lua
+06.11.2014  11:04            38.340 tagdefs_misc.lua
+07.09.2012  13:25            20.596 tagdefs_rcx.lua
+27.08.2013  08:47            51.594 taglist.lua
+05.08.2010  12:09               634 tagtool.bat
+24.06.2013  08:29            33.517 tagtool.wx.lua
+12.04.2012  10:23               125 tester_nextid.lua
+29.06.2010  08:52               159 test_description.xml
+
+<Installdir>\nxo_editor\help
+                                                                         nxoeditor 16418
+12.08.2010  13:57               831 misc_tags.htm
+29.03.2012  09:33             2.541 RCX_TAG_DPM_COMM_CHANNEL_DATA_T.htm
+29.03.2012  09:33             1.440 RCX_TAG_DPM_SETTINGS_DATA_T.htm
+   etc.
