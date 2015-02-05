@@ -1,88 +1,22 @@
 ; Inno Setup Cfg for NXO Editor
 
-; ; call batch file to get the svnversion of the nxo_editor directory.
-; #define ExitCode
-; #expr ExitCode = Exec("get_svnversion.bat")
-; #pragma message "exit code of batch file: "+str(ExitCode)
-; 
-; ; read the output of the batch file into SVNVersion
-; #define FileHandle
-; #define SVNVersion "0000"
-; #expr FileHandle = FileOpen("modulator_version.txt");
-; #if FileHandle
-; #expr SVNVersion = FileRead(FileHandle)
-; #pragma message "SVN version = " + SVNVersion
-; #expr FileClose(FileHandle)
-; #endif
-; 
-; ; remove the letters M, P or S from SVNVersion
-; #define iPos
-; #expr iPos = Pos("M", SVNVersion);
-; #if (iPos > 0)
-; #expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
-; #endif
-; #expr iPos = Pos("P", SVNVersion);
-; #if (iPos > 0)
-; #expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
-; #endif
-; #expr iPos = Pos("S", SVNVersion);
-; #if (iPos > 0)
-; #expr SVNVersion = Copy(SVNVersion, 1, iPos-1)
-; #endif
-; 
-; ; if SVNVersion if of the form 1234:1236, strip the first number
-; #expr iPos = Pos(":", SVNVersion);
-; #if (iPos > 0)
-; #expr SVNVersion = Copy(SVNVersion, iPos+1)
-; #endif
-; #pragma message "numeric SVN version: "+SVNVersion
-; 
-; 
-; ; read change logs (not used)
-; #define Changelog ""
-; #define FileLine
-; #sub AppendChangelogLine
-; 	#define iPos
-; 	#for {iPos = Pos("'", FileLine); iPos>0 ; iPos = Pos("'", FileLine)} FileLine = Copy(FileLine, 1, iPos-1) + "''" + Copy(FileLine, iPos+1)
-; 	#pragma message FileLine
-; 	#expr Changelog = Changelog + "\n" + FileLine
-; #endsub
-; 
-; #define ChangelogFile
-; #sub ReadChangelog
-; 	#expr FileLine = ""
-; 	#expr Changelog = ""
-; 	#for {FileHandle = FileOpen(ChangelogFile); FileHandle && !FileEof(FileHandle); FileLine = FileRead(FileHandle)} AppendChangelogLine
-; 	#if FileHandle
-; 		#expr FileClose(FileHandle)
-; 	#endif
-; #endsub
-
-; comment out if ExitCode was defined above when getting the SVN version
-#define ExitCode
-
 #define AppName "netX Tag List Editor/NXO Builder"
-;#define AppVersion GetFileVersion("..\..\..\bin\muhkuh.exe")
-;#define AppVersion "1.1."+SVNVersion+".0"
 #define AppVersion "1.2.0.0"
 #define AppVerName AppName+" "+AppVersion
 #define InstallerName "tag_list_editor_"+AppVersion+"_setup"
 
-
 ; make .cfg file with AppVerName as customtitle
 #define NXOEditorDir "..\.."
+#define ExitCode
 #expr ExitCode = Exec("cmd", '/c m4 --define __CUSTOMTITLE__="' + AppVerName + '" Modulator_cfg.m4 >Modulator.cfg', NXOEditorDir)
 #pragma message "m4 exited with code "+str(ExitCode)
 #if ExitCode > 0
   #error Failed to build Modulator.cfg file
 #endif
 
-
 #define SourceDir "..\..\.."
 #define OutputDir "."
 
-; include the common muhkuh settings
-;-------------------------------------------------------------------------
 [Setup]
 AppName={#AppName}
 AppVersion={#AppVersion}
@@ -91,13 +25,13 @@ AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://www.hilscher.com
 ;AppSupportURL=http://www.sourceforge.net/projects/muhkuh
 ;AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
-AppCopyright=(C) 2013, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2015, Muhkuh team and Hilscher GmbH
 
 ; works: company, copyright, product name, product version
 ; description goes into properties and version dialogue
 VersionInfoTextVersion={#AppVersion}
 VersionInfoDescription=Installer of the Hilscher Tag List Editor application
-VersionInfoCopyright=(C) 2013 Muhkuh team and Hilscher GmbH
+VersionInfoCopyright=(C) 2015 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoProductName=Hilscher Tag List Editor
 VersionInfoVersion={#AppVersion}
@@ -235,11 +169,12 @@ Source: nxo_editor\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modul
 Source: nxo_editor\makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: nxo_editor\tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
-Source: "H:\Manual netX Products\Tools\TagListEditor\man.004\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf"; DestDir: {app}\doc; Components: modulator
+Source: "H:\Manual netX Products\Tools\TagListEditor\man.005_V1.2\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf"; DestDir: {app}\doc; Components: modulator
 Source: nxo_editor\doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
 Source: nxo_editor\doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 
 [InstallDelete]
+Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 03 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 02 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 01 EN.pdf"
@@ -257,7 +192,7 @@ Source: bin\serverkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Com
 Source: bin\muhkuh_tips.txt; DestDir: {app}\application; Components: muhkuh
 ;Source: icons\custom\muhkuh_uninstall.ico; DestDir: {app}\application; Components: muhkuh
 
-; system dlls
+; runtime dlls
 ;Source: bin\msvcr71.dll; DestDir: {app}\application; Components: muhkuh
 ;Source: bin\msvcp71.dll; DestDir: {app}\application; Components: muhkuh
 Source: bin\Microsoft.VC80.CRT\*; DestDir: {app}\application\Microsoft.VC80.CRT; Components: muhkuh
@@ -314,7 +249,7 @@ Name: {app}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Paramete
 
 ; start menu entry
 Name: {group}\Tag List Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
-Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf; Components: modulator; Tasks: startmenu
+Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf; Components: modulator; Tasks: startmenu
 Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
 ;Name: {group}\Tag List Editor Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf; Components: modulator; Tasks: startmenu
 ;Name: {group}\Uninstall Tag List Editor; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
