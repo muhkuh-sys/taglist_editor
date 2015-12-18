@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2015-12-18     SL            change %d to %u
 -- 2014-11-06     SL            updated TAG_PROFINET_FEATURES_DATA_T
 -- 2014-10-30     SL            added RCX_TAG_PROFINET_FEATURES 0x30015001
 -- 2013-10-31     SL            updated RCX_TAG_ETHERNET_PARAMS 0x100f0000: 
@@ -278,7 +279,7 @@ TAG_CCL_DEVICEID_DATA_T = {
 	{"UINT32", "ulVendorCode", desc="Vendor Code"},
 	{"UINT32", "ulModelType",  desc="Model Type"},
 	{"UINT32", "ulSwVersion",  desc="Software Version",
-		editor="numedit", editorParam={nBits=32, format="%d", minValue=0, maxValue=63}
+		editor="numedit", editorParam={nBits=32, format="%u", minValue=0, maxValue=63}
 	},
 },
 
@@ -352,31 +353,31 @@ TAG_ECS_MBX_SIZE_DATA_T = {
 ----------------------------------------------------------------------------------------------
 -- TCP Port Numbers 
 TAG_TCP_PORT_NUMBERS_DATA_T = {
-	{"UINT32", "ulPortStart",                   desc="TCP/UDP Port Range (First Port)", editor="numedit", editorParam={nBits=32, format="%d", minValue=0,    maxValue=0xefff}},
-	{"UINT32", "ulPortEnd",                     desc="TCP/UDP Port Range (Last Port)",  editor="numedit", editorParam={nBits=32, format="%d", minValue=0,    maxValue=0xefff}},
+	{"UINT32", "ulPortStart",                   desc="TCP/UDP Port Range (First Port)", editor="numedit", editorParam={nBits=32, format="%u", minValue=0,    maxValue=0xefff}},
+	{"UINT32", "ulPortEnd",                     desc="TCP/UDP Port Range (Last Port)",  editor="numedit", editorParam={nBits=32, format="%u", minValue=0,    maxValue=0xefff}},
 	{"UINT32", "ulNumberOfProtocolStackPorts",  desc="Number of Protocol Stack Ports", 
-	                                                                mode = "read-only", editor="numedit", editorParam={nBits=32, format="%d", minValue=0,    maxValue=20}},
-	{"UINT32", "ulNumberOfUserPorts",           desc="Number of Additional Ports",      editor="numedit", editorParam={nBits=32, format="%d", minValue=0,    maxValue=20}},
-	{"UINT16", "ausPortList_0",                 desc="Port 1",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_1",                 desc="Port 2",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_2",                 desc="Port 3",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_3",                 desc="Port 4",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_4",                 desc="Port 5",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_5",                 desc="Port 6",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_6",                 desc="Port 7",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_7",                 desc="Port 8",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_8",                 desc="Port 9",                          editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_9",                 desc="Port 10",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_10",                desc="Port 11",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_11",                desc="Port 12",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_12",                desc="Port 13",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_13",                desc="Port 14",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_14",                desc="Port 15",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_15",                desc="Port 16",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_16",                desc="Port 17",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_17",                desc="Port 18",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_18",                desc="Port 19",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
-	{"UINT16", "ausPortList_19",                desc="Port 20",                         editor="numedit", editorParam={nBits=16, format="%d", minValue=0,    maxValue=65535}},
+	                                                                mode = "read-only", editor="numedit", editorParam={nBits=32, format="%u", minValue=0,    maxValue=20}},
+	{"UINT32", "ulNumberOfUserPorts",           desc="Number of Additional Ports",      editor="numedit", editorParam={nBits=32, format="%u", minValue=0,    maxValue=20}},
+	{"UINT16", "ausPortList_0",                 desc="Port 1",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_1",                 desc="Port 2",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_2",                 desc="Port 3",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_3",                 desc="Port 4",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_4",                 desc="Port 5",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_5",                 desc="Port 6",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_6",                 desc="Port 7",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_7",                 desc="Port 8",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_8",                 desc="Port 9",                          editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_9",                 desc="Port 10",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_10",                desc="Port 11",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_11",                desc="Port 12",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_12",                desc="Port 13",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_13",                desc="Port 14",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_14",                desc="Port 15",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_15",                desc="Port 16",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_16",                desc="Port 17",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_17",                desc="Port 18",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_18",                desc="Port 19",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
+	{"UINT16", "ausPortList_19",                desc="Port 20",                         editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=65535}},
 
 	layout = {
 		sizer = "v",
@@ -483,7 +484,7 @@ TAG_DIAG_IF_CTRL_UART_DATA_T = {
         editor="checkboxedit",
         editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
     },
-    {"UINT8", "bInterfaceNumber", desc="UART Number", mode="read-only", editorParam={format="%d"}},
+    {"UINT8", "bInterfaceNumber", desc="UART Number", mode="read-only", editorParam={format="%u"}},
     {"UINT8", "bReserved2", desc="Reserved2", mode = "hidden", editorParam={format="0x%02x"}},
     {"UINT8", "bReserved3", desc="Reserved3", mode = "hidden", editorParam={format="0x%02x"}},
 
@@ -502,7 +503,7 @@ TAG_DIAG_IF_CTRL_USB_DATA_T = {
         editor="checkboxedit",
         editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
     },
-    {"UINT8", "bInterfaceNumber", desc="USB Port Number", mode="read-only", editorParam={format="%d"}},
+    {"UINT8", "bInterfaceNumber", desc="USB Port Number", mode="read-only", editorParam={format="%u"}},
     {"UINT8", "bReserved2", desc="Reserved2", mode = "hidden", editorParam={format="0x%02x"}},
     {"UINT8", "bReserved3", desc="Reserved3", mode = "hidden", editorParam={format="0x%02x"}},
 
@@ -521,7 +522,7 @@ TAG_DIAG_IF_CTRL_TCP_DATA_T = {
         editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
     },
     {"UINT8", "bReserved1",   desc="Reserved1",       mode="hidden",    editorParam={format="0x%02x"}},
-    {"UINT16", "usTCPPortNo", desc="TCP Port Number", mode="read-only", editorParam={format="%d"}},
+    {"UINT16", "usTCPPortNo", desc="TCP Port Number", mode="read-only", editorParam={format="%u"}},
 
     layout = {sizer="grid", "usTCPPortNo", "bEnable"}
 },
@@ -624,7 +625,7 @@ RCX_TAG_FIBER_OPTIC_IF_DMI_NETX100_PARAMS_DATA_T = {
         editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
     },
     {"UINT8", "bSelectPinIdx", desc="Pin Number",
-        editor="numedit", editorParam={nBits=8, format="%d", minValue=0, maxValue=84}
+        editor="numedit", editorParam={nBits=8, format="%u", minValue=0, maxValue=84}
     },
     {"UINT8", "bReserved",     desc="Reserved", mode = "hidden", editorParam={format="0x%02x"}},
 
@@ -661,7 +662,7 @@ RCX_TAG_EIF_NDIS_ENABLE_DATA_T = {
 -- servX facility tags
 
 RCX_TAG_SERVX_PORT_NUMBER_DATA_T = {
-	{"UINT16", "usServXPortNumber",  desc="Webserver TCP Port Number", editor="numedit", editorParam={nBits=16, format="%d"}}
+	{"UINT16", "usServXPortNumber",  desc="Webserver TCP Port Number", editor="numedit", editorParam={nBits=16, format="%u"}}
 },
 
 

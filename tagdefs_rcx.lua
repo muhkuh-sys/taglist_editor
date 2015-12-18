@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author  Description
 ---------------------------------------------------------------------------
+-- 2015-12-18     SL      changed %d to %u
 -- 2015-10-15     SL      added RCX_TAG_DPM_BEHAVIOUR 0x00001062
 -- 2012-09-05     SL      added RCX_TAG_SWAP_LNK_ACT_LED 0x00001042 
 -- 2012-06-18     SL      added RCX_TAG_IOPIN 0x00001041 
@@ -283,8 +284,8 @@ RCX_TAG_UART_T = {
     {"UINT32", "ulTxFifoLevel" , desc="Tx FIFO trigger level" , editor="comboedit", editorParam={nBits=32, minValue=0, maxValue=14}},
     {"UINT32", "ulRtsMode"     , desc="RTS mode"              , editor="comboedit", editorParam={nBits=32, values = RX_UART_RTS_MODE}},
     {"UINT32", "ulRtsPolarity" , desc="RTS polarity"          , editor="comboedit", editorParam={nBits=32, values = RX_UART_RTS_CTS_POLARITY}},
-    {"UINT32", "ulRtsForerun"  , desc="RTS forerun"           ,                     editorParam={nBits=32, format = "%d", minValue=0, maxValue=255}},
-    {"UINT32", "ulRtsTrail"    , desc="RTS trail"             ,                     editorParam={nBits=32, format = "%d", minValue=0, maxValue=255}},
+    {"UINT32", "ulRtsForerun"  , desc="RTS forerun"           ,                     editorParam={nBits=32, format = "%u", minValue=0, maxValue=255}},
+    {"UINT32", "ulRtsTrail"    , desc="RTS trail"             ,                     editorParam={nBits=32, format = "%u", minValue=0, maxValue=255}},
     {"UINT32", "ulCtsMode"     , desc="CTS mode"              , editor="comboedit", editorParam={nBits=32, values = RX_UART_CTS_MODE}},
     {"UINT32", "ulCtsPolarity" , desc="CTS polarity"          , editor="comboedit", editorParam={nBits=32, values = RX_UART_RTS_CTS_POLARITY}},
     nameField = "szIdentifier"

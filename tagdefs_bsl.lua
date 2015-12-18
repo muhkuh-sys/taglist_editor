@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2015-12-18     SL            changed %d to %u
 -- 2014-10-31     SL            added constants for BSL custom serial flash tag
 -- 2012-06-26     SL            added TAG_BSL_HIF_NETX51_52_PARAMS 0x40000010 
 --                              added TAG_BSL_MMIO_NETX51_52_PARAMS 0x4000000f
@@ -701,13 +702,13 @@ TAG_BSL_HWDATA_PARAMS_DATA_T = {
 
     {"UINT16", "usManufacturer", desc="Manufacturer", editorParam={format="0x%04x"}},
     -- Format: 0xyyww (year/week), byte order: ww yy
-    {"UINT8", "bProdWeek", desc="Production Week", editorParam={format="%d"}},
-    {"UINT8", "bProdYear", desc="Production Year", editorParam={format="%d"}},
+    {"UINT8", "bProdWeek", desc="Production Week", editorParam={format="%u"}},
+    {"UINT8", "bProdYear", desc="Production Year", editorParam={format="%u"}},
     {"UINT16", "usDeviceClass", desc="Device Class", editorParam={format="0x%04x"}},
-    {"UINT8", "bHWCompatibility", desc="HW Compatibility", editorParam={format="%d"}},
-    {"UINT8", "bHWRevision", desc="HW Revision", editorParam={format="%d"}},
-    {"UINT32", "ulDeviceNr", desc="Device Number", editorParam={format="%d"}},
-    {"UINT32", "ulSerialNr", desc="Serial Number", editorParam={format="%d"}},
+    {"UINT8", "bHWCompatibility", desc="HW Compatibility", editorParam={format="%u"}},
+    {"UINT8", "bHWRevision", desc="HW Revision", editorParam={format="%u"}},
+    {"UINT32", "ulDeviceNr", desc="Device Number", editorParam={format="%u"}},
+    {"UINT32", "ulSerialNr", desc="Serial Number", editorParam={format="%u"}},
     {"UINT16", "usHwOption0", desc="HW Option 0", editorParam={format="0x%04x"}},
     {"UINT16", "usHwOption1", desc="HW Option 1", editorParam={format="0x%04x"}},
     {"UINT16", "usHwOption2", desc="HW Option 2", editorParam={format="0x%04x"}},
@@ -953,7 +954,7 @@ TAG_BSL_USB_DESCR_PARAMS_DATA_T =
        {name="Self-powered, remote wakeup",  value=0x80+0x40+0x20},
        {name="Bus-powered, remote wakeup",   value=0x80+0x20},
      }}},
-  {"UINT8",  "bMaxPower",         desc="Maximum Power", editor="numedit", editorParam={nBits=8, format="%d", minValue=0, maxValue=250}},
+  {"UINT8",  "bMaxPower",         desc="Maximum Power", editor="numedit", editorParam={nBits=8, format="%u", minValue=0, maxValue=250}},
   {"STRING", "szVendor",          desc="Vendor Name", size=16},
   {"STRING", "szProduct",         desc="Product Name", size=16},
   {"STRING", "szSerial",          desc="Serial Number", size=16},
@@ -996,9 +997,9 @@ TAG_BSL_SERFLASH_PARAMS_DATA_T = {
 	{"UINT8",   "bUseCustomFlash",        desc="Enable",                                   editor="checkboxedit", editorParam={nBits=8, onValue=1, offValue=0, otherValues=true}},
 	{"STRING",  "szName",                 desc="Name",                             size=16},
 	{"UINT32",  "ulSize",                 desc="Chip size",                                editor="numedit", editorParam={nBits=32, format="0x%08x"}},
-	{"UINT32",  "ulClock",                desc="Maximum speed in kHz",                     editor="numedit", editorParam={nBits=32, format="%d"}    },
-	{"UINT32",  "ulPageSize",             desc="Bytes per Page",                           editor="numedit", editorParam={nBits=32, format="%d"}    },
-	{"UINT32",  "ulSectorPages",          desc="Pages per Sector",                         editor="numedit", editorParam={nBits=32, format="%d"}    },
+	{"UINT32",  "ulClock",                desc="Maximum speed in kHz",                     editor="numedit", editorParam={nBits=32, format="%u"}    },
+	{"UINT32",  "ulPageSize",             desc="Bytes per Page",                           editor="numedit", editorParam={nBits=32, format="%u"}    },
+	{"UINT32",  "ulSectorPages",          desc="Pages per Sector",                         editor="numedit", editorParam={nBits=32, format="%u"}    },
 	{"UINT8",   "bAdrMode",               desc="Addressing mode",                          editor="comboedit", editorParam={
      nBits=8,
      values={
@@ -1006,8 +1007,8 @@ TAG_BSL_SERFLASH_PARAMS_DATA_T = {
        {name="Shifted", value=1},
      } } },
 	{"UINT8",   "bReadOpcode",            desc="Opcode for 'continuous array read'",       editor="numedit", editorParam={nBits=8, format="0x%x"}   },
-	{"UINT8",   "bReadOpcodeDCBytes",     desc="Don't care bytes",                         editor="numedit", editorParam={nBits=8, format="%d"}     },
-	{"UINT8",   "bWriteEnableOpcode",     desc="Opcode for 'write enable' command",        editor="numedit", editorParam={nBits=8, format="%d"}     },
+	{"UINT8",   "bReadOpcodeDCBytes",     desc="Don't care bytes",                         editor="numedit", editorParam={nBits=8, format="%u"}     },
+	{"UINT8",   "bWriteEnableOpcode",     desc="Opcode for 'write enable' command",        editor="numedit", editorParam={nBits=8, format="%u"}     },
 	{"UINT8",   "bErasePageOpcode",       desc="Opcode for 'erase page'",                  editor="numedit", editorParam={nBits=8, format="0x%x"}   },
 	{"UINT8",   "bEraseSectorOpcode",     desc="Opcode for 'erase sector'",                editor="numedit", editorParam={nBits=8, format="0x%x"}   },
 	
@@ -1027,7 +1028,7 @@ TAG_BSL_SERFLASH_PARAMS_DATA_T = {
 	{"UINT8",   "bInitCmd1_length",       desc="Second Init Command Length",               editor="comboedit", editorParam=INITCMD_LENGTH_VALUES}, -- editor="numedit", editorParam={nBits=8, format="0x%x"}},
 	{"bindata", "abInitCmd1",             desc="Second Init Command",              size=3, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 3, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
 	
-	{"UINT8",   "bIdLength",              desc="ID Sequence Length",                       editor="comboedit", editorParam=ID_CMD_LENGTH_VALUES}, -- editor="numedit", editorParam={nBits=8, format="%d"}     },
+	{"UINT8",   "bIdLength",              desc="ID Sequence Length",                       editor="comboedit", editorParam=ID_CMD_LENGTH_VALUES}, -- editor="numedit", editorParam={nBits=8, format="%u"}     },
 	{"bindata", "abIdSend",               desc="ID command",                       size=9, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 9, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
 	{"bindata", "abIdMask",               desc="ID mask",                          size=9, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 9, byteSeparatorChar = " ", showAscii = false, multiLine = false}},
 	{"bindata", "abIdMagic",              desc="ID compare",                       size=9, editor="hexedit", editorParam = {addrFormat="", bytesPerLine = 9, byteSeparatorChar = " ", showAscii = false, multiLine = false}},

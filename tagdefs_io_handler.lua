@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2015-12-18     SL            change %d to %u
 -- 2013-08-27     SL            changed paths to HTML files
 -- 2011-07-26     SL            replaced IEEE in analog data formats with IEC
 -- 2011-07-07     SL            Fix: PIO types HIF_PIO and GPIO were swapped
@@ -98,10 +99,10 @@ RCX_TAG_NETPLC_IO_HANDLER_ENABLE_DATA_T = {
 RCX_TAG_NETPLC_IO_HANDLER_DIGITAL_DATA_T = {
 	{"UINT8",  "bImageType",     desc="Image Type",         editor="comboedit", editorParam={nBits=8, values = NETPLC_IO_HANDLER_IMAGE_TYPES}},
 	{"UINT8",  "bType",          desc="I/O Type",           editor="comboedit", editorParam={nBits=8, values = NETPLC_IO_HANDLER_PIO_TYPES}},
-	{"UINT8",  "bFirstBit",      desc="Index of First Bit", editor="numedit",   editorParam={nBits=8, format="%d"}},
-	{"UINT8",  "bNumBits",       desc="Number of Bits",     editor="comboedit",   editorParam={nBits=8, format="%d", minValue=1, maxValue=32}},
+	{"UINT8",  "bFirstBit",      desc="Index of First Bit", editor="numedit",   editorParam={nBits=8, format="%u"}},
+	{"UINT8",  "bNumBits",       desc="Number of Bits",     editor="comboedit",   editorParam={nBits=8, format="%u", minValue=1, maxValue=32}},
 	{"UINT32", "ulInvertMask",   desc="Invert Mask",        editor="numedit",   editorParam={nBits=32, format="0x%08x"}},
-	{"UINT32", "ulImageOffset",  desc="Image Offset",       editor="numedit",   editorParam={nBits=32, format="%d"}},
+	{"UINT32", "ulImageOffset",  desc="Image Offset",       editor="numedit",   editorParam={nBits=32, format="%u"}},
 	{"UINT32", "ulBitOffset",    desc="Bit Offset",         editor="comboedit",   editorParam={nBits=32, minValue=0, maxValue=7}},
 },
 
@@ -122,7 +123,7 @@ RCX_TAG_NETPLC_IO_HANDLER_ANALOG_DATA_T = {
 	{"UINT8",  "bDevice",       desc="Converter Device Number", editor="comboedit", editorParam={nBits=8, minValue=0, maxValue=1}},
 	{"UINT8",  "bChannel",      desc="Channel Number",          editor="comboedit", editorParam={nBits=8, minValue=0, maxValue=3}},
 	{"UINT8",  "bFormat",       desc="Number Format",           editor="comboedit", editorParam={nBits=8, values = NETPLC_IO_HANDLER_FORMATS} },
-	{"UINT32", "ulImageOffset", desc="Image Offset",            editor="numedit",   editorParam={nBits=32, format="%d"}},
+	{"UINT32", "ulImageOffset", desc="Image Offset",            editor="numedit",   editorParam={nBits=32, format="%u"}},
 },
 }
 
