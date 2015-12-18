@@ -1,5 +1,10 @@
 Change log for Tag List Editor
 
+Tag list editor 1.2.0.1 (Tag list editor 1.1.17334)
+
+ * added RCX_TAG_DPM_BEHAVIOUR 0x00001062
+ * fixed: decimal numbers >= 0x80000000 are shown as -2147483648.
+
 Tag list editor 1.2.0.0 (Tag list editor 1.1.16238)
 
  * added RCX_TAG_PROFINET_FEATURES 0x30015001
