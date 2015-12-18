@@ -1,7 +1,7 @@
 ; Inno Setup Cfg for NXO Editor
 
 #define AppName "netX Tag List Editor/NXO Builder"
-#define AppVersion "1.2.0.0"
+#define AppVersion "1.2.0.1"
 #define AppVerName AppName+" "+AppVersion
 #define InstallerName "tag_list_editor_"+AppVersion+"_setup"
 
@@ -100,8 +100,8 @@ var
 
 procedure CurStepChanged(CurStep: TSetupStep);
 var
-  strMuhChanges: String;
-  strMChanges: String;
+  strMuhChanges: AnsiString;
+  strMChanges: AnsiString;
 begin
   if CurStep = ssPostInstall then begin
     if not LoadStringFromFile(WizardDirValue()+'\doc\modulator_changelog.txt', strMChanges) then
