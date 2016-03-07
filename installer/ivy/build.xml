@@ -1,0 +1,35 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="taglisteditor" default="all">
+	<property name="version.required" value="1.9.1" />
+
+	<!-- The settings file is in the current directory. -->
+	<property name="mbs.settings.path" location="." />
+	<!-- Import the common tasks. -->
+	<import file="${mbs.ivy.path}/mbs.xml" />
+
+	<target name="local" description="The local additions to the packages.">
+		<!-- Copy the complete doc folder. -->
+		<copy todir="${install.base}/doc" includeEmptyDirs="true">
+			<fileset dir="../../doc" />
+		</copy>
+		
+		<!-- Copy the complete help folder. -->
+		<copy todir="${install.base}/help" includeEmptyDirs="true">
+			<fileset dir="../../help" />
+		</copy>
+		
+		<!-- Copy the complete lua folder. -->
+		<copy todir="${install.base}/lua" includeEmptyDirs="true">
+			<fileset dir="../../lua" />
+		</copy>
+		
+		<!-- Copy all taglist editor files. -->
+		<copy todir="${install.base}" includeEmptyDirs="true">
+			<fileset dir="../..">
+				<include name="makenxo.bat" />
+				<include name="makenxo_dev.bat" />
+				<include name="netX.ico" />
+				<include name="taglisteditor.lua" />
+			</fileset>
+		</copy>
+	</target>
+</project>

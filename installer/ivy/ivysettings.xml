@@ -1,0 +1,43 @@
+<ivysettings>
+	<settings defaultResolver="resolver-muhkuh-chain" />
+	<resolvers>
+		<chain name="resolver-muhkuh-chain">
+			<!-- This is a local resolver for the build result of this project.
+			     The repository is located in the 'repository' subfolder next to this configuration file.
+			-->
+			<filesystem name="private" descriptor="required" m2compatible="true">
+				<ivy      pattern="${ivy.settings.dir}/repository/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<artifact pattern="${ivy.settings.dir}/repository/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			</filesystem>
+			
+			<!-- This is a local resolver for the filesystem. Results of
+			     the local builds will be stored here.
+			-->
+			<filesystem name="local" descriptor="required" m2compatible="true">
+				<ivy      pattern="${user.home}/.mbs/repository/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<artifact pattern="${user.home}/.mbs/repository/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			</filesystem>
+			
+			<!-- The main repository for stable artifacts on sourceforge. -->
+			<url name="sourceforge" descriptor="required" m2compatible="true">
+				<ivy      pattern="http://downloads.sourceforge.net/project/muhkuh/mbs/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<artifact pattern="http://downloads.sourceforge.net/project/muhkuh/mbs/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			</url>
+			
+			<!-- The main repository for stable artifacts on GitHub. -->
+			<url name="github" descriptor="required" m2compatible="true">
+				<ivy      pattern="https://github.com/muhkuh-sys/[organisation]-[module]/releases/download/v[revision]/[artifact].[ext]" />
+				<artifact pattern="https://github.com/muhkuh-sys/[organisation]-[module]/releases/download/v[revision]/[artifact].[ext]" />
+			</url>
+			
+			<!-- This is the resolver for Bintray.
+			     Build results from Travis CI are stored here. They are snapshots and will be replaced with a new build.
+			-->
+			<url name="bintray" descriptor="required" m2compatible="true">
+				<ivy      pattern="http://dl.bintray.com/muhkuh/Muhkuh/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<artifact pattern="http://dl.bintray.com/muhkuh/Muhkuh/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			</url>
+		</chain>
+	</resolvers>
+</ivysettings>
+
