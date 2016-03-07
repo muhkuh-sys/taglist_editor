@@ -1,0 +1,3 @@
+[submodule "ivy"]
+	path = ivy
+	url = https://github.com/muhkuh-sys/mbs_ivy.git
