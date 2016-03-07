@@ -1,0 +1,6 @@
+# Ignore all files in the targets folder.
+/installer/ivy/lib/
+/installer/ivy/targets/
+
+# Ignore all backup files.
+*~
