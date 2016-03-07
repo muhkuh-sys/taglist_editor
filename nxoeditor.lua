@@ -140,11 +140,13 @@ STATUS_SAVE_ERROR = 2
 
 local function OnQuit()
 	if nxoeditor.confirmDialog("Please Confirm",
-			"Do you really want to close the application?") then
-		if nxoeditor.m_fShowHelp then nxoeditor.getSplitRatio() end
+	                           "Do you really want to close the application?") then
+		if nxoeditor.m_fShowHelp then
+			nxoeditor.getSplitRatio()
+		end
 		nxoeditor.saveConfig()
-    	muhkuh.TestHasFinished()
-    end
+		os.exit()
+	end
 end
 
 local function OnClear()
