@@ -28,8 +28,22 @@
 				<include name="makenxo.bat" />
 				<include name="makenxo_dev.bat" />
 				<include name="netX.ico" />
-				<include name="taglisteditor.lua" />
 			</fileset>
 		</copy>
+
+		<copy file="../../taglisteditor.lua" todir="${install.base}">
+			<filterset>
+				<filter token="PROJECT_VERSION" value="${ivy.revision}"/>
+			</filterset>
+		</copy>
+
+		<!-- Remove the romloader plugins. They are not used here. -->
+		<delete file="${install.luaplugin}/romloader.dll" />
+		<delete file="${install.luaplugin}/romloader_eth.dll" />
+		<delete file="${install.luaplugin}/romloader_uart.dll" />
+		<delete file="${install.luaplugin}/romloader_usb.dll" />
+
+		<!-- Replace "muhkuh_cli_init.lua" with our custom version. -->
+		<copy file="../../muhkuh_cli_init.lua" todir="${install.base}" />
 	</target>
 </project>
