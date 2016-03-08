@@ -50,6 +50,7 @@ Also included in the Tag List Editor are two command line tools:
 	
 	<dependencies>
 		<dependency org="org.muhkuh.tools" name="muhkuh_base_cli" rev="2.2.2" />
+		<dependency org="org.muhkuh.lua" name="lua51-wxlua" rev="2.8.12"/>
 	</dependencies>
 </ivy-module>
 
