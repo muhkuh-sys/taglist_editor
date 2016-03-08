@@ -42,7 +42,7 @@
 
 module("hexedit", package.seeall)
 require("tester")
-muhkuh.include("hexdump.lua", "hexdump")
+require("hexdump")
 
 ---------------------------------------------------------------------
 --     Reading and writing a binary from/to the text control

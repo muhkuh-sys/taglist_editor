@@ -67,8 +67,8 @@ local err_print = utils.err_print
 local function printf(...) print(string.format(...)) end
 
 
-muhkuh.include("numedit.lua", "numedit")
-muhkuh.include("rcxveredit.lua", "rcxveredit")
+require("numedit")
+require("rcxveredit")
 
 
 --[[
@@ -1517,7 +1517,7 @@ function include_option(strFilename, strPackage)
 	pcall(muhkuh.include, strFilename, strPackage)
 end
 
-muhkuh.include("tagdefs_rcx.lua", "tagdefs_rcx")
-muhkuh.include("tagdefs_bsl.lua", "tagdefs_bsl")
-muhkuh.include("tagdefs_misc.lua", "tagdefs_misc")
-muhkuh.include("tagdefs_io_handler.lua", "tagdefs_io_handler")
+require("tagdefs_rcx")
+require("tagdefs_bsl")
+require("tagdefs_misc")
+require("tagdefs_io_handler")

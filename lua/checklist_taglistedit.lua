@@ -23,17 +23,19 @@ require("tester")
 require("gui_stuff")
 errorDialog = gui_stuff.errorDialog
 
-if not taglist then muhkuh.include("taglist.lua", "taglist") end
-muhkuh.include("numedit.lua", "numedit")
-muhkuh.include("stringedit.lua", "stringdit")
-muhkuh.include("hexedit.lua", "hexedit")
-muhkuh.include("hexdump.lua", "hexdump")
-muhkuh.include("ipv4edit.lua", "ipv4edit")
-muhkuh.include("macedit.lua", "macedit")
-muhkuh.include("rcxveredit.lua", "rcxveredit")
-muhkuh.include("structedit.lua", "structedit")
-muhkuh.include("comboedit.lua", "comboedit")
-muhkuh.include("checkboxedit.lua", "checkboxedit")
+--if not taglist then
+require("taglist")
+--end
+require("numedit")
+require("stringedit")
+require("hexedit")
+require("hexdump")
+require("ipv4edit")
+require("macedit")
+require("rcxveredit")
+require("structedit")
+require("comboedit")
+require("checkboxedit")
 
 
 -- public: createEditors, destroyEditors, getTagBin

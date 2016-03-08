@@ -21,7 +21,7 @@
 
 module("nxoeditor", package.seeall)
 
-muhkuh.include("tester_nextid.lua", "tester")
+require("tester_nextid")
 require("gui_stuff")
 createButton = gui_stuff.createButton
 createRadioButton = gui_stuff.createRadioButton
@@ -32,13 +32,13 @@ internalErrorDialog = gui_stuff.internalErrorDialog
 require("utils")
 
 
-muhkuh.include("taglist.lua", "taglist")
---muhkuh.include("page_taglistedit.lua", "taglistedit")
-muhkuh.include("checklist_taglistedit.lua", "taglistedit")
-muhkuh.include("nxfile.lua", "nxfile")
-muhkuh.include("structedit.lua", "structedit")
-muhkuh.include("hexdump.lua", "hexdump")
-muhkuh.include("devhdredit.lua", "devhdredit")
+require("taglist")
+--require("page_taglistedit")
+require("checklist_taglistedit")
+require("nxfile")
+require("structedit")
+require("hexdump")
+require("devhdredit")
 
 
 function createToggleButton(parentPanel, strLabel, eventFunction)
