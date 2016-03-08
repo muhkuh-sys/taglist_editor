@@ -1,0 +1,68 @@
+taglist editor
+==============
+
+== Status
+
+TravisCI: image:https://travis-ci.org/muhkuh-sys/taglist_editor.svg?branch=master["TravisCI build status", link="https://travis-ci.org/muhkuh-sys/taglist_editor"]
+
+AppVeyor: -
+
+circleci: image:https://circleci.com/gh/muhkuh-sys/taglist_editor.svg?style=shield["circleci build status", link="https://circleci.com/gh/muhkuh-sys/taglist_editor"]
+
+
+== About
+
+A tag list is a list of structured configuration parameters which has been
+compiled into an executable file for the netX chip in NXO or NXF format.
+It contains parameters to configure the firmware. The information contained
+in the tag list (e.g. the location of the file system) must be available before
+any configuration files are accessed.
+
+The Tag List Editor provides a graphical user interface which allows the
+manipulation of tag lists and firmware files containing a tag list, which
+includes NXF and NXO files as well as the 2nd Stage Loader (BSL), which is
+in NXF format starting from version 1.3.
+
+Note, that the Tag List Editor is a tool for experts. Misusing this tool can
+have serious consequences for your device and/or the network in which the
+device is used.
+
+The Tag List Editor allows you to:
+
+ * edit the tag list
+ * edit the device header
+ * construct an NXO file from its basic components.
+
+If you are an OEM who uses a Hilscher netX chip, you can thus use the
+Tag List Editor to change certain parameters contained in the loadable
+standard firmware for the netX provided by Hilscher, in order to make it
+operable with your own hardware setup and in order to let you use your
+own customized product identification on the network bus.
+For more information on adapting loadable standard firmware, see section
+Customizing Hilscher Standard Firmware for OEM Devices on page 20.
+
+Also included in the Tag List Editor are two command line tools:
+
+ * makenxo combines a header binary, ELF file and tag list to an NXO file.
+ * tagtool allows you to print, compare, replace and manipulate tag lists and to print, compare and manipulate device headers of NXF, NXO and BSL files.
+
+
+== Infrastructure
+
+This chapter describes the current infrastructure of the project.
+
+The source code is hosted on GitHub: https://github.com/muhkuh-sys/taglist_editor
+
+Issues are collected here: https://github.com/muhkuh-sys/taglist_editor/issues
+
+Each push to the GitHub repository triggers a build on these services:
+
+ * TravisCI using a Ubuntu 12.04 64bit VM: https://travis-ci.org/muhkuh-sys/taglist_editor
+ * circleci running on Ubuntu 12.04 64bit VM: https://circleci.com/gh/muhkuh-sys/taglist_editor
+
+The build results from TravisCI are copied after auccess to Bintray: https://bintray.com/muhkuh/Muhkuh/taglist_editor/view
+Please note that this is done for each build, and not only tagged ones.
+
+Build results for every commit are also available on circleci if you are logged in: //circleci.com/gh/muhkuh-sys/taglist_editor
+
+Build results from a tag are released on GitHub: https://github.com/muhkuh-sys/taglist_editor/releases
