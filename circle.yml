@@ -1,0 +1,32 @@
+machine:
+  pre:
+    - sudo dpkg --purge ant ant-optional
+    - wget http://downloads.sourceforge.net/project/muhkuh/mbs/org/apache/ant/1.9.6/apache-ant-1.9.6-bin.tar.bz2 -O /tmp/apache-ant-1.9.6-bin.tar.bz2
+    - tar --directory /tmp --extract --bzip2 --file /tmp/apache-ant-1.9.6-bin.tar.bz2
+  environment:
+    PATH: /tmp/apache-ant-1.9.6/bin:${PATH}
+  python:
+    version: 2.7.10
+
+
+dependencies:
+  cache_directories:
+    - "~/.mbs" # The Muhkuh build system.
+    - "~/.ant" # The ANT modules.
+
+
+checkout:
+  post:
+    - git submodule sync
+    - git submodule update --init --recursive
+
+
+general:
+  artifacts:
+    - "installer/ivy/targets/taglisteditor_windows_amd64.zip"
+    - "installer/ivy/targets/taglisteditor_windows_x86.zip"
+
+
+test:
+  override:
+    - ./.build.sh
