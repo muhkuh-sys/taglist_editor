@@ -63,6 +63,6 @@ Each push to the GitHub repository triggers a build on these services:
 The build results from TravisCI are copied after auccess to Bintray: https://bintray.com/muhkuh/Muhkuh/taglist_editor/view
 Please note that this is done for each build, and not only tagged ones.
 
-Build results for every commit are also available on circleci if you are logged in: //circleci.com/gh/muhkuh-sys/taglist_editor
+Build results for every commit are also available on circleci if you are logged in: https://circleci.com/gh/muhkuh-sys/taglist_editor
 
 Build results from a tag are released on GitHub: https://github.com/muhkuh-sys/taglist_editor/releases
