@@ -28,6 +28,7 @@
 				<include name="makenxo.bat" />
 				<include name="makenxo_dev.bat" />
 				<include name="netX.ico" />
+				<include name="taglisteditor.bat" />
 			</fileset>
 		</copy>
 
