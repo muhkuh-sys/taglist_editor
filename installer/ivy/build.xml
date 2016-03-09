@@ -44,6 +44,6 @@
 		<delete file="${install.luaplugin}/romloader_usb.dll" />
 
 		<!-- Replace "muhkuh_cli_init.lua" with our custom version. -->
-		<copy file="../../muhkuh_cli_init.lua" todir="${install.base}" />
+		<copy file="../../muhkuh_cli_init.lua" todir="${install.base}" overwrite="true" />
 	</target>
 </project>
