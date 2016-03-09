@@ -49,8 +49,10 @@ Also included in the Tag List Editor are two command line tools:
 	</publications>
 	
 	<dependencies>
+		<!-- Use LUA5.1.5 instead of the older LUA5.1.4 bundled with muhkuh_base_cli and lua51-wxlua. -->
+		<dependency org="org.muhkuh.lua" name="lua51" rev="5.1.5" />
 		<dependency org="org.muhkuh.tools" name="muhkuh_base_cli" rev="2.2.2" />
-		<dependency org="org.muhkuh.lua" name="lua51-wxlua" rev="2.8.12"/>
+		<dependency org="org.muhkuh.lua" name="lua51-wxlua" rev="2.8.12" />
 	</dependencies>
 </ivy-module>
 
