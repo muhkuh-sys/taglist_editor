@@ -1,6 +1,6 @@
 This software includes the following components:
 
-Muhkuh/Serverkuh, licensed under the GPL
+Muhkuh, licensed under the GPLv2
 Lua scripts, licensed under the GPL
 Lua, licensed under the Lua License
 wxWidgets and wxLua, licensed under the wxWindows Library Licence
