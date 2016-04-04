@@ -8,5 +8,5 @@ ant -Dmbs.ivy.path=${IVY_PATH} bootstrap
 ant -Dmbs.ivy.path=${IVY_PATH}
 popd
 
-cat installer/nsis/taglisteditor.nsi | makensis -
+makensis -NOCD installer/nsis/taglisteditor.nsi
 
