@@ -35,7 +35,7 @@
 
 
 Name "${DESCRIPTION} ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}.${VERSION_SUB}"
-OutFile "taglisteditor_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}.${VERSION_SUB}.exe"
+OutFile "installer/nsis/targets/taglisteditor_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}.${VERSION_SUB}.exe"
 ; NOTE: Do not use "InstallDir" here, the variable "INSTDIR" is set in the ".onInit" function.
 
 ;Request admin privileges for Windows Vista and later.
