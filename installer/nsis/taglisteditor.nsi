@@ -15,6 +15,7 @@
 !define DESCRIPTION "netX Tag List Editor/NXO Builder"
 !define APPICON "installer/ivy/targets/taglisteditor_windows_amd64/taglisteditor_windows_amd64/netX.ico"
 
+; FIXME: get this from the IVY file.
 !define VERSION_MAJOR 1
 !define VERSION_MINOR 2
 !define VERSION_MICRO 0
