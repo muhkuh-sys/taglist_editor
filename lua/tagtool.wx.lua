@@ -6,7 +6,8 @@
 --
 --  Changes:
 --    Date        Author        Description
---  Jun 24, 2013  SL            typo ín listdiffs (missing tag definition)
+--  Jun 23, 2016  SL            new option dump_tagdefs    
+--  Jun 24, 2013  SL            typo in listdiffs (missing tag definition)
 --  Jun 29, 2012  SL            Load dummy tester_nextid
 --  Sept 23, 2011 SL            all chars except " and # allowed in match/set
 --  Aug 5, 2011   SL            handle DOS/Unix/Mac style line breaks
@@ -16,11 +17,12 @@
 ---------------------------------------------------------------------------
 -- SVN Keywords
 --
-SVN_DATE   ="$Date$"
-SVN_VERSION="$Revision$"
--- $Author$
+SVN_DATE   ="$Date: 2013-06-24 09:28:26 +0200 (Mo, 24 Jun 2013) $"
+SVN_VERSION="$Revision: 14960 $"
+-- $Author: slesch $
 ---------------------------------------------------------------------------
 -- Load the wxLua module, does nothing if running from wxLua, wxLuaFreeze, or wxLuaEdit
+
 package.cpath = package.cpath..";./?.dll;./?.so;../lib/?.so;../lib/vc_dll/?.dll;../lib/bcc_dll/?.dll;../lib/mingw_dll/?.dll;"
 require("wx")
 
@@ -36,6 +38,7 @@ require("tester_nextid") -- load dummy tester package
 require("nxfile")
 require("taglist")
 require("devhdredit")
+require("tagdefs2json")
 
 -- input: unsigned->signed
 function bitparconv(x)
@@ -953,24 +956,26 @@ local strUsage = [==[
 tagtool prints or manipulates the tag list in an NXF or NXO file
 
 Usage: 
-   tagtool settags    [-v|-debug] infile taglistfile outfile
-   tagtool edit       [-v|-debug] infile editsfile outfile
-   tagtool list       [-v|-debug] infile 
-   tagtool diff       [-v|-debug] infile1 infile2 
+   tagtool settags     [-v|-debug] infile taglistfile outfile
+   tagtool edit        [-v|-debug] infile editsfile outfile
+   tagtool list        [-v|-debug] infile 
+   tagtool diff        [-v|-debug] infile1 infile2 
+   tagtool dump_tagdefs[-v|-debug] outfile
    tagtool [help|-h]
    tagtool help_tags
    tagtool help_const
    tagtool -version
 
 Modes:
-   settags     Replaces the tag list
-   edit        Changes values in the tag list or device header
-   list        Prints the tags list and the device header
-   diff        Extract changes between infile1 and infile2
-   help        Prints this help text
-   help_tags   Prints a list of the known tags
-   help_const  Prints a list of the known value constants
-   -version    Prints version information
+   settags      Replaces the tag list
+   edit         Changes values in the tag list or device header
+   list         Prints the tags list and the device header
+   diff         Extract changes between infile1 and infile2
+   dump_tagdefs Generate tag definitions in JSON format
+   help         Prints this help text
+   help_tags    Prints a list of the known tags
+   help_const   Prints a list of the known value constants
+   -version     Prints version information
    
 Flags:
    -v          enable verbose output
@@ -1020,6 +1025,7 @@ local MODE_SETTAGS = 5
 local MODE_EDIT = 6
 local MODE_LIST = 7
 local MODE_DIFF = 8
+local MODE_DUMP_TAGDEFS = 9
 
 local fArgsOk = false
 local iArg = 1
@@ -1028,10 +1034,11 @@ local strTagsFile
 local strOutputFile
 
 -- 1st argument: mode
-if #arg == 0 then
+if #arg == 0 and strMode~="dump_tagdefs"then
 	iMode = MODE_HELP
 	fArgsOk = true
 elseif iArg <= #arg then
+
 	local strMode = arg[iArg]
 	if strMode=="-h" or strMode=="/h" or strMode=="/?" or strMode=="help" then
 		iMode = MODE_HELP
@@ -1063,6 +1070,10 @@ elseif iArg <= #arg then
 	
 	elseif strMode=="diff" then
 		iMode = MODE_DIFF
+		iArg = iArg + 1
+    
+	elseif strMode=="dump_tagdefs" then
+		iMode = MODE_DUMP_TAGDEFS
 		iArg = iArg + 1
 	end
 
@@ -1108,6 +1119,11 @@ elseif (iMode==MODE_SETTAGS or
 	strOutputFile = arg[iArg+2]
 	iArg = iArg+3
 	fArgsOk = true
+	
+elseif (iMode==MODE_DUMP_TAGDEFS) and iRemArgs == 1 then
+	strOutputFile = arg[iArg]
+	iArg = iArg+1
+	fArgsOk = true
 end
 
 -- execute
@@ -1143,6 +1159,9 @@ elseif iMode==MODE_LIST then
 	
 elseif iMode==MODE_DIFF then
 	fOk, msgs = listdiffs(strInputFile, strInputFile2)
+	
+elseif iMode==MODE_DUMP_TAGDEFS then
+	fOk, msgs = tagdefs2json.tagdefs2json_main(strOutputFile)
 end
 
 printResults(fOk, msgs)
