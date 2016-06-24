@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2016-05-31     SL            added TAG_EIP_DLR_PROTOCOL      0x3000a002
 -- 2015-12-18     SL            change %d to %u
 -- 2014-11-06     SL            updated TAG_PROFINET_FEATURES_DATA_T
 -- 2014-10-30     SL            added RCX_TAG_PROFINET_FEATURES 0x30015001
@@ -37,9 +38,9 @@ module("tagdefs_misc", package.seeall)
 ---------------------------------------------------------------------------
 -- SVN Keywords
 --
-SVN_DATE   ="$Date$"
-SVN_VERSION="$Revision$"
--- $Author$
+SVN_DATE   ="$Date: 2015-12-18 12:49:29 +0100 (Fr, 18 Dez 2015) $"
+SVN_VERSION="$Revision: 17333 $"
+-- $Author: slesch $
 ---------------------------------------------------------------------------
 require("taglist")
 
@@ -328,6 +329,15 @@ TAG_EIP_EDD_CONFIGURATION_DATA_T = {
 	}
 } ,
 
+
+----------------------------------------------------------------------------------------------
+-- EIP/DLR configuration
+TAG_EIP_DLR_PROTOCOL_DATA_T = {
+	{"UINT32", "ulEnableDLR",          desc="Enable DLR",
+		editor="checkboxedit",
+		editorParam={nBits = 32, offValue = 0, onValue = 1, otherValues = true}
+	},
+} ,
 
 
 ----------------------------------------------------------------------------------------------
@@ -698,12 +708,14 @@ TAG_S3S_DEVICEID =
     {paramtype = 0x30018000, datatype="TAG_S3S_DEVICEID_DATA_T",          desc="sercos III Product Information"},
 TAG_PLS_DEVICEID =
     {paramtype = 0x3001a000, datatype="TAG_PLS_DEVICEID_DATA_T",          desc="POWERLINK Product Information"},
-
+ 
 -- protocol tag: EIP EDD Config
 TAG_EIP_EDD_CONFIGURATION =
     {paramtype = 0x3000a001, datatype="TAG_EIP_EDD_CONFIGURATION_DATA_T", desc="Ethernet/IP EDD Configuration"},
 
-
+TAG_EIP_DLR_PROTOCOL =
+    {paramtype = 0x3000a002, datatype="TAG_EIP_DLR_PROTOCOL_DATA_T",      desc="DLR Protocol"},
+    
 -- protocol tags: EtherCAT Slave
 TAG_ECS_ENABLE_BOOTSTRAP =
 	{paramtype = 0x30009001, datatype="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T", desc="EtherCAT Slave Enable Bootstrap Mode"},
@@ -780,7 +792,8 @@ TAG_HELP = {
     TAG_PLS_DEVICEID                    = {file="TAG_PLS_DEVICEID_DATA_T.htm"},
 
     TAG_EIP_EDD_CONFIGURATION           = {file="TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"},
-
+    TAG_EIP_DLR_PROTOCOL                = {file="TAG_EIP_DLR_PROTOCOL.htm"},
+    
     TAG_ECS_ENABLE_BOOTSTRAP            = {file="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm"},
     TAG_ECS_SELECT_SOE_COE              = {file="TAG_ECS_SELECT_SOE_COE_DATA_T.htm"},
     TAG_ECS_CONFIG_EOE                  = {file="TAG_ECS_CONFIG_EOE_DATA_T.htm"},
