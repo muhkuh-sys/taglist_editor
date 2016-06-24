@@ -210,6 +210,7 @@ Section "-install"
 	File ${SRC_CM}/help/TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm
 	File ${SRC_CM}/help/TAG_ECS_MBX_SIZE_DATA_T.htm
 	File ${SRC_CM}/help/TAG_ECS_SELECT_SOE_COE_DATA_T.htm
+	File ${SRC_CM}/help/TAG_EIP_DLR_PROTOCOL.htm
 	File ${SRC_CM}/help/TAG_EIP_EDD_CONFIGURATION_DATA_T.htm
 	File ${SRC_CM}/help/TAG_PLS_DEVICEID_DATA_T.htm
 	File ${SRC_CM}/help/TAG_PN_DEVICEID_DATA_T.htm
@@ -405,6 +406,7 @@ Section "uninstall"
 	delete "$INSTDIR\help\TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_ECS_MBX_SIZE_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_ECS_SELECT_SOE_COE_DATA_T.htm"
+	delete "$INSTDIR\help\TAG_EIP_DLR_PROTOCOL.htm"
 	delete "$INSTDIR\help\TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_PLS_DEVICEID_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_PN_DEVICEID_DATA_T.htm"
