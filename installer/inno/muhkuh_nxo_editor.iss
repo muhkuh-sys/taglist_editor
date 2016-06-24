@@ -1,7 +1,7 @@
 ; Inno Setup Cfg for NXO Editor
 
 #define AppName "netX Tag List Editor/NXO Builder"
-#define AppVersion "1.2.0.1"
+#define AppVersion "1.2.0.2"
 #define AppVerName AppName+" "+AppVersion
 #define InstallerName "tag_list_editor_"+AppVersion+"_setup"
 
@@ -25,13 +25,13 @@ AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://www.hilscher.com
 ;AppSupportURL=http://www.sourceforge.net/projects/muhkuh
 ;AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
-AppCopyright=(C) 2015, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2016, Muhkuh team and Hilscher GmbH
 
 ; works: company, copyright, product name, product version
 ; description goes into properties and version dialogue
 VersionInfoTextVersion={#AppVersion}
 VersionInfoDescription=Installer of the Hilscher Tag List Editor application
-VersionInfoCopyright=(C) 2015 Muhkuh team and Hilscher GmbH
+VersionInfoCopyright=(C) 2016 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoProductName=Hilscher Tag List Editor
 VersionInfoVersion={#AppVersion}
