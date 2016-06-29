@@ -1,0 +1,239 @@
+Description of the tag definition format (JSON)
+SL Jun 28, 2016
+
+Tag definitions
+================
+Example entry in tags:
+"RCX_TAG_LED" : {                      <-- attribute name: internal key
+    "id" : "0x00001040",               <-- The 32 bit tag ID which identifies the tag in a binary tag list.
+    "datatype" : "RCX_TAG_LED_T",      <-- The data type name of the tag.
+    "desc" : "LED",                    <-- The name of the tag to be displayed in the tag selection list in the GUI.
+    "helpfile" : "RCX_TAG_LED_T.htm"   <-- The file name of the help file
+},
+
+
+Datatype definitions
+=====================
+
+Builtin datatypes
+-----------------
+name                                   size           default editor/params
+UINT32  32 bit little endian integer   4 bytes        numedit
+UINT16  16 bit little endian integer   2 bytes        numedit nBits=16
+UINT8   8 bit integer                  1 byte         numedit nBits=8
+STRING                                 arbitrary      stringedit
+bindata binary data                    arbitrary      hexedit
+rcxver  an RCX version, 4x UINT16      8 bytes        rcxveredit
+
+
+Structure datatypes
+-------------------
+Example entry in structDefs:
+"RCX_TAG_NAME_T" : {                  <-- attribute name: the name of the data type
+    "fields" : [...],                 <-- list of field definitions (structure members)
+		"layout" : {...},                 <-- optional: layout of the GUI components
+    "nameField" : "..."               <-- optional: name field 
+},
+
+
+Field definitions:
+-------------------
+"fields" : [
+    {
+        "datatype" : "STRING",    <-- member data type. May be a basic type or structure type. 
+        "name" : "szIdentifier",  <-- internal name, used in list/patch files generated/used by tagtool
+        "desc" : "Identifier",    <-- String displayed in the GUI next to the editor component
+        "size" : "16",            <-- max. 16 characters, padded with 0 if less.
+        "mode" : "read-only"      <-- read-only: the member is displayed but cannot be edited
+                                      hidden: the member is not displayed
+    },
+    {
+        "datatype" : "UINT32",          
+        "name" : "ulUsesResourceType",  
+        "desc" : "Resource Type",       
+        "editor" : "comboedit",         <-- editor component, here: display a dropdown/combo box with a list of options
+        "editorParam" : {
+            "nBits" : "32",             <-- 32 bit number (used by the editor component)
+            "values" : [                <-- A list of possible values as name-value pairs.
+                {
+                    "name" : "GPIO",    <-- option name, displayed in the drop-down box
+                    "value" : "1"       <-- the respective value
+                },
+                {
+                    "name" : "PIO",
+                    "value" : "2"
+                }
+            ]
+        }
+    },
+    {
+        "datatype" : "UINT32",
+        "name" : "ulPinNumber",
+        "desc" : "Pin Number",
+        "editorParam" : {
+            "format" : "%u"             <-- display the number in decimal
+        }
+    },
+    {
+        "datatype" : "UINT32",
+        "name" : "ulPolarity",
+        "desc" : "Polarity",
+        "editor" : "comboedit",
+        "editorParam" : {
+            "nBits" : "32",
+            "values" : [
+                {
+                    "name" : "normal",
+                    "value" : "0"
+                },
+                {
+                    "name" : "inverted",
+                    "value" : "1"
+                }
+            ]
+        }
+    }
+],
+
+The nameField attribute
+-----------------------
+The name of a struct member whose value is a string to be displayed in the tag selection list.
+Example:
+"nameField" : "szIdentifier"    <-- display the value of the field szIdentifier next to the tag name
+
+Some tags, like task priorities and LED configuration, may have multiple instances in a tag list.
+The instances may contain name strings to indicate which task/LED is configured. 
+These strings should be defined at compile time and not be editable.
+The nameField attribute contains the field name of the name string. If specified, the string
+is displayed in the tag selection list in the GUI, next to the tag type.
+
+
+
+The basic editor components
+============================
+
+numedit 
+--------
+A text box to display/edit a number in decimal or hex format
+Parameter   Default
+nBits       32  
+format      hex
+minValue    0
+maxValue    2^nBits -1
+
+
+comboedit
+---------
+A dropdown list/combobox to select a numeric value from a specified list.
+
+nBits  8/16/24/32 The bit size of the number.
+values
+minValue
+maxValue
+
+The list of possible values may either be written out in the values parameter, as a list of {name = "...", value = ...} pairs.
+Alternatively, minValue and maxValue may be specified, which will show all integers minValue <= i <= maxValue.
+If the binary value passed in is none of the pre-defined values, nothing is displayed in the combo box.
+Unless a value from the combo box is selected, the original value is kept.
+
+
+checkboxedit
+-------------
+A checkbox that switches a field between two values.
+
+nBits       8     
+onValue     1     
+offValue    0     
+otherValues true  
+label       ""    May be used to add a text label to the checkbox, but is generally not used.
+
+When the value passed in is equal to onValue, the box is checked. When it is equal to offValue, the box is unchecked. 
+When it is equal to neither, the box is checked if OtherValues is true, unchecked if false.
+
+
+stringedit
+----------
+A textbox to edit strings (8 bit Ascii)
+The maximum length of the editing window is set by the length of the string passed to the editor.
+The string does not have to end with a 0-byte.
+If the edited string is shorter than the original one, it is padded with 0-bytes to the size of the original string.
+
+
+hexedit
+--------
+A little hex editor for binary data.
+The size of the data is fixed.
+
+Parameter         Default
+addrFormat        ""      if non-empty, the offset in the data is shown at the beginning of every line.
+bytesPerLine      16      
+byteSeparatorChar " "     the character printed between two bytes. 
+showAscii         false   When true, shows an ascii representation of the data at the end of every line.
+multiLine         false   When true, the editor can extend to multiple lines.
+
+Examples:
+addrFormat="0x%04x: ", bytesPerLine = 16, byteSeparatorChar = " ", showAscii = true, multiLine = true 
+0x0000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+0x0010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+
+addrFormat="", bytesPerLine = 8, byteSeparatorChar = " ", showAscii = false, multiLine = true 
+00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 
+
+addrFormat="", bytesPerLine = 6, byteSeparatorChar = ":", showAscii = false, multiLine = false
+00:00:00:00:00:00
+
+
+rcxveredit
+----------
+An editor for an rcX version stored as 4x UINT16.
+This is only used in two tags and it's possible that they are not really in use.
+
+
+
+
+- GUI layout
+==============
+For each structure member, an editor object (numedit, comboedit etc.) is created.
+If the member is a sub-structure, an editor object for the whole sub-structure is generated recursively.
+Also, a label with the value of the "desc" attribute is created.
+By default, each editor object and its label are put in one row.
+
+Specifying a layout:
+Each label/editor pair is referenced in the layout description using the "name" attribute of the struct member.
+The elements of children list in the layout may be
+- a name string: puts the label and editor object of the named structure member
+- a layout description: calls the layout function recursively
+- nil: inserts a spacer element 
+
+
+Default layout
+--------------
+The default layout is a two-column layout with the "desc" attribute of each structure member on the left and the editor object to the right.
+The children list may only contain name strings.
+
+Grid layout
+-----------
+	sizer = "grid"
+	box   = "text"         If specified, the layout is wrapped in a box with a caption.
+	rows     default: 0  - the nuber of rows 
+	cols     default: 1  - the number of columns (each editor component and its label count as one column)
+	hgap     default: 3  - insert a horizontal spacer with the given width in pixels between the GUI elements
+	vgap     default: 3  - insert a vertical spacer with the given width in pixels between the GUI elements
+
+layout = {sizer="grid", rows=3, cols=4, box="Options",
+ "usDeviceClass", "bHwCompatibility", nil, nil
+ "usHWOptions_1", "usHWOptions_2", "usHWOptions_3", "usHWOptions_4",
+ "ulLicenseFlags1", "ulLicenseFlags2", "usNetXLicenseID", "usNetXLicenseFlags"
+}
+
+Box layout
+-----------
+Horizontally/vertically ordered box layout:
+	sizer = "h" or "v"
+	box   = "text"         If specified, the layout is wrapped in a box with a caption.
+	
+
+
+
+
