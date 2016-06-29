@@ -146,7 +146,7 @@ end
 -- conversion/adaption of the tag definitions
 --------------------------------------------------------------------------
 
-tJsonKeyOrder_tag = {"id", "datatype", "desc"}
+tJsonKeyOrder_tag = {"id", "datatype", "desc", "helpfile"}
 
 tJsonKeyOrder_structDef={
 	"fields", "layout",
@@ -160,7 +160,7 @@ tJsonKeyOrder_structDef={
 		}
 	},
 	layout = {
-		"sizer", "box", "cols", "children"
+		"sizer", "box", "rows", "cols", "hgap", "vgap", "children"
 	}
 }
 
@@ -267,6 +267,16 @@ function insertTypeDef(strTypeName, atJson, tJsonKeyOrder)
 	end
 end
 
+function getTagHelp(strKey)
+	local tHelp = taglist.HELP_MAPPING[strKey]
+	if tHelp then
+		--print(strKey, "->", tHelp.file)
+		return tHelp.file
+	else
+		--print(strKey, "-> None")
+	end
+end
+
 function tagdefs2json()
 	
 	local atJson = {
@@ -288,10 +298,10 @@ function tagdefs2json()
 	-- datatype = datatype
 	
 	for i, tTag in ipairs(atLuaTags) do
-	--for i = 1, 2 do
-		--tTag = atLuaTags[i]
 		local strKey = tTag.key
+		local strHelpFile = getTagHelp(strKey)
 		tTag.key = nil
+		tTag.helpfile = strHelpFile
 		atJson.tags[strKey] = tTag
 		insertKeyOrder(tJsonKeyOrder.tags, strKey, tJsonKeyOrder_tag)
 		
