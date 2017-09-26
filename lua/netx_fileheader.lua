@@ -23,6 +23,7 @@ SVN_VERSION="$Revision: 8903 $"
 
 require("utils")
 require("mhash")
+require("bit")
 
 HIL_FILE_HEADER_MODULE_COOKIE     = 0x4d584e2e -- 2E 4E 58 4D ".NXM"
 HIL_FILE_HEADER_OPTION_COOKIE     = 0x4f584e2e -- 2E 4E 58 4F ".NXO"
