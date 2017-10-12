@@ -1,7 +1,7 @@
 ; Inno Setup Cfg for NXO Editor
 
 #define AppName "netX Tag List Editor/NXO Builder"
-#define AppVersion "1.2.0.2"
+#define AppVersion "1.2.0.3"
 #define AppVerName AppName+" "+AppVersion
 #define InstallerName "tag_list_editor_"+AppVersion+"_setup"
 
@@ -14,8 +14,8 @@
   #error Failed to build Modulator.cfg file
 #endif
 
-#define SourceDir "..\..\.."
-#define OutputDir "."
+#define SourceDir "..\.."
+#define OutputDir ".."
 
 [Setup]
 AppName={#AppName}
@@ -23,15 +23,13 @@ AppVersion={#AppVersion}
 AppVerName={#AppVerName}
 AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://www.hilscher.com
-;AppSupportURL=http://www.sourceforge.net/projects/muhkuh
-;AppUpdatesURL=http://www.sourceforge.net/projects/muhkuh
-AppCopyright=(C) 2016, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2017, Muhkuh team and Hilscher GmbH
 
 ; works: company, copyright, product name, product version
 ; description goes into properties and version dialogue
 VersionInfoTextVersion={#AppVersion}
 VersionInfoDescription=Installer of the Hilscher Tag List Editor application
-VersionInfoCopyright=(C) 2016 Muhkuh team and Hilscher GmbH
+VersionInfoCopyright=(C) 2017 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoProductName=Hilscher Tag List Editor
 VersionInfoVersion={#AppVersion}
@@ -39,7 +37,7 @@ VersionInfoVersion={#AppVersion}
 Compression=lzma/max
 SolidCompression=yes
 AllowNoIcons=yes
-LicenseFile=nxo_editor\doc\licenses.txt
+LicenseFile=doc\licenses.txt
 
 SourceDir={#SourceDir}
 OutputDir={#OutputDir}
@@ -49,10 +47,10 @@ DefaultDirName ={pf}\Hilscher GmbH\Tag List Editor
 DefaultGroupName =Hilscher GmbH\Tag List Editor
 
 ; icon stuff
-SetupIconFile=nxo_editor\netX.ico
+SetupIconFile=netX.ico
 UninstallDisplayIcon={app}\nxo_editor\netX.ico
 
-WizardImageFile=nxo_editor\installer\inno\Screen-netX_164x314px.bmp
+WizardImageFile=installer\inno\Screen-netX_164x314px.bmp
 WizardImageStretch=no
 WizardImageBackColor=$ffffff
 
@@ -136,42 +134,43 @@ Source: bin\lua_hilscher\gui_stuff.lua; DestDir: {app}\application\lua_hilscher;
 Source: bin\lua.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
 Source: bin\wx.dll; DestDir: {app}\application; Components: muhkuh
 
-Source: nxo_editor\help\*.htm; DestDir: {app}\nxo_editor\help; Components: modulator
+Source: help\*.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 
-Source: nxo_editor\Modulator.cfg; DestDir: {app}\application; Components: modulator
-Source: nxo_editor\netX.ico; DestDir: {app}\nxo_editor; Components: modulator
+Source: Modulator.cfg; DestDir: {app}\application; Components: modulator
+Source: netX.ico; DestDir: {app}\nxo_editor; Components: modulator
 
-Source: nxo_editor\comboedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\checkboxedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\hexdump.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\hexedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\ipv4edit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\macedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\numedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\rcxveredit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\stringedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\devhdredit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\comboedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\checkboxedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\hexdump.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\hexedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\ipv4edit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\macedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\numedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\rcxveredit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\stringedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\devhdredit.lua; DestDir: {app}\nxo_editor; Components: modulator
 
-Source: nxo_editor\page_taglistedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\checklist_taglistedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\structedit.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\nxoeditor.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\tester_nextid.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\test_description.xml; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\page_taglistedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\checklist_taglistedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\structedit.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\nxoeditor.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\tagdefs2json.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\tester_nextid.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: test_description.xml; DestDir: {app}\nxo_editor; Components: modulator
 
-Source: nxo_editor\nxfile.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\taglist.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\tagdefs_rcx.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\tagdefs_bsl.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\tagdefs_misc.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\tagdefs_io_handler.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
-Source: nxo_editor\tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\nxfile.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\taglist.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\tagdefs_rcx.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\tagdefs_bsl.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\tagdefs_misc.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\tagdefs_io_handler.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
+Source: lua\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
+Source: tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: "H:\Manual netX Products\Tools\TagListEditor\man.005_V1.2\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf"; DestDir: {app}\doc; Components: modulator
-Source: nxo_editor\doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
-Source: nxo_editor\doc\licenses.txt; DestDir: {app}\doc; Components: modulator
+Source: doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
+Source: doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 
 [InstallDelete]
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf"
@@ -209,7 +208,7 @@ Source: bin\wxlua_msw28_*.dll; DestDir: {app}\application; Components: muhkuh
 Source: bin\mhash.dll; DestDir: {app}\application; Components: muhkuh
 
 ; the docs
-Source: changelog.txt; DestDir: {app}\docs; Components: muhkuh
+Source: doc\changelog.txt; DestDir: {app}\docs; Components: muhkuh
 
 
 
