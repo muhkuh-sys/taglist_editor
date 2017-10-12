@@ -13,6 +13,8 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2017-10-12     SL            added TAG_PROFINET_FEATURES_V2  0x30015002
+--                     TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES  0x30015003
 -- 2016-05-31     SL            added TAG_EIP_DLR_PROTOCOL      0x3000a002
 -- 2015-12-18     SL            change %d to %u
 -- 2014-11-06     SL            updated TAG_PROFINET_FEATURES_DATA_T
@@ -479,6 +481,90 @@ TAG_PROFINET_FEATURES_DATA_T = {
     {"UINT8",  "abReserved2",                desc = "reserved",                              mode = "hidden",   },
 },
 
+
+
+----------------------------------------------------------------------------------------------
+-- typedef struct HIL_TAG_PROFINET_FEATURES_V2_DATA_Ttag
+-- {
+--   uint8_t      bNumAdditionalIoAR;     /* 0: only 1 cyclic Profinet connection is possible, for allowed values refer to PNS API Manual for details */
+--   uint8_t      bIoSupervisorSupported; /* 0: IO Supervisor communication is not accepted by firmware / 1: IO Supervisor communication is accepted by firmware */
+--   uint8_t      bIRTSupported;          /* 0: IRT communication is not accepted by firmware / 1: IRT communication is accepted by firmware */
+--   uint8_t      bNumOfReadImplAR;       /* number of parallel RPC ReadImplicit ARs. Minimum value 1, max. value 8.  */
+--   uint16_t     usMinDeviceInterval;    /* the MinDeviceInterval according to GSDML file of the product (allowed values: Power of two in range [8 - 4096]) */
+--   uint16_t     usNumSubmodules;        /* number of usable submodules. Minimum value 5, max. value 1000 */
+--   uint8_t      bRPCBufferSize;         /* size of RPC buffers in KB. Minimum value 4, max. value 64 */
+--   uint8_t      bNumAdditionalDAAR;     /* 0: only 1 DA-AR is supported, other values reserved for future use and currently ignored by firmware */
+--   uint8_t      abReserved[2];
+-- } HIL_TAG_PROFINET_FEATURES_V2_DATA_T;
+
+TAG_PROFINET_FEATURES_V2_DATA_T = {
+    {"UINT8",  "bNumAdditionalIoAR",         desc = "Number of additional IO Connections (ARs)",
+        editor="comboedit",
+        editorParam={nBits=8,  minValue = 0, maxValue = 7} 
+	},
+    {"UINT8",  "bIoSupervisorSupported",     desc = "IO Supervisor communication accepted",
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+    },
+    {"UINT8",  "bIRTSupported",              desc = "IRT Communication accepted",
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+    },
+    {"UINT8",  "bNumOfReadImplAR",            desc = "Number of parallel Read Implicit Requests",
+        editor="comboedit",
+        editorParam={nBits=8, minValue = 1, maxValue = 8} 
+	},
+    {"UINT16", "usMinDeviceInterval",        desc = "MinDeviceInterval",
+        editor="comboedit",
+        editorParam={nBits=16,
+            values={
+                {name="8",      value=8},
+                {name="16",     value=16},
+                {name="32",     value=32},
+                {name="64",     value=64},
+                {name="128",    value=128},
+                {name="256",    value=256},
+                {name="512",    value=512},
+                {name="1024",   value=1024},
+                {name="2048",   value=2048},
+                {name="4096",   value=4096},
+        } } },
+		
+	{"UINT16", "usNumSubmodules", desc = "Number of configurable submodules", 
+		editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=1000} -- minValue=5
+	}, 
+		
+	{"UINT8", "bRPCBufferSize", desc = "Size of each RPC buffer in KB", 
+		editor="numedit", editorParam={nBits=8, format="%u", minValue=0,    maxValue=64} -- minValue=4
+	},
+		
+	{"UINT8", "bNumAdditionalDAAR",          desc = "bNumAdditionalDAAR",     mode = "hidden"},
+    {"UINT8",  "abReserved1",                desc = "reserved",               mode = "hidden"},
+    {"UINT8",  "abReserved2",                desc = "reserved",               mode = "hidden"},
+},
+
+----------------------------------------------------------------------------------------------
+-- typedef struct HIL_TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_Ttag
+-- {
+--   uint8_t      bNumberOfARSets;        /* 0: SystemRedundancy not supported, for allowed values refer to PNS API Manual for details */
+--   uint8_t      bNumberOfARsPerARSet;   /* Number of ARs per ARSet. Minimum value 2, max. value 4 */
+--   uint16_t     usMinRDHT;              /* RedundancyDataHoldTime value in ms, GSDML Keyword MinRDHT. Minimum value 3, max. value 200 */
+--   uint8_t      abReserved[4];
+-- } HIL_TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T;
+TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T = {
+	{"UINT8",  "bNumberOfARSets",       desc="Number of parallel ARSets", 
+		editor="numedit", editorParam={nBits=8, format="%u", minValue=0,    maxValue=1} 
+	},
+	{"UINT8",  "bNumberOfARsPerARSet",  desc="bNumberOfARsPerARSet",    mode = "hidden"},
+	{"UINT16", "usMinRDHT",             desc="RedundancyDataHoldTime", 
+		editor="numedit", editorParam={nBits=16, format="%u", minValue=0,    maxValue=200}  -- minValue = 3
+	},
+	{"UINT8",  "abReserved0",           desc="reserved",                mode = "hidden"},
+	{"UINT8",  "abReserved1",           desc="reserved",                mode = "hidden"},
+	{"UINT8",  "abReserved2",           desc="reserved",                mode = "hidden"},
+	{"UINT8",  "abReserved3",           desc="reserved",                mode = "hidden"},
+
+}, 
 ----------------------------------------------------------------------------------------------
 -- tags for netX Diagnostics and Remote Access component
 
@@ -727,11 +813,16 @@ TAG_ECS_MBX_SIZE =
 	{paramtype = 0x30009004, datatype="TAG_ECS_MBX_SIZE_DATA_T",          desc="EtherCAT Slave Mailbox Size"},
 
 TAG_PROFINET_FEATURES = 
-	{paramtype = 0x30015001, datatype="TAG_PROFINET_FEATURES_DATA_T",     desc="Profinet Features"},
+	{paramtype = 0x30015001, datatype="TAG_PROFINET_FEATURES_DATA_T",                    desc="Profinet Features"},
+TAG_PROFINET_FEATURES_V2 = 
+	{paramtype = 0x30015002, datatype="TAG_PROFINET_FEATURES_V2_DATA_T",                 desc="Profinet Features V2"},
+TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES = 
+	{paramtype = 0x30015003, datatype="TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T",  desc="Profinet SystemRedundancy"},
 	
 TAG_TCP_PORT_NUMBERS =
 	{paramtype = 0x30019000, datatype="TAG_TCP_PORT_NUMBERS_DATA_T",      desc="Ethernet Interface TCP Port Numbers"},
-
+	
+	
 
 -- facility tags: netX Diagnostics and Remote Access component
 TAG_DIAG_IF_CTRL_UART =
@@ -800,8 +891,11 @@ TAG_HELP = {
     TAG_ECS_MBX_SIZE                    = {file="TAG_ECS_MBX_SIZE_DATA_T.htm"},
     TAG_TCP_PORT_NUMBERS                = {file="TAG_TCP_PORT_NUMBERS_DATA_T.htm"},
 
-    TAG_PROFINET_FEATURES               = {file="TAG_PROFINET_FEATURES_DATA_T.htm"},
+    TAG_PROFINET_FEATURES                     = {file="TAG_PROFINET_FEATURES_DATA_T.htm"},
+    TAG_PROFINET_FEATURES_V2                  = {file="TAG_PROFINET_FEATURES_V2_DATA_T.htm"},
+    TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES   = {file="TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T.htm"},
 
+	
     TAG_DIAG_IF_CTRL_UART               = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_USB                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_TCP                = {file="TAG_DIAG_CTRL_DATA_T.htm"},

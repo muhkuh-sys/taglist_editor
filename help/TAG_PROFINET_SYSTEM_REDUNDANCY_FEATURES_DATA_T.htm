@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Profinet SystemRedundancy</h2>
+
+<p>
+In this tag, you can enable, disable or modify PROFINET SystemRedundancy related features.<br>
+<b>Note</b>: Please refer to PROFINET IO Device API Manual for more details about the consequence of changing one of these values.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Number of parallel ARSets</td>
+	<td>
+	0: No SR-ARSet is allowed. SystemRedundancy is not available.<br>
+	1: One SR-ARSet is allowed. SystemRedundancy is available.<br>
+	Allowed values are 0 - 1, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used.
+	</td>
+</tr>
+
+<tr>
+	<td>RedundancyDataHoldTime</td>
+	<td>
+	Value 3 to 199: The minimum RedundancyDataHoldTimer according to GSDML Keyword MinRDHT that shall be accepted by the firmware.<br>
+	Value 200: GSDML does not state MinRDHT	<br>
+	Allowed values are 3 - 200, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used (it may support only larger values than 3).
+	</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

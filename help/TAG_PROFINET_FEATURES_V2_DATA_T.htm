@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_PROFINET_FEATURES_V2_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>PROFINET Features V2</h2>
+
+<p>
+In this tag, you can enable, disable or configure some PROFINET features.<br>
+<b>Note</b>: Due to limited memory resources of some firmware implementations, restrictions apply regarding the possible combinations of the features. Please refer to PROFINET IO Device API Manual for more details about the consequences of changes to these values.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Number of additional IO Connections (ARs)</td>
+	<td>
+	0: only 1 cyclic Profinet connection is possible<br>
+	Allowed values are 0 - 7, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used (it may support less than 7 additional ARs).	
+	</td>
+</tr>
+<tr>
+	<td>IO Supervisor communication accepted</td>
+	<td>
+	Selects whether IO Supervisor communication is accepted by the firmware.
+	</td>
+</tr>
+<tr>
+	<td>IRT Communication accepted</td>
+	<td>
+	Selects whether IRT communication is accepted by the firmware.
+	</td>
+</tr>
+<tr>
+	<td>Number of parallel Read Implicit Requests</td>
+	<td>
+	The amount of parallel acyclic Read Implicit Requests that can be handled by the firmware simultaneously.<br>
+	Allowed values are 1 - 8, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used (it may support less than 8 parallel Services).
+	</td>
+</tr>
+
+<tr>
+	<td>MinDeviceInterval</td>
+	<td>
+	The MinDeviceInterval according to the GSDML file of the product.<br>
+	Allowed values: Power of two in range [8 - 4096]
+	</td>
+</tr>
+<tr>
+	<td>Number of configurable submodules</td>
+	<td>
+	The amount of submodules an application can configure in the firmware. This number has impact on the runtime memory required by the firmware.<br>
+	Allowed values are 5 - 1000, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used (it may support less than 1000 submodules).
+	</td>
+</tr>
+<tr>
+	<td>Size of each RPC buffer in KB</td>
+	<td>
+	The size in KB of each existing RPC buffer preallocated by the firmware. Each AR (IO, DeviceAccess, Supervisor, ReadImplicit) has its own buffer of this size.<br>
+	Allowed values are 4 - 64, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used.
+	</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>
