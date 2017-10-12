@@ -1,5 +1,5 @@
 [Lua]
-includepaths=lua/?.lua;lua_hilscher/?.lua
+includepaths=../nxo_editor/?.lua;lua/?.lua;lua_hilscher/?.lua
 startupcode=require("muhkuh_system")\nmuhkuh_system.boot_xml()\n
 debuggercode=require("muhkuh_debugger")\nmuhkuh_debugger.init()\n
 [wxWindows]
