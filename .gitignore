@@ -6,3 +6,4 @@
 # Ignore all backup files.
 *~
 /targets
+/bin
