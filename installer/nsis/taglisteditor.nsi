@@ -17,9 +17,9 @@
 
 ; FIXME: get this from the IVY file.
 !define VERSION_MAJOR 1
-!define VERSION_MINOR 2
+!define VERSION_MINOR 3
 !define VERSION_MICRO 0
-!define VERSION_SUB   1
+!define VERSION_SUB   0
 
 # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
 # It is possible to use "mailto:" links in here to open the email client
@@ -215,6 +215,8 @@ Section "-install"
 	File ${SRC_CM}/help/TAG_PLS_DEVICEID_DATA_T.htm
 	File ${SRC_CM}/help/TAG_PN_DEVICEID_DATA_T.htm
 	File ${SRC_CM}/help/TAG_PROFINET_FEATURES_DATA_T.htm
+	File ${SRC_CM}/help/TAG_PROFINET_FEATURES_V2_DATA_T.htm
+	File ${SRC_CM}/help/TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T.htm
 	File ${SRC_CM}/help/TAG_S3S_DEVICEID_DATA_T.htm
 	File ${SRC_CM}/help/TAG_TCP_PORT_NUMBERS_DATA_T.htm
 	File ${SRC_CM}/help/welcome.htm
@@ -232,7 +234,7 @@ Section "-install"
 	File ${SRC_CM}/lua/hexedit.lua
 	File ${SRC_CM}/lua/ipv4edit.lua
 	File ${SRC_CM}/lua/macedit.lua
-	File ${SRC_CM}/lua/muhkuh.lua
+	File ${SRC_CM}/lua/muhkuh.lua                         ;
 	File ${SRC_CM}/lua/netx_fileheader.lua
 	File ${SRC_CM}/lua/numedit.lua
 	File ${SRC_CM}/lua/nxfile.lua
@@ -240,20 +242,20 @@ Section "-install"
 	File ${SRC_CM}/lua/nxomaker.wx.lua
 	File ${SRC_CM}/lua/page_taglistedit.lua
 	File ${SRC_CM}/lua/rcxveredit.lua
-	File ${SRC_CM}/lua/select_plugin_cli.lua
-	File ${SRC_CM}/lua/serialnr.lua
+	File ${SRC_CM}/lua/select_plugin_cli.lua              ;
+	File ${SRC_CM}/lua/serialnr.lua                       ;
 	File ${SRC_CM}/lua/stringedit.lua
 	File ${SRC_CM}/lua/structedit.lua
+	File ${SRC_CM}/lua/tagdefs2json.lua
 	File ${SRC_CM}/lua/tagdefs_bsl.lua
 	File ${SRC_CM}/lua/tagdefs_io_handler.lua
 	File ${SRC_CM}/lua/tagdefs_misc.lua
 	File ${SRC_CM}/lua/tagdefs_rcx.lua
 	File ${SRC_CM}/lua/taglist.lua
 	File ${SRC_CM}/lua/tagtool.wx.lua
-	File ${SRC_CM}/lua/tester_cli.lua
+	File ${SRC_CM}/lua/tester_cli.lua                     ;
 	File ${SRC_CM}/lua/tester_nextid.lua
-	File ${SRC_CM}/lua/utils.lua
-
+	File ${SRC_CM}/lua/utils.lua                          ;
 
 
 	SetOutPath "$INSTDIR\lua_plugins"
@@ -411,6 +413,8 @@ Section "uninstall"
 	delete "$INSTDIR\help\TAG_PLS_DEVICEID_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_PN_DEVICEID_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_PROFINET_FEATURES_DATA_T.htm"
+	delete "$INSTDIR\help\TAG_PROFINET_FEATURES_V2_DATA_T.htm"
+	delete "$INSTDIR\help\TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_S3S_DEVICEID_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_TCP_PORT_NUMBERS_DATA_T.htm"
 	delete "$INSTDIR\help\welcome.htm"
@@ -437,6 +441,7 @@ Section "uninstall"
 	delete "$INSTDIR\lua\serialnr.lua"
 	delete "$INSTDIR\lua\stringedit.lua"
 	delete "$INSTDIR\lua\structedit.lua"
+	delete "$INSTDIR\lua\tagdefs2json.lua"
 	delete "$INSTDIR\lua\tagdefs_bsl.lua"
 	delete "$INSTDIR\lua\tagdefs_io_handler.lua"
 	delete "$INSTDIR\lua\tagdefs_misc.lua"

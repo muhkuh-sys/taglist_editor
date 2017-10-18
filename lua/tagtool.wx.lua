@@ -1,27 +1,11 @@
 ---------------------------------------------------------------------------
--- Copyright (C) 2010 Hilscher Gesellschaft für Systemautomation mbH
+-- Copyright (C) 2017 Hilscher Gesellschaft für Systemautomation mbH
 --
 -- Description:
---   command-line tool which replaces the tag list in an NXF/NXO file.
---
---  Changes:
---    Date        Author        Description
---  Jun 23, 2016  SL            new option dump_tagdefs    
---  Jun 24, 2013  SL            typo in listdiffs (missing tag definition)
---  Jun 29, 2012  SL            Load dummy tester_nextid
---  Sept 23, 2011 SL            all chars except " and # allowed in match/set
---  Aug 5, 2011   SL            handle DOS/Unix/Mac style line breaks
---  Jul 27, 2010  SL            created
+--   command-line tool to view or change the tag list in an NXF/NXO file.
 ---------------------------------------------------------------------------
---  
----------------------------------------------------------------------------
--- SVN Keywords
---
-SVN_DATE   ="$Date: 2013-06-24 09:28:26 +0200 (Mo, 24 Jun 2013) $"
-SVN_VERSION="$Revision: 14960 $"
--- $Author: slesch $
----------------------------------------------------------------------------
--- Load the wxLua module, does nothing if running from wxLua, wxLuaFreeze, or wxLuaEdit
+
+require("version")
 
 package.cpath = package.cpath..";./?.dll;./?.so;../lib/?.so;../lib/vc_dll/?.dll;../lib/bcc_dll/?.dll;../lib/mingw_dll/?.dll;"
 require("wx")
@@ -993,12 +977,7 @@ function printUsage()
 end
 
 function printVersion()
-	print("tagtool:")
-	print(SVN_VERSION)
-	print(SVN_DATE)
-	print("taglist:")
-	print(taglist.SVN_VERSION)
-	print(taglist.SVN_DATE)
+	print("Version: " .. TLE_VERSION)
 end
 
 -- print results

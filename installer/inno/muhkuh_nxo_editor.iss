@@ -1,18 +1,6 @@
 ; Inno Setup Cfg for NXO Editor
 
-#define AppName "netX Tag List Editor/NXO Builder"
-#define AppVersion "1.2.0.3"
-#define AppVerName AppName+" "+AppVersion
-#define InstallerName "tag_list_editor_"+AppVersion+"_setup"
-
-; make .cfg file with AppVerName as customtitle
-#define NXOEditorDir "..\.."
-#define ExitCode
-#expr ExitCode = Exec("cmd", '/c m4 --define __CUSTOMTITLE__="' + AppVerName + '" Modulator_cfg.m4 >Modulator.cfg', NXOEditorDir)
-#pragma message "m4 exited with code "+str(ExitCode)
-#if ExitCode > 0
-  #error Failed to build Modulator.cfg file
-#endif
+#include "../../targets/version.iss"
 
 #define SourceDir "..\.."
 #define OutputDir ".."
@@ -32,7 +20,7 @@ VersionInfoDescription=Installer of the Hilscher Tag List Editor application
 VersionInfoCopyright=(C) 2017 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoProductName=Hilscher Tag List Editor
-VersionInfoVersion={#AppVersion}
+VersionInfoVersion={#ProjectVersion}
 
 Compression=lzma/max
 SolidCompression=yes
@@ -76,42 +64,22 @@ begin
   Result := 'file:/' + strPath;
 end;
 
-// after the installation, load the installed changelogs for Muhkuh and Modulator and display them in a page
+// after the installation, load the installed changelog and display it in a page
 var
   ChangelogPage: TOutputMsgMemoWizardPage;
 
-//procedure CurPageChanged(CurPageID: Integer);
-//var
-//	strModChanges: String;
-//	strMuhChanges: String;
-//begin
-//	strModChanges:='Modulator changelog';
-//	strMuhChanges:='Muhkuh changelog' + #13 + ExpandConstant('{#MuhkuhChangelog}');
-//	if CurPageID = wpWelcome then begin
-//		ChangelogPage := CreateOutputMsgMemoPage(wpInfoBefore,
-//		'Change Log', 'Recent changes to Modulator',
-//		'',
-//		strModChanges + #13 + strMuhChanges);
-//	end;
-//end;
-
-
 procedure CurStepChanged(CurStep: TSetupStep);
 var
-  strMuhChanges: AnsiString;
-  strMChanges: AnsiString;
+  strChanges: AnsiString;
 begin
   if CurStep = ssPostInstall then begin
-    if not LoadStringFromFile(WizardDirValue()+'\doc\modulator_changelog.txt', strMChanges) then
-      strMChanges:='Changelog for Tag List Editor not found';
-
-    if not LoadStringFromFile(WizardDirValue()+'\docs\changelog.txt', strMuhChanges) then
-      strMuhChanges:='Muhkuh change log not found';
+    if not LoadStringFromFile(WizardDirValue()+'\doc\changelog.txt', strChanges) then
+      strChanges:='Changelog for Tag List Editor not found';
 
     ChangelogPage := CreateOutputMsgMemoPage(wpInfoAfter,
-      'Change Log', 'Recent changes to Tag List Editor and the underlying Muhkuh platform',
+      'Change Log', 'Recent changes to Tag List Editor',
       '',
-      strMChanges + #13 + strMuhChanges);
+      strChanges);
   end;
 
 end;
@@ -136,7 +104,8 @@ Source: bin\wx.dll; DestDir: {app}\application; Components: muhkuh
 
 Source: help\*.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 
-Source: Modulator.cfg; DestDir: {app}\application; Components: modulator
+Source: targets\Modulator.cfg; DestDir: {app}\application; Components: modulator
+Source: targets\version.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: netX.ico; DestDir: {app}\nxo_editor; Components: modulator
 
 Source: lua\comboedit.lua; DestDir: {app}\nxo_editor; Components: modulator
@@ -169,7 +138,7 @@ Source: makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: lua\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: "H:\Manual netX Products\Tools\TagListEditor\man.005_V1.2\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf"; DestDir: {app}\doc; Components: modulator
-Source: doc\changelog.txt; DestDir: {app}\doc; DestName: modulator_changelog.txt; Components: modulator
+Source: doc\changelog.txt; DestDir: {app}\doc; Components: modulator
 Source: doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 
 [InstallDelete]
@@ -186,16 +155,10 @@ Type: files; Name: "{group}\Tag_List_Editor.lnk"
 Name: muhkuh; Description: Muhkuh base application; Types: full
 
 [Files]
-Source: bin\muhkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
 Source: bin\serverkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
-Source: bin\muhkuh_tips.txt; DestDir: {app}\application; Components: muhkuh
-;Source: icons\custom\muhkuh_uninstall.ico; DestDir: {app}\application; Components: muhkuh
 
 ; runtime dlls
-;Source: bin\msvcr71.dll; DestDir: {app}\application; Components: muhkuh
-;Source: bin\msvcp71.dll; DestDir: {app}\application; Components: muhkuh
 Source: bin\Microsoft.VC80.CRT\*; DestDir: {app}\application\Microsoft.VC80.CRT; Components: muhkuh
-
 
 ; the wxwidgets dlls
 Source: bin\wxbase28_*.dll; DestDir: {app}\application; Components: muhkuh
@@ -206,10 +169,6 @@ Source: bin\wxlua_msw28_*.dll; DestDir: {app}\application; Components: muhkuh
 
 ; mhash
 Source: bin\mhash.dll; DestDir: {app}\application; Components: muhkuh
-
-; the docs
-Source: doc\changelog.txt; DestDir: {app}\docs; Components: muhkuh
-
 
 
 ;-------------------------------------------------------------------------

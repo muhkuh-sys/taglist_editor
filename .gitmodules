@@ -1,0 +1,3 @@
+[submodule "mbs"]
+	path = mbs
+	url = https://github.com/muhkuh-sys/mbs.git
