@@ -8,57 +8,66 @@
 
 <p>
 In this tag, you can enable, disable or configure some PROFINET features.<br>
-<b>Note</b>: Due to limited memory resources of some firmware implementations, restrictions apply regarding the possible combinations of the features. Please refer to PROFINET IO Device API Manual for more details about the consequences of changes to these values.
+<b>Note:</b> Due to limited memory resources of some firmware implementations restrictions apply regarding the possible combinations of the features. 
+Please refer to PROFINET IO Device API Manual for more details about the consequence of changing one of these values.
 </p>
 <p></p>
 
 <table border=1>
-<tr>
-	<td>Number of additional IO Connections (ARs)</td>
-	<td>
-	0: only 1 cyclic Profinet connection is possible<br>
-	Allowed values are 0 - 7, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used (it may support less than 7 additional ARs).	
-	</td>
-</tr>
-<tr>
-	<td>IO Supervisor communication accepted</td>
-	<td>
-	Selects whether IO Supervisor communication is accepted by the firmware.
-	</td>
-</tr>
-<tr>
-	<td>IRT Communication accepted</td>
-	<td>
-	Selects whether IRT communication is accepted by the firmware.
-	</td>
-</tr>
-<tr>
-	<td>Number of parallel Read Implicit Requests</td>
-	<td>
-	The amount of parallel acyclic Read Implicit Requests that can be handled by the firmware simultaneously.<br>
-	Allowed values are 1 - 8, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used (it may support less than 8 parallel Services).
-	</td>
-</tr>
 
-<tr>
-	<td>MinDeviceInterval</td>
-	<td>
-	The MinDeviceInterval according to the GSDML file of the product.<br>
-	Allowed values: Power of two in range [8 - 4096]
-	</td>
-</tr>
 <tr>
 	<td>Number of configurable submodules</td>
 	<td>
 	The amount of submodules an application can configure in the firmware. This number has impact on the runtime memory required by the firmware.<br>
-	Allowed values are 5 - 1000, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used (it may support less than 1000 submodules).
+	Allowed values are 1 - 1000. <br>
+	Please refer to technical data in PROFINET IO Device API Manual for the capabilities of the stack version used (it may support less than 1000 submodules).
 	</td>
 </tr>
+
 <tr>
-	<td>Size of each RPC buffer in KB</td>
+	<td>Minimum size of each RPC buffer in KB</td>
 	<td>
-	The size in KB of each existing RPC buffer preallocated by the firmware. Each AR (IO, DeviceAccess, Supervisor, ReadImplicit) has its own buffer of this size.<br>
-	Allowed values are 4 - 64, please refer to technical data in PROFINET IO Device API Manual for capabilities of the stack version used.
+	The minimum size in KB of each existing RPC buffer preallocated by the firmware. <br>
+	Each AR (IO, DeviceAccess, Supervisor, ReadImplicit) has its own buffer of this size. The real buffer size depends on other factors and may be higher than this value.<br>
+	Allowed values are 4 - 64.<br>
+	Please refer to technical data in PROFINET IO Device API Manual for the capabilities of the stack version used.
+	</td>
+</tr>
+
+<tr>
+	<td>Number of additional IO Connections (ARs)</td>
+	<td>
+	The number of additional cyclic PROFINET IO connections accepted by the firmware.<br>
+	Allowed values are 0 - 7.<br>
+	0: only 1 cyclic PROFINET connection is possible<br>
+	Please refer to technical data in PROFINET IO Device API Manual for the capabilities of the stack version used (it may support less than 7 additional ARs).
+	</td>
+</tr>
+
+<tr>
+	<td>Number of parallel Read Implicit Requests</td>
+	<td>
+	The amount of parallel acyclic Read Implicit Requests that can be handled by the firmware simultaneously.<br>
+	Allowed values are 1 - 8. <br>
+	Please refer to technical data in PROFINET IO Device API Manual for the capabilities of the stack version used (it may support less than 8 parallel Services).
+	</td>
+</tr>
+
+<tr>
+	<td>Number of parallel DeviceAccess ARs</td>
+	<td>
+	The amount of supported DeviceAccess ARs. <br>
+	Allowed values are 0 - 1.<br>
+	0 means DeviceAccess AR is not supported.
+	</td>
+</tr>
+
+<tr>
+	<td>Number of available diagnosis buffers</td>
+	<td>
+	The total amount of buffers the firmware shall reserve for Channel diagnosis datasets.<br>
+	The application can not create more diagnosis datasets than this number.<br>
+	Allowed values are 0 - 1000.
 	</td>
 </tr>
 </table>

@@ -1,5 +1,10 @@
 Change log for Tag List Editor
 
+Tag list editor 1.3.0.1
+ * updated TAG_PROFINET_FEATURES_V2                0x30015002 
+ * updated TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES 0x30015003
+
+
 Tag list editor 1.3.0.0 
  * added TAG_PROFINET_FEATURES_V2                 0x30015002
  * added TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES  0x30015003
