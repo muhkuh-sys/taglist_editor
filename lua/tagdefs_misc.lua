@@ -504,13 +504,13 @@ TAG_PROFINET_FEATURES_V2_DATA_T = {
     {"UINT8",  "bNumAdditionalIoAR",   desc = "Number of additional IO Connections (ARs)",
         editor="comboedit", editorParam={nBits=8,  minValue = 0, maxValue = 7} 
     },    
-    {"UINT8",  "bNumImplicitAR",       desc = "Number of implicit ARs",
+    {"UINT8",  "bNumImplicitAR",       desc = "Number of parallel Read Implicit Requests",
         editor="comboedit", editorParam={nBits=8,  minValue = 1, maxValue = 8} 
     },
     {"UINT8",  "bNumDAAR",             desc = "Number of parallel DeviceAccess ARs",
         editor="comboedit", editorParam={nBits=8,  minValue = 0, maxValue = 1} 
     },
-    {"UINT16",  "usNumSubmDiagnosis",  desc = "Max. number of diagnosis entries", 
+    {"UINT16",  "usNumSubmDiagnosis",  desc = "Number of available diagnosis buffers", 
         editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1000}
     },
 },
