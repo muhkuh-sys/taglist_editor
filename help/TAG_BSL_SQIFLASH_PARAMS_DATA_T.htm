@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_SQIFLASH_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Custom SQI Flash Parameters</h2>
+<p>
+The TAG_BSL_SQIFLASH_PARAMS tag can be used to specify a custom SQI flash that is not supported out of the box. It must be used in conjunction with the custom serial flash tag.
+</p>
+
+<p>
+<b>Attention:</b> The used flash must conform to the SQIROM unit inside the netX chip (e.g. max wait cycles of 7 clocks, no more than 3 Address bytes, etc.).
+</p>
+
+<p>
+<b>Note:</b> Custom SQI flash configuration is available in Second Stage Boot Loader V1.5.0.0 and later.<br>
+</p>
+
+<p>
+<b>Note:</b> A special firmware that uses the flash parameters from the Second Stage Boot Loader must be used. 
+</p>
+
+<p></p>
+
+<table border=1>
+<tr><td>Enable                      </td><td>Enable custom SQI parameters</td></tr>
+<tr><td>Max. frequency in MHz       </td><td>Maximum Clock frequency in MHz (must be within netX Limits)</td></tr>
+<tr><td>Number of address bytes     </td><td>Number of address bytes (netX only supports 3 address bytes)</td></tr>
+<tr><td>Command to enter 0-4-4 mode </td><td>Command to enter 0-4-4 mode</td></tr>
+<tr><td>Number of mode clocks       </td><td>Number of mode clocks</td></tr>
+<tr><td>Number of dummy cycles      </td><td>Number of dummy cycles</td></tr>
+<tr><td>Quad Enable Type            </td><td>
+Quad Enable Type (see Quad Enable Requirements in SFDP Specification for more details)<br>
+1: QE is Bit1 in status register 2 (word accessible)<br>
+2: QE is Bit6 in status register 1<br>
+3: QE is Bit7 in status register 2<br>
+4: QE is Bit1 in status register 2 (byte accessible)<br>
+5: QE is Bit1 in status register 2 (split transaction)<br>
+	</td></tr>
+<tr><td>Sequence to enter 0-4-4 mode </td><td>
+Sequence to enter 0-4-4 mode<br>
+1: Send 0xA5 as last address bytes<br>
+2: Set 0xA5 in configuration register<br>
+	</td></tr>
+<tr><td>Sequence to exit 0-4-4 mode  </td><td>
+Sequence to exit 0-4-4 mode<br>
+1: Send 0x00 at end of current read<br>
+2: Send 0xFF as address ((8/10 cycles, depending on address width)<br>
+	</td></tr>
+</table>
+
+</BODY>
+</HTML>

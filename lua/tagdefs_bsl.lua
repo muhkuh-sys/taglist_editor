@@ -7,6 +7,8 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2018-03-06     SL            added TAG_BSL_SQIFLASH_PARAMS
+--                              added TAG_BSL_LIBSTORAGE_POS_PARAMS
 -- 2015-12-18     SL            changed %d to %u
 -- 2014-10-31     SL            added constants for BSL custom serial flash tag
 -- 2012-06-26     SL            added TAG_BSL_HIF_NETX51_52_PARAMS 0x40000010 
@@ -448,6 +450,9 @@ ID_CMD_LENGTH_VALUES={
        {name="9 bytes", value=9},
      } }
 
+
+
+
 BSL_CUSTOMFLASH_CONSTANTS = {
     TAG_BSL_SERFLASH_PARAMS_ADRMODE_LINEAR            = 0, -- linear addressing
     TAG_BSL_SERFLASH_PARAMS_ADRMODE_PAGESIZE_BITSHIFT = 1, -- bitshift derived from the pagesize
@@ -458,6 +463,54 @@ BSL_CUSTOMFLASH_CONSTANTS = {
 taglist.addConstants(BSL_CUSTOMFLASH_CONSTANTS)
 
 
+
+
+BSL_SQI_QE_TYPE_CONSTANTS = {
+    TAG_BSL_SQI_QER_TYPE_BIT1_REG2_WORD  = 1, 
+    TAG_BSL_SQI_QER_TYPE_BIT6_REG1       = 2, 
+    TAG_BSL_SQI_QER_TYPE_BIT7_REG2       = 3, 
+    TAG_BSL_SQI_QER_TYPE_BIT1_REG2_BYTE  = 4, 
+    TAG_BSL_SQI_QER_TYPE_BIT1_REG2_SPLIT = 5, 
+    }
+taglist.addConstants(BSL_SQI_QE_TYPE_CONSTANTS)
+
+
+BSL_SQI_QE_TYPE_VALUES = {
+    nBits=8,
+    values={
+        {name="QE is Bit1 in status register 2 (word accessible)",   value=1},
+        {name="QE is Bit6 in status register 1",                     value=2},
+        {name="QE is Bit7 in status register 2",                     value=3},
+        {name="QE is Bit1 in status register 2 (byte accessible)",   value=4},
+        {name="QE is Bit1 in status register 2 (split transaction)", value=5},
+    } }
+
+BSL_SQI_ENTER_TYPE_CONSTANTS = {
+    TAG_BSL_SQI_ENTER_TYPE_A5_CONT   = 1, 
+    TAG_BSL_SQI_ENTER_TYPE_A5_CONFIG = 2, 
+    }
+taglist.addConstants(BSL_SQI_ENTER_TYPE_CONSTANTS)
+
+BSL_SQI_ENTER_TYPE_VALUES = {
+    nBits=8,
+    values={
+        {name="Send 0xA5 as last address byte",       value=1},
+        {name="Set 0xA5 in configuration register", value=2},
+    } }
+
+BSL_SQI_EXIT_TYPE_CONSTANTS = {
+    TAG_BSL_SQI_EXIT_TYPE_00 = 1, 
+    TAG_BSL_SQI_EXIT_TYPE_FF = 2, 
+}
+taglist.addConstants(BSL_SQI_EXIT_TYPE_CONSTANTS)
+
+BSL_SQI_EXIT_TYPE_VALUES = {
+    nBits=8,
+    values={
+        {name="Send 0x00 at end of current read",   value=1},
+        {name="Send 0xFF as address",               value=2},
+     } }
+ 
 BSL_TAGS={
 -- tags for configuration of 2nd stage loader
 ----------------------------------------------------------------------------------------------
@@ -989,6 +1042,52 @@ TAG_BSL_BACKUP_POS_PARAMS_DATA_T =
 },
 
 
+----------------------------------------------------------------------------------------------
+--  2nd stage loader flash layout
+
+TAG_BSL_FLASH_LAYOUT_PARAMS_DATA_T =
+{
+    {"UINT32", "ulFileSystemOffset", desc="Offset"},
+    {"UINT32", "ulFileSystemSize",   desc="Size"},
+  
+    {"UINT8",  "bMedium", desc="Medium",
+        editor="comboedit", 
+        editorParam={nBits=8, values=BSL_BACKUP_MEDIUM}
+    },
+    {"UINT8",  "bUnused0", mode = "hidden"},
+    {"UINT8",  "bUnused1", mode = "hidden"},
+    {"UINT8",  "bUnused2", mode = "hidden"},
+    {"UINT32", "ulBackupPartOffset", desc="Offset"},
+    {"UINT32", "ulBackupPartSize",   desc="Size"},
+  
+    {"UINT32", "ulLibStorageOffset", desc="Offset"},
+    {"UINT32", "ulLibStorageSize",   desc="Size"},
+
+    layout = {
+        sizer = "v",
+        {
+            sizer = "grid", cols = 2,
+            box= "Disk Position",
+            "ulFileSystemOffset",
+            "ulFileSystemSize"
+        },
+        {
+            sizer = "grid", cols = 2,
+            box= "Backup Partition",
+            "bMedium",
+            nil,
+            "ulBackupPartOffset",
+            "ulBackupPartSize"
+        },
+        {
+            sizer = "grid", cols = 2,
+            box= "Storage Library Position",
+            "ulLibStorageOffset",
+            "ulLibStorageSize"
+        },
+    }
+},
+
 
 ----------------------------------------------------------------------------------------------
 --  2nd stage loader custom serial flash settings
@@ -1039,6 +1138,22 @@ TAG_BSL_SERFLASH_PARAMS_DATA_T = {
 
 
 
+----------------------------------------------------------------------------------------------
+--  2nd stage loader custom SQI flash settings
+
+TAG_BSL_SQIFLASH_PARAMS_DATA_T = {
+  {"UINT8",  "bValid",        desc="Enable",                         editor="checkboxedit", editorParam={nBits=8, onValue=1, offValue=0, otherValues=true}},
+  {"UINT16", "usFreqMHz",     desc="Max. frequency in MHz",          editor="numedit",      editorParam={nBits=16, format="%d"}},
+  {"UINT8",  "bAddrBytes",    desc="Number of address bytes",        editor="numedit",      editorParam={nBits=8, format="%d"}},
+  {"UINT8",  "bFastReadCmd",  desc="Command to enter 0-4-4 mode",    editor="numedit",      editorParam={nBits=8, format="0x%02x"}},
+  {"UINT8",  "bModeClocks",   desc="Number of mode clocks",          editor="numedit",      editorParam={nBits=8, format="%d"}},
+  {"UINT8",  "bDummyClocks",  desc="Number of dummy cycles",         editor="numedit",      editorParam={nBits=8, format="%d"}},
+  {"UINT8",  "bQERType",      desc="Quad Enable Type",               editor="comboedit",    editorParam=BSL_SQI_QE_TYPE_VALUES},
+  {"UINT8",  "bEntryType",    desc="Sequence to enter 0-4-4 mode",   editor="comboedit",    editorParam=BSL_SQI_ENTER_TYPE_VALUES},
+  {"UINT8",  "bExitType",     desc="Sequence to exit 0-4-4 mode",    editor="comboedit",    editorParam=BSL_SQI_EXIT_TYPE_VALUES},
+},
+
+
 
 
 }
@@ -1084,9 +1199,10 @@ TAG_BSL_HIF_NETX51_52_PARAMS =
     {paramtype = 0x40000010, datatype="TAG_BSL_HIF_NETX51_52_PARAMS_DATA_T",     desc="netX 51/52 HIF/DPM"},
 TAG_BSL_SERFLASH_PARAMS =
     {paramtype = 0x40000011, datatype="TAG_BSL_SERFLASH_PARAMS_DATA_T",       desc="Custom Serial Flash"},
-    
-    
- 
+TAG_BSL_SQIFLASH_PARAMS =
+    {paramtype = 0x40000012, datatype="TAG_BSL_SQIFLASH_PARAMS_DATA_T",       desc="Custom SQI Flash"},
+TAG_BSL_FLASH_LAYOUT_PARAMS =
+    {paramtype = 0x40000013, datatype="TAG_BSL_FLASH_LAYOUT_PARAMS_DATA_T",   desc="Flash Layout"},
 })
 
 taglist.addTagHelpPages({
@@ -1105,10 +1221,11 @@ taglist.addTagHelpPages({
     TAG_BSL_USB_DESCR_PARAMS            = {file="TAG_BSL_USB_DESCR_PARAMS_DATA_T.htm"},
     TAG_BSL_DISK_POS_PARAMS             = {file="TAG_BSL_DISK_POS_PARAMS_DATA_T.htm"},
     TAG_BSL_BACKUP_POS_PARAMS           = {file="TAG_BSL_BACKUP_POS_PARAMS_DATA_T.htm"},
-    TAG_BSL_MMIO_NETX51_52_PARAMS          = {file="TAG_BSL_MMIO_NETX51_52_PARAMS_DATA_T.htm"},
-    TAG_BSL_HIF_NETX51_52_PARAMS           = {file="TAG_BSL_HIF_NETX51_52_PARAMS_DATA_T.htm"},    
+    TAG_BSL_MMIO_NETX51_52_PARAMS       = {file="TAG_BSL_MMIO_NETX51_52_PARAMS_DATA_T.htm"},
+    TAG_BSL_HIF_NETX51_52_PARAMS        = {file="TAG_BSL_HIF_NETX51_52_PARAMS_DATA_T.htm"},    
     TAG_BSL_SERFLASH_PARAMS             = {file="TAG_BSL_SERFLASH_PARAMS_DATA_T.htm"},
-        
+    TAG_BSL_SQIFLASH_PARAMS             = {file="TAG_BSL_SQIFLASH_PARAMS_DATA_T.htm"},
+    TAG_BSL_FLASH_LAYOUT_PARAMS         = {file="TAG_BSL_FLASH_LAYOUT_PARAMS_DATA_T.htm"},
 })
 
 

@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_FLASH_LAYOUT_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Flash Layout</h2>
+
+The flash memory may be partitioned into several different areas.
+This tag can be used to specify the location and size of
+<ul>
+<li>a flash disk (FAT file system) containing firmware and configuration files,</li>
+<li>a backup partition containing a fallback firmware that is started when the main firmware is damaged or cannot be found,</li>
+<li>a storage library partition.</li>
+</ul>
+<p></p>
+Additionally, the flash may contain some areas whose locations are not specified in this tag, but hard-coded into the 2nd stage loader or the firmware:
+<ul>
+<li>an XIP (execute-in-place) firmware that is stored outside of the file system,</li>
+<li>a flash device label, usually located in the last sector of the flash,</li>
+<li>other firmware-specific areas.</li>
+</ul>
+<p></p>
+<b>Notes:</b><br>
+<ul>
+<li>All sizes and offsets are in bytes.                                                                   </li>
+<li>All sizes and offsets must be multiples of the sector size of the flash.                              </li>
+<li>The Second Stage Boot Loader does not check for overlapping areas.<br>
+Make sure the file system, backup partition and the storage library partition, as well as an XIP area, flash device label and any other areas do not overlap. </li>
+</ul>
+
+
+<h2>Disk Position</h2>
+
+<p>
+If a serial flash disk or RAM disk is used, the position and size of the file system have to be defined.<br>
+These entries can be used to override the builtin defaults.<br>
+If a parallel flash is used, the disk position entries are ignored.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Offset</td>
+    <td>The offset of the disk (file system) from the beginning of the device (serial flash or SDRAM) in bytes. <br>
+    The value 0xFFFFFFFF means that the default setting should be used.</td>
+</tr>
+<tr>
+    <td>Size</td>
+    <td>The size of the disk (file system) in bytes.<br> 
+    The value 0xFFFFFFFF means that the default setting should be used.</td>
+</tr>
+</table>
+
+<h2>Backup Partition</h2>
+
+<p>
+It is possible to reserve an area outside of the file system for a backup firmware which is started if no firmware is found in the file system. 
+These entries define the device, start offset and size of the backup partition.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Medium</td>
+    <td>
+    Selects whether the backup partition is turned off or located in 
+    serial or parallel flash
+    </td>
+</tr>
+<tr>
+    <td>Offset</td>
+    <td>
+    The offset of the backup partition from the beginning of the 
+    device in bytes
+    </td>
+</tr>
+<tr>
+    <td>Size</td>
+    <td>The size of the backup partition in bytes</td>
+</tr>
+</table>
+
+<h2>Storage Library Position
+</h2>
+
+<p>
+If a storage library partition is used, these entries can be used to specify the offset and the size of the partition. <br>
+The storage library position is not used within the 2nd Stage Boot Loader. 
+The parameters are handed over to the firmware by using Boot Tokens.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Offset</td>
+    <td>
+    The offset of the storage library partition from the beginning of the flash device in bytes.<br>
+    The offset must be a multiple of the block/sector size of the used flash chip.</td>
+</tr>
+<tr>
+    <td>Size</td>
+    <td>The size of the storage library partition in bytes.<br>
+    If set to 0, no storage library area is available.<br>
+    The size must be a multiple of the block/sector size of the used flash chip.<br>
+    The size includes two blocks/sectors which are reserved for the management area.</td>
+</tr>
+</table>
+
+<p></p>
+
+<b>Example:</b><br>
+The Flash block size is 4096 Byte.<br>
+The Offset is 0x20000, which is aligned to the used Flash block size.<br>
+The remanent area size is defined with 14 Flash blocks.<br>
+The management area needs 2 additional Flash blocks.<br>
+Therefore the size for the storage library area has to be 16 * 4096 = 65536 bytes.<br>
+</BODY>
+
+</BODY>
+</HTML>
