@@ -1,5 +1,9 @@
 Change log for Tag List Editor
 
+Tag list editor 1.3.0.2
+ * added TAG_BSL_SQIFLASH_PARAMS     0x40000012
+   added TAG_BSL_FLASH_LAYOUT_PARAMS 0x40000013
+
 Tag list editor 1.3.0.1
  * updated TAG_PROFINET_FEATURES_V2                0x30015002 
  * updated TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES 0x30015003
