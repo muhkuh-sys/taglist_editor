@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_BSL_LIBSTORAGE_POS_PARAMS_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>LibStorage Position
+</h2>
+
+<p>
+If a LibStorage partition is used, this tag can be used to specify the
+offset and the size of the partition. 
+
+The LibStorage position is not used within the 2nd Stage Boot Loader. 
+The parameters are handed over to the firmware by using Boot Tokens.
+</p>
+
+<p>
+<b>Note:</b> The LibStorage partition has to be used in combination 
+with the "Disk Position" and "Backup Partition" tags.
+</p>
+
+<p>
+<b>Attention:</b> The Second Stage Boot Loader does not check for overlapping areas.<br>
+Make sure the flash file system (disk position), backup partition and the LibStorage position do not overlap. Also, the last flash sector might be occupied by a Flash Device Label (FDL).
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+    <td>Offset</td>
+    <td>
+    The offset of the LibStorage partition from the beginning of the flash device in bytes.<br>
+    The offset must be a multiple of the block/sector size of the used flash chip.</td>
+</tr>
+<tr>
+    <td>Size</td>
+    <td>The size of the LibStorage partition in bytes.<br>
+    If set to 0, no LibStorage area is available.<br>
+    The size must be a multiple of the block/sector size of the used flash chip.<br>
+    The size includes two blocks/sectors which are reserved for the management area.</td>
+</tr>
+</table>
+
+<p></p>
+
+<b>Example:</b><br>
+The Flash block size is 4096 Byte.<br>
+The Offset is 0x20000, which is aligned to the used Flash block size.<br>
+The remanent area size is defined with 14 Flash blocks.<br>
+The management area needs 2 additional Flash blocks.<br>
+Therefore the size for the LibStorage area has to be 16 * 4096 = 65536 bytes.<br>
+</BODY>
+</HTML>
