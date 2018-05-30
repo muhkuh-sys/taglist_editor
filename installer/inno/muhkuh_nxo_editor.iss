@@ -11,13 +11,13 @@ AppVersion={#AppVersion}
 AppVerName={#AppVerName}
 AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://www.hilscher.com
-AppCopyright=(C) 2017, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2018, Muhkuh team and Hilscher GmbH
 
 ; works: company, copyright, product name, product version
 ; description goes into properties and version dialogue
 VersionInfoTextVersion={#AppVersion}
 VersionInfoDescription=Installer of the Hilscher Tag List Editor application
-VersionInfoCopyright=(C) 2017 Muhkuh team and Hilscher GmbH
+VersionInfoCopyright=(C) 2018 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoProductName=Hilscher Tag List Editor
 VersionInfoVersion={#ProjectVersion}
@@ -137,11 +137,13 @@ Source: lua\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: lua\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
-Source: "H:\Manual netX Products\Tools\TagListEditor\man.005_V1.2\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf"; DestDir: {app}\doc; Components: modulator
+;Source: "H:\Manual netX Products\Tools\TagListEditor\man.006_V1.2\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf"; DestDir: {app}\doc; Components: modulator
+Source: "doc\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf"; DestDir: {app}\doc; Components: modulator
 Source: doc\changelog.txt; DestDir: {app}\doc; Components: modulator
 Source: doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 
 [InstallDelete]
+Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 03 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 02 EN.pdf"
