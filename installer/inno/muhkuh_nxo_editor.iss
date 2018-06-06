@@ -137,7 +137,6 @@ Source: lua\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: lua\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
-;Source: "H:\Manual netX Products\Tools\TagListEditor\man.006_V1.2\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf"; DestDir: {app}\doc; Components: modulator
 Source: "doc\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf"; DestDir: {app}\doc; Components: modulator
 Source: doc\changelog.txt; DestDir: {app}\doc; Components: modulator
 Source: doc\licenses.txt; DestDir: {app}\doc; Components: modulator
@@ -209,10 +208,8 @@ Name: {app}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Paramete
 
 ; start menu entry
 Name: {group}\Tag List Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
-Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf; Components: modulator; Tasks: startmenu
+Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf; Components: modulator; Tasks: startmenu
 Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
-;Name: {group}\Tag List Editor Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf; Components: modulator; Tasks: startmenu
-;Name: {group}\Uninstall Tag List Editor; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
 
 [Registry]
 ; set PATH_NXOEDITOR
