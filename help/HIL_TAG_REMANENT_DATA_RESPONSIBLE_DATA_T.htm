@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_REMANENT_DATA_RESPONSIBLE</Title>
+</HEAD>
+<BODY>
+<h2>AP task remanent data handling responsibility</h2>
+
+<p>
+With this tag, you can adjust whether loading and storing of remanent data is entirely
+performed by the communication firmware or by the host application. Per default, the
+stack will handle remanent data.
+</p>
+
+<p>
+When remanent data handling is configured to be done in the host domain, the host application has to provide remanent data for each relevant component of the firmware via packet HIL_SET_REMANENT_DATA_REQ during initialization. Subsequently, it must handle the packets HIL_STORE_REMANENT_DATA_IND with which modified remanent data for each component is submitted in order for the host to store it onto a non-volatile storage device during runtime.  <br>
+Depending on the specific stack implementation, there still may be the need for the host to store certain non-volatile data even if the stack is responsible for remanent data storage. Please refer to the manual of your particular firmware for further information.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+<td>Remanent Data stored by Host</td>
+<td>Responsibility switch </br>
+<ul>
+<li>not checked: Communication firmware stores remanent data</li>
+<li>checked: Host stores remanent data</li>
+</ul>
+</td>
+</tr>
+</table>
+</BODY>
+</HTML>

@@ -7,6 +7,7 @@
 --  Changes:
 --    Date        Author  Description
 ---------------------------------------------------------------------------
+-- 2018-10-01     SL      added HIL_TAG_REMANENT_DATA_RESPONSIBLE 0x00001070
 -- 2015-12-18     SL      changed %d to %u
 -- 2015-10-15     SL      added RCX_TAG_DPM_BEHAVIOUR 0x00001062
 -- 2012-09-05     SL      added RCX_TAG_SWAP_LNK_ACT_LED 0x00001042 
@@ -420,6 +421,24 @@ RCX_TAG_DPM_BEHAVIOUR_DATA_T =
     {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
 },
 
+
+
+----------------------------------------------------------------------------------------------
+-- REMANENT_DATA_RESPONSIBLE
+
+HIL_TAG_REMANENT_DATA_RESPONSIBLE_DATA_T =
+{
+    {"UINT8", "bHandledByHost",         desc="Remanent Data stored by Host",         
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+    },
+    {"UINT8", "bReserved1",        desc="Reserved1",     mode = "hidden"},
+    {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
+    {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
+},
+
+
+
 } -- end of structure definitions
 
 
@@ -465,6 +484,9 @@ RCX_TAG_DPM_SETTINGS =
     {paramtype = 0x00001061, datatype="RCX_TAG_DPM_SETTINGS_DATA_T",          desc="DPM Settings"},
 RCX_TAG_DPM_BEHAVIOUR = 
 	{paramtype = 0x00001062, datatype="RCX_TAG_DPM_BEHAVIOUR_DATA_T",         desc="DPM Behaviour"},
+HIL_TAG_REMANENT_DATA_RESPONSIBLE =
+	{paramtype = 0x00001070, datatype="HIL_TAG_REMANENT_DATA_RESPONSIBLE_DATA_T", desc="Remanent Data Responsibility"},
+	
 }
 
 RCX_TAG_HELP = {
@@ -489,6 +511,8 @@ RCX_TAG_HELP = {
     RCX_TAG_DPM_COMM_CHANNEL            = {file="RCX_TAG_DPM_COMM_CHANNEL_DATA_T.htm"},
     RCX_TAG_DPM_SETTINGS                = {file="RCX_TAG_DPM_SETTINGS_DATA_T.htm"},
     RCX_TAG_DPM_BEHAVIOUR               = {file="RCX_TAG_DPM_BEHAVIOUR_DATA_T.htm"},
+
+    HIL_TAG_REMANENT_DATA_RESPONSIBLE   = {file="HIL_TAG_REMANENT_DATA_RESPONSIBLE_DATA_T.htm"},
         
 }
 
