@@ -1,27 +1,34 @@
 <jonchkicfg>
 	<repositories>
+		<repository id="local" type="file" cacheable="false">
+			<root>../../../jonchki/local_repository</root>
+			<versions>[group]/[module]</versions>
+			<config>[group]/[module]/[version]/[artifact]-[version][platform].[extension]</config>
+			<artifact>[group]/[module]/[version]/[artifact]-[version][platform].[extension]</artifact>
+		</repository>
+
 		<!-- The bintray repository contains stable artifacts. -->
-		<repository id="bintray" type="url" cacheable="true">
+		<repository id="bintray" type="url" cacheable="true" rescan="1800">
 			<root>https://dl.bintray.com/muhkuh/jonchki</root>
 			<versions>[group]/[module]</versions>
-			<config>[group]/[module]/[version]/[artifact]-[version].[extension]</config>
-			<artifact>[group]/[module]/[version]/[artifact]-[version].[extension]</artifact>
+			<config>[group]/[module]/[version]/[artifact]-[version][platform].[extension]</config>
+			<artifact>[group]/[module]/[version]/[artifact]-[version][platform].[extension]</artifact>
 		</repository>
 
 		<!-- The github repository contains stable artifacts. -->
-		<repository id="github" type="url" cacheable="true">
+		<repository id="github" type="url" cacheable="true" rescan="1800">
 			<root>https://github.com/muhkuh-sys</root>
 			<versions>[dotgroup]-[module]/releases</versions>
-			<config>[dotgroup]-[module]/releases/download/v[version]/[artifact]-[version].[extension]</config>
-			<artifact>[dotgroup]-[module]/releases/download/v[version]/[artifact]-[version].[extension]</artifact>
+			<config>[dotgroup]-[module]/releases/download/v[version]/[artifact]-[version][platform].[extension]</config>
+			<artifact>[dotgroup]-[module]/releases/download/v[version]/[artifact]-[version][platform].[extension]</artifact>
 		</repository>
 
 		<!-- The sourceforge repository contains stable artifacts. -->
-		<repository id="sourceforge" type="url" cacheable="true">
+		<repository id="sourceforge" type="url" cacheable="true" rescan="1800">
 			<root>https://sourceforge.net/projects/muhkuh/files/jonchki</root>
 			<versions>[group]/[module]/</versions>
-			<config>[group]/[module]/[version]/[artifact]-[version].[extension]/download</config>
-			<artifact>[group]/[module]/[version]/[artifact]-[version].[extension]/download</artifact>
+			<config>[group]/[module]/[version]/[artifact]-[version][platform].[extension]/download</config>
+			<artifact>[group]/[module]/[version]/[artifact]-[version][platform].[extension]/download</artifact>
 		</repository>
 	</repositories>
 </jonchkicfg>

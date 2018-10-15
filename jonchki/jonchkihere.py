@@ -32,9 +32,10 @@ import tarfile
 import tempfile
 import time
 import urllib2
+import zipfile
 
 
-strDefaultJonchkiVersion = '0.0.1.1'
+strDefaultJonchkiVersion = '0.0.3.1'
 
 
 class ProgressOutput:
@@ -161,18 +162,24 @@ class PlatformDetect:
             strEnvProcessorArchiteW6432 = os.environ['PROCESSOR_ARCHITEW6432']
         # See here for details: https://blogs.msdn.microsoft.com/david.wang/
         # 2006/03/27/howto-detect-process-bitness/
-        if (strEnvProcessorArchitecture == 'amd64') or (strEnvProcessorArchiteW6432 == 'amd64'):
+        if((strEnvProcessorArchitecture == 'amd64') or
+           (strEnvProcessorArchiteW6432 == 'amd64')):
             strCpuArchitecture = 'x86_64'
-        elif (strEnvProcessorArchitecture == 'x86') and (strEnvProcessorArchiteW6432 is None):
+        elif((strEnvProcessorArchitecture == 'x86') and
+             (strEnvProcessorArchiteW6432 is None)):
             strCpuArchitecture = 'x86'
         else:
-            print('Failed to detect the CPU architecture on Windows with the ENV variables.')
-            print('PROCESSOR_ARCHITECTURE = %s' % (str(strEnvProcessorArchitecture)))
-            print('PROCESSOR_ARCHITEW6432 = %s' % (str(strEnvProcessorArchiteW6432)))
+            print('Failed to detect the CPU architecture on Windows with the '
+                  'ENV variables.')
+            print('PROCESSOR_ARCHITECTURE = %s' %
+                  (str(strEnvProcessorArchitecture)))
+            print('PROCESSOR_ARCHITEW6432 = %s' %
+                  (str(strEnvProcessorArchiteW6432)))
 
         return strCpuArchitecture
 
-    # See here for the output of the "ver" command: https://en.wikipedia.org/wiki/Ver_(command)
+    # See here for the output of the "ver" command:
+    # https://en.wikipedia.org/wiki/Ver_(command)
     def __windows_get_distribution_ver(self):
         strDistributionId = None
         strDistributionVersion = None
@@ -186,6 +193,19 @@ class PlatformDetect:
         strDistributionVersion = tMatch.group(0)
 
         return strDistributionId, strDistributionVersion
+
+    def __linux_get_os_architecture_getconf(self):
+        strCpuArchitecture = None
+
+        # Try to parse the output of the 'getconf LONG_BIT' command.
+        strOutput = subprocess.check_output(['getconf', 'LONG_BIT'])
+        strOutputStrip = string.strip(strOutput)
+        if strOutputStrip == '32':
+            strCpuArchitecture = 'x86'
+        elif strOutputStrip == '64':
+            strCpuArchitecture = 'x86_64'
+
+        return strCpuArchitecture
 
     def __linux_get_cpu_architecture_lscpu(self):
         strCpuArchitecture = None
@@ -216,7 +236,8 @@ class PlatformDetect:
         # Try to open /etc/lsb-release.
         tFile = open('/etc/lsb-release', 'rt')
         if tFile is None:
-            raise Exception('Failed to detect the Linux distribution with /etc/lsb-release.')
+            raise Exception('Failed to detect the Linux distribution with '
+                            '/etc/lsb-release.')
         for strLine in tFile:
             tMatch = re.match('DISTRIB_ID=(.+)', strLine)
             if tMatch is not None:
@@ -239,10 +260,12 @@ class PlatformDetect:
             # This is windows.
 
             # Detect the CPU architecture.
-            self.strHostCpuArchitecture = self.__windows_get_cpu_architecture_env()
+            self.strHostCpuArchitecture =\
+                self.__windows_get_cpu_architecture_env()
 
             # Get the version with the 'ver' command.
-            self.strHostDistributionId, self.strHostDistributionVersion = self.__windows_get_distribution_ver()
+            self.strHostDistributionId, self.strHostDistributionVersion =\
+                self.__windows_get_distribution_ver()
 
             # Windows uses ZIP as standard archive format.
             self.strStandardArchiveFormat = 'zip'
@@ -250,10 +273,17 @@ class PlatformDetect:
             # This is a Linux.
 
             # Detect the CPU architecture.
-            self.strHostCpuArchitecture = self.__linux_get_cpu_architecture_lscpu()
+            # Prefer the OS architecture over the CPU architecture to honour a
+            # 32bit OS on a 64bit CPU. This happens with a 32bit Docker
+            # container on a 64bit host.
+            strCpuArch = self.__linux_get_os_architecture_getconf()
+            if strCpuArch is None:
+                strCpuArch = self.__linux_get_cpu_architecture_lscpu()
+            self.strHostCpuArchitecture = strCpuArch
 
             # Detect the distribution.
-            self.strHostDistributionId, self.strHostDistributionVersion = self.__linux_detect_distribution_etc_lsb_release()
+            self.strHostDistributionId, self.strHostDistributionVersion =\
+                self.__linux_detect_distribution_etc_lsb_release()
 
             # Linux uses TAR GZIP as standard archive format.
             self.strStandardArchiveFormat = 'tar.gz'
@@ -300,88 +330,81 @@ def download_to_file(strUrl, tFile):
     return bResult
 
 
-tParser = argparse.ArgumentParser(description='Install a jonchki version to a local folder.')
-tParser.add_argument('strOutputFolder', metavar='OUTPUT_FOLDER',
-                     help='Install the jonchki tool to the folder OUTPUT_FOLDER.')
-tParser.add_argument('-j', '--jonchki-version', dest='strJonchkiVersion', default=strDefaultJonchkiVersion,
-                     metavar='VERSION', help='Install version VERSION of the jonchki tool. (default is %s)' % strDefaultJonchkiVersion)
-
-atArgs = tParser.parse_args()
-
-logging.basicConfig(level=logging.DEBUG)
-
-strOutputFolder = atArgs.strOutputFolder
-strJonchkiVersion = atArgs.strJonchkiVersion
-
-logging.info('Install jonchki v%s to %s.' % (strJonchkiVersion, strOutputFolder))
-
-# Create the expected tool path.
-fFoundJonchki = False
-strJonchkiPath = os.path.join(strOutputFolder, 'jonchki-%s' % (strJonchkiVersion))
-strJonchkiTool = os.path.join(strJonchkiPath, 'jonchki')
-logging.debug('Jonchki path: %s' % strJonchkiPath)
-logging.debug('Jonchki tool: %s' % strJonchkiTool)
-if os.path.isdir(strJonchkiPath) is not True:
-    logging.info('The jonchki path does not exist.')
-else:
-    logging.debug('The jonchki path exists.')
-
-    if os.path.isfile(strJonchkiTool) is not True:
-        logging.info('The jonchki tool does not point to a file.')
+def __check_jonchki_version(
+    strID,
+    strLua,
+    strPath,
+    strTool,
+    strVersion,
+    strCmdFile
+):
+    fFound = False
+    if os.path.isdir(strPath) is not True:
+        logging.info('The %s path does not exist.' % strID)
     else:
-        try:
-            strOutput = string.strip(subprocess.check_output([strJonchkiTool, '--version'], shell=False))
-            logging.debug('The jonchki tool reported the version string "%s".' % strOutput)
-        except subprocess.CalledProcessError:
-            logging.debug('Failed to get the version from the jonchki tool.')
-            strOutput = ''
-        tMatch = re.match('jonchki V(\d+.\d+.\d+.\d+)', strOutput)
-        if tMatch is None:
-            logging.debug('Failed to extract the version from the jonchi output.')
+        logging.debug('The %s path exists.' % strID)
+
+        if os.path.isfile(strTool) is not True:
+            logging.info('The %s tool does not point to a file.' % strID)
         else:
-            strFoundVersion = tMatch.group(1)
-            logging.debug('The jonchi tool reported version %s.' % strFoundVersion)
-            if strJonchkiVersion != strFoundVersion:
-                logging.debug('The reported version "%s" does not match the requested version "%s".' % (strFoundVersion, strJonchkiVersion))
+            try:
+                astrCmd = []
+                if strLua is not None:
+                    astrCmd.append(strLua)
+                astrCmd.append(strTool)
+                astrCmd.append('--version')
+                strOutput = string.strip(subprocess.check_output(
+                    astrCmd,
+                    shell=False
+                ))
+                logging.debug('The %s tool reported the version string "%s".' %
+                              (strID, strOutput))
+            except subprocess.CalledProcessError:
+                logging.debug('Failed to get the version from the %s tool.' %
+                              strID)
+                strOutput = ''
+            tMatch = re.match('jonchki V(\d+.\d+.\d+.\d+)', strOutput)
+            if tMatch is None:
+                logging.debug('Failed to extract the version '
+                              'from the %s output.' % strID)
             else:
-                fFoundJonchki = True
-                logging.info('Jonchki v%s is already installed.' % strJonchkiVersion)
+                strFoundVersion = tMatch.group(1)
+                logging.debug('The %s tool reported version %s.' % (
+                    strID, strFoundVersion))
+                if strVersion != strFoundVersion:
+                    logging.debug(
+                        'The reported version "%s" does not match the '
+                        'requested version "%s".' % (
+                            strFoundVersion,
+                            strVersion
+                        )
+                    )
+                else:
+                    fFound = True
+                    logging.info('%s v%s is installed.' % (strID, strVersion))
 
-    if fFoundJonchki is not True:
-        logging.info('The jonchki path "%s" does not contain a useable version.' % strJonchkiPath)
-        logging.info('Remove the jonchi path recursively.')
+                    # Write the jonchki command to the CMD file.
+                    if strLua is None:
+                        strCmd = strTool
+                    else:
+                        strCmd = '%s %s' % (strLua, strTool)
+                    tFile = open(strCmdFile, 'w')
+                    tFile.write('%s\n' % strCmd)
+                    tFile.close()
 
-        # Recursively delete the jonchki folder.
-        shutil.rmtree(strJonchkiPath)
+        if fFound is not True:
+            logging.info('The path "%s" does not contain a useable %s '
+                         'version.' % (strPath, strID))
+            logging.info('Remove the path recursively.')
 
-if fFoundJonchki is not True:
-    logging.info('The tool is not yet installed in the requested version.')
+            # Recursively delete the jonchki folder.
+            shutil.rmtree(strPath)
 
-    c = PlatformDetect()
-    c.detect()
-    print('Host CPU architecture: %s' % c.strHostCpuArchitecture)
-    print('Host distribution ID: %s' % c.strHostDistributionId)
-    print('Host distribution version: %s' % c.strHostDistributionVersion)
-    print('Standard archive format: %s' % c.strStandardArchiveFormat)
+    return fFound
 
-    astrReplace = {
-        'HOST_CPU_ARCHITECTURE': c.strHostCpuArchitecture,
-        'HOST_DISTRIBUTION_ID': c.strHostDistributionId,
-        'HOST_DISTRIBUTION_VERSION': c.strHostDistributionVersion,
-        'JONCHKI_VERSION': strJonchkiVersion,
-        'ARCHIVE_EXTENSION': c.strStandardArchiveFormat
-    }
-    strUrlTemplate = 'https://github.com/muhkuh-sys/org.muhkuh.lua-jonchki/releases/download/v{JONCHKI_VERSION}/jonchki-{JONCHKI_VERSION}-{HOST_DISTRIBUTION_ID}{HOST_DISTRIBUTION_VERSION}_{HOST_CPU_ARCHITECTURE}.{ARCHIVE_EXTENSION}'
-    strUrl = strUrlTemplate.format(**astrReplace)
-    print(strUrl)
 
-    # Download the archive to a temporary file.
-    tFile = tempfile.TemporaryFile()
-    tResult = download_to_file(strUrl, tFile)
-    tFile.seek(0, 0)
-
-    # Extract the archive contents to the destiation folder.
-    if c.strStandardArchiveFormat == 'tar.gz':
+def __extract_archive(tFile, strArchiveFormat, strOutputFolder):
+    if strArchiveFormat == 'tar.gz':
         tArchive = tarfile.open(fileobj=tFile, mode='r')
         while 1:
             tInfo = tArchive.next()
@@ -394,4 +417,248 @@ if fFoundJonchki is not True:
             tArchive.extract(tInfo, path=strOutputFolder)
         tArchive.close()
 
+    elif strArchiveFormat == 'zip':
+        tArchive = zipfile.ZipFile(tFile, 'r')
+        atInfos = tArchive.infolist()
+        for tInfo in atInfos:
+            strDstPath = os.path.join(strOutputFolder, tInfo.filename)
+            strRel = os.path.relpath(strDstPath, strOutputFolder)
+            if strRel[0:2] == '..':
+                raise Exception('Invalid archive member: "%s".' %
+                                (tInfo.filename))
+        tArchive.extractall(strOutputFolder)
+
+    else:
+        raise Exception('Unknown archive format: "%s".' % strArchiveFormat)
+
+
+tParser = argparse.ArgumentParser(
+    description='Install a jonchki version to a local folder.'
+)
+tParser.add_argument(
+    'strOutputFolder',
+    metavar='OUTPUT_FOLDER',
+    help='Install the jonchki tool to the folder OUTPUT_FOLDER.'
+)
+tParser.add_argument(
+    '-j', '--jonchki-version',
+    dest='strJonchkiVersion',
+    default=strDefaultJonchkiVersion,
+    metavar='VERSION',
+    help='Install version VERSION of the jonchki tool. '
+         '(default is %s)' % strDefaultJonchkiVersion
+)
+tParser.add_argument(
+    '-l', '--local-archives',
+    dest='strLocalArchivesFolder',
+    default=None,
+    metavar='PATH',
+    help='Look in PATH for the jonchki archives before downloading them.'
+)
+tParser.add_argument(
+    '-i', '--lua-interpreter',
+    dest='strLuaInterpreter',
+    default='lua5.1',
+    metavar='PATH',
+    help='Use the LUA interpreter in PATH to run the jonchki-light tool.'
+)
+
+atArgs = tParser.parse_args()
+
+logging.basicConfig(level=logging.DEBUG)
+
+strCfg_OutputFolder = atArgs.strOutputFolder
+if(
+    ('JONCHKI_VERSION_OVERWRITE' in os.environ) and
+    (len(os.environ['JONCHKI_VERSION_OVERWRITE']) > 0)
+):
+    strCfg_JonchkiVersion = os.environ['JONCHKI_VERSION_OVERWRITE']
+    logging.info(
+        'Overwriting the jonchki version with the environment variable '
+        '"JONCHKI_VERSION_OVERWRITE" to "%s".' % strCfg_JonchkiVersion
+    )
+else:
+    strCfg_JonchkiVersion = atArgs.strJonchkiVersion
+strCfg_LocalArchivesFolder = atArgs.strLocalArchivesFolder
+
+logging.info('Install jonchki v%s to %s.' %
+             (strCfg_JonchkiVersion, strCfg_OutputFolder))
+
+strJonchkiCmdFile = os.path.join(
+    strCfg_OutputFolder,
+    '.jonchki.cmd'
+)
+# Create the expected tool path.
+fFoundJonchki = False
+fFoundJonchkiLight = False
+strJonchkiPath = os.path.join(
+    strCfg_OutputFolder,
+    'jonchki-%s' % (strCfg_JonchkiVersion)
+)
+strJonchkiTool = os.path.join(
+    strJonchkiPath,
+    'jonchki'
+)
+strJonchkiLightPath = os.path.join(
+    strCfg_OutputFolder,
+    'jonchki-light-%s' % (strCfg_JonchkiVersion)
+)
+strJonchkiLightTool = os.path.join(
+    strJonchkiLightPath,
+    'jonchki.lua'
+)
+logging.debug('Jonchki path: %s' % strJonchkiPath)
+logging.debug('Jonchki tool: %s' % strJonchkiTool)
+logging.debug('Jonchki-light path: %s' % strJonchkiLightPath)
+logging.debug('Jonchki-light tool: %s' % strJonchkiLightTool)
+
+fFoundJonchki = __check_jonchki_version(
+    'jonchki',
+    None,
+    strJonchkiPath,
+    strJonchkiTool,
+    strCfg_JonchkiVersion,
+    strJonchkiCmdFile
+)
+if fFoundJonchki is not True:
+    fFoundJonchkiLight = __check_jonchki_version(
+        'jonchki-light',
+        atArgs.strLuaInterpreter,
+        strJonchkiLightPath,
+        strJonchkiLightTool,
+        strCfg_JonchkiVersion,
+        strJonchkiCmdFile
+    )
+
+if (fFoundJonchki is not True) and (fFoundJonchkiLight is not True):
+    logging.info('The tool is not yet installed in the requested version.')
+
+    c = PlatformDetect()
+    c.detect()
+    logging.info('Host CPU architecture: %s' % c.strHostCpuArchitecture)
+    logging.info('Host distribution ID: %s' % c.strHostDistributionId)
+    logging.info('Host distribution version: %s' %
+                 c.strHostDistributionVersion)
+    logging.info('Standard archive format: %s' % c.strStandardArchiveFormat)
+
+    astrReplace = {
+        'HOST_CPU_ARCHITECTURE': c.strHostCpuArchitecture,
+        'HOST_DISTRIBUTION_ID': c.strHostDistributionId,
+        'HOST_DISTRIBUTION_VERSION': c.strHostDistributionVersion,
+        'JONCHKI_VERSION': strCfg_JonchkiVersion,
+        'ARCHIVE_EXTENSION': c.strStandardArchiveFormat
+    }
+    strLocalFileTemplate = (
+        'jonchki-{JONCHKI_VERSION}-{HOST_DISTRIBUTION_ID}'
+        '{HOST_DISTRIBUTION_VERSION}_{HOST_CPU_ARCHITECTURE}.'
+        '{ARCHIVE_EXTENSION}'
+    )
+    strLightLocalFileTemplate = 'jonchki-light-{JONCHKI_VERSION}.zip'
+    if(
+        ('JONCHKI_URL_OVERWRITE' in os.environ) and
+        (len(os.environ['JONCHKI_URL_OVERWRITE']) > 0)
+    ):
+        strUrlTemplate = os.environ['JONCHKI_URL_OVERWRITE']
+        logging.info(
+            'Overwriting the jonchki URL template with the environment '
+            'variable "JONCHKI_URL_OVERWRITE" to "%s".' % strUrlTemplate
+        )
+    else:
+        strUrlTemplate = (
+            'https://github.com/muhkuh-sys/org.muhkuh.lua-jonchki/releases/'
+            'download/v{JONCHKI_VERSION}/jonchki-{JONCHKI_VERSION}-'
+            '{HOST_DISTRIBUTION_ID}{HOST_DISTRIBUTION_VERSION}_'
+            '{HOST_CPU_ARCHITECTURE}.{ARCHIVE_EXTENSION}'
+        )
+    if(
+        ('JONCHKI_LIGHT_URL_OVERWRITE' in os.environ) and
+        (len(os.environ['JONCHKI_LIGHT_URL_OVERWRITE']) > 0)
+    ):
+        strLightUrlTemplate = os.environ['JONCHKI_LIGHT_URL_OVERWRITE']
+        logging.info(
+            'Overwriting the jonchki-light URL template with the environment '
+            'variable "JONCHKI_LIGHT_URL_OVERWRITE" to "%s".' %
+            strLightUrlTemplate
+        )
+    else:
+        strLightUrlTemplate = (
+            'https://github.com/muhkuh-sys/org.muhkuh.lua-jonchki/releases/'
+            'download/v{JONCHKI_VERSION}/jonchki-light-{JONCHKI_VERSION}.zip'
+        )
+    strLocalFile = strLocalFileTemplate.format(**astrReplace)
+    strUrl = strUrlTemplate.format(**astrReplace)
+    strLightLocalFile = strLightLocalFileTemplate.format(**astrReplace)
+    strLightUrl = strLightUrlTemplate.format(**astrReplace)
+
+    # Does the local file already exist?
+    tFile = None
+    strArchiveFormat = None
+    if strCfg_LocalArchivesFolder is not None:
+        # Search the full version first, then the light version.
+        strAbsFile = os.path.join(strCfg_LocalArchivesFolder, strLocalFile)
+        if os.path.exists(strAbsFile) is True:
+            logging.info('Found the requested version in the local files '
+                         'folder.')
+            tFile = open(strAbsFile, 'rb')
+            fFoundJonchki = True
+            strArchiveFormat = c.strStandardArchiveFormat
+        else:
+            strAbsFile = os.path.join(
+                strCfg_LocalArchivesFolder,
+                strLightLocalFile
+            )
+            if os.path.exists(strAbsFile) is True:
+                logging.info('Found the requested light version in the local '
+                             'files folder.')
+                tFile = open(strAbsFile, 'rb')
+                fFoundJonchkiLight = True
+                strArchiveFormat = 'zip'
+
+    if tFile is None:
+        # Download the archive to a temporary file.
+        logging.info('Trying to download "%s".' % strUrl)
+        tFile = tempfile.TemporaryFile()
+        tResult = download_to_file(strUrl, tFile)
+        if tResult is True:
+            tFile.seek(0, 0)
+            fFoundJonchki = True
+            strArchiveFormat = c.strStandardArchiveFormat
+        else:
+            # Close the old temporary file.
+            tFile.close()
+
+            logging.info('Trying to download "%s".' % strLightUrl)
+            tFile = tempfile.TemporaryFile()
+            tResult = download_to_file(strLightUrl, tFile)
+            if tResult is True:
+                tFile.seek(0, 0)
+                fFoundJonchkiLight = True
+                strArchiveFormat = 'zip'
+            else:
+                tFile.close()
+                raise Exception('Failed to download the full and the light '
+                                'version.')
+
+    # Extract the archive contents to the destination folder.
+    __extract_archive(tFile, strArchiveFormat, strCfg_OutputFolder)
     tFile.close()
+
+    # Is the extracted version valid?
+    if fFoundJonchki is True:
+        fFoundJonchki = __check_jonchki_version(
+            'jonchki',
+            None,
+            strJonchkiPath,
+            strJonchkiTool,
+            strCfg_JonchkiVersion,
+            strJonchkiCmdFile
+        )
+    elif fFoundJonchkiLight is True:
+        fFoundJonchkiLight = __check_jonchki_version(
+            'jonchki-light',
+            atArgs.strLuaInterpreter,
+            strJonchkiLightPath,
+            strJonchkiLightTool,
+            strCfg_JonchkiVersion,
+            strJonchkiCmdFile
+        )
