@@ -145,7 +145,17 @@ local function OnQuit()
 			nxoeditor.getSplitRatio()
 		end
 		nxoeditor.saveConfig()
-		os.exit()
+		
+		-- If muhkuh.TestHasFinished() exists, call it to exit the application.
+		-- If we're running from within Serverkuh, it will write the generic 
+		-- configuration items (window position etc.) and flush the configuration to disk.
+		if muhkuh.TestHasFinished then
+			muhkuh.TestHasFinished()
+			-- Linux may need an additional call to os.exit()
+		else
+		-- If it does not exist, just exit the Lua interpreter. The configuration won't be written.
+			os.exit()
+		end
 	end
 end
 
