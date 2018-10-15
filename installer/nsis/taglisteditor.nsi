@@ -159,6 +159,7 @@ Section "-install"
 	SetOutPath "$INSTDIR\help"
 
 	File ${SRC_CM}/help/misc_tags.htm
+	File ${SRC_CM}/help/HIL_TAG_REMANENT_DATA_RESPONSIBLE_DATA_T.htm
 	File ${SRC_CM}/help/RCX_TAG_DPM_BEHAVIOUR_DATA_T.htm
 	File ${SRC_CM}/help/RCX_TAG_DPM_COMM_CHANNEL_DATA_T.htm
 	File ${SRC_CM}/help/RCX_TAG_DPM_SETTINGS_DATA_T.htm
@@ -357,6 +358,7 @@ Section "uninstall"
 	rmDir "$INSTDIR\doc"
 
 	delete "$INSTDIR\help\misc_tags.htm"
+	delete "$INSTDIR\help\HIL_TAG_REMANENT_DATA_RESPONSIBLE_DATA_T.htm"
 	delete "$INSTDIR\help\RCX_TAG_DPM_BEHAVIOUR_DATA_T.htm"
 	delete "$INSTDIR\help\RCX_TAG_DPM_COMM_CHANNEL_DATA_T.htm"
 	delete "$INSTDIR\help\RCX_TAG_DPM_SETTINGS_DATA_T.htm"
