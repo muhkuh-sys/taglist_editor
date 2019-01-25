@@ -287,10 +287,11 @@ end
 strHdrFilenameFilters = "Header files (*.bin)|*.bin|All Files (*)|*"
 strElfFilenameFilters = "ELF files (*.elf)|*.elf|All Files (*)|*"
 strTagFilenameFilters = "Tag list files (*.bin)|*.bin|All Files (*)|*"
-strNxFilenameFilters = "NXO/NXF/BIN files (*.nxo/*.nxf/*.bin)|*.nxo;*.nxf;*.bin|All Files (*)|*"
-strsaveNxFilenameFilters = "NXO files (*.nxo)|*.nxo|NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
+strNxFilenameFilters = "NXO/NXF/NXI/BIN files (*.nxo/*.nxf/*.nxi/*.bin)|*.nxo;*.nxf;*.nxi;*.bin|All Files (*)|*"
+strsaveNxFilenameFilters = "NXO files (*.nxo)|*.nxo|NXF files (*.nxf)|*.nxf|NXI files (*.nxi)|*.nxi|BIN files (*.bin)|*.bin|All Files (*)|*"
 strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|All Files (*)|*"
-strNxfFilenameFilters = "NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
+strNxiFilenameFilters = "NXI files (*.nxi)|*.nxi|All Files (*)|*"
+strNxfFilenameFilters = "NXF files (*.nxf)|*.nxf|NXI files (*.nxi)|*.nxi|BIN files (*.bin)|*.bin|All Files (*)|*"
 strDefaultFilenameFilters = "All Files (*)|*"
 
 function loadFileDialog(parent, strTitle, strFilters)
@@ -445,7 +446,7 @@ function loadTags(strFilename)
 		showMessages(fOk, "Notice", "Error parsing tag list", strMsg)
 
 		-- replace tag list
-		if fOk then
+		if fOk and not m_nxfile:isNxi() then
 			local fChanged = checkEndMarker(params)
 			if fChanged then
 				abBin = taglist.paramsToBin(params)
@@ -528,7 +529,7 @@ function loadNx(strFilename)
 				local fTagsOk, params, iLen, strMsg = taglist.binToParams(abTags)
 				showMessages(fTagsOk, "Notice", "Error parsing tag list", strMsg)
 
-				if fTagsOk then
+				if fTagsOk and not m_nxfile:isNxi() then
 					local fChanged = checkEndMarker(params)
 					if fChanged then
 						abTags = taglist.paramsToBin(params)
@@ -582,6 +583,9 @@ function saveNx(strFilename)
 	elseif m_nxfile:isNxo() then
 		strFilter = strNxoFilenameFilters
 		strTitle = "Save NXO file as"
+	elseif m_nxfile:isNxi() then
+		strFilter = strNxiFilenameFilters
+		strTitle = "Save NXI file as"
 	else
 		strFilter = strsaveNxFilenameFilters
 		strTitle = "Save as"

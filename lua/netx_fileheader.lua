@@ -23,13 +23,12 @@ SVN_VERSION="$Revision: 8903 $"
 
 require("utils")
 require("mhash")
-require("bit")
-
+HIL_FILE_HEADER_NXI_COOKIE        = 0x49584e2e -- 2E 4E 58 49 ".NXI"
 HIL_FILE_HEADER_MODULE_COOKIE     = 0x4d584e2e -- 2E 4E 58 4D ".NXM"
 HIL_FILE_HEADER_OPTION_COOKIE     = 0x4f584e2e -- 2E 4E 58 4F ".NXO"
-HIL_FILE_HEADER_DATABASE_COOKIE   = 0x44584e2e -- 2E 4E 58 4F ".NXD"
-HIL_FILE_HEADER_LICENSE_COOKIE    = 0x4c584e2e -- 2E 4E 58 4F ".NXL"
-HIL_FILE_HEADER_BINARY_COOKIE     = 0x42584e2e -- 2E 4E 58 4F ".NXB"
+HIL_FILE_HEADER_DATABASE_COOKIE   = 0x44584e2e -- 2E 4E 58 44 ".NXD"
+HIL_FILE_HEADER_LICENSE_COOKIE    = 0x4c584e2e -- 2E 4E 58 4C ".NXL"
+HIL_FILE_HEADER_BINARY_COOKIE     = 0x42584e2e -- 2E 4E 58 42 ".NXB"
 HIL_FILE_HEADER_BOOT_COOKIE       = 0xF8BEAF00 -- 00 AF BE F8 bootblock cookie
 HIL_FILE_HEADER_MAGIC_COOKIE_MASK = 0xFFFFFF00
 HIL_FILE_HEADER_SIGNATURE 		  = 0x5854454E -- "NETX" in boot header
@@ -84,11 +83,22 @@ DEFAULT_HEADER_SPEC = {
 
 -- checks NXF cookie and netX signature
 function isBootHeader(tDefaultHeader)
-	local res = bit.band(tDefaultHeader.ulMagicCookie, HIL_FILE_HEADER_MAGIC_COOKIE_MASK) 
+	return bit.band(tDefaultHeader.ulMagicCookie, HIL_FILE_HEADER_MAGIC_COOKIE_MASK) 
 			== HIL_FILE_HEADER_BOOT_COOKIE 
 		and tDefaultHeader.ulSignature == HIL_FILE_HEADER_SIGNATURE
-	--print("isBootHeader", res)
-	return res
+end
+
+function isNxiBootHeader(tDefaultHeader)
+    return tDefaultHeader.ulMagicCookie == HIL_FILE_HEADER_NXI_COOKIE 
+     and tDefaultHeader.ulSignature == HIL_FILE_HEADER_SIGNATURE
+end
+
+function isChecksumBootHeader(tDefaultHeader)
+    return isBootHeader(tDefaultHeader) or isNxiBootHeader(tDefaultHeader)
+end
+
+function isBootOrDefaultHeader(tDefaultHeader)
+    return isChecksumBootHeader(tDefaultHeader) or isDefaultHeader(tDefaultHeader)
 end
 
 function isNXODefaultHeader(tDefaultHeader)
@@ -105,6 +115,8 @@ end
 function getHeaderType(tDefaultHeader)
 	if isBootHeader(tDefaultHeader) then
 		return "NXF" 
+	elseif tDefaultHeader.ulMagicCookie == HIL_FILE_HEADER_NXI_COOKIE then
+		return "NXI"
 	elseif tDefaultHeader.ulMagicCookie == HIL_FILE_HEADER_OPTION_COOKIE then
 		return "NXO"
 	elseif tDefaultHeader.ulMagicCookie == HIL_FILE_HEADER_DATABASE_COOKIE then
@@ -552,6 +564,12 @@ function calcBootblockChecksum(abBootblock)
 	return hash:byte(1) + 256 * hash:byte(2) + 65536 * hash:byte(3) + 0x1000000 * hash:byte(4)
 end
 
+function calcSHA384(abChunk) 
+	local hash = calcMHash(mhash.MHASH_SHA384, abChunk)
+	vbs_printf("chunk checksum: %02x %02x %02x %02x", hash:byte(1), hash:byte(2), hash:byte(3), hash:byte(4))
+	return hash
+end
+
 
 -- calculates hash over the concatenation of varargs (must be strings)
 -- returns hash as a string
@@ -579,8 +597,9 @@ end
 -- 3) calculate and set application checksum over everything following the boot header
 -- 4) calculate and set boot header checksum
 
+
 function updateChecksums(tDefaultHeader, tCommonHeader, ...)
-	if isBootHeader(tDefaultHeader) then
+	if isChecksumBootHeader(tDefaultHeader) then
 		tDefaultHeader.ulAppChecksum = 0
 		tDefaultHeader.ulBootHeaderChecksum = 0
 	end
@@ -598,13 +617,12 @@ function updateChecksums(tDefaultHeader, tCommonHeader, ...)
 	abCommonHeader = headerToBin(tCommonHeader, COMMON_HEADER_V3_SPEC)
 
 	-- appChecksum and bootheader checksum
-	if isBootHeader(tDefaultHeader) then
+	if isChecksumBootHeader(tDefaultHeader) then
 		tDefaultHeader.ulAppChecksum = calcAppChecksum(abCommonHeader, ...)
 		abDefaultHeader = headerToBin(tDefaultHeader, DEFAULT_HEADER_SPEC)
 		tDefaultHeader.ulBootHeaderChecksum = calcBootblockChecksum(abDefaultHeader)
 	end
 end
-
 
 
 -- checks conditions that hold on both a freshly compiled
@@ -624,7 +642,6 @@ end
 -- tCommonHeader list representation of common header V3
 -- iFileSize: file size including default header, may have to add 64 (optional)
 function isCommonHeaderV3(tCommonHeader, iFileSize)
-	--print("isCommonHeader")
 	return 
 		bit.band(tCommonHeader.ulHeaderVersion, COMMON_HEADER_MAJOR_VERSION_MASK)
 		== HIL_FILE_COMMON_HEADER_VERSION_3 
@@ -696,6 +713,7 @@ function isUnfilledHeadersBin(abBin)
 	return true
 end
 
+-- unused 
 function checkBootHeaderChecksums(tBootBlock, ...)
 	local fOk, msgs = true, {}
 	local tBB = copyHeader(tBootBlock)
@@ -712,6 +730,7 @@ function checkBootHeaderChecksums(tBootBlock, ...)
 	end
 end
 
+-- unused
 -- extend this to check the bootblock checksums, too?
 function checkCommonHeaderChecksums(tBootBlock, tCommonHeader, ...)
 	local tBB = copyHeader(tBootBlock)
@@ -757,6 +776,7 @@ end
 -- tBB, tCH: boot and common header
 -- ... remaining binary parts
 
+-- unused
 function isValidCommonHeaderV3(tBB, tCH, ...)
 	local parts = {...}
 	local iTotalLen = DEFAULT_HEADER_SIZE+COMMON_HEADER_V3_SIZE
@@ -996,8 +1016,6 @@ end
 --   data, gap behind data
 --   tag list, gap behind tag list (as string)
 
-
-
 function parseNXFile(abBin)
 	local msgs = {}
 	local iBinSize = abBin:len()
@@ -1030,7 +1048,7 @@ function parseNXFile(abBin)
 	end
 	-- identify boot/default header, warn if unknown
 
-	if not(isBootHeader(tBB) or isDefaultHeader(tBB)) then
+	if not(isBootOrDefaultHeader(tBB)) then
 		table.insert(msgs, string.format(
 			"Unknown cookie or no netX signature in boot/default header: 0x%08x/0x%08x",
 			tBB.ulMagicCookie, tBB.ulSignature))
@@ -1101,6 +1119,10 @@ function parseNXFile(abBin)
 		return false, msgs
 	end
 	
+	if isNxiBootHeader(tBB) then
+		abTags = nxi_get_taglist(abBin)
+	end
+	
 	-- warn if the file contains gap data
 	local strSections = ""
 	if abHeaderGap:len()>0 then
@@ -1126,7 +1148,7 @@ function parseNXFile(abBin)
 	local aulMD5 = tCH.aulMD5
 	local ulHeaderCRC32 = tCH.ulHeaderCRC32
 	updateChecksums(tBB, tCH, abRest)
-	if isBootHeader(tBB) then
+	if isChecksumBootHeader(tBB) then
 		if ulAppChecksum ~= tBB.ulAppChecksum then
 			table.insert(msgs, "Incorrect application checksum")
 		end
@@ -1143,6 +1165,7 @@ function parseNXFile(abBin)
 	
 	return true, msgs, tBB, tCH, abHeaders, abHeaderGap, abData, abDataGap, abTags, abTagGap
 end
+
 
 -- 
 function makeNXFile(tBootBlock, tCH, abHeaders, abHeaderGap, abData, abDataGap, abTags, abTagGap)
@@ -1187,7 +1210,7 @@ function makeNXFile(tBootBlock, tCH, abHeaders, abHeaderGap, abData, abDataGap, 
 		abBin = abHeaders .. abHeaderGap .. abData .. abDataGap
 	end
 	
-	if isBootHeader(tBootBlock) then
+	if isChecksumBootHeader(tBootBlock) then
 		tBootBlock.ulAppFileSize = (COMMON_HEADER_V3_SIZE + abBin:len()) / 4
 	end
 
@@ -1195,4 +1218,156 @@ function makeNXFile(tBootBlock, tCH, abHeaders, abHeaderGap, abData, abDataGap, 
 	abDefaultHeader = headerToBin(tBootBlock, DEFAULT_HEADER_SPEC)
 	abCommonHeader = headerToBin(tCH, COMMON_HEADER_V3_SPEC)
 	return abDefaultHeader .. abCommonHeader .. abBin, {}
+end
+
+
+
+function makeNXIFile(tBootBlock, tCH, abHeaders, abHeaderGap, abData, abDataGap, abTags, abTagGap)
+    assert(abTagGap == "")
+    local abBin = abHeaders .. abHeaderGap .. abData .. abDataGap
+    assert(abBin)
+    abBin = nxi_replace_taglist(abBin, abTags)
+    assert(abBin)
+    updateChecksums(tBootBlock, tCH, abBin)
+    local abDefaultHeader = headerToBin(tBootBlock, DEFAULT_HEADER_SPEC)
+    local abCommonHeader = headerToBin(tCH, COMMON_HEADER_V3_SPEC)
+    abBin = abDefaultHeader .. abCommonHeader .. abBin
+    
+    return abBin, {}
+end
+
+
+
+-- Search a binary containing a list of HBoot chunks for a tag list.
+-- 
+-- ulStartPos is 0x200 to search in the complete binary including boot and common header,
+-- or 0x180 when the boot and common headers have been removed.
+--
+-- netX 90:
+-- 0-3     TEXT chunk ID
+-- 4-7     chunk size (remaining size in dwords)
+-- 8-15    TagList> tag list identifier/delimiter
+-- 16-17   size of tag list including delimiters
+-- 18-19   size of tag list contents (actual tags)
+-- 20-     tag list contents 
+-- 4 bytes 0x00 (reserved)
+-- 8 bytes <TagList delimiter 
+-- 4 bytes Chunk checksum 
+
+-- netX 4000:
+-- 0-3     DATA chunk ID
+-- 4-7     chunk size (remaining size in dwords)
+-- 8-11    load address
+-- 12-19   TagList> tag list identifier/delimiter
+-- 20-21   size of tag list including delimiters
+-- 22-23   size of tag list contents (actual tags)
+-- 24-     tag list contents 
+-- 4 bytes 0x00 (reserved)
+-- 8 bytes <TagList delimiter 
+-- 4 bytes Chunk checksum 
+
+-- 24 is the min. overhead of the structure wrapping the tag list 
+
+function nxi_find_taglist(abBin, ulStartPos)
+    local iPos = ulStartPos
+    local iSize = abBin:len()
+    local tRes = {}
+     
+    dbg_print("Searching HBoot image chunks for tag list")
+    while iPos + 24 < iSize do
+        local strChunkName = abBin:sub(iPos+1, iPos+4)
+        local b1, b2, b3, b4 = abBin:byte(iPos+5, iPos+8)
+        local ulSizeDword = 2+b1+0x100*b2+0x10000*b3+0x1000000*b4
+        local ulSizeBytes = 4*ulSizeDword
+        
+        dbg_printf("Offset: 0x%08x, chunk: %s", iPos, strChunkName)
+        
+        if "TEXT" == strChunkName then
+            local strMarker = abBin:sub(iPos+9, iPos+16)
+            if "TagList>" == strMarker then
+                tRes.ulChunkPos = iPos
+                tRes.strChunkType = strChunkName
+                tRes.ulChunkSizeBytes = ulSizeBytes
+                tRes.ulTagListOffset = 16
+                break
+            end
+        elseif "DATA" == strChunkName then
+            local strMarker = abBin:sub(iPos+13, iPos+20)
+            if "TagList>" == strMarker then
+                tRes.ulChunkPos = iPos
+                tRes.strChunkType = strChunkName
+                tRes.ulChunkSizeBytes = ulSizeBytes
+                -- Offset of the length fields in the chunk.
+                -- The tag list is behind the length fields.
+                tRes.ulTagListOffset = 20
+                break
+            end
+        end
+        
+        iPos = iPos + ulSizeBytes
+    end
+    
+    if tRes.ulChunkPos then
+        dbg_printf("Found tag list chunk at offset 0x%08x  size 0x%08x  type %s", 
+            tRes.ulChunkPos, tRes.ulChunkSizeBytes, tRes.strChunkType)
+        local ulTagListPos =  tRes.ulChunkPos + tRes.ulTagListOffset
+        local b1, b2, b3, b4 = abBin:byte(ulTagListPos+1, ulTagListPos+4)
+        local ulTagListSize = b3+0x100*b4
+        local strTagList = abBin:sub(ulTagListPos+ 4 + 1, ulTagListPos + 4 + ulTagListSize)
+        tRes.strTagList = strTagList
+        tRes.ulTagListSize = ulTagListSize
+        return tRes
+    else 
+        dbg_print("No tag list found")
+        return nil
+    end
+end
+
+
+-- find the tag list in the full image
+function nxi_get_taglist(abBin)
+    local tRes = nxi_find_taglist(abBin, 0x200)
+    if tRes then
+        return tRes.strTagList
+    else
+        return ""
+    end
+end
+
+-- replace the tag list an NXI image.
+function nxi_replace_taglist(abBin, abNewTagList)
+    local tRes = nxi_find_taglist(abBin, 0x180)
+    if tRes then
+        -- separate the chunk containing the tag list
+        local ulChunkPos = tRes.ulChunkPos
+        local ulChunkSizeBytes = tRes.ulChunkSizeBytes 
+        local abChunksBefore = abBin:sub(1, ulChunkPos)
+        local abChunk = abBin:sub(ulChunkPos+1, ulChunkPos+ulChunkSizeBytes)
+        local abChunksAfter = abBin:sub(ulChunkPos+ulChunkSizeBytes+1)
+        
+        -- construct a new chunk with the tag list replaced
+        local ulTagListOffset = tRes.ulTagListOffset + 4
+        local ulTagListSize = tRes.ulTagListSize
+        
+        dbg_printf("Found tag list: chunk at 0x%08x offset 0x%08x size(content) 0x%04x", 
+            ulChunkPos, ulTagListOffset, ulTagListSize)
+        assert(abNewTagList:len() == ulTagListSize)
+        
+        local abBeforeTags = abChunk:sub(1, ulTagListOffset )
+        local abAfterTags = abChunk:sub(ulTagListOffset + ulTagListSize + 1)
+        local abNewChunk = abBeforeTags ..abNewTagList .. abAfterTags
+
+        -- update the chunk's checksum
+        -- The checksum is a SHA384 of the entire chunk including the chunk type and size, except the checksum field.
+        abNewChunk = abNewChunk:sub(1, -5)
+        local abHash = calcSHA384(abNewChunk)
+        abHash = abHash:sub(1, 4)
+        abNewChunk = abNewChunk .. abHash
+        
+        -- construct a new image with the chunk replaced
+        abBin = abChunksBefore .. abNewChunk .. abChunksAfter
+        return abBin
+    else
+        return nil
+    end
 end

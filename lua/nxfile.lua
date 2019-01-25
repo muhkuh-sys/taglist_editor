@@ -72,10 +72,17 @@ end
 
 -- returns binary/nil, messages
 function buildNXFile(self)
-	return netx_fileheader.makeNXFile(
-		self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
-		self.m_abData, self.m_abDataGap,
-		self.m_abTaglist, self.m_abTagGap)
+    if isNxi(self) then
+        return netx_fileheader.makeNXIFile(
+            self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
+            self.m_abData, self.m_abDataGap,
+            self.m_abTaglist, self.m_abTagGap)
+    else 
+        return netx_fileheader.makeNXFile(
+            self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
+            self.m_abData, self.m_abDataGap,
+            self.m_abTaglist, self.m_abTagGap)
+    end
 end
 
 
@@ -106,6 +113,10 @@ end
 
 function isNxf(self)
 	return netx_fileheader.isBootHeader(self.m_tDefaultHeader)
+end
+
+function isNxi(self)
+	return netx_fileheader.isNxiBootHeader(self.m_tDefaultHeader)
 end
 
 -- returns "NXF", "NXO" etc.
@@ -306,6 +317,18 @@ function setTaglistBin(self, abBin, fKeepGap)
 	abBin = abBin or ""
 	local tCH = self.m_tCommonHeader
 	
+    -- If file is an NXI, just replace the tag list.
+    -- The tag list can only be replaced with one that has the same size as the old one.
+    if isNxi(self) then
+        if self.m_abTaglist:len() == abBin:len() then
+            self.m_abTaglist = abBin
+            -- todo: replace the tag list in the binary.
+            return true
+        else 
+            return false, "The taglist of an NXI file can only be replaced with one of the same size."
+        end
+    end
+    
 	-- no tag list or tag list at end of file: just pad to dword size
 	if tCH.ulTagListStartOffset == 0 or tCH.ulTagListStartOffset > tCH.ulDataStartOffset then
 		if tCH.ulTagListSizeMax == 0 or tCH.ulTagListSizeMax >= abBin:len() then
