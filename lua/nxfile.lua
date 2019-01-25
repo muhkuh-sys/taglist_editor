@@ -151,6 +151,10 @@ end
 -- (as it is not contained in the file)
 
 function setHeadersBin(self, abBin)
+	if isNxi(self) then
+		error("setHeadersBin not supported on NXI files.")
+	end
+
 	abBin = abBin or ""
 	local abCH = abBin:sub(1, netx_fileheader.COMMON_HEADER_V3_SIZE)
 	local fOk = netx_fileheader.isUnfilledHeadersBin(abBin)
@@ -241,6 +245,9 @@ end
 --------------------------------------------------------------------------
 
 function setData(self, abBin)
+	if isNxi(self) then
+		error("setData not supported on NXI files.")
+	end
 	abBin = abBin or ""
 	self.m_abData = abBin
 	self.m_abDataGap = getPadding(abBin, 4)
