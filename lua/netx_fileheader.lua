@@ -893,112 +893,6 @@ function makeNXF(abBootBlock, abImage, abTaglist)
 	return abNXF
 end
 
--- build an NXO
--- abCommonHeader binary common header V3 with at least the following 
--- fields set:
--- ulHeaderVersion, ulHeaderLength, bNumModuleInfos
--- 
--- the following fields will be set by makeNXO:
--- ulDataStartOffset, ulDataSize
--- ulTagListSize, ulTagListStartOffset
--- aulMD5, ulHeaderCRC32
---
--- does not set ulTagListSizeMax
---[[
-function makeNXO(abDefaultHeader, abCommonHeader, abOtherHeaders, abElf, abTaglist)
-	local tCommonHeader = binToHeader(abCommonHeader, COMMON_HEADER_V3_SPEC)
-	local abElfPad
-	
-	local iLen = DEFAULT_HEADER_SIZE + COMMON_HEADER_V3_SIZE + abOtherHeaders:len()
-	if not isCommonHeaderV3(tCommonHeader, iLen) then
-		return false, "Common header V3 not found"
-	end
-	
-	if not abDefaultHeader then
-		local tDefaultHeader = {ulMagicCookie = HIL_FILE_HEADER_OPTION_COOKIE}
-		abDefaultHeader = headerToBin(tDefaultHeader, DEFAULT_HEADER_SPEC)
-	end
-	
-	-- pad headers part if necessary
-	if iLen%4>0 then
-		abOtherHeaders = abOtherHeaders .. string.rep(string.char(0), 4 - iLen%4)
-		-- len1 = len1 + 4 - iLen%4
-	end
-	-- set ulDataStartOffset/Size
-	tCommonHeader.ulDataStartOffset = iLen
-	tCommonHeader.ulDataSize = abElf:len()
-	
-	if abTaglist then
-		-- update taglist pointers, pad ELF to dword size
-		tCommonHeader.ulTagListSize = abTaglist:len()
-		--tCommonHeader.ulTagListSizeMax = tCommonHeader.ulTagListSize
-		local ulTagListOffset = tCommonHeader.ulDataStartOffset + abElf:len()
-		local iElfPad = (4 - ulTagListOffset) % 4
-		abElfPad = string.rep(string.char(0), iElfPad)
-		ulTagListOffset = ulTagListOffset + iElfPad
-		tCommonHeader.ulTagListStartOffset = ulTagListOffset
-	end
-	
-	local tBootBlock = binToHeader(abDefaultHeader, DEFAULT_HEADER_SPEC)
-	assert(tBootBlock.ulMagicCookie ~= 0)
-	updateChecksums(tBootBlock, tCommonHeader, abOtherHeaders, abElf, abElfPad, abTaglist)
-	
-	abDefaultHeader = headerToBin(tBootBlock, DEFAULT_HEADER_SPEC)
-	abCommonHeader = headerToBin(tCommonHeader, COMMON_HEADER_V3_SPEC)
-
-	local abNxo = abDefaultHeader .. abCommonHeader .. abOtherHeaders .. abElf
-	if abTaglist then abNxo = abNxo .. abElfPad .. abTaglist end
-	return abNxo
-end
---]]
-
--- split into default header, common header, rest
--- parse common header
--- test checksums
--- split rest into other headers, ELF, taglist
---[[
-function parseNXO(abBin)
-	if abBin:len() < DEFAULT_HEADER_SIZE + COMMON_HEADER_V3_SIZE then
-		return nil, {"file too short"}
-	end
-	
-	local abDefaultHeader = abBin:sub(1, DEFAULT_HEADER_SIZE)
-	local abCommonHeader = abBin:sub(DEFAULT_HEADER_SIZE+1, DEFAULT_HEADER_SIZE+COMMON_HEADER_V3_SIZE)
-	
-	local tBB = binToHeader(abDefaultHeader, DEFAULT_HEADER_SPEC)
-	local tCH = binToHeader(abCommonHeader, COMMON_HEADER_V3_SPEC)
-	
-	if not isNXODefaultHeader(tBB) then
-		return nil, {"NXO default header not found"}
-	end
-	
-	local abRest = abBin:sub(DEFAULT_HEADER_SIZE+COMMON_HEADER_V3_SIZE+1)
-	--local fOk, aErrors = checkCommonHeaderChecksums(tBB, tCH, abRest)
-	local fOk, aErrors = isValidCommonHeaderV3(tBB, tCH, abRest)
-	abRest = nil
-	if not fOk then
-		-- for i=1, #aErrors do print(aErrors[i]) end
-		return false, aErrors
-	end
-	
-	local abOtherHeaders = abBin:sub(DEFAULT_HEADER_SIZE+COMMON_HEADER_V3_SIZE+1, tCH.ulHeaderLength)
-	local abElf
-	if tCH.ulDataStartOffset ~= 0 and tCH.ulDataSize ~= 0 then
-		abElf = abBin:sub(tCH.ulDataStartOffset+1, tCH.ulDataStartOffset + tCH.ulDataSize)
-	end
-	local abTaglist
-	if tCH.ulTagListStartOffset ~= 0 and tCH.ulTagListSize ~= 0 then
-		dbg_print("extracting tag list")
-		abTaglist = abBin:sub(tCH.ulTagListStartOffset+1, tCH.ulTagListStartOffset+tCH.ulTagListSize)
-	end
-	
-	return true, aErrors, abDefaultHeader, abCommonHeader, abOtherHeaders, abElf, abTaglist
-end
---]]
-
-
-
-
 
 
 -- Parse contents of an nx* file consisting of
@@ -1120,7 +1014,16 @@ function parseNXFile(abBin)
 	end
 	
 	if isNxiBootHeader(tBB) then
-		abTags = nxi_get_taglist(abBin)
+        print("NXI boot header")
+        local fOk, strMsg
+        fOk, abTags, strMsg = nxi_get_taglist(abBin)
+        print("fOk: ", fOk, "abTags.len", abTags:len(), "strMsg:", strMsg)
+        if strMsg then
+            table.insert(msgs, strMsg)
+        end
+        if not fOk then
+            return false, msgs
+        end
 	end
 	
 	-- warn if the file contains gap data
@@ -1238,6 +1141,7 @@ end
 
 
 
+
 -- Search a binary containing a list of HBoot chunks for a tag list.
 -- 
 -- ulStartPos is 0x200 to search in the complete binary including boot and common header,
@@ -1269,53 +1173,61 @@ end
 -- 24 is the min. overhead of the structure wrapping the tag list 
 
 function nxi_find_taglist(abBin, ulStartPos)
-    local iPos = ulStartPos
+    local ulChunkPos = ulStartPos
     local iSize = abBin:len()
     local tRes = {}
-     
+    local fFound = false
+    
     dbg_print("Searching HBoot image chunks for tag list")
-    while iPos + 24 < iSize do
-        local strChunkName = abBin:sub(iPos+1, iPos+4)
-        local b1, b2, b3, b4 = abBin:byte(iPos+5, iPos+8)
-        local ulSizeDword = 2+b1+0x100*b2+0x10000*b3+0x1000000*b4
-        local ulSizeBytes = 4*ulSizeDword
+    while fFound == false and ulChunkPos + 24 < iSize do
+        -- Get the chunk type and size.
+        local strChunkType = abBin:sub(ulChunkPos+1, ulChunkPos+4)
+        local b1, b2, b3, b4 = abBin:byte(ulChunkPos+5, ulChunkPos+8)
+        local ulChunkSizeDword = 2+b1+0x100*b2+0x10000*b3+0x1000000*b4
+        local ulChunkSizeBytes = 4*ulChunkSizeDword
+        local ulMarkerOffset = nil
         
-        dbg_printf("Offset: 0x%08x, chunk: %s", iPos, strChunkName)
+        dbg_printf("Offset: 0x%08x, chunk: %s", ulChunkPos, strChunkType)
         
-        if "TEXT" == strChunkName then
-            local strMarker = abBin:sub(iPos+9, iPos+16)
+        -- Get the offset at which the marker should be expected.
+        if "TEXT" == strChunkType then
+            ulMarkerOffset = 8
+        elseif "DATA" == strChunkType then
+            ulMarkerOffset = 12
+        end
+        
+        -- Check if the marker is present.
+        if ulMarkerOffset then
+            local strMarker = abBin:sub(ulChunkPos+ulMarkerOffset+1, ulChunkPos+ulMarkerOffset+8)
             if "TagList>" == strMarker then
-                tRes.ulChunkPos = iPos
-                tRes.strChunkType = strChunkName
-                tRes.ulChunkSizeBytes = ulSizeBytes
-                tRes.ulTagListOffset = 16
-                break
-            end
-        elseif "DATA" == strChunkName then
-            local strMarker = abBin:sub(iPos+13, iPos+20)
-            if "TagList>" == strMarker then
-                tRes.ulChunkPos = iPos
-                tRes.strChunkType = strChunkName
-                tRes.ulChunkSizeBytes = ulSizeBytes
+                fFound = true
+                tRes.ulChunkPos = ulChunkPos
+                tRes.strChunkType = strChunkType
+                tRes.ulChunkSizeBytes = ulChunkSizeBytes
+                
                 -- Offset of the length fields in the chunk.
                 -- The tag list is behind the length fields.
-                tRes.ulTagListOffset = 20
-                break
+                tRes.ulTagListOffset = ulMarkerOffset+8
+                
+                -- b1/b2: taglist size: from header to footer
+                -- b3/b4: content size: only the actual tags
+                local b1, b2, b3, b4 = abBin:byte(ulChunkPos+tRes.ulTagListOffset+1, ulChunkPos+tRes.ulTagListOffset+4)
+                tRes.ulTagListSize = b1+0x100*b2
+                tRes.ulContentSize = b3+0x100*b4
+                
+                dbg_printf("Found tag list:")
+                dbg_printf("Chunk at offset 0x%08x  size 0x%08x  type %s", 
+                    ulChunkPos, ulChunkSizeBytes, strChunkType)
+                dbg_printf("Tag list offset: 0x%08x  total size: 0x%08x content size: 0x%08x", 
+                    tRes.ulTagListOffset, tRes.ulTagListSize, tRes.ulContentSize)
+                
             end
         end
         
-        iPos = iPos + ulSizeBytes
+        ulChunkPos = ulChunkPos + ulChunkSizeBytes
     end
     
-    if tRes.ulChunkPos then
-        dbg_printf("Found tag list chunk at offset 0x%08x  size 0x%08x  type %s", 
-            tRes.ulChunkPos, tRes.ulChunkSizeBytes, tRes.strChunkType)
-        local ulTagListPos =  tRes.ulChunkPos + tRes.ulTagListOffset
-        local b1, b2, b3, b4 = abBin:byte(ulTagListPos+1, ulTagListPos+4)
-        local ulTagListSize = b3+0x100*b4
-        local strTagList = abBin:sub(ulTagListPos+ 4 + 1, ulTagListPos + 4 + ulTagListSize)
-        tRes.strTagList = strTagList
-        tRes.ulTagListSize = ulTagListSize
+    if fFound then
         return tRes
     else 
         dbg_print("No tag list found")
@@ -1324,15 +1236,68 @@ function nxi_find_taglist(abBin, ulStartPos)
 end
 
 
--- find the tag list in the full image
+
+-- Find Text/data chunk with tag list header 
+-- Check chunk checksum  (Warning if not correct)
+-- Get tag list/content size 
+-- Check for consistency (Error if not correct)
+-- Check presence of tag list footer (Error if not correct)
+
+-- Returns:
+-- true, tag list binary, optional warning message
+-- true, "",              optional warning message: no tag list found 
+-- false, nil,            error message
 function nxi_get_taglist(abBin)
+    local fOk = true
+    local strTagList = ""
+    local strMsg = nil
+    
     local tRes = nxi_find_taglist(abBin, 0x200)
     if tRes then
-        return tRes.strTagList
-    else
-        return ""
+        
+        local abChunk = abBin:sub(tRes.ulChunkPos+1, tRes.ulChunkPos+tRes.ulChunkSizeBytes)
+        local abChunkHash =  abChunk:sub(-4)
+        local abChunkData = abChunk:sub(1, -5)
+        local abNewHash = calcSHA384(abChunkData)
+        abNewHash = abNewHash:sub(1, 4)
+        if abChunkHash ~= abNewHash then
+            -- Warning: chunk hashsum not ok
+            print("Chunk hash incorrect")
+            strMsg = "Incorrect chunk hashsum"
+        else
+            dbg_print("Chunk hash ok")
+        end
+        
+        -- ulTagListSize = ulContentSize + wrapping elements:
+        -- Header            8 bytes
+        -- size fields       4 bytes
+        -- reserved field    4 bytes
+        -- Footer            8 bytes 
+        if tRes.ulTagListSize ~= tRes.ulContentSize+ 0x18 then
+            fOk = false
+            strMsg = "Tag list size and content size are inconsistent"
+        else
+            local ulFooterOffset = tRes.ulTagListOffset+4+tRes.ulContentSize+4
+            if ulFooterOffset+8 > tRes.ulChunkSizeBytes then
+                fOk = false
+                strMsg = "Incorrect size field in tag list"
+            else
+                local strFooter = abChunk:sub(ulFooterOffset+1, ulFooterOffset+8)
+                if strFooter ~= "<TagList" then
+                    fOk = false
+                    strMsg = "Tag list footer not found"
+                else 
+                    strTagList = abChunk:sub(tRes.ulTagListOffset+ 4 + 1, tRes.ulTagListOffset + 4 + tRes.ulContentSize)
+                end
+            end
+        end
+    else 
+        dbg_print("No tag list found")
     end
+    
+    return fOk, strTagList, strMsg
 end
+
 
 -- replace the tag list an NXI image.
 function nxi_replace_taglist(abBin, abNewTagList)
@@ -1347,14 +1312,12 @@ function nxi_replace_taglist(abBin, abNewTagList)
         
         -- construct a new chunk with the tag list replaced
         local ulTagListOffset = tRes.ulTagListOffset + 4
-        local ulTagListSize = tRes.ulTagListSize
+        local ulContentSize = tRes.ulContentSize
         
-        dbg_printf("Found tag list: chunk at 0x%08x offset 0x%08x size(content) 0x%04x", 
-            ulChunkPos, ulTagListOffset, ulTagListSize)
-        assert(abNewTagList:len() == ulTagListSize)
+        assert(abNewTagList:len() == ulContentSize, "Length of new tag list differs!")
         
         local abBeforeTags = abChunk:sub(1, ulTagListOffset )
-        local abAfterTags = abChunk:sub(ulTagListOffset + ulTagListSize + 1)
+        local abAfterTags = abChunk:sub(ulTagListOffset + ulContentSize + 1)
         local abNewChunk = abBeforeTags ..abNewTagList .. abAfterTags
 
         -- update the chunk's checksum
