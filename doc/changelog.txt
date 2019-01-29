@@ -1,5 +1,8 @@
 Change log for Tag List Editor
 
+Tag list editor 1.4.0.0
+ * Added support for the NXI format (netx 90 and 4000)
+
 Tag list editor 1.3.0.4
  * added HIL_TAG_REMANENT_DATA_RESPONSIBLE 0x00001070
  * fixed: window configuration not written back on Quit.
