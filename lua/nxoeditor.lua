@@ -434,7 +434,6 @@ end
 
 
 
-
 function loadTags(strFilename)
 	local strFilename = strFilename or loadFileDialog(m_panel, "Select Tag list file", strTagFilenameFilters)
 	if not strFilename then return end
@@ -446,10 +445,12 @@ function loadTags(strFilename)
 		showMessages(fOk, "Notice", "Error parsing tag list", strMsg)
 
 		-- replace tag list
-		if fOk and not m_nxfile:isNxi() then
-			local fChanged = checkEndMarker(params)
-			if fChanged then
-				abBin = taglist.paramsToBin(params)
+		if fOk then
+			if not m_nxfile:isNxi() then
+				local fChanged = checkEndMarker(params)
+				if fChanged then
+					abBin = taglist.paramsToBin(params)
+				end
 			end
 			fOk, strMsg = m_nxfile:setTaglistBin(abBin)
 			showMessages(fOk, "Notice", "Error", strMsg)
