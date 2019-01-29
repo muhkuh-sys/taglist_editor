@@ -9,6 +9,7 @@
 ---------------------------------------------------------------------------
 --  2010-08       SL            switched to vbs_/dbg_print
 --  2010-09       SL            MakeNXF sets DataSize only if 0
+--  2019-01       SL            add handling of NXI files.
 ---------------------------------------------------------------------------
 
 module("netx_fileheader", package.seeall)
