@@ -937,7 +937,7 @@ end
 ----------------------------------------------------------------------------
 
 local strUsage = [==[
-tagtool prints or manipulates the tag list in an NXF or NXO file
+tagtool prints or manipulates the tag list in an NXF/NXI or NXO file
 
 Usage: 
    tagtool settags     [-v|-debug] infile taglistfile outfile
@@ -966,10 +966,10 @@ Flags:
    -debug      enable debug output    
    
 Arguments:
-   infile      The NXF/NXO file to load
+   infile      The NXF/NXI/NXO file to load
    editsfile   Text file containing editing instructions
    taglistfile The new tag list in binary format
-   outfile     The NXF/NXO file to write
+   outfile     The NXF/NXI/NXO file to write
 ]==]
 
 function printUsage()
