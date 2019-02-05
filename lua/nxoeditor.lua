@@ -512,7 +512,7 @@ function checkEndMarker(atTags)
 end
 
 function loadNx(strFilename)
-	strFilename = strFilename or loadFileDialog(m_panel, "Select NXO/NXF/bin file", strNxFilenameFilters)
+	strFilename = strFilename or loadFileDialog(m_panel, "Select NXO/NXF/NXI/bin file", strNxFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	-- loaded successfully
@@ -729,7 +729,7 @@ function createPanel()
 	m_headerFilebar = insertFilebar(parent, fileSizer, "Headers", loadHdr, saveHdr)
 	m_elfFilebar = insertFilebar(parent, fileSizer, "ELF", loadElf, saveElf)
 	m_tagsFilebar = insertFilebar(parent, fileSizer, "Tag list", loadTags, saveTags)
-	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF", loadNx, saveNx)
+	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF/NXI", loadNx, saveNx)
 
 	-- HTML help window
 	m_helpWindow = wx.wxHtmlWindow(m_splitterPanel)
