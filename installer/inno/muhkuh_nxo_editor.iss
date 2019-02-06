@@ -11,13 +11,13 @@ AppVersion={#AppVersion}
 AppVerName={#AppVerName}
 AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://www.hilscher.com
-AppCopyright=(C) 2018, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2019, Muhkuh team and Hilscher GmbH
 
 ; works: company, copyright, product name, product version
 ; description goes into properties and version dialogue
 VersionInfoTextVersion={#AppVersion}
 VersionInfoDescription=Installer of the Hilscher Tag List Editor application
-VersionInfoCopyright=(C) 2018 Muhkuh team and Hilscher GmbH
+VersionInfoCopyright=(C) 2019 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoProductName=Hilscher Tag List Editor
 VersionInfoVersion={#ProjectVersion}
@@ -96,12 +96,6 @@ Name: custom; Description: Custom installation; Flags: iscustom
 Name: modulator; Description: Tag List Editor; Types: full
 
 [Files]
-Source: bin\lua_hilscher\netx_fileheader.lua; DestDir: {app}\application\lua_hilscher; Components: lua_scripts
-Source: bin\lua_hilscher\gui_stuff.lua; DestDir: {app}\application\lua_hilscher; Components: lua_scripts
-
-Source: bin\lua.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
-Source: bin\wx.dll; DestDir: {app}\application; Components: muhkuh
-
 Source: help\*.htm; DestDir: {app}\nxo_editor\help; Components: modulator
 
 Source: targets\Modulator.cfg; DestDir: {app}\application; Components: modulator
@@ -156,31 +150,37 @@ Type: files; Name: "{group}\Tag_List_Editor.lnk"
 Name: muhkuh; Description: Muhkuh base application; Types: full
 
 [Files]
-Source: bin\serverkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
+Source: external\bin\lua.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
+Source: external\bin\wx.dll; DestDir: {app}\application; Components: muhkuh
+
+Source: external\bin\serverkuh.exe; DestDir: {app}\application; Flags: ignoreversion; Components: muhkuh
 
 ; runtime dlls
-Source: bin\Microsoft.VC80.CRT\*; DestDir: {app}\application\Microsoft.VC80.CRT; Components: muhkuh
+Source: external\bin\Microsoft.VC80.CRT\*; DestDir: {app}\application\Microsoft.VC80.CRT; Components: muhkuh
 
 ; the wxwidgets dlls
-Source: bin\wxbase28_*.dll; DestDir: {app}\application; Components: muhkuh
-Source: bin\wxmsw28_*.dll; DestDir: {app}\application; Components: muhkuh
+Source: external\bin\wxbase28_*.dll; DestDir: {app}\application; Components: muhkuh
+Source: external\bin\wxmsw28_*.dll; DestDir: {app}\application; Components: muhkuh
 ; the wxLua dlls
-Source: bin\lua5.1.dll; DestDir: {app}\application; Components: muhkuh
-Source: bin\wxlua_msw28_*.dll; DestDir: {app}\application; Components: muhkuh
+Source: external\bin\lua5.1.dll; DestDir: {app}\application; Components: muhkuh
+Source: external\bin\wxlua_msw28_*.dll; DestDir: {app}\application; Components: muhkuh
 
 ; mhash
-Source: bin\mhash.dll; DestDir: {app}\application; Components: muhkuh
+Source: external\bin\mhash.dll; DestDir: {app}\application; Components: muhkuh
 
 
 ;-------------------------------------------------------------------------
-; Muhkuh Lua scripts
+; Lua scripts from external repos
 ;-------------------------------------------------------------------------
 [Components]
 Name: lua_scripts; Description: Lua scripts; Types: full
 
 [Files]
-Source: bin\lua\muhkuh_system.lua; DestDir: {app}\application\lua; Components: lua_scripts
-Source: bin\lua\utils.lua; DestDir: {app}\application\lua; Components: lua_scripts
+Source: external\lua_hilscher\netx_fileheader.lua; DestDir: {app}\application\lua_hilscher; Components: lua_scripts
+Source: external\lua_hilscher\gui_stuff.lua; DestDir: {app}\application\lua_hilscher; Components: lua_scripts
+
+Source: external\muhkuh_old\bin\lua\muhkuh_system.lua; DestDir: {app}\application\lua; Components: lua_scripts
+Source: external\muhkuh_old\bin\lua\utils.lua; DestDir: {app}\application\lua; Components: lua_scripts
 
 
 
