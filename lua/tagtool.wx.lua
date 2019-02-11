@@ -187,9 +187,11 @@ function loadInputFile(strInputFile)
 		end
 		
 		if fOk then
-			local fEndOk, fCorrectible, strMsg = taglist.checkEndMarker(tNx, atTags)
-			if not fEndOk then
-				printResults(true, strMsg)
+			if not tNx:isNxi() then
+				local fEndOk, fCorrectible, strMsg = taglist.checkEndMarker(tNx, atTags)
+				if not fEndOk then
+					printResults(true, strMsg)
+				end
 			end
 		else
 			return nil, strError
@@ -908,9 +910,11 @@ function replacetags(strInputFile, strTagsFile, strOutputFile)
 		return false, strError
 	end
 	
-	local fEndOk, fCorrectible, strMsg = taglist.checkEndMarker(nx, atTags)
-	if not fEndOk then
-		printResults(true, strMsg)
+	if not nx:isNxi() then
+		local fEndOk, fCorrectible, strMsg = taglist.checkEndMarker(nx, atTags)
+		if not fEndOk then
+			printResults(true, strMsg)
+		end
 	end
 	
 	-- replace the tag list
