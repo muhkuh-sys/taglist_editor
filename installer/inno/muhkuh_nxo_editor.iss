@@ -3,7 +3,7 @@
 #include "../../targets/version.iss"
 
 #define SourceDir "..\.."
-#define OutputDir ".."
+#define OutputDir "targets"
 
 [Setup]
 AppName={#AppName}
