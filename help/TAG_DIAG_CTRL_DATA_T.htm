@@ -16,6 +16,10 @@ transport protocols define the "language" used by the client and the marshaller.
 You must always enable at least one interface AND one transport protocol.
 Otherwise you lock yourself out of the device and will be unable to replace the firmware.
 </p>
+<h2>Limitation (netx 90 only):</h2>
+<p>
+If you enable the marshaller using the shared UART interface, this UART will no longer be available to the APP CPU.
+</p>
 <p></p>
 
 <h2>Interfaces: UART/USB/TCP</h2>
