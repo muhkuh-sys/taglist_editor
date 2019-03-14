@@ -209,7 +209,7 @@ Name: {app}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Paramete
 
 ; start menu entry
 Name: {group}\Tag List Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
-Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf; Components: modulator; Tasks: startmenu
+Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 07 EN.pdf; Components: modulator; Tasks: startmenu
 Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
 
 [Registry]
