@@ -131,11 +131,12 @@ Source: lua\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: lua\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
-Source: "doc\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf"; DestDir: {app}\doc; Components: modulator
+Source: "doc\Tag List Editor - Viewing and Editing Tags OI 07 EN.pdf"; DestDir: {app}\doc; Components: modulator
 Source: doc\changelog.txt; DestDir: {app}\doc; Components: modulator
 Source: doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 
 [InstallDelete]
+Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 03 EN.pdf"
