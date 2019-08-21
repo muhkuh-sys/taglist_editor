@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2019-08-06     SL            added TAG_ECM_ENI_BUS_STATE     0x30009005
 -- 2017-10-12     SL            added TAG_PROFINET_FEATURES_V2  0x30015002
 --                     TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES  0x30015003
 -- 2016-05-31     SL            added TAG_EIP_DLR_PROTOCOL      0x3000a002
@@ -200,6 +201,9 @@ TAG_CONSTANTS = {
 	RCX_TAG_ETHERNET_FIBEROPTICMODE_PORT0_ON = 2,
 	RCX_TAG_ETHERNET_FIBEROPTICMODE_PORT1_ON = 3,
 
+	-- EtherCAT Master Target bus state for ENI files on ChannelInit
+	HIL_TAG_ECM_ENI_BUS_STATE_OFF = 0,
+	HIL_TAG_ECM_ENI_BUS_STATE_ON  = 1,
 }
 
 EIP_XC_TYPE = {
@@ -236,6 +240,10 @@ ECS_MBX_SIZE = {
 --	{name = "780 bytes RX / 780 bytes TX", value = 5},
 }
 
+ECM_ENI_BUS_STATE = {
+	{name = "Off", value = 0},
+	{name = "On",  value = 1},
+}
 
 -- MMIO pin numbers for netX 50
 NETX50_MMIO_NUMBERS = {}
@@ -361,7 +369,9 @@ TAG_ECS_MBX_SIZE_DATA_T = {
 	{"UINT32", "ulMbxSize", desc="Mailbox Size", editor="comboedit",  editorParam={nBits=32, values = ECS_MBX_SIZE}}
 },
 
-
+TAG_ECM_ENI_BUS_STATE_DATA_T = {
+	{"UINT32", "ulTargetBusState", desc="Target bus state", editor="comboedit",  editorParam={nBits=32, values = ECM_ENI_BUS_STATE}}
+},
 ----------------------------------------------------------------------------------------------
 -- TCP Port Numbers 
 TAG_TCP_PORT_NUMBERS_DATA_T = {
@@ -778,7 +788,9 @@ TAG_ECS_CONFIG_EOE =
 	{paramtype = 0x30009003, datatype="TAG_ECS_CONFIG_EOE_DATA_T",        desc="EtherCAT Slave EoE Mode"},
 TAG_ECS_MBX_SIZE =
 	{paramtype = 0x30009004, datatype="TAG_ECS_MBX_SIZE_DATA_T",          desc="EtherCAT Slave Mailbox Size"},
-
+TAG_ECM_ENI_BUS_STATE =
+	{paramtype = 0x30009005, datatype="TAG_ECM_ENI_BUS_STATE_DATA_T",     desc="EtherCAT Master bus state for ENI"},
+	
 TAG_PROFINET_FEATURES = 
 	{paramtype = 0x30015001, datatype="TAG_PROFINET_FEATURES_DATA_T",                    desc="Profinet Features"},
 TAG_PROFINET_FEATURES_V2 = 
@@ -856,13 +868,14 @@ TAG_HELP = {
     TAG_ECS_SELECT_SOE_COE              = {file="TAG_ECS_SELECT_SOE_COE_DATA_T.htm"},
     TAG_ECS_CONFIG_EOE                  = {file="TAG_ECS_CONFIG_EOE_DATA_T.htm"},
     TAG_ECS_MBX_SIZE                    = {file="TAG_ECS_MBX_SIZE_DATA_T.htm"},
+    TAG_ECM_ENI_BUS_STATE               = {file="TAG_ECM_ENI_BUS_STATE_DATA_T.htm"},
+
     TAG_TCP_PORT_NUMBERS                = {file="TAG_TCP_PORT_NUMBERS_DATA_T.htm"},
 
     TAG_PROFINET_FEATURES                     = {file="TAG_PROFINET_FEATURES_DATA_T.htm"},
     TAG_PROFINET_FEATURES_V2                  = {file="TAG_PROFINET_FEATURES_V2_DATA_T.htm"},
     TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES   = {file="TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T.htm"},
 
-	
     TAG_DIAG_IF_CTRL_UART               = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_USB                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_TCP                = {file="TAG_DIAG_CTRL_DATA_T.htm"},

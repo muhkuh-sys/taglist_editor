@@ -206,6 +206,7 @@ Section "-install"
 	File ${SRC_CM}/help/TAG_CO_DEVICEID_DATA_T.htm
 	File ${SRC_CM}/help/TAG_DIAG_CTRL_DATA_T.htm
 	File ${SRC_CM}/help/TAG_DP_DEVICEID_DATA_T.htm
+	File ${SRC_CM}/help/TAG_ECM_ENI_BUS_STATE_DATA_T.htm
 	File ${SRC_CM}/help/TAG_ECS_CONFIG_EOE_DATA_T.htm
 	File ${SRC_CM}/help/TAG_ECS_DEVICEID_DATA_T.htm
 	File ${SRC_CM}/help/TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm
@@ -405,6 +406,7 @@ Section "uninstall"
 	delete "$INSTDIR\help\TAG_CO_DEVICEID_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_DIAG_CTRL_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_DP_DEVICEID_DATA_T.htm"
+	delete "$INSTDIR\help\TAG_ECM_ENI_BUS_STATE_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_ECS_CONFIG_EOE_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_ECS_DEVICEID_DATA_T.htm"
 	delete "$INSTDIR\help\TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm"
