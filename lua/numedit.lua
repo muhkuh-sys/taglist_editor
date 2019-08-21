@@ -130,7 +130,7 @@ end
 
 
 local hexDecValidator = wx.wxTextValidator(wx.wxFILTER_INCLUDE_CHAR_LIST )
-hexDecValidator:SetIncludes({"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "x"})
+hexDecValidator:SetIncludes({"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "x", "A", "B", "C", "D", "E", "F"})
 
 function create(self, parent)
 	local id = tester.nextID()
