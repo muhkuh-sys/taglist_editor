@@ -370,7 +370,7 @@ TAG_ECS_MBX_SIZE_DATA_T = {
 },
 
 TAG_ECM_ENI_BUS_STATE_DATA_T = {
-	{"UINT32", "ulTargetBusState", desc="Target bus state", editor="comboedit",  editorParam={nBits=32, values = ECM_ENI_BUS_STATE}}
+	{"UINT32", "ulTargetBusState", desc="Target Bus State", editor="comboedit",  editorParam={nBits=32, values = ECM_ENI_BUS_STATE}}
 },
 ----------------------------------------------------------------------------------------------
 -- TCP Port Numbers 
