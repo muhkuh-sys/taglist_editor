@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="mbs/setup2html.xsl"?>
 
 <muhkuh_buildsystem project="netX Tag List Editor/NXO Builder">
-	<project_version>1.4.0.0</project_version>
+	<project_version>1.4.0.1</project_version>
 
 	<scons>
 		<group>org.scons</group>
