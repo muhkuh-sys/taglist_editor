@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_PHY_ENABLE_TIMEOUT_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Phy enable timeout after firmware startup</h2>
+
+<p>
+  With this tag, you can set the timeout to enable the Phys after firmware startup.
+  If no Phy configuration is provided to main protocol stack integrated in the firmware
+  up to this timeout, all Phys will be enabled with default settings.
+  The default settings are Autonegotiation and Autocrossover.
+</p>
+
+<p>
+  If the main protocol stack gets its valid Phy configuration prior the timeout hits,
+  the Phys will be configured with the parameters from configuration.
+  If the main protocol stack gets its valid Phy configuration after the timeout hits,
+  the protocol stack will reparameterize the Phys according to its configuration.
+  This may lead to short link loss in case the configuration is different to defaults.
+</p>
+
+<p>
+  By default (if taglist is unchanged) the Phy enable timeout is inactive and set to 0.
+  In this case the Phy is not switched on by the firmware and a valid Phy
+  configuration of the protocol stack is needed.
+  If the timeout is set to a value greater than 0, the firmware will check the Phys
+  state after the given timeout. If Phys are not configured, they will be enabled.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+<td>Phy enable timeout after startup</td>
+<td> </br>
+<ul>
+<li>0: never enable Phy without configuration, wait for protocol stack configuration (default)</li>
+<li>1-300: Phy shall be enabled 1-300 seconds after firmware startup</li>
+<li>other values: reserved</li>
+</ul>
+</td>
+</tr>
+</table>
+</BODY>
+</HTML>

@@ -1,5 +1,11 @@
 Change log for Tag List Editor
 
+Tag list editor 1.4.0.2
+ * added tag HIL_TAG_DDP_MODE_AFTER_STARTUP  0x00001081
+ * added tag HIL_TAG_PHY_ENABLE_TIMEOUT      0x00001090
+ * added tag HIL_TAG_LWIP_PORTS_FOR_IP_ZERO  0x10e90000
+ * added tag HIL_TAG_LWIP_NETIDENT_BEHAVIOUR 0x10e90001
+
 Tag list editor 1.4.0.1
  * added TAG_ECM_ENI_BUS_STATE 0x30009005
  * allow capital letters A-F in hex numbers

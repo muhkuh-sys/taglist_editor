@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>LWIP Ports for usage with IP 0.0.0.0</h2>
+
+<p>
+  With this tag, you can set IP ports which the LWIP stack integrated in firmware
+  shall handle even if it does not have a valid IP configuration.
+  These ports will be usable with Multicast communication only.
+</p>
+
+<p>
+ Setting a port to 0 means that this entry in taglist shall be ignored. This allows
+  e.g. only activating a single port (or even zero ports).
+</p>
+
+<p>
+By default (if taglist is unchanged) the ports shall be set to 0.
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+<td>Port 0</td>
+<td>
+<ul>
+<li>0: Ignore this entry</li>
+<li>1-65535: Set the port number for Port 0.</li>
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>Port 1</td>
+<td>
+<ul>
+<li>0: Ignore this entry</li>
+<li>1-65535: Set the port number for Port 1.</li>
+</ul>
+</td>
+</tr>
+
+</table>
+</BODY>
+</HTML>

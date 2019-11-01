@@ -13,6 +13,8 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2019-11-01     SL            added HIL_TAG_LWIP_NETIDENT_BEHAVIOUR 0x10e90001
+--                              added HIL_TAG_LWIP_PORTS_FOR_IP_ZERO  0x10e90000
 -- 2019-08-06     SL            added TAG_ECM_ENI_BUS_STATE     0x30009005
 -- 2017-10-12     SL            added TAG_PROFINET_FEATURES_V2  0x30015002
 --                     TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES  0x30015003
@@ -740,6 +742,29 @@ RCX_TAG_SERVX_PORT_NUMBER_DATA_T = {
 
 
 
+----------------------------------------------------------------------------------------------
+-- LWIP Ports for usage with IP 0.0.0.0
+
+HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T = {
+    {"UINT16", "usPort0",  desc="Port 0", editor="numedit", editorParam ={nBits=16, format="%u", minValue=0, maxValue=65535}},
+    {"UINT16", "usPort1",  desc="Port 1", editor="numedit", editorParam ={nBits=16, format="%u", minValue=0, maxValue=65535}},
+},
+
+
+----------------------------------------------------------------------------------------------
+-- LWIP netident behaviour
+
+HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T = {
+    {"UINT8", "bNetidentEnable",         desc="Enable netident",         
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true}
+    },
+    {"UINT8", "bReserved1",        desc="Reserved1",     mode = "hidden"},
+    {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
+    {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
+},
+
+
 
 } -- end of structure defintions
 
@@ -839,6 +864,12 @@ RCX_TAG_SERVX_PORT_NUMBER =
 	{paramtype = 0x10920000, datatype="RCX_TAG_SERVX_PORT_NUMBER_DATA_T", desc="servX TCP Port Number"},
 
 
+HIL_TAG_LWIP_PORTS_FOR_IP_ZERO = 
+	{paramtype = 0x10e90000, datatype="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T", desc="LWIP Ports for IP 0.0.0.0"},
+    -- todo: Tag ID anpassen
+HIL_TAG_LWIP_NETIDENT_BEHAVIOUR = 
+	{paramtype = 0x10e90001, datatype="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T", desc="LWIP netident behaviour"},
+
 }
 
 
@@ -892,6 +923,8 @@ TAG_HELP = {
 
     RCX_TAG_SERVX_PORT_NUMBER           = {file="RCX_TAG_SERVX_PORT_NUMBER_DATA_T.htm"},
 
+    HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
+    HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
 
 }
 

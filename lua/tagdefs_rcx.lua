@@ -7,6 +7,8 @@
 --  Changes:
 --    Date        Author  Description
 ---------------------------------------------------------------------------
+-- 2019-10-25     SL      added HIL_TAG_DDP_MODE_AFTER_STARTUP  0x00001081
+--                        added HIL_TAG_PHY_ENABLE_TIMEOUT      0x00001090
 -- 2018-10-01     SL      added HIL_TAG_REMANENT_DATA_RESPONSIBLE 0x00001070
 -- 2015-12-18     SL      changed %d to %u
 -- 2015-10-15     SL      added RCX_TAG_DPM_BEHAVIOUR 0x00001062
@@ -84,6 +86,9 @@ CONSTANTS = {
     RX_HIF_MODE_IO             = 4,     -- Peripheral I/O Bus
     RX_HIF_MODE_RSRVD1         = 5,     -- reserved define for internal use
 
+    -- DDP Mode
+    DDP_MODE_ACTIVE = 1,
+    DDP_MODE_PASSIVE = 0,    
 }
 
 
@@ -155,7 +160,10 @@ DPM_SETTINGS_DPM_MODE = {
     {name="PCI / Reserved1",    value = 5},
 }
 
-
+DDP_MODE = {
+    {name="Active",      value = 1},
+    {name="Passive",     value = 0},
+}
 
 -- add TSK_PRIO_01 ... TSK_PRIO_55 and TSK_TOK_01 ... TSK_TOK_55
 -- for task priorities: TSK_PRIO_01 = 8 ... TSK_PRIO_55 = 62
@@ -438,6 +446,26 @@ HIL_TAG_REMANENT_DATA_RESPONSIBLE_DATA_T =
 },
 
 
+----------------------------------------------------------------------------------------------
+-- DDP Mode after firmware startup
+
+HIL_TAG_DDP_INITIAL_STATE_DATA_T = {
+    {"UINT8", "bDdpModeAfterStartup",         desc="DDP mode after firmware startup", editor="comboedit", editorParam ={nBits=8, values=DDP_MODE}    
+    },
+    {"UINT8", "bReserved1",        desc="Reserved1",     mode = "hidden"},
+    {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
+    {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
+ 
+},
+
+----------------------------------------------------------------------------------------------
+-- Phy enable timeout after firmware startup
+
+HIL_TAG_PHY_ENABLE_TIMEOUT_DATA_T = {
+    {"UINT32", "ulPhyEnableTimeoutAfterStartup",  desc="Phy enable timeout after startup", editor="numedit", editorParam ={format="%u", minValue=0, maxValue=300}},
+},
+
+
 
 } -- end of structure definitions
 
@@ -486,7 +514,12 @@ RCX_TAG_DPM_BEHAVIOUR =
 	{paramtype = 0x00001062, datatype="RCX_TAG_DPM_BEHAVIOUR_DATA_T",         desc="DPM Behaviour"},
 HIL_TAG_REMANENT_DATA_RESPONSIBLE =
 	{paramtype = 0x00001070, datatype="HIL_TAG_REMANENT_DATA_RESPONSIBLE_DATA_T", desc="Remanent Data Responsibility"},
-	
+    
+    
+HIL_TAG_DDP_MODE_AFTER_STARTUP = 
+	{paramtype = 0x00001081, datatype="HIL_TAG_DDP_INITIAL_STATE_DATA_T", desc="DDP Mode after firmware startup"},
+HIL_TAG_PHY_ENABLE_TIMEOUT = 
+	{paramtype = 0x00001090, datatype="HIL_TAG_PHY_ENABLE_TIMEOUT_DATA_T", desc="Phy enable timeout after firmware startup"},
 }
 
 RCX_TAG_HELP = {
@@ -513,6 +546,9 @@ RCX_TAG_HELP = {
     RCX_TAG_DPM_BEHAVIOUR               = {file="RCX_TAG_DPM_BEHAVIOUR_DATA_T.htm"},
 
     HIL_TAG_REMANENT_DATA_RESPONSIBLE   = {file="HIL_TAG_REMANENT_DATA_RESPONSIBLE_DATA_T.htm"},
+    
+    HIL_TAG_DDP_MODE_AFTER_STARTUP      = {file="HIL_TAG_DDP_INITIAL_STATE_DATA_T.htm"},
+    HIL_TAG_PHY_ENABLE_TIMEOUT          = {file="HIL_TAG_PHY_ENABLE_TIMEOUT_DATA_T.htm"},
         
 }
 

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_DDP_INITIAL_STATE_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>DDP Mode after firmware startup</h2>
+
+<p>
+With this tag, you can control the DDP mode on firmware startup.
+The DDP is integrated in the firmware operating system.
+The DDP offers two modes: "active" or "passive" mode.
+This influences the possibilities of your application in regards of the usage
+of the DDP Set API to modify parameter in DDP.
+</p>
+
+<p>
+In "passive" mode the usage of the DDP Set API is possible (for writable
+parameters). The firmware will treat the writable DDP parameters as invalid
+(with all corresponding consequences) until the application informs the firmware
+that DDP parameters are now valid.
+The application is required to use the DDP API to set DDP mode to "active" later.
+Consequences of "passive" DDP mode (incomplete list)
+<ul>
+<li>protocol specific configuration is rejected</li>
+<li>NDIS is not working</li>
+</ul>
+</p>
+
+<p>
+In "active" mode the usage of DDP Set API is not possible and will be rejected.
+The firmware will directly use and activate the DDP parameters (which are
+typically contained in FDL).
+</p>
+
+<p>
+By default (if taglist is unchanged) the DDP starts in "active" more.
+In consequence, no DDP parameter can be changed with DDP Set API.
+</p>
+
+<p>
+</p>
+
+<p></p>
+
+<table border=1>
+<tr>
+<td>DDP mode after firmware startup</td>
+<td> </br>
+<ul>
+<li>Passive: Startup in mode "passive". Using DDP Set API is possible.</li>
+<li>Active:  Startup in mode "active".  Using DDP Set API is impossible.</li>
+</ul>
+</td>
+</tr>
+</table>
+</BODY>
+</HTML>
