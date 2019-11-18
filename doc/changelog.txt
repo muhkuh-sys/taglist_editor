@@ -5,6 +5,7 @@ Tag list editor 1.4.0.2
  * added tag HIL_TAG_PHY_ENABLE_TIMEOUT      0x00001090
  * added tag HIL_TAG_LWIP_PORTS_FOR_IP_ZERO  0x10e90000
  * added tag HIL_TAG_LWIP_NETIDENT_BEHAVIOUR 0x10e90001
+ * updated description for TAG_PROFINET_FEATURES_V2 0x30015002
 
 Tag list editor 1.4.0.1
  * added TAG_ECM_ENI_BUS_STATE 0x30009005
