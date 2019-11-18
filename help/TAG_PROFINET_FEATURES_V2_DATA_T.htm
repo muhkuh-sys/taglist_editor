@@ -37,10 +37,24 @@ Please refer to PROFINET IO Device API Manual for more details about the consequ
 <tr>
 	<td>Number of additional IO Connections (ARs)</td>
 	<td>
-	The number of additional cyclic PROFINET IO connections accepted by the firmware.<br>
-	Allowed values are 0 - 7.<br>
-	0: only 1 cyclic PROFINET connection is possible<br>
-	Please refer to technical data in PROFINET IO Device API Manual for the capabilities of the stack version used (it may support less than 7 additional ARs).
+	The number of additional cyclic PROFINET IO connections accepted by the firmware. 
+	This parameter relates to the Shared Device feature.<br>
+	Allowed values are 0 - 7:<br>
+	<ul>
+	<li>0: Only 1 cyclic PROFINET connection is possible. Shared Device is not supported.</li>
+	<li>1-7: In total, 2-8 cyclic PROFINET connections are supported. Shared device is supported.</li>
+	</ul>
+	Please refer to technical data in PROFINET IO Device API Manual for the capabilities of the stack version used (it may support less than 7 additional ARs).<br>
+	<br>
+	The value of this parameter has an influence on the GSDML file provided with the product. The GSDML parameter "NumberOfAR" needs to be set to the value of this parameter plus 1.<br>
+	<br>
+	<b>Special handling for firmware including System Redundancy:</b><br>
+	<ul>
+	<li>Setting this parameter to 0 still allows using S2 redundancy with 2 redundant IO-Controllers. Shared Device with 2 non-redundant IO Controllers is not supported in this case. This represents an IO Device supporting S2 redundancy but without Shared Device. <br>
+	In this special case, the GSDML parameter "NumberOfAR" needs to be set to value 2.</li>
+	<li>Setting this parameter to 1 (or higher) activates Shared Device plus S2 redundancy in the firmware. <br>
+	In this case, the default rule for GSDML parameter "NumberOfAR" applies and needs to be set to this value plus 1.</li>
+	</ul>
 	</td>
 </tr>
 
