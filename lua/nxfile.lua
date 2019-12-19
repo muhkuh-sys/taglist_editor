@@ -67,6 +67,11 @@ function buildNXFile(self)
             self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
             self.m_abData, self.m_abDataGap,
             self.m_abTaglist, self.m_abTagGap)
+    elseif isNxe(self) then
+        return netx_fileheader.makeNXEFile(
+            self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
+            self.m_abData, self.m_abDataGap,
+            self.m_abTaglist, self.m_abTagGap)
     else 
         return netx_fileheader.makeNXFile(
             self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
@@ -75,6 +80,32 @@ function buildNXFile(self)
     end
 end
 
+
+-- Update common CRC32
+-- 1. call makeNXIFile on both files to update MD5
+-- 2. combine MD5 checksums to obtain common CRC32, 
+-- 3. put common CRC32 into both common headers 
+-- 4. call makeNXIFile on both files again (this is done later)
+function updateCommonCRC32(tNXI, tNXE)
+	local fOk = false
+	local astrMsgs
+	local abNXI, abNXE
+	
+	abNXI, astrMsgs = tNXI:buildNXFile()
+	if abNXI then
+		abNXE, astrMsgs = tNXE:buildNXFile()
+		if abNXE then
+			local md5_nxi = tNXI.m_tCommonHeader.aulMD5
+			local md5_nxe = tNXE.m_tCommonHeader.aulMD5
+			local ulCommonCRC32 = netx_fileheader.calcCRC32B(md5_nxi, md5_nxe)
+			tNXI.m_tCommonHeader.ulCommonCRC32 = ulCommonCRC32
+			tNXE.m_tCommonHeader.ulCommonCRC32 = ulCommonCRC32
+			fOk = true
+		end
+	end
+	
+	return fOk, astrMsgs
+end
 
 -- returns true if headers and data are present
 function isComplete(self)
@@ -107,6 +138,10 @@ end
 
 function isNxi(self)
 	return netx_fileheader.isNxiBootHeader(self.m_tDefaultHeader)
+end
+
+function isNxe(self)
+	return netx_fileheader.isNxeBootHeader(self.m_tDefaultHeader)
 end
 
 -- returns "NXF", "NXO" etc.
@@ -228,6 +263,69 @@ function hasDeviceHeaderV1(self)
 	else
 		return fOk, strMsg
 	end
+end
+
+function needsExtensionFile(self)
+	local fRes = false
+	if isNxi(self) then
+		local tCH = self:getCommonHeader()
+		if tCH.ulCommonCRC32 ~= 0 then
+			fRes = true
+		end
+	end
+	
+	return fRes
+end
+
+-- Check if an NXE file matches an NXI file.
+-- self = NXI, tExtFile = Nxe file
+
+-- Check function to be called on 
+-- compare:
+-- common CRC in common header 
+-- device info header 
+-- module info headers 
+function isExtensionFileValid(tBaseFile, tExtFile)
+	local tCH1 = tBaseFile:getCommonHeader()
+	local tCH2 = tExtFile:getCommonHeader()
+	if tCH1.ulCommonCRC32 ~= tCH2.ulCommonCRC32 then
+		return false, "The common CRC values do not match."
+	end
+	
+	local abDH1 = tBaseFile:getDeviceHeader()
+	local abDH2 = tExtFile:getDeviceHeader()
+	if abDH1 ~= abDH2 then
+		return false, "The device headers do not match."
+	end
+	
+	-- Todo: extract and match module headers
+	
+	return true
+end
+
+
+function updateExtensionFile(tBaseFile, tExtFile)
+	local abDH1 = tBaseFile:getDeviceHeader()
+	tExtFile:setDeviceHeader(abDH1)
+	
+	local tCHBase = tBaseFile:getCommonHeader()
+	local tCHExt = tExtFile:getCommonHeader()
+	
+	if tCHBase.bNumModuleInfos ~= tCHExt.bNumModuleInfos then 
+		return false, "The base and extension file differ in the number of module info headers"
+	end
+	
+	local ulLen = netx_fileheader.DEVICE_INFO_V1_SIZE + tCHBase.bNumModuleInfos * netx_fileheader.MODULE_INFO_V1_SIZE
+	
+	if tCHBase.ulHeaderLength - netx_fileheader.DEFAULT_HEADER_SIZE + netx_fileheader.COMMON_HEADER_V3_SIZE < ulLen then
+		return false, "Invalid header length in base file"
+	end
+	
+	if tCHExt.ulHeaderLength - netx_fileheader.DEFAULT_HEADER_SIZE + netx_fileheader.COMMON_HEADER_V3_SIZE < ulLen then
+		return false, "Invalid header length in extension file"
+	end
+	
+	tExtFile.m_abOtherHeaders = tBaseFile.m_abOtherHeaders:sub(1, ulLen) .. tExtFile.m_abOtherHeaders:sub(ulLen+1)
 end
 
 --------------------------------------------------------------------------

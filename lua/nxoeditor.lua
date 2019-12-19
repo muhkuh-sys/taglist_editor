@@ -56,6 +56,16 @@ function createCheckBox(parentPanel, strLabel, fChecked, eventFunction)
 	return checkbox
 end
 
+-- Dialog with Ok button
+function messageDialog(strCaption, strMessage)
+	print(strCaption .. ": " .. strMessage)
+	local dialog = wx.wxMessageDialog(__MUHKUH_PANEL, strMessage, strCaption,
+		wx.wxOK + wx.wxSTAY_ON_TOP)
+	dialog:ShowModal()
+	dialog:Destroy()
+end
+
+-- Dialog with Ok and Cancel buttons
 function confirmDialog(strCaption, strMessage)
 	print(strCaption .. ": " .. strMessage)
 	local dialog = wx.wxMessageDialog(__MUHKUH_PANEL, strMessage, strCaption,
@@ -65,6 +75,7 @@ function confirmDialog(strCaption, strMessage)
 	return res==wx.wxID_OK
 end
 
+-- Dialog with Yes/No buttons
 function yesNoDialog(strCaption, strMessage)
 	print(strCaption .. ": " .. strMessage)
 	local dialog = wx.wxMessageDialog(__MUHKUH_PANEL, strMessage, strCaption,
@@ -111,11 +122,12 @@ end
 
 -- DEBUG = true
 m_nxfile = nil
-
+m_nxfile_ext = nil
 m_headerFilebar = nil
 m_elfFilebar = nil
 m_tagsFilebar = nil
 m_nxFilebar = nil
+m_nxExtFilebar = nil
 
 m_buttonCreateTags = nil
 m_buttonDeleteTags = nil
@@ -216,10 +228,12 @@ end
 function emptyNxo()
 	m_nxfile = nxfile.new()
 	m_nxfile:initNxo()
+	m_nxfile_ext = nil
 	m_headerFilebar:clearFilename()
 	m_elfFilebar:clearFilename()
 	m_tagsFilebar:clearFilename()
 	m_nxFilebar:clearFilename()
+	m_nxExtFilebar:clearFilename()
 	m_fParamsLoaded = nil
 	taglistedit.destroyEditors()
 end
@@ -268,6 +282,9 @@ function setButtons() -- should be adapt_GUI or something
 	m_headerFilebar:show(fShow_Hdr_Elf)
 	m_elfFilebar:show(fShow_Hdr_Elf)
 
+	local fShow_Ext = m_nxfile:needsExtensionFile() 
+	m_nxExtFilebar:show(fShow_Ext)
+
 	-- Show the current file type
 	local strType = m_nxfile:getHeaderType() or "unknown"
 	m_fileBox:SetLabel(string.format("Load/Save (Current file type: %s)", strType))
@@ -291,6 +308,7 @@ strNxFilenameFilters = "NXO/NXF/NXI/BIN files (*.nxo/*.nxf/*.nxi/*.bin)|*.nxo;*.
 strsaveNxFilenameFilters = "NXO files (*.nxo)|*.nxo|NXF files (*.nxf)|*.nxf|NXI files (*.nxi)|*.nxi|BIN files (*.bin)|*.bin|All Files (*)|*"
 strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|All Files (*)|*"
 strNxiFilenameFilters = "NXI files (*.nxi)|*.nxi|All Files (*)|*"
+strNxeFilenameFilters = "NXE files (*.nxe)|*.nxe|All Files (*)|*"
 strNxfFilenameFilters = "NXF files (*.nxf)|*.nxf|NXI files (*.nxi)|*.nxi|BIN files (*.bin)|*.bin|All Files (*)|*"
 strDefaultFilenameFilters = "All Files (*)|*"
 
@@ -376,6 +394,7 @@ function saveFile1(filebar, strFilename, strTitle, strFilenameFilters, abBin)
 		filebar:setFilename(strFilename)
 		setButtons()
 	end
+	return iStatus
 end
 
 
@@ -512,6 +531,7 @@ function checkEndMarker(atTags)
 end
 
 function loadNx(strFilename)
+	--utils.setvbs_debug()
 	strFilename = strFilename or loadFileDialog(m_panel, "Select NXO/NXF/NXI/bin file", strNxFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
@@ -551,6 +571,45 @@ function loadNx(strFilename)
 				messageDialog("No tag list", "The file does not contain a tag list")
 				m_nxFilebar:setFilename(strFilename)
 			end
+			
+			
+			-- Check if the file is an extended firmware which is split over two files (NXI/NXE).
+			-- If true, ask the user to select the extension file. 
+			
+			-- Todo: was fuer Fehlerzustaende?
+			-- Todo: Extension aus Filetyp vorwaehlen
+			if m_nxfile:needsExtensionFile() then
+				local fExtLoaded = false
+				
+				messageDialog("Extended firmware", 
+				"This firmware file requires an extension file (NXE/NAE).")
+				
+				local strFilenameExt = loadFileDialog(m_panel, "Select extension file", strNxeFilenameFilters)
+				
+				if strFilenameExt then
+					local iStatus, abBin = loadFile(strFilenameExt)
+					if iStatus==STATUS_OK then
+						m_nxfile_ext = nxfile.new()
+						fOk, astrMsgs = m_nxfile_ext:parseBin(abBin)
+						showMessages(fOk, "Warning", "Error parsing extension file", astrMsgs)
+						if fOk then
+							fOk, strMsg = nxfile.isExtensionFileValid(m_nxfile, m_nxfile_ext)
+							if fOk then
+								print("Common CRC match")
+								fExtLoaded = true
+							else
+								print("Common CRC mismatch !!")
+							end
+						end
+					end
+				end
+				
+				if fExtLoaded==true then 
+					m_nxExtFilebar:setFilename(strFilenameExt)
+				else
+					emptyNxo()
+				end
+			end
 		end
 		setButtons()
 	end
@@ -570,11 +629,32 @@ function saveNx(strFilename)
 		m_nxfile:setTaglistBin(abTags, true)
 	end
 
-	-- build nxo file
-	local abNxFile = m_nxfile:buildNXFile()
-	if not abNxFile then
-		errorDialog("Error", "Failed to build NX* file")
-		return
+	local abNxFile
+	local abNxFile_ext
+	
+	if m_nxfile_ext == nil then
+		-- build nxo file
+		abNxFile = m_nxfile:buildNXFile()
+		if not abNxFile then
+			errorDialog("Error", "Failed to build NX* file")
+			return
+		end
+	else
+		-- NXI + NXE file
+		nxfile.updateExtensionFile(m_nxfile, m_nxfile_ext)
+		nxfile.updateCommonCRC32(m_nxfile, m_nxfile_ext)
+		
+		abNxFile = m_nxfile:buildNXFile()
+		if not abNxFile then
+			errorDialog("Error", "Failed to build NXI file")
+			return
+		end
+		abNxFile_ext = m_nxfile_ext:buildNXFile()
+		if not abNxFile_ext then
+			errorDialog("Error", "Failed to build NXE file")
+			return
+		end
+		
 	end
 
 	local strFilter, strTitle
@@ -591,7 +671,16 @@ function saveNx(strFilename)
 		strFilter = strsaveNxFilenameFilters
 		strTitle = "Save as"
 	end
-	saveFile1(m_nxFilebar, strFilename, strTitle, strFilter, abNxFile)
+	local iStatus = saveFile1(m_nxFilebar, strFilename, strTitle, strFilter, abNxFile)
+	
+	if iStatus==STATUS_OK and abNxFile_ext~=nil then
+		if strFilename ~= nil then
+			strFilename = m_nxExtFilebar:getFilename()
+		end
+		strFilter = strNxeFilenameFilters
+		strTitle = "Save NXE file as"
+		saveFile1(m_nxExtFilebar, strFilename, strTitle, strFilter, abNxFile_ext)
+	end
 end
 
 
@@ -730,7 +819,7 @@ function createPanel()
 	m_elfFilebar = insertFilebar(parent, fileSizer, "ELF", loadElf, saveElf)
 	m_tagsFilebar = insertFilebar(parent, fileSizer, "Tag list", loadTags, saveTags)
 	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF/NXI", loadNx, saveNx)
-
+	m_nxExtFilebar = insertFilebar(parent, fileSizer, "NXE", nil, nil)
 	-- HTML help window
 	m_helpWindow = wx.wxHtmlWindow(m_splitterPanel)
 
