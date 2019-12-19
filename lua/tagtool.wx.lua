@@ -720,13 +720,15 @@ function edit(strInputFile, strEditsFile, strOutputFile)
 		end
 	end
 	
-	-- rebuild taglist binary
-	local abTags = taglist.paramsToBin(atTags)
-	
-	-- replace the tag list
-	local fOk, strError = nx:setTaglistBin(abTags, true)
-	if not fOk then
-		return fOk, strError
+	if nx:hasTaglist() then
+		-- rebuild taglist binary
+		local abTags = taglist.paramsToBin(atTags)
+		
+		-- replace the tag list
+		local fOk, strError = nx:setTaglistBin(abTags, true)
+		if not fOk then
+			return fOk, strError
+		end
 	end
 	
 	-- rebuild the firmware
@@ -742,6 +744,48 @@ function edit(strInputFile, strEditsFile, strOutputFile)
 end
 
 
+function update_ext_fw(strInputFile, strInputFile2, strOutputFile, strOutputFile2)
+	local tRes1, msgs = loadInputFile(strInputFile)
+	if not tRes1 then
+		return false, msgs
+	end
+
+	local nx_base = tRes1.tNx
+
+	local tRes2, msgs = loadInputFile(strInputFile2)
+	if not tRes2 then
+		return false, msgs
+	end
+
+	local nx_ext = tRes2.tNx
+
+	vbs_printf("Updating device info/module info in extension file")
+	nxfile.updateExtensionFile(nx_base, nx_ext)
+	vbs_printf("Updating common CRC32")
+	nxfile.updateCommonCRC32(nx_base, nx_ext)
+
+	
+	local abBin_base, astrErrors = nx_base:buildNXFile()
+	if not abBin_base then 
+		return false, astrErrors
+	end
+
+	local abBin_ext, astrErrors = nx_ext:buildNXFile()
+	if not abBin_ext then 
+		return false, astrErrors
+	end
+	
+	
+	-- write the result
+	local fOk, strMsg = writeBin(strOutputFile, abBin_base)
+	
+	if fOk then
+		fOk, strMsg = writeBin(strOutputFile2, abBin_ext)
+	end
+	
+	return fOk, strMsg
+	
+end
 
 ----------------------------------------------------------------------------
 --        print known tags and device header
@@ -948,6 +992,7 @@ Usage:
    tagtool edit        [-v|-debug] infile editsfile outfile
    tagtool list        [-v|-debug] infile 
    tagtool diff        [-v|-debug] infile1 infile2 
+   tagtool upd_extfw   [-v|-debug] infile1 infile2 outfile1 outfile2
    tagtool dump_tagdefs[-v|-debug] outfile
    tagtool [help|-h]
    tagtool help_tags
@@ -959,6 +1004,7 @@ Modes:
    edit         Changes values in the tag list or device header
    list         Prints the tags list and the device header
    diff         Extract changes between infile1 and infile2
+   upd_extfw    update extended firmware files (NXI/NXE)
    dump_tagdefs Generate tag definitions in JSON format
    help         Prints this help text
    help_tags    Prints a list of the known tags
@@ -1008,7 +1054,8 @@ local MODE_SETTAGS = 5
 local MODE_EDIT = 6
 local MODE_LIST = 7
 local MODE_DIFF = 8
-local MODE_DUMP_TAGDEFS = 9
+local MODE_UPD_EXTFW = 9
+local MODE_DUMP_TAGDEFS = 10
 
 local fArgsOk = false
 local iArg = 1
@@ -1055,6 +1102,10 @@ elseif iArg <= #arg then
 		iMode = MODE_DIFF
 		iArg = iArg + 1
     
+	elseif strMode=="upd_extfw" then
+		iMode = MODE_UPD_EXTFW
+		iArg = iArg + 1
+		
 	elseif strMode=="dump_tagdefs" then
 		iMode = MODE_DUMP_TAGDEFS
 		iArg = iArg + 1
@@ -1107,6 +1158,15 @@ elseif (iMode==MODE_DUMP_TAGDEFS) and iRemArgs == 1 then
 	strOutputFile = arg[iArg]
 	iArg = iArg+1
 	fArgsOk = true
+	
+	
+elseif iMode==MODE_UPD_EXTFW and iRemArgs == 4 then
+	strInputFile = arg[iArg]
+	strInputFile2 = arg[iArg+1]
+	strOutputFile = arg[iArg+2]
+	strOutputFile2 = arg[iArg+3]
+	iArg = iArg+4
+	fArgsOk = true
 end
 
 -- execute
@@ -1143,6 +1203,9 @@ elseif iMode==MODE_LIST then
 elseif iMode==MODE_DIFF then
 	fOk, msgs = listdiffs(strInputFile, strInputFile2)
 	
+elseif iMode==MODE_UPD_EXTFW then
+	fOk, msgs = update_ext_fw(strInputFile, strInputFile2, strOutputFile, strOutputFile2)
+
 elseif iMode==MODE_DUMP_TAGDEFS then
 	fOk, msgs = tagdefs2json.tagdefs2json_main(strOutputFile)
 end
