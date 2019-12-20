@@ -1,5 +1,14 @@
 Change log for Tag List Editor
 
+Tag list editor 1.5.0.0 Beta
+ * added support for two-part extended firmware consisting of
+   an NXI and an NXE file. 
+ - The editor allows editing tag list and device info of 
+   an extended firmware.
+ - New Tagtool command: upd_extfw in.nxi in.nxe out.nxi out.nxe
+   Copies Device and module info headers from NXI file to NXE file
+   and updates checksums in both files.
+
 Tag list editor 1.4.0.2
  * added tag HIL_TAG_DDP_MODE_AFTER_STARTUP  0x00001081
  * added tag HIL_TAG_PHY_ENABLE_TIMEOUT      0x00001090
