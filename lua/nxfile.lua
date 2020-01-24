@@ -28,6 +28,8 @@ require("netx_fileheader")
 
 function new()
 	local t = {}
+	t.m_abVectors        = ""
+	t.m_tHBootHeader     = netx_fileheader.makeEmptyHBootHeader()
 	t.m_tDefaultHeader = netx_fileheader.makeEmptyDefaultHeader()
 	t.m_tCommonHeader = netx_fileheader.makeEmptyCommonHeader()
 	t.m_abOtherHeaders   = ""
@@ -41,28 +43,94 @@ function new()
 	return t
 end
 
+function showMessages(...)
+	if not ... then return end
+
+	local messages = {}
+	for _, v in pairs({...}) do
+		if #messages > 0 then
+			table.insert(messages, "")
+		end
+		if type(v) == "string" and v:len()>0 then
+			table.insert(messages, v)
+		elseif type(v) == "table" then
+			for _, str in pairs(v) do
+				table.insert(messages, str)
+			end
+		end
+	end
+
+	for k,v in pairs(messages) do print(k,v) end
+end
 
 function parseBin(self, abBin)
-	local fOk, astrErrors, 
-		tDefaultHeader, tCommonHeader, 
-		abHeaders, abHeaderGap, abData, abDataGap, abTags, abTagGap
-		= netx_fileheader.parseNXFile(abBin)
+	local fOk_ret, astrErrors_ret
+	
+	-- try to parse as an NAI file
+	print("Trying NAI")
+	local fOk, astrErrors, abVectors, tHBootHeader, tDefaultHeader, tCommonHeader, abDevInfo, abRest = netx_fileheader.parseNAIFile(abBin)
+	showMessages(astrErrors)
+	fOk_ret, astrErrors_ret = fOk, astrErrors
+    
 	if fOk then
+		self.m_abVectors        = abVectors
+		self.m_tHBootHeader     = tHBootHeader
 		self.m_tDefaultHeader   = tDefaultHeader
 		self.m_tCommonHeader    = tCommonHeader
-		self.m_abOtherHeaders   = abHeaders
-		self.m_abHeaderGap      = abHeaderGap
-		self.m_abData           = abData
-		self.m_abDataGap        = abDataGap
-		self.m_abTaglist        = abTags
-		self.m_abTagGap         = abTagGap
+		self.m_abOtherHeaders   = abDevInfo
+		self.m_abHeaderGap      = ""
+		self.m_abData           = abRest
+		self.m_abDataGap        = ""
+		self.m_abTaglist        = ""
+		self.m_abTagGap         = ""
+	else
+		-- try to parse an NAE file
+		print("Trying NAE")
+		local fOk, astrErrors, tHBootHeader, tDefaultHeader, tCommonHeader, abDevInfo, abRest = netx_fileheader.parseNAEFile(abBin)
+		showMessages(astrErrors)
+		fOk_ret, astrErrors_ret = fOk, astrErrors
+		if fOk then
+			self.m_abVectors        = ""
+			self.m_tHBootHeader     = tHBootHeader
+			self.m_tDefaultHeader   = tDefaultHeader
+			self.m_tCommonHeader    = tCommonHeader
+			self.m_abOtherHeaders   = abDevInfo
+			self.m_abHeaderGap      = ""
+			self.m_abData           = abRest
+			self.m_abDataGap        = ""
+			self.m_abTaglist        = ""
+			self.m_abTagGap         = ""
+			
+		else
+			print("Trying NXF/NXO/NXI/NXE")
+			local fOk, astrErrors, 
+				tDefaultHeader, tCommonHeader, 
+				abHeaders, abHeaderGap, abData, abDataGap, abTags, abTagGap
+				= netx_fileheader.parseNXFile(abBin)
+			print(fOk, astrErrors)
+			showMessages(astrErrors)
+			fOk_ret, astrErrors_ret = fOk, astrErrors
+			if fOk then
+				self.m_abVectors        = ""
+				self.m_tHBootHeader     = ""
+				self.m_tDefaultHeader   = tDefaultHeader
+				self.m_tCommonHeader    = tCommonHeader
+				self.m_abOtherHeaders   = abHeaders
+				self.m_abHeaderGap      = abHeaderGap
+				self.m_abData           = abData
+				self.m_abDataGap        = abDataGap
+				self.m_abTaglist        = abTags
+				self.m_abTagGap         = abTagGap
+			end
+		end
 	end
-	return fOk, astrErrors
+	
+	return fOk_ret, astrErrors_ret
 end
 
 -- returns binary/nil, messages
 function buildNXFile(self)
-    if isNxi(self) then
+    if isNxi(self) or isMxf(self) then
         return netx_fileheader.makeNXIFile(
             self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
             self.m_abData, self.m_abDataGap,
@@ -72,12 +140,178 @@ function buildNXFile(self)
             self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
             self.m_abData, self.m_abDataGap,
             self.m_abTaglist, self.m_abTagGap)
-    else 
+    elseif isNai(self) then
+        return netx_fileheader.makeNAI_NAEFile(
+            self.m_abVectors, self.m_tHBootHeader,
+            self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abData)
+    elseif isNae(self) then
+        return netx_fileheader.makeNAI_NAEFile(
+            "", self.m_tHBootHeader,
+            self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abData)
+    else
         return netx_fileheader.makeNXFile(
             self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
             self.m_abData, self.m_abDataGap,
             self.m_abTaglist, self.m_abTagGap)
     end
+end
+
+
+-- returns true if headers and data are present
+function isComplete(self)
+	return self:hasHeaders() and self:hasData()
+end
+
+
+-- returns a string to pad abBin to the next multiple of length
+function getPadding(abBin, length)
+	return string.rep(string.char(0), (length - abBin:len()) % length)
+end
+
+
+--------------------------------------------------------------------------
+--                  handle base/extension file pairs
+--------------------------------------------------------------------------
+
+function needsExtensionFile(self)
+	return getExtensionFileType(self) ~= nil
+end
+
+function getExtensionFileType(self)
+	local tCH = self:getCommonHeader()
+	if tCH.ulCommonCRC32 ~= 0 then
+		if isNxi(self) then
+			return "NXE"
+		elseif isNai(self) then
+			return "NAE"
+		end
+	end
+	
+	return nil
+end
+
+
+-- Checking if base and extension files match:
+-- Default header: file type magic must be NXI/NXE or NAI/NAE
+-- Common header bNumModuleInfos must be equal
+-- Common header common CRC32 must be equal and non-null
+-- Contents of device and module headers must be equal
+-- Length of header area must be large enough for device and module info headers
+
+function isExtensionFileValid(tBaseFile, tExtFile)
+	if not tBaseFile:isNxi() and not tBaseFile:isNai() then
+		return false, "The base file does not require an extension file"
+	elseif tBaseFile:isNxi() and not tExtFile:isNxe() then
+		return false, "The base file has type NXI, but the extension file does not have type NXE."
+	elseif tBaseFile:isNai() and not tExtFile:isNae() then
+		return false, "The base file has type NAI, but the extension file does not have type NAE."
+	end
+	
+	local tCHBase = tBaseFile:getCommonHeader()
+	local tCHExt = tExtFile:getCommonHeader()
+	
+	if tCHBase.ulCommonCRC32 ~= tCHExt.ulCommonCRC32 then
+		return true, "The common CRC values do not match."
+	end
+	
+	-- calculate the minimal length of the header area
+	local ulMinHeaderLen = 
+		netx_fileheader.DEFAULT_HEADER_SIZE + 
+		netx_fileheader.COMMON_HEADER_V3_SIZE +
+		netx_fileheader.DEVICE_INFO_V1_SIZE + 
+		tCHBase.bNumModuleInfos * netx_fileheader.MODULE_INFO_V1_SIZE
+	
+	if tCHBase.ulHeaderLength  < ulMinHeaderLen then
+		return false, "Invalid header length in base file"
+	elseif tCHExt.ulHeaderLength < ulMinHeaderLen then
+		return false, "Invalid header length in extension file"
+	end
+	
+	local abDH1 = tBaseFile:getDeviceHeader()
+	local abDH2 = tExtFile:getDeviceHeader()
+	if abDH1 ~= abDH2 then
+		return true, "The device headers do not match."
+	end
+	
+	if tCHBase.bNumModuleInfos ~= tCHExt.bNumModuleInfos then 
+		return false, "The base and extension file differ in the number of module info headers"
+	end
+	
+	local ulModuleInfoStart = netx_fileheader.DEVICE_INFO_V1_SIZE + 1
+	local ulModuleInfoEnd  = netx_fileheader.DEVICE_INFO_V1_SIZE + tCHBase.bNumModuleInfos * netx_fileheader.MODULE_INFO_V1_SIZE
+	
+	local abBaseModuleInfo = tBaseFile.m_abOtherHeaders:sub(ulModuleInfoStart, ulModuleInfoEnd)
+	local abExtModuleInfo  = tBaseFile.m_abOtherHeaders:sub(ulModuleInfoStart, ulModuleInfoEnd)
+	if abBaseModuleInfo~=abExtModuleInfo then
+		return true, "The module info headers do not match"
+	end
+	
+	return true
+end
+
+
+
+-- Check if an NXE file matches an NXI file.
+-- self = NXI, tExtFile = Nxe file
+
+-- Check function to be called on 
+-- compare:
+-- common CRC in common header 
+-- device info header 
+-- module info headers 
+function __isExtensionFileValid(tBaseFile, tExtFile)
+	local tCH1 = tBaseFile:getCommonHeader()
+	local tCH2 = tExtFile:getCommonHeader()
+	if tCH1.ulCommonCRC32 ~= tCH2.ulCommonCRC32 then
+		return false, 
+		"The base and extension file do not seem to belong to each other.\n"..
+		"The common CRC values do not match."
+	end
+	
+	local abDH1 = tBaseFile:getDeviceHeader()
+	local abDH2 = tExtFile:getDeviceHeader()
+	if abDH1 ~= abDH2 then
+		return false, 
+		"The base and extension file do not seem to belong to each other.\n"..
+		"The device headers do not match."
+	end
+	
+	-- Todo: extract and match module headers
+	
+	return true
+end
+
+-- 1. copy device info and module info headers from the base file to the extension file.
+-- 2. update the checksums
+-- 3. calculate commmon CRC32
+-- 4. update commonCRC32 in base and extension file.
+-- 5. update the checksums 
+
+-- The base and extension file must have the same number of module info headers.
+-- Sanity checks on offsets/sizes 
+-- Replace the device header in the extension file with the one of the base file.
+function updateExtensionFile(tBaseFile, tExtFile)
+	local abDH1 = tBaseFile:getDeviceHeader()
+	tExtFile:setDeviceHeader(abDH1)
+	
+	local tCHBase = tBaseFile:getCommonHeader()
+	local tCHExt = tExtFile:getCommonHeader()
+	
+	if tCHBase.bNumModuleInfos ~= tCHExt.bNumModuleInfos then 
+		return false, "The base and extension file differ in the number of module info headers"
+	end
+	
+	local ulLen = netx_fileheader.DEVICE_INFO_V1_SIZE + tCHBase.bNumModuleInfos * netx_fileheader.MODULE_INFO_V1_SIZE
+	
+	if tCHBase.ulHeaderLength - netx_fileheader.DEFAULT_HEADER_SIZE + netx_fileheader.COMMON_HEADER_V3_SIZE < ulLen then
+		return false, "Invalid header length in base file"
+	end
+	
+	if tCHExt.ulHeaderLength - netx_fileheader.DEFAULT_HEADER_SIZE + netx_fileheader.COMMON_HEADER_V3_SIZE < ulLen then
+		return false, "Invalid header length in extension file"
+	end
+	
+	tExtFile.m_abOtherHeaders = tBaseFile.m_abOtherHeaders:sub(1, ulLen) .. tExtFile.m_abOtherHeaders:sub(ulLen+1)
 end
 
 
@@ -107,17 +341,6 @@ function updateCommonCRC32(tNXI, tNXE)
 	return fOk, astrMsgs
 end
 
--- returns true if headers and data are present
-function isComplete(self)
-	return self:hasHeaders() and self:hasData()
-end
-
-
--- returns a string to pad abBin to the next multiple of length
-function getPadding(abBin, length)
-	return string.rep(string.char(0), (length - abBin:len()) % length)
-end
-
 --------------------------------------------------------------------------
 --                  Boot/default header and file type
 --------------------------------------------------------------------------
@@ -140,8 +363,20 @@ function isNxi(self)
 	return netx_fileheader.isNxiBootHeader(self.m_tDefaultHeader)
 end
 
+function isMxf(self)
+	return netx_fileheader.isMxfBootHeader(self.m_tDefaultHeader)
+end
+
 function isNxe(self)
 	return netx_fileheader.isNxeBootHeader(self.m_tDefaultHeader)
+end
+
+function isNai(self)
+	return netx_fileheader.isNaiBootHeader(self.m_tDefaultHeader)
+end
+
+function isNae(self)
+	return netx_fileheader.isNaeBootHeader(self.m_tDefaultHeader)
 end
 
 -- returns "NXF", "NXO" etc.
@@ -175,6 +410,7 @@ end
 -- sets common header V3, device info, and module infos; NOT the default header!
 -- (as it is not contained in the file)
 
+-- used only on NXO files.
 function setHeadersBin(self, abBin)
 	if isNxi(self) then
 		error("setHeadersBin not supported on NXI files.")
@@ -204,6 +440,7 @@ end
 
 
 -- gets common header V3, device info, and module infos; NOT the default header!
+-- used only on NXO files.
 function getHeadersBin(self)
 	if self.m_tCommonHeader and self.m_abOtherHeaders then
 		local abCH = netx_fileheader.headerToBin(self.m_tCommonHeader, netx_fileheader.COMMON_HEADER_V3_SPEC)
@@ -265,76 +502,14 @@ function hasDeviceHeaderV1(self)
 	end
 end
 
-function needsExtensionFile(self)
-	local fRes = false
-	if isNxi(self) then
-		local tCH = self:getCommonHeader()
-		if tCH.ulCommonCRC32 ~= 0 then
-			fRes = true
-		end
-	end
-	
-	return fRes
-end
-
--- Check if an NXE file matches an NXI file.
--- self = NXI, tExtFile = Nxe file
-
--- Check function to be called on 
--- compare:
--- common CRC in common header 
--- device info header 
--- module info headers 
-function isExtensionFileValid(tBaseFile, tExtFile)
-	local tCH1 = tBaseFile:getCommonHeader()
-	local tCH2 = tExtFile:getCommonHeader()
-	if tCH1.ulCommonCRC32 ~= tCH2.ulCommonCRC32 then
-		return false, "The common CRC values do not match."
-	end
-	
-	local abDH1 = tBaseFile:getDeviceHeader()
-	local abDH2 = tExtFile:getDeviceHeader()
-	if abDH1 ~= abDH2 then
-		return false, "The device headers do not match."
-	end
-	
-	-- Todo: extract and match module headers
-	
-	return true
-end
-
-
-function updateExtensionFile(tBaseFile, tExtFile)
-	local abDH1 = tBaseFile:getDeviceHeader()
-	tExtFile:setDeviceHeader(abDH1)
-	
-	local tCHBase = tBaseFile:getCommonHeader()
-	local tCHExt = tExtFile:getCommonHeader()
-	
-	if tCHBase.bNumModuleInfos ~= tCHExt.bNumModuleInfos then 
-		return false, "The base and extension file differ in the number of module info headers"
-	end
-	
-	local ulLen = netx_fileheader.DEVICE_INFO_V1_SIZE + tCHBase.bNumModuleInfos * netx_fileheader.MODULE_INFO_V1_SIZE
-	
-	if tCHBase.ulHeaderLength - netx_fileheader.DEFAULT_HEADER_SIZE + netx_fileheader.COMMON_HEADER_V3_SIZE < ulLen then
-		return false, "Invalid header length in base file"
-	end
-	
-	if tCHExt.ulHeaderLength - netx_fileheader.DEFAULT_HEADER_SIZE + netx_fileheader.COMMON_HEADER_V3_SIZE < ulLen then
-		return false, "Invalid header length in extension file"
-	end
-	
-	tExtFile.m_abOtherHeaders = tBaseFile.m_abOtherHeaders:sub(1, ulLen) .. tExtFile.m_abOtherHeaders:sub(ulLen+1)
-end
-
 --------------------------------------------------------------------------
 --                         Data/ELF section
 --------------------------------------------------------------------------
+-- used only in relation to nxo files
 
 function setData(self, abBin)
-	if isNxi(self) then
-		error("setData not supported on NXI files.")
+	if isNxi(self) or isNxe(self) or isMxf(self) then
+		error("setData not supported on NXI/NXE/MXF files.")
 	end
 	abBin = abBin or ""
 	self.m_abData = abBin
@@ -371,15 +546,15 @@ function setTaglistBin(self, abBin, fKeepGap)
 	abBin = abBin or ""
 	local tCH = self.m_tCommonHeader
 	
-    -- If file is an NXI, just replace the tag list.
+    -- If file is an NXI or MXF, just replace the tag list.
     -- The tag list can only be replaced with one that has the same size as the old one.
-    if isNxi(self) then
+    if isNxi(self) or isMxf(self) then
         if self.m_abTaglist:len() == abBin:len() then
             self.m_abTaglist = abBin
             -- todo: replace the tag list in the binary.
             return true
         else 
-            return false, "The taglist of an NXI file can only be replaced with one of the same size."
+            return false, "The taglist of an NXI/MXF file can only be replaced with one of the same size."
         end
     end
     

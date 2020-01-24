@@ -301,15 +301,35 @@ end
 ---------------------------------------------------------------------
 -- loading and saving
 ---------------------------------------------------------------------
+
+-- filters for loading NXO parts
 strHdrFilenameFilters = "Header files (*.bin)|*.bin|All Files (*)|*"
 strElfFilenameFilters = "ELF files (*.elf)|*.elf|All Files (*)|*"
 strTagFilenameFilters = "Tag list files (*.bin)|*.bin|All Files (*)|*"
-strNxFilenameFilters = "NXO/NXF/NXI/BIN files (*.nxo/*.nxf/*.nxi/*.bin)|*.nxo;*.nxf;*.nxi;*.bin|All Files (*)|*"
-strsaveNxFilenameFilters = "NXO files (*.nxo)|*.nxo|NXF files (*.nxf)|*.nxf|NXI files (*.nxi)|*.nxi|BIN files (*.bin)|*.bin|All Files (*)|*"
+
+-- used by loadNx
+strNxFilenameFilters = "NXO/NXF/NXI/MXF/NAI/BIN files (*.nxo/*.nxf/*.nxi/*.mxf/*.nai/*.bin)|*.nxo;*.nxf;*.nxi;*.mxf;*.nai;*.bin|All Files (*)|*"
+
+-- used by saveNx if file type is neither nxf, nxo nor nxi
+strsaveNxFilenameFilters = 
+    "NXO files (*.nxo)|*.nxo|"..
+    "NXF files (*.nxf)|*.nxf|"..
+    "NXI files (*.nxi)|*.nxi|"..
+    "MXF files (*.mxf)|*.mxf|"..
+    "NAI files (*.nai)|*.nai|"..
+    "BIN files (*.bin)|*.bin|"..
+    "All Files (*)|*"
+
+-- used by saveNx (nxe also loadNx)
 strNxoFilenameFilters = "NXO files (*.nxo)|*.nxo|All Files (*)|*"
 strNxiFilenameFilters = "NXI files (*.nxi)|*.nxi|All Files (*)|*"
 strNxeFilenameFilters = "NXE files (*.nxe)|*.nxe|All Files (*)|*"
-strNxfFilenameFilters = "NXF files (*.nxf)|*.nxf|NXI files (*.nxi)|*.nxi|BIN files (*.bin)|*.bin|All Files (*)|*"
+strNaiFilenameFilters = "NAI files (*.nai)|*.nai|All Files (*)|*"
+strNaeFilenameFilters = "NAE files (*.nae)|*.nae|All Files (*)|*"
+strMxfFilenameFilters = "MXF files (*.mxf)|*.mxf|All Files (*)|*"
+strNxfFilenameFilters = "NXF files (*.nxf)|*.nxf|BIN files (*.bin)|*.bin|All Files (*)|*"
+
+-- default filters used by load/save dialogs when no filter is specified
 strDefaultFilenameFilters = "All Files (*)|*"
 
 function loadFileDialog(parent, strTitle, strFilters)
@@ -532,18 +552,24 @@ end
 
 function loadNx(strFilename)
 	--utils.setvbs_debug()
-	strFilename = strFilename or loadFileDialog(m_panel, "Select NXO/NXF/NXI/bin file", strNxFilenameFilters)
+	strFilename = strFilename or loadFileDialog(m_panel, "Select NXF/NXI/MXF/NXO/bin file", strNxFilenameFilters)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	-- loaded successfully
+	print("***B")
+	
 	if iStatus==STATUS_OK then
 		emptyNxo()
 
 		local fOk, astrMsgs = m_nxfile:parseBin(abBin)
 		showMessages(fOk, "Warning", "Error parsing file", astrMsgs)
-
+		print("***C")
+		print(fOk)
+		print(astrMsgs)
 		-- overall file structure is ok, now look after the tag list.
 		if fOk then
+			print("***D")
+
 			-- file has tag list
 			if m_nxfile:hasTaglist() then
 				local abTags = m_nxfile:getTaglistBin()
@@ -572,6 +598,7 @@ function loadNx(strFilename)
 				m_nxFilebar:setFilename(strFilename)
 			end
 			
+			print("***A")
 			
 			-- Check if the file is an extended firmware which is split over two files (NXI/NXE).
 			-- If true, ask the user to select the extension file. 
@@ -581,10 +608,17 @@ function loadNx(strFilename)
 			if m_nxfile:needsExtensionFile() then
 				local fExtLoaded = false
 				
+				local strFilter = strDefaultFilenameFilters
+				if m_nxfile:isNxi() then
+					strFilter = strNxeFilenameFilters
+				elseif m_nxfile:isNai() then
+					strFilter = strNaeFilenameFilters
+				end
+				
 				messageDialog("Extended firmware", 
 				"This firmware file requires an extension file (NXE/NAE).")
 				
-				local strFilenameExt = loadFileDialog(m_panel, "Select extension file", strNxeFilenameFilters)
+				local strFilenameExt = loadFileDialog(m_panel, "Select extension file", strFilter)
 				
 				if strFilenameExt then
 					local iStatus, abBin = loadFile(strFilenameExt)
@@ -594,11 +628,12 @@ function loadNx(strFilename)
 						showMessages(fOk, "Warning", "Error parsing extension file", astrMsgs)
 						if fOk then
 							fOk, strMsg = nxfile.isExtensionFileValid(m_nxfile, m_nxfile_ext)
+							if strMsg then
+								showMessages(fOk, "Warning", "Error", strMsg)
+							end
+							
 							if fOk then
-								print("Common CRC match")
 								fExtLoaded = true
-							else
-								print("Common CRC mismatch !!")
 							end
 						end
 					end
@@ -646,12 +681,12 @@ function saveNx(strFilename)
 		
 		abNxFile = m_nxfile:buildNXFile()
 		if not abNxFile then
-			errorDialog("Error", "Failed to build NXI file")
+			errorDialog("Error", "Failed to build NXI/NAI file")
 			return
 		end
 		abNxFile_ext = m_nxfile_ext:buildNXFile()
 		if not abNxFile_ext then
-			errorDialog("Error", "Failed to build NXE file")
+			errorDialog("Error", "Failed to build NXE/NAE file")
 			return
 		end
 		
@@ -667,6 +702,12 @@ function saveNx(strFilename)
 	elseif m_nxfile:isNxi() then
 		strFilter = strNxiFilenameFilters
 		strTitle = "Save NXI file as"
+	elseif m_nxfile:isMxf() then
+		strFilter = strMxfFilenameFilters
+		strTitle = "Save MXF file as"
+	elseif m_nxfile:isNai() then
+		strFilter = strNaiFilenameFilters
+		strTitle = "Save NAI file as"
 	else
 		strFilter = strsaveNxFilenameFilters
 		strTitle = "Save as"
@@ -677,8 +718,18 @@ function saveNx(strFilename)
 		if strFilename ~= nil then
 			strFilename = m_nxExtFilebar:getFilename()
 		end
-		strFilter = strNxeFilenameFilters
-		strTitle = "Save NXE file as"
+
+		if m_nxfile_ext:isNxe() then
+			strFilter = strNxeFilenameFilters
+			strTitle = "Save NXE file as"
+		elseif m_nxfile_ext:isNae() then
+			strFilter = strNaeFilenameFilters
+			strTitle = "Save NAE file as"
+		else
+			strFilter = strDefaultFilenameFilters
+			strTitle = "Save as"
+		end
+		
 		saveFile1(m_nxExtFilebar, strFilename, strTitle, strFilter, abNxFile_ext)
 	end
 end
@@ -818,7 +869,7 @@ function createPanel()
 	m_headerFilebar = insertFilebar(parent, fileSizer, "Headers", loadHdr, saveHdr)
 	m_elfFilebar = insertFilebar(parent, fileSizer, "ELF", loadElf, saveElf)
 	m_tagsFilebar = insertFilebar(parent, fileSizer, "Tag list", loadTags, saveTags)
-	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF/NXI", loadNx, saveNx)
+	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF/NXI/MXF", loadNx, saveNx)
 	m_nxExtFilebar = insertFilebar(parent, fileSizer, "NXE", nil, nil)
 	-- HTML help window
 	m_helpWindow = wx.wxHtmlWindow(m_splitterPanel)
