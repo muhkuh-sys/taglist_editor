@@ -556,19 +556,16 @@ function loadNx(strFilename)
 	if not strFilename then return end
 	local iStatus, abBin = loadFile(strFilename)
 	-- loaded successfully
-	print("***B")
 	
 	if iStatus==STATUS_OK then
 		emptyNxo()
 
 		local fOk, astrMsgs = m_nxfile:parseBin(abBin)
 		showMessages(fOk, "Warning", "Error parsing file", astrMsgs)
-		print("***C")
 		print(fOk)
 		print(astrMsgs)
 		-- overall file structure is ok, now look after the tag list.
 		if fOk then
-			print("***D")
 
 			-- file has tag list
 			if m_nxfile:hasTaglist() then
@@ -597,8 +594,6 @@ function loadNx(strFilename)
 				messageDialog("No tag list", "The file does not contain a tag list")
 				m_nxFilebar:setFilename(strFilename)
 			end
-			
-			print("***A")
 			
 			-- Check if the file is an extended firmware which is split over two files (NXI/NXE).
 			-- If true, ask the user to select the extension file. 
@@ -664,34 +659,6 @@ function saveNx(strFilename)
 		m_nxfile:setTaglistBin(abTags, true)
 	end
 
-	local abNxFile
-	local abNxFile_ext
-	
-	if m_nxfile_ext == nil then
-		-- build nxo file
-		abNxFile = m_nxfile:buildNXFile()
-		if not abNxFile then
-			errorDialog("Error", "Failed to build NX* file")
-			return
-		end
-	else
-		-- NXI + NXE file
-		nxfile.updateExtensionFile(m_nxfile, m_nxfile_ext)
-		nxfile.updateCommonCRC32(m_nxfile, m_nxfile_ext)
-		
-		abNxFile = m_nxfile:buildNXFile()
-		if not abNxFile then
-			errorDialog("Error", "Failed to build NXI/NAI file")
-			return
-		end
-		abNxFile_ext = m_nxfile_ext:buildNXFile()
-		if not abNxFile_ext then
-			errorDialog("Error", "Failed to build NXE/NAE file")
-			return
-		end
-		
-	end
-
 	local strFilter, strTitle
 	if m_nxfile:isNxf() then
 		strFilter = strNxfFilenameFilters
@@ -712,25 +679,44 @@ function saveNx(strFilename)
 		strFilter = strsaveNxFilenameFilters
 		strTitle = "Save as"
 	end
-	local iStatus = saveFile1(m_nxFilebar, strFilename, strTitle, strFilter, abNxFile)
 	
-	if iStatus==STATUS_OK and abNxFile_ext~=nil then
-		if strFilename ~= nil then
-			strFilename = m_nxExtFilebar:getFilename()
+	if m_nxfile_ext == nil then
+		-- build nxo file
+		local abNxFile = m_nxfile:buildNXFile()
+		if not abNxFile then
+			errorDialog("Error", "Failed to build NX* file")
+			return
 		end
-
-		if m_nxfile_ext:isNxe() then
-			strFilter = strNxeFilenameFilters
-			strTitle = "Save NXE file as"
-		elseif m_nxfile_ext:isNae() then
-			strFilter = strNaeFilenameFilters
-			strTitle = "Save NAE file as"
-		else
-			strFilter = strDefaultFilenameFilters
-			strTitle = "Save as"
+		saveFile1(m_nxFilebar, strFilename, strTitle, strFilter, abNxFile)
+		
+	else
+		local abNxFile, abNxFile_ext, strMsg = nxfile.buildNXFilePair(m_nxfile, m_nxfile_ext)
+		
+		if not abNxFile or not abNxFile_ext then
+			errorDialog("Error", strMsg)
+			return
 		end
 		
-		saveFile1(m_nxExtFilebar, strFilename, strTitle, strFilter, abNxFile_ext)
+		local iStatus = saveFile1(m_nxFilebar, strFilename, strTitle, strFilter, abNxFile)
+		
+		if iStatus==STATUS_OK and abNxFile_ext~=nil then
+			if strFilename ~= nil then
+				strFilename = m_nxExtFilebar:getFilename()
+			end
+	
+			if m_nxfile_ext:isNxe() then
+				strFilter = strNxeFilenameFilters
+				strTitle = "Save NXE file as"
+			elseif m_nxfile_ext:isNae() then
+				strFilter = strNaeFilenameFilters
+				strTitle = "Save NAE file as"
+			else
+				strFilter = strDefaultFilenameFilters
+				strTitle = "Save as"
+			end
+			
+			saveFile1(m_nxExtFilebar, strFilename, strTitle, strFilter, abNxFile_ext)
+		end
 	end
 end
 

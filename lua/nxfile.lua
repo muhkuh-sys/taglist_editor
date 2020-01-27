@@ -67,9 +67,8 @@ function parseBin(self, abBin)
 	local fOk_ret, astrErrors_ret
 	
 	-- try to parse as an NAI file
-	print("Trying NAI")
 	local fOk, astrErrors, abVectors, tHBootHeader, tDefaultHeader, tCommonHeader, abDevInfo, abRest = netx_fileheader.parseNAIFile(abBin)
-	showMessages(astrErrors)
+	--showMessages(astrErrors)
 	fOk_ret, astrErrors_ret = fOk, astrErrors
     
 	if fOk then
@@ -85,9 +84,8 @@ function parseBin(self, abBin)
 		self.m_abTagGap         = ""
 	else
 		-- try to parse an NAE file
-		print("Trying NAE")
 		local fOk, astrErrors, tHBootHeader, tDefaultHeader, tCommonHeader, abDevInfo, abRest = netx_fileheader.parseNAEFile(abBin)
-		showMessages(astrErrors)
+		--showMessages(astrErrors)
 		fOk_ret, astrErrors_ret = fOk, astrErrors
 		if fOk then
 			self.m_abVectors        = ""
@@ -102,13 +100,11 @@ function parseBin(self, abBin)
 			self.m_abTagGap         = ""
 			
 		else
-			print("Trying NXF/NXO/NXI/NXE")
 			local fOk, astrErrors, 
 				tDefaultHeader, tCommonHeader, 
 				abHeaders, abHeaderGap, abData, abDataGap, abTags, abTagGap
 				= netx_fileheader.parseNXFile(abBin)
-			print(fOk, astrErrors)
-			showMessages(astrErrors)
+			--showMessages(astrErrors)
 			fOk_ret, astrErrors_ret = fOk, astrErrors
 			if fOk then
 				self.m_abVectors        = ""
@@ -128,8 +124,9 @@ function parseBin(self, abBin)
 	return fOk_ret, astrErrors_ret
 end
 
+
 -- returns binary/nil, messages
-function buildNXFile(self)
+function buildNXFile(self, abExtFile)
     if isNxi(self) or isMxf(self) then
         return netx_fileheader.makeNXIFile(
             self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abHeaderGap,
@@ -141,12 +138,12 @@ function buildNXFile(self)
             self.m_abData, self.m_abDataGap,
             self.m_abTaglist, self.m_abTagGap)
     elseif isNai(self) then
-        return netx_fileheader.makeNAI_NAEFile(
+        return netx_fileheader.makeNAIFile(
             self.m_abVectors, self.m_tHBootHeader,
-            self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abData)
+            self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abData, abExtFile or "")
     elseif isNae(self) then
-        return netx_fileheader.makeNAI_NAEFile(
-            "", self.m_tHBootHeader,
+        return netx_fileheader.makeNAEFile(
+            self.m_tHBootHeader,
             self.m_tDefaultHeader, self.m_tCommonHeader, self.m_abOtherHeaders, self.m_abData)
     else
         return netx_fileheader.makeNXFile(
@@ -156,6 +153,27 @@ function buildNXFile(self)
     end
 end
 
+
+function buildNXFilePair(tBaseFile, tExtFile)
+    local abBaseFile
+    local abExtFile
+    local strMsg
+    
+    updateExtensionFile(tBaseFile, tExtFile)
+    updateCommonCRC32(tBaseFile, tExtFile)
+    
+    abExtFile = tExtFile:buildNXFile()
+    if not abExtFile then
+        strMsg = "Failed to build NXE/NAE file"
+    else
+        abBaseFile = tBaseFile:buildNXFile(abExtFile)
+        if not abBaseFile then
+            strMsg = "Failed to build NXI/NAI file"
+        end
+    end
+    
+    return abBaseFile, abExtFile, strMsg
+end
 
 -- returns true if headers and data are present
 function isComplete(self)
@@ -281,15 +299,8 @@ function __isExtensionFileValid(tBaseFile, tExtFile)
 	return true
 end
 
--- 1. copy device info and module info headers from the base file to the extension file.
--- 2. update the checksums
--- 3. calculate commmon CRC32
--- 4. update commonCRC32 in base and extension file.
--- 5. update the checksums 
-
+-- Copy device info and module info headers from the base file to the extension file.
 -- The base and extension file must have the same number of module info headers.
--- Sanity checks on offsets/sizes 
--- Replace the device header in the extension file with the one of the base file.
 function updateExtensionFile(tBaseFile, tExtFile)
 	local abDH1 = tBaseFile:getDeviceHeader()
 	tExtFile:setDeviceHeader(abDH1)
@@ -340,6 +351,8 @@ function updateCommonCRC32(tNXI, tNXE)
 	
 	return fOk, astrMsgs
 end
+
+
 
 --------------------------------------------------------------------------
 --                  Boot/default header and file type

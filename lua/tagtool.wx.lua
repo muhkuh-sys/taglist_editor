@@ -759,22 +759,10 @@ function update_ext_fw(strInputFile, strInputFile2, strOutputFile, strOutputFile
 
 	local nx_ext = tRes2.tNx
 
-	vbs_printf("Updating device info/module info in extension file")
-	nxfile.updateExtensionFile(nx_base, nx_ext)
-	vbs_printf("Updating common CRC32")
-	nxfile.updateCommonCRC32(nx_base, nx_ext)
-
-	
-	local abBin_base, astrErrors = nx_base:buildNXFile()
-	if not abBin_base then 
-		return false, astrErrors
+	local abBin_base, abBin_ext, strMsg = nxfile.buildNXFilePair(nx_base, nx_ext)
+	if not abBin_base or not abBin_ext then
+		return false, strMsg
 	end
-
-	local abBin_ext, astrErrors = nx_ext:buildNXFile()
-	if not abBin_ext then 
-		return false, astrErrors
-	end
-	
 	
 	-- write the result
 	local fOk, strMsg = writeBin(strOutputFile, abBin_base)
