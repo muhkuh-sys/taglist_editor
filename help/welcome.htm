@@ -7,30 +7,37 @@
 <h2>Welcome to Tag List Editor.</h2>
 
 <p>
-The main purpose of this tool is to edit configuration tags used by netX option modules (NXO),
-netX firmware files (NXF/NXI) or the 2nd Stage Loader. <br>
+The purpose of this tool is to view and edit the configuration of netX firmware files.<br>
+This is done by editing a list of data structures included in the firmware binary, called the "Tag list", 
+and the device info header.<br>
 
+In this context, "firmware" refers to netX firmware files in NXF, NXI/NXE, MXF or NAI/NAE format,
+netX option modules (NXO) and 2nd Stage loader binaries.<br>
 
-You can edit NXO, NXF, NXI or 2nd Stage Loader files, as well as raw tag list binaries.
-Tag lists can be saved separately and loaded into another NXO/NXF/NXI/2nd stage loader file.
+It is also possible to edit raw tag list binaries. 
+Tag lists can be saved separately and loaded into another file.
 </p>
 <p></p>
 
 <p>
-After starting the tool, or after clicking on "Empty NXO", an NXO file can be constructed
-from its its components:
+In order to load a firmware file, use the "Load" button right to the "NXO/NXF/NXI/MXF/NAI" label.
+</p>
+
+<p>
+After start, or after clicking the "Clear" button, the Tag List Editor is set up for constructing
+an option module (NXO) file from components:
 <ul>
   <li>a binary header file containing the common header, device info and module info headers</li>
   <li>an ELF file</li>
   <li>the tag list</li>
 </ul>
   A command line script for this process is also included.
-  It is also possible to load an existing NXO file and replace one or more of the components.
+  It is possible to load an existing NXO file and replace its components.
 </p>
 <p></p>
 
 <h3>Notes:</h3>
-<p>In order to parse an NXO/NXF/NXI/2nd Stage Loader, the file must contain a common header with at least version 3.</p>
+<p>This editor can only open firmware files containing a common header with at least version 3.</p>
 
 <p>
 The input routines refuse any input outside the allowed range for a field, with one exception: 
