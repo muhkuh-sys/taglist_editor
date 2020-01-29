@@ -68,7 +68,7 @@ function parseBin(self, abBin)
 	
 	-- try to parse as an NAI file
 	local fOk, astrErrors, abVectors, tHBootHeader, tDefaultHeader, tCommonHeader, abDevInfo, abRest = netx_fileheader.parseNAIFile(abBin)
-	--showMessages(astrErrors)
+
 	fOk_ret, astrErrors_ret = fOk, astrErrors
     
 	if fOk then
@@ -85,7 +85,7 @@ function parseBin(self, abBin)
 	else
 		-- try to parse an NAE file
 		local fOk, astrErrors, tHBootHeader, tDefaultHeader, tCommonHeader, abDevInfo, abRest = netx_fileheader.parseNAEFile(abBin)
-		--showMessages(astrErrors)
+
 		fOk_ret, astrErrors_ret = fOk, astrErrors
 		if fOk then
 			self.m_abVectors        = ""
@@ -104,7 +104,7 @@ function parseBin(self, abBin)
 				tDefaultHeader, tCommonHeader, 
 				abHeaders, abHeaderGap, abData, abDataGap, abTags, abTagGap
 				= netx_fileheader.parseNXFile(abBin)
-			--showMessages(astrErrors)
+
 			fOk_ret, astrErrors_ret = fOk, astrErrors
 			if fOk then
 				self.m_abVectors        = ""
@@ -187,6 +187,45 @@ function getPadding(abBin, length)
 end
 
 
+
+function check_nai_nae(self, tExtFile, abExtFile)
+	local fOk = false 
+	local astrMsg = {}
+
+	if isNai(self) and isNae(tExtFile) then
+		local fOkNae, astrMsgNae = netx_fileheader.check_checksums_nae(
+			tExtFile.m_tHBootHeader, 
+			tExtFile.m_tDefaultHeader, 
+			tExtFile.m_tCommonHeader, 
+			tExtFile.m_abOtherHeaders, 
+			tExtFile.m_abData)
+		
+		local fOkNai, astrMsgNai = netx_fileheader.check_checksums_nai(
+			self.m_abVectors, 
+			self.m_tHBootHeader, 
+			self.m_tDefaultHeader, 
+			self.m_tCommonHeader, 
+			self.m_abOtherHeaders, 
+			self.m_abData, 
+			abExtFile)
+
+		fOk = fOkNai and fOkNae
+		astrMsg = join_lists(astrMsgNai, astrMsgNae)
+	end
+	return fOk, astrMsg
+end
+
+function join_lists(l1, l2)
+	local l = {}
+	for i, e in ipairs(l1) do 
+		table.insert(l, e)
+	end
+	for i, e in ipairs(l2) do 
+		table.insert(l, e)
+	end
+	return l
+end
+
 --------------------------------------------------------------------------
 --                  handle base/extension file pairs
 --------------------------------------------------------------------------
@@ -227,6 +266,10 @@ function isExtensionFileValid(tBaseFile, tExtFile)
 	
 	local tCHBase = tBaseFile:getCommonHeader()
 	local tCHExt = tExtFile:getCommonHeader()
+	
+	if tCHBase.ulCommonCRC32 == 0 then
+		return false, "The base file does not require an extension file."
+	end 
 	
 	if tCHBase.ulCommonCRC32 ~= tCHExt.ulCommonCRC32 then
 		return true, "The common CRC values do not match."
@@ -269,35 +312,6 @@ end
 
 
 
--- Check if an NXE file matches an NXI file.
--- self = NXI, tExtFile = Nxe file
-
--- Check function to be called on 
--- compare:
--- common CRC in common header 
--- device info header 
--- module info headers 
-function __isExtensionFileValid(tBaseFile, tExtFile)
-	local tCH1 = tBaseFile:getCommonHeader()
-	local tCH2 = tExtFile:getCommonHeader()
-	if tCH1.ulCommonCRC32 ~= tCH2.ulCommonCRC32 then
-		return false, 
-		"The base and extension file do not seem to belong to each other.\n"..
-		"The common CRC values do not match."
-	end
-	
-	local abDH1 = tBaseFile:getDeviceHeader()
-	local abDH2 = tExtFile:getDeviceHeader()
-	if abDH1 ~= abDH2 then
-		return false, 
-		"The base and extension file do not seem to belong to each other.\n"..
-		"The device headers do not match."
-	end
-	
-	-- Todo: extract and match module headers
-	
-	return true
-end
 
 -- Copy device info and module info headers from the base file to the extension file.
 -- The base and extension file must have the same number of module info headers.

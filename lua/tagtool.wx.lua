@@ -212,6 +212,7 @@ function loadInputFile(strInputFile)
 	end
 	
 	return {
+		abInputFile = abInputFile,
 		tNx = tNx,
 		atTags = atTags,
 		abDevHdr = abDevHdr,
@@ -744,22 +745,46 @@ function edit(strInputFile, strEditsFile, strOutputFile)
 end
 
 
+----------------------------------------------------------------------------
+--        Update a pair of base and extended FW
+----------------------------------------------------------------------------
+
 function update_ext_fw(strInputFile, strInputFile2, strOutputFile, strOutputFile2)
 	local tRes1, msgs = loadInputFile(strInputFile)
-	if not tRes1 then
+	if tRes1 then 
+		printResults(true, msgs)
+	else
 		return false, msgs
 	end
 
 	local nx_base = tRes1.tNx
 
 	local tRes2, msgs = loadInputFile(strInputFile2)
-	if not tRes2 then
+	if tRes2 then 
+		printResults(true, msgs)
+	else
 		return false, msgs
 	end
 
 	local nx_ext = tRes2.tNx
 
-	local abBin_base, abBin_ext, strMsg = nxfile.buildNXFilePair(nx_base, nx_ext)
+	local fOk, strMsg = nxfile.isExtensionFileValid(nx_base, nx_ext)
+	if fOk then
+		printResults(fOk, strMsg)
+	else
+		return false, strMsg
+	end
+	
+	if fOk and nx_base:isNai() and nx_ext:isNae() then
+		local fOk, astrMsg = nxfile.check_nai_nae(nx_base, nx_ext)
+		if fOk then
+			printResults(fOk, astrMsg)
+		else
+			return false, astrMsg
+		end
+	end
+	
+	local abBin_base, abBin_ext, strMsg = nxfile.buildNXFilePair(nx_base, nx_ext, tRes2.abInputFile)
 	if not abBin_base or not abBin_ext then
 		return false, strMsg
 	end
@@ -768,11 +793,11 @@ function update_ext_fw(strInputFile, strInputFile2, strOutputFile, strOutputFile
 	local fOk, strMsg = writeBin(strOutputFile, abBin_base)
 	
 	if fOk then
+		printResults(fOk, msg)
 		fOk, strMsg = writeBin(strOutputFile2, abBin_ext)
 	end
 	
 	return fOk, strMsg
-	
 end
 
 ----------------------------------------------------------------------------

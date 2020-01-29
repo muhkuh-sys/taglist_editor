@@ -4,19 +4,6 @@
 -- Description:
 --   Main program of Taglist editor
 --
---  Changes:
---    Date        Author        Description
---   2012/04/12   SL        replaced tester with tester_nextid
---   2011/05/16   SL        Fixed: changes to the file were not saved if
---                          the file contained an empty tag list
----------------------------------------------------------------------------
---
----------------------------------------------------------------------------
--- SVN Keywords
---
--- $Date$
--- $Revision$
--- $Author$
 ---------------------------------------------------------------------------
 
 module("nxoeditor", package.seeall)
@@ -108,7 +95,6 @@ function showMessages(fOk, strInfoTitle, strErrTitle, ...)
 		end
 	end
 
-	--for k,v in pairs(messages) do print(k,v) end
 	local strMsg = table.concat(messages, "\n")
 
 	if fOk and #messages > 0 then
@@ -184,7 +170,6 @@ end
 
 function OnHelp(event)
 	local fVal = nxoeditor.m_checkboxHelp:GetValue()
-	-- print("help", fVal)
 	nxoeditor.displayHelp(fVal)
 end
 
@@ -562,8 +547,7 @@ function loadNx(strFilename)
 
 		local fOk, astrMsgs = m_nxfile:parseBin(abBin)
 		showMessages(fOk, "Warning", "Error parsing file", astrMsgs)
-		print(fOk)
-		print(astrMsgs)
+
 		-- overall file structure is ok, now look after the tag list.
 		if fOk then
 
@@ -598,8 +582,6 @@ function loadNx(strFilename)
 			-- Check if the file is an extended firmware which is split over two files (NXI/NXE).
 			-- If true, ask the user to select the extension file. 
 			
-			-- Todo: was fuer Fehlerzustaende?
-			-- Todo: Extension aus Filetyp vorwaehlen
 			if m_nxfile:needsExtensionFile() then
 				local fExtLoaded = false
 				
@@ -616,15 +598,23 @@ function loadNx(strFilename)
 				local strFilenameExt = loadFileDialog(m_panel, "Select extension file", strFilter)
 				
 				if strFilenameExt then
-					local iStatus, abBin = loadFile(strFilenameExt)
+					local iStatus, abExtFw = loadFile(strFilenameExt)
 					if iStatus==STATUS_OK then
 						m_nxfile_ext = nxfile.new()
-						fOk, astrMsgs = m_nxfile_ext:parseBin(abBin)
+						fOk, astrMsgs = m_nxfile_ext:parseBin(abExtFw)
 						showMessages(fOk, "Warning", "Error parsing extension file", astrMsgs)
 						if fOk then
 							fOk, strMsg = nxfile.isExtensionFileValid(m_nxfile, m_nxfile_ext)
 							if strMsg then
 								showMessages(fOk, "Warning", "Error", strMsg)
+							end
+							
+							if fOk and m_nxfile:isNai() and m_nxfile_ext:isNae() then
+								local astrMsg
+								fOk, astrMsg = nxfile.check_nai_nae(m_nxfile, m_nxfile_ext, abExtFw)
+								if astrMsg then
+									showMessages(fOk, "Warning", "Error", astrMsg)
+								end
 							end
 							
 							if fOk then
@@ -773,19 +763,16 @@ function insertFilebar(parent, sizer, strStaticText, fnLoad, fnSave)
 	if buttonLoad then
 		sizer:Add(buttonLoad, 0, wx.wxALIGN_CENTER_VERTICAL)
 	else
-		print("spacer")
 		sizer:AddSpacer(0)
 	end
 	if buttonSaveAs then
 		sizer:Add(buttonSaveAs, 0, wx.wxALIGN_CENTER_VERTICAL)
 	else
-		print("spacer")
 		sizer:AddSpacer(0)
 	end
 	if buttonSave then
 		sizer:Add(buttonSave, 0, wx.wxALIGN_CENTER_VERTICAL)
 	else
-		print("spacer")
 		sizer:AddSpacer(0)
 	end
 
@@ -855,8 +842,8 @@ function createPanel()
 	m_headerFilebar = insertFilebar(parent, fileSizer, "Headers", loadHdr, saveHdr)
 	m_elfFilebar = insertFilebar(parent, fileSizer, "ELF", loadElf, saveElf)
 	m_tagsFilebar = insertFilebar(parent, fileSizer, "Tag list", loadTags, saveTags)
-	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF/NXI/MXF", loadNx, saveNx)
-	m_nxExtFilebar = insertFilebar(parent, fileSizer, "NXE", nil, nil)
+	m_nxFilebar = insertFilebar(parent, fileSizer, "NXO/NXF/NXI/MXF/NAI", loadNx, saveNx)
+	m_nxExtFilebar = insertFilebar(parent, fileSizer, "NXE/NAE", nil, nil)
 	-- HTML help window
 	m_helpWindow = wx.wxHtmlWindow(m_splitterPanel)
 
