@@ -1,7 +1,8 @@
 Change log for Tag List Editor
 
-Tag list editor 1.5.0.0 Beta
+Tag list editor 1.5.0.0 
  * Add support for two-part extended firmware containing an NAI and NAE file.
+ * Add support for MXF files.
 
 Tag list editor 1.5.0.0 Beta
  * added support for two-part extended firmware consisting of
