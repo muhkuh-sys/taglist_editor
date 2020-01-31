@@ -17,7 +17,7 @@ AppCopyright=(C) 2019, Muhkuh team and Hilscher GmbH
 ; description goes into properties and version dialogue
 VersionInfoTextVersion={#AppVersion}
 VersionInfoDescription=Installer of the Hilscher Tag List Editor application
-VersionInfoCopyright=(C) 2019 Muhkuh team and Hilscher GmbH
+VersionInfoCopyright=(C) 2020 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoProductName=Hilscher Tag List Editor
 VersionInfoVersion={#ProjectVersion}
