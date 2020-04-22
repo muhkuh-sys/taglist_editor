@@ -11,7 +11,7 @@ AppVersion={#AppVersion}
 AppVerName={#AppVerName}
 AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://www.hilscher.com
-AppCopyright=(C) 2019, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2020, Muhkuh team and Hilscher GmbH
 
 ; works: company, copyright, product name, product version
 ; description goes into properties and version dialogue
@@ -131,11 +131,12 @@ Source: lua\nxomaker.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: makenxo.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: lua\tagtool.wx.lua; DestDir: {app}\nxo_editor; Components: modulator
 Source: tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
-Source: "doc\Tag List Editor - Viewing and Editing Tags OI 07 EN.pdf"; DestDir: {app}\doc; Components: modulator
+Source: "doc\Tag List Editor - Viewing and Editing Tags OI 08 EN.pdf"; DestDir: {app}\doc; Components: modulator
 Source: doc\changelog.txt; DestDir: {app}\doc; Components: modulator
 Source: doc\licenses.txt; DestDir: {app}\doc; Components: modulator
 
 [InstallDelete]
+Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 07 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 06 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 05 EN.pdf"
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 04 EN.pdf"
@@ -209,7 +210,7 @@ Name: {app}\Tag_List_Editor; Filename: {app}\application\serverkuh.exe; Paramete
 
 ; start menu entry
 Name: {group}\Tag List Editor; Filename: {app}\application\serverkuh.exe; Parameters: "-c Modulator.cfg -i 0 ""{code:ToFileUrl}"" --"; WorkingDir: {app}\application; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
-Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 07 EN.pdf; Components: modulator; Tasks: startmenu
+Name: {group}\Documentation; Filename: {app}\doc\Tag List Editor - Viewing and Editing Tags OI 08 EN.pdf; Components: modulator; Tasks: startmenu
 Name: {group}\Uninstall; Filename: {uninstallexe}; IconFilename: {app}\nxo_editor\netX.ico; Components: modulator; Tasks: startmenu
 
 [Registry]
