@@ -15,6 +15,7 @@
 ---------------------------------------------------------------------------
 -- 2021-04-28     SL            added HIL_TAG_LWIP_QUANTITY_STRUCTURE 0x10e90002
 --                              added HIL_TAG_NF_GEN_DIAG_RESOURCES   0x10e00001
+--                              added HIL_TAG_NF_PROFI_ENERGY_MODES   0x10e00002
 -- 2019-11-01     SL            added HIL_TAG_LWIP_NETIDENT_BEHAVIOUR 0x10e90001
 --                              added HIL_TAG_LWIP_PORTS_FOR_IP_ZERO  0x10e90000
 -- 2019-08-06     SL            added TAG_ECM_ENI_BUS_STATE     0x30009005
@@ -827,13 +828,33 @@ HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T = {
             {name="248", value=248},
             {name="256", value=256}
         }},
-        
---        editor="numedit", 
---        editorParam={nBits=16, format="%u", minValue=32,maxValue=256}
     },
 },
 
 
+----------------------------------------------------------------------------------------------
+-- PROFIenergy Support
+HIL_TAG_NF_PROFI_ENERGY_MODES_DATA_T = {
+    {"UINT8", "bPROFIenergyMode",
+        desc="PROFIenergy support",
+        editor="comboedit",
+        editorParam={nBits= 8,
+            values={
+            {name="PROFIenergy disabled", value=0},
+            {name="PROFIenergy enabled with 1 modes", value=1},
+            {name="PROFIenergy enabled with 2 modes", value=2},
+            {name="PROFIenergy enabled with 3 modes", value=3},
+            {name="PROFIenergy enabled with 4 modes", value=4},
+            {name="PROFIenergy enabled with 5 modes", value=5},
+            {name="PROFIenergy enabled with 6 modes", value=6},
+            {name="PROFIenergy enabled with 7 modes", value=7},
+            {name="PROFIenergy enabled with 8 modes", value=8},
+        }},
+    },
+    {"UINT8", "bReserved1",        desc="Reserved1",     mode = "hidden"},
+    {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
+    {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
+},
 
 } -- end of structure defintions
 
@@ -936,6 +957,13 @@ RCX_TAG_SERVX_PORT_NUMBER =
 HIL_TAG_NF_GEN_DIAG_RESOURCES =
 	{paramtype = 0x10e00001, datatype="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T", desc="Generic Diagnosis Ressources"},
 
+HIL_TAG_NF_PROFI_ENERGY_MODES =
+	{paramtype = 0x10e00002, datatype="HIL_TAG_NF_PROFI_ENERGY_MODES_DATA_T", desc="PROFIenergy Support"},
+
+
+
+
+
 HIL_TAG_LWIP_PORTS_FOR_IP_ZERO = 
 	{paramtype = 0x10e90000, datatype="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T", desc="LWIP Ports for IP 0.0.0.0"},
     -- todo: Tag ID anpassen
@@ -998,6 +1026,7 @@ TAG_HELP = {
     RCX_TAG_SERVX_PORT_NUMBER           = {file="RCX_TAG_SERVX_PORT_NUMBER_DATA_T.htm"},
 
     HIL_TAG_NF_GEN_DIAG_RESOURCES       = {file="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T.htm"},
+    HIL_TAG_NF_PROFI_ENERGY_MODES       = {file="HIL_TAG_NF_PROFI_ENERGY_MODES_DATA_T.htm"},
 
     HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
     HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
