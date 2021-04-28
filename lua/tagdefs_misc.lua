@@ -14,6 +14,7 @@
 --    Date        Author        Description
 ---------------------------------------------------------------------------
 -- 2021-04-28     SL            added HIL_TAG_LWIP_QUANTITY_STRUCTURE 0x10e90002
+--                              added HIL_TAG_NF_GEN_DIAG_RESOURCES   0x10e00001
 -- 2019-11-01     SL            added HIL_TAG_LWIP_NETIDENT_BEHAVIOUR 0x10e90001
 --                              added HIL_TAG_LWIP_PORTS_FOR_IP_ZERO  0x10e90000
 -- 2019-08-06     SL            added TAG_ECM_ENI_BUS_STATE     0x30009005
@@ -786,6 +787,54 @@ HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T = {
 },
 
 
+
+----------------------------------------------------------------------------------------------
+-- Generic Diagnosis Ressources
+
+HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T = {
+    {"UINT16", "usNumOfDiagnosisInstances",
+        desc="Number of additional netPROXY Generic Diagnosis instances",
+        editor="comboedit",
+        editorParam={nBits= 16,
+            values={
+            {name="32", value=32},
+            {name="40", value=40},
+            {name="48", value=48},
+            {name="56", value=56},
+            {name="64", value=64},
+            {name="72", value=72},
+            {name="80", value=80},
+            {name="88", value=88},
+            {name="96", value=96},
+            {name="104", value=104},
+            {name="112", value=112},
+            {name="120", value=120},
+            {name="128", value=128},
+            {name="136", value=136},
+            {name="144", value=144},
+            {name="152", value=152},
+            {name="160", value=160},
+            {name="168", value=168},
+            {name="176", value=176},
+            {name="184", value=184},
+            {name="192", value=192},
+            {name="200", value=200},
+            {name="208", value=208},
+            {name="216", value=216},
+            {name="224", value=224},
+            {name="232", value=232},
+            {name="240", value=240},
+            {name="248", value=248},
+            {name="256", value=256}
+        }},
+        
+--        editor="numedit", 
+--        editorParam={nBits=16, format="%u", minValue=32,maxValue=256}
+    },
+},
+
+
+
 } -- end of structure defintions
 
 ---------------------------------------------------------------------------
@@ -884,6 +933,9 @@ RCX_TAG_SERVX_PORT_NUMBER =
 	{paramtype = 0x10920000, datatype="RCX_TAG_SERVX_PORT_NUMBER_DATA_T", desc="servX TCP Port Number"},
 
 
+HIL_TAG_NF_GEN_DIAG_RESOURCES =
+	{paramtype = 0x10e00001, datatype="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T", desc="Generic Diagnosis Ressources"},
+
 HIL_TAG_LWIP_PORTS_FOR_IP_ZERO = 
 	{paramtype = 0x10e90000, datatype="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T", desc="LWIP Ports for IP 0.0.0.0"},
     -- todo: Tag ID anpassen
@@ -944,6 +996,8 @@ TAG_HELP = {
     RCX_TAG_EIF_NDIS_ENABLE             = {file="RCX_TAG_EIF_NDIS_ENABLE_DATA_T.htm"},
 
     RCX_TAG_SERVX_PORT_NUMBER           = {file="RCX_TAG_SERVX_PORT_NUMBER_DATA_T.htm"},
+
+    HIL_TAG_NF_GEN_DIAG_RESOURCES       = {file="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T.htm"},
 
     HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
     HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
