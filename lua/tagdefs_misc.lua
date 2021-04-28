@@ -777,7 +777,7 @@ HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T = {
         editorParam={nBits=8, format="%u", minValue=1, maxValue=8}
     },
     {"UINT8", "bNumberSockets",
-        desc="Number of sockets for Socket API isage",
+        desc="Number of sockets for Socket API usage",
         editor="numedit", 
         editorParam={nBits=8, format="%u", minValue=1, maxValue=64}
     },
