@@ -179,7 +179,7 @@ function createEditors(tagList)
 	m_listCtrl:Connect(m_listId, wx.wxEVT_COMMAND_LISTBOX_SELECTED , OnPageChanged)
 	m_listCtrl:Connect(m_listId, wx.wxEVT_COMMAND_CHECKLISTBOX_TOGGLED , OnToggle)
 	
-	if #tagList > 0 then
+	if #m_pages > 0 then
 		m_listCtrl:SetSelection(0)
 		enterPage(1)
 	end
