@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2021-04-28     SL            added HIL_TAG_LWIP_QUANTITY_STRUCTURE 0x10e90002
 -- 2019-11-01     SL            added HIL_TAG_LWIP_NETIDENT_BEHAVIOUR 0x10e90001
 --                              added HIL_TAG_LWIP_PORTS_FOR_IP_ZERO  0x10e90000
 -- 2019-08-06     SL            added TAG_ECM_ENI_BUS_STATE     0x30009005
@@ -766,6 +767,25 @@ HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T = {
 
 
 
+----------------------------------------------------------------------------------------------
+-- Socket API quantity structure
+
+HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T = {
+    {"UINT8", "bNumberDpmSocketServices",
+        desc="Number of Socket API Services at DPM level",
+        editor="numedit", 
+        editorParam={nBits=8, format="%u", minValue=1, maxValue=8}
+    },
+    {"UINT8", "bNumberSockets",
+        desc="Number of sockets for Socket API isage",
+        editor="numedit", 
+        editorParam={nBits=8, format="%u", minValue=1, maxValue=64}
+    },
+    {"UINT8", "bReserved1",        desc="Reserved1",     mode = "hidden"},
+    {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
+},
+
+
 } -- end of structure defintions
 
 ---------------------------------------------------------------------------
@@ -869,6 +889,8 @@ HIL_TAG_LWIP_PORTS_FOR_IP_ZERO =
     -- todo: Tag ID anpassen
 HIL_TAG_LWIP_NETIDENT_BEHAVIOUR = 
 	{paramtype = 0x10e90001, datatype="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T", desc="LWIP netident behaviour"},
+HIL_TAG_LWIP_QUANTITY_STRUCTURE = 
+	{paramtype = 0x10e90002, datatype="HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T", desc="Socket API Quantity Structure"},
 
 }
 
@@ -923,8 +945,9 @@ TAG_HELP = {
 
     RCX_TAG_SERVX_PORT_NUMBER           = {file="RCX_TAG_SERVX_PORT_NUMBER_DATA_T.htm"},
 
-    HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
     HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
+    HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
+    HIL_TAG_LWIP_QUANTITY_STRUCTURE     = {file="HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T.htm"},
 
 }
 

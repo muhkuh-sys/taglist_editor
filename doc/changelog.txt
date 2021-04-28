@@ -3,6 +3,7 @@ Change log for Tag List Editor
 Tag list editor 1.5.0.1
  * bugfix: An error occurred upon loading a firmware file if the file contains
    a non-empty tag list, but none of the tags are known to the editor.
+ * added tag HIL_TAG_LWIP_QUANTITY_STRUCTURE 0x10e90002
  
 Tag list editor 1.5.0.0 
  * Add support for two-part extended firmware containing an NAI and NAE file.

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Socket API Quantity Structure</h2>
+
+<p>
+In this tag you can configure quantity structures related to the Socket API on the Network Services DPM Channel.
+</p>
+
+<p>
+<b>Note:</b> Due to limited memory resources of some firmware implementations, restrictions apply regarding the possible values such that the allowed value range may not be useable.</p>
+<p>
+A general hint which combinations are working can not be given here as this is product specific. However, increasing the values (compared to default) will lead to increased memory requirements of the firmware. Value combinations that work for a specific firmware release may no longer work for future releases (in case of memory restricted devices).</p>
+<p>
+The values set here do not influence the quantity structure of resources related to the protocol stack integrated in the firmware. These are independent from the values of the Network Service DPM Channel.
+</p>
+
+<p>
+<table border=1>
+<tr>
+<td>Number of Socket API Services at DPM level</td>
+<td>The number of Socket API services that shall be handled in parallel at DPM mailbox level.<br>
+Allowed values are 1 to 8.
+</td>
+</tr>
+
+<tr>
+<td>Number of sockets for Socket API isage</td>
+<td>The number of IP sockets of integrated IP stack that the application wants to use in parallel.<br>
+Allowed values are 1 to 64.
+</td>
+</tr>
+
+</table>
+</p>
+
+</BODY>
+</HTML>
