@@ -879,7 +879,7 @@ HIL_TAG_NF_PN_IOL_PROFILE_PADDING_DATA_T = {
         editor="comboedit",
         editorParam={nBits= 8,
             values={
-            {name="No padding (default)", value=0},
+            {name="No padding",                    value=0},
             {name="Padding for 2 bytes alignment", value=1},
             {name="Padding for 4 bytes alignment", value=2},
         }},
