@@ -17,6 +17,7 @@
 --                              added HIL_TAG_NF_GEN_DIAG_RESOURCES   0x10e00001
 --                              added HIL_TAG_NF_PROFI_ENERGY_MODES   0x10e00002
 --                              added HIL_TAG_NF_PN_IOL_PROFILE_PADDING 0x10e00003
+--                              added HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM 0x10e00004
 -- 2019-11-01     SL            added HIL_TAG_LWIP_NETIDENT_BEHAVIOUR 0x10e90001
 --                              added HIL_TAG_LWIP_PORTS_FOR_IP_ZERO  0x10e90000
 -- 2019-08-06     SL            added TAG_ECM_ENI_BUS_STATE     0x30009005
@@ -216,6 +217,10 @@ TAG_CONSTANTS = {
 	HIL_TAG_NF_PN_IOL_PROFILE_PADDING_PADMODE_2BYTE_ALIGNMENT = 1,
 	HIL_TAG_NF_PN_IOL_PROFILE_PADDING_PADMODE_4BYTE_ALIGNMENT = 2,
 	
+	-- netFIELD PROFINET IO-Link profile DIO in IOLM
+	HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DISABLED  =  0,
+	HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_ENABLED   =  1,
+
 }
 
 EIP_XC_TYPE = {
@@ -885,6 +890,24 @@ HIL_TAG_NF_PN_IOL_PROFILE_PADDING_DATA_T = {
 },
 
 
+----------------------------------------------------------------------------------------------
+-- PROFINET IO-Link Profile Pin4 DIO in IOLM Submodule
+
+HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DATA_T = {
+    {"UINT8", "bDioInIolm",
+        desc="Location of Pin4 DIO Data",
+        editor="comboedit",
+        editorParam={nBits= 8,
+            values={
+            {name="Regular profile DI/DO submodules", value=0},
+            {name="IOLM Submodule",                   value=1},
+        }},
+    },
+    {"UINT8", "bReserved1",        desc="Reserved1",     mode = "hidden"},
+    {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
+    {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
+},
+
 } -- end of structure defintions
 
 ---------------------------------------------------------------------------
@@ -992,6 +1015,8 @@ HIL_TAG_NF_PROFI_ENERGY_MODES =
 HIL_TAG_NF_PN_IOL_PROFILE_PADDING =
 	{paramtype = 0x10e00003, datatype="HIL_TAG_NF_PN_IOL_PROFILE_PADDING_DATA_T", desc="PROFINET IO-Link Profile Submodule Padding"},
 
+HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM =
+	{paramtype = 0x10e00004, datatype="HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DATA_T", desc="PROFINET IO-Link Profile Pin4 DIO in IOLM Submodule"},
 
 
 
@@ -1059,6 +1084,7 @@ TAG_HELP = {
     HIL_TAG_NF_GEN_DIAG_RESOURCES       = {file="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T.htm"},
     HIL_TAG_NF_PROFI_ENERGY_MODES       = {file="HIL_TAG_NF_PROFI_ENERGY_MODES_DATA_T.htm"},
     HIL_TAG_NF_PN_IOL_PROFILE_PADDING   = {file="HIL_TAG_NF_PN_IOL_PROFILE_PADDING_DATA_T.htm"},
+    HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM   = {file="HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DATA_T.htm"},
 
     HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
     HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
