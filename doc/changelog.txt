@@ -3,8 +3,10 @@ Change log for Tag List Editor
 Tag list editor 1.5.0.1
  * bugfix: An error occurred upon loading a firmware file if the file contains
    a non-empty tag list, but none of the tags are known to the editor.
- * added tag HIL_TAG_LWIP_QUANTITY_STRUCTURE 0x10e90002
- * added tag HIL_TAG_NF_PN_IOL_PROFILE_PADDING 0x10e00003
+ * added tag HIL_TAG_LWIP_QUANTITY_STRUCTURE       0x10e90002
+ * added tag HIL_TAG_NF_GEN_DIAG_RESOURCES         0x10e00001
+ * added tag HIL_TAG_NF_PROFI_ENERGY_MODES         0x10e00002
+ * added tag HIL_TAG_NF_PN_IOL_PROFILE_PADDING     0x10e00003
  * added tag HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM 0x10e00004
 
 Tag list editor 1.5.0.0 
