@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2021-05-28     SL            added HIL_TAG_NF_SWAP_COM_LEDS  0x10e00005
 -- 2021-04-28     SL            added HIL_TAG_LWIP_QUANTITY_STRUCTURE 0x10e90002
 --                              added HIL_TAG_NF_GEN_DIAG_RESOURCES   0x10e00001
 --                              added HIL_TAG_NF_PROFI_ENERGY_MODES   0x10e00002
@@ -889,7 +890,6 @@ HIL_TAG_NF_PN_IOL_PROFILE_PADDING_DATA_T = {
     {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
 },
 
-
 ----------------------------------------------------------------------------------------------
 -- PROFINET IO-Link Profile Pin4 DIO in IOLM Submodule
 
@@ -907,6 +907,22 @@ HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DATA_T = {
     {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
     {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
 },
+
+----------------------------------------------------------------------------------------------
+-- Swap COM0 and COM1 LEDs
+
+HIL_TAG_NF_SWAP_COM_LEDS_DATA_T = {
+    {"UINT8", "bSwapComLeds",
+        desc="Swap COM LEDs",
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true},
+    },
+    {"UINT8", "bReserved1",        desc="Reserved1",     mode = "hidden"},
+    {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
+    {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
+},
+
+
 
 } -- end of structure defintions
 
@@ -1018,6 +1034,8 @@ HIL_TAG_NF_PN_IOL_PROFILE_PADDING =
 HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM =
 	{paramtype = 0x10e00004, datatype="HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DATA_T", desc="PROFINET IO-Link Profile Pin4 DIO in IOLM Submodule"},
 
+HIL_TAG_NF_SWAP_COM_LEDS =
+	{paramtype = 0x10e00005, datatype="HIL_TAG_NF_SWAP_COM_LEDS_DATA_T", desc="Swap COM LEDs"},
 
 
 HIL_TAG_LWIP_PORTS_FOR_IP_ZERO = 
@@ -1085,6 +1103,7 @@ TAG_HELP = {
     HIL_TAG_NF_PROFI_ENERGY_MODES       = {file="HIL_TAG_NF_PROFI_ENERGY_MODES_DATA_T.htm"},
     HIL_TAG_NF_PN_IOL_PROFILE_PADDING   = {file="HIL_TAG_NF_PN_IOL_PROFILE_PADDING_DATA_T.htm"},
     HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM   = {file="HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DATA_T.htm"},
+    HIL_TAG_NF_SWAP_COM_LEDS            = {file="HIL_TAG_NF_SWAP_COM_LEDS_DATA_T.htm"},
 
     HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
     HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
