@@ -1511,7 +1511,26 @@ function correctEndMarker(atTags)
     atTags.iLen = atTags.iLen + atTags.abEndMarker:len()
 end
 
-
+function listUnknownTags(atTags)
+    astrUnknownTags = {}
+    fHasUnknownTags = false
+    
+    for i, tTag in ipairs(atTags) do
+        local strDesc = getTagDescString(tTag.ulTag)
+        if not strDesc then
+            local strMsg = string.format("0x%08x", tTag.ulTag)
+            table.insert(astrUnknownTags, strMsg)
+            fHasUnknownTags = true
+        end
+    end
+    
+    if fHasUnknownTags == true then
+        table.insert(astrUnknownTags, 1, "The tag list contains unknown tags:")
+        table.insert(astrUnknownTags, 2, "")
+    end
+    
+    return fHasUnknownTags, astrUnknownTags
+end
 
 function include_option(strFilename, strPackage)
 	pcall(muhkuh.include, strFilename, strPackage)

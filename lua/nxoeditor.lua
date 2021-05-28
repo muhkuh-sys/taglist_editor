@@ -470,6 +470,8 @@ function loadTags(strFilename)
 
 		-- replace tag list
 		if fOk then
+			showUnknownTags(params)
+
 			if not m_nxfile:isNxi() then
 				local fChanged = checkEndMarker(params)
 				if fChanged then
@@ -535,6 +537,14 @@ function checkEndMarker(atTags)
 	return fChanged
 end
 
+
+function showUnknownTags(params)
+	fHasUnknownTags, astrUnknownTags = taglist.listUnknownTags(params)
+	if fHasUnknownTags == true then
+		showMessages(true, "Unknown tags found", "Unknown tags found", astrUnknownTags)
+	end
+end 
+
 function loadNx(strFilename)
 	--utils.setvbs_debug()
 	strFilename = strFilename or loadFileDialog(m_panel, "Select NXF/NXI/MXF/NXO/bin file", strNxFilenameFilters)
@@ -556,6 +566,8 @@ function loadNx(strFilename)
 				local abTags = m_nxfile:getTaglistBin()
 				local fTagsOk, params, iLen, strMsg = taglist.binToParams(abTags)
 				showMessages(fTagsOk, "Notice", "Error parsing tag list", strMsg)
+
+				showUnknownTags(params)
 
 				if fTagsOk and not m_nxfile:isNxi() then
 					local fChanged = checkEndMarker(params)
