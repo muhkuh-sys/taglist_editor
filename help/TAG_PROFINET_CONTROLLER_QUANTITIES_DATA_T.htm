@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>TAG_PROFINET_CONTROLLER_QUANTITIES_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>PROFINET Controller Features</h2>
+
+<p>
+In this tag, you can enable, disable or configure some PROFINET features.<br>
+<b>Note:</b> Due to available memory resources, restrictions apply regarding the possible combinations of the features. 
+It is not possible to max out all quantity structures in parallel.
+</p>
+<p></p>
+
+<table border=1>
+
+<tr>
+	<td>Number of IO Connections (ARs)</td>
+	<td>
+	The number of cyclic PROFINET IO connections supported by the firmware. 
+	Configurations containing more configured ARs will be rejected.<br>
+	Allowed values are 1 - 128.
+	</td>
+</tr>
+
+<tr>
+	<td>Number of parallel DeviceAccess ARs</td>
+	<td>
+	The amount of supported DeviceAccess ARs. <br>
+	Allowed values are 0 - 1.<br>
+	0 means DeviceAccess AR is not supported.
+	</td>
+</tr>
+
+<tr>
+	<td>Number of submodules</td>
+	<td>
+	The amount of submodules supported by the firmware (sum of all submodules of all IO ARs).
+    Configurations containing more submodules will be rejected.<br>
+	Allowed values are 32 - 2048.
+	</td>
+</tr>
+
+<tr>
+	<td>GSD parameter record storage size</td>
+	<td>
+	The available memory for storing GSD record parameters in KB. <br>
+	Each IO AR  has its own storage of this size.<br>
+    Configurations containing a more GSD parameters per IO AR will be rejected.<br>
+	Allowed values are 4 - 256. The Profinet Specification requires a minimum value of 16.
+	</td>
+</tr>
+
+<tr>
+	<td>Number of ARVendorBlocks</td>
+	<td>
+	The amount of ARVendorBlocks supported by the firmware (sum of all ARVendorBlocks of all IO ARs).
+    Configurations containing more ARVendorBlocks will be rejected.<br>
+	Allowed values are 1 - 512.
+	</td>
+</tr>
+
+<tr>
+	<td>ARVendorBlock storage size</td>
+	<td>
+	The supported size per ARVendorBlock supported by the firmware.
+    Configurations containing larger ARVendorBlocks will be rejected.<br>
+	Allowed values are 128 - 4096.
+	</td>
+</tr>
+
+<tr>
+	<td>Size for acyclic application Read/Write requests</td>
+	<td>
+	The firmware offers one large buffer for runtime Read/Write requests. 
+    The size of this buffer in KB is set here.<br>
+    Allowed values are 4 - 256. <br>
+    Note that per IO AR an additional (small) buffer for parallel Read/Write requests exists. Their size can not be modified.
+	</td>
+</tr>
+
+</table>
+
+</BODY>
+</HTML>
