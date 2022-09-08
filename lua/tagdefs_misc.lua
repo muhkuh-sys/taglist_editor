@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2022-09-07     SL            added HIL_TAG_PROFINET_CONTROLLER_QUANTITIES 0x30015004
 -- 2021-05-28     SL            added HIL_TAG_NF_SWAP_COM_LEDS  0x10e00005
 -- 2021-04-28     SL            added HIL_TAG_LWIP_QUANTITY_STRUCTURE 0x10e90002
 --                              added HIL_TAG_NF_GEN_DIAG_RESOURCES   0x10e00001
@@ -561,6 +562,48 @@ TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T = {
     {"UINT8",  "abPadding2",           desc="reserved",                mode = "hidden"},
 
 }, 
+
+----------------------------------------------------------------------------------------------
+-- typedef struct
+-- {
+--   uint16_t     usNumIOAR;               /** Number of parallel IO ARs. Allowed values [1, 128] */
+--   uint16_t     usNumDAAR;               /** Number of parallel Device Access ARs. Allowed values [0, 1] */
+--   uint16_t     usNumSubmodules;         /** Maximum number of submodules over all IO ARs. Allowed values [32, 2048] */
+--   uint16_t     usParamRecordStorage;    /** Available GSD parameter record storage per AR in KB. Allowed values [4, 256] */
+--   uint16_t     usNumARVendorBlocks;     /** Number of ARVendorBlocks over all IO ARs. Allowed values [1, 512] */
+--   uint16_t     usSizeARVendorBlock;     /** Size per ARVendrBlock in byte. Allowed values [128, 4096] */
+--   uint16_t     usSizeApplRpcBuffer;     /** Size of single application service RPC buffer in KB. Allowed values [4, 256] */
+--   uint8_t      abPadding[2];            /** 32Bits alignment */
+-- } HIL_TAG_PROFINET_CONTROLLER_QUANTITIES_DATA_T;
+
+
+TAG_PROFINET_CONTROLLER_QUANTITIES_DATA_T = {
+    {"UINT16", "usNumIOAR",             desc="Number of IO Connections (ARs)",  
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=128} -- actual Range: 1-128
+    },
+    {"UINT16", "usNumDAAR",             desc="Number of parallel Device Access ARs",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1} 
+    },
+    {"UINT16", "usNumSubmodules",       desc="Number of submodules",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=2048} -- actual Range: 32-2048
+    },
+    {"UINT16", "usParamRecordStorage",  desc="GSD parameter record storage size", 
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=256} -- actual Range: 4-256
+    },
+    {"UINT16", "usNumARVendorBlocks",   desc="Number of ARVendorBlocks", 
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=512} -- actual Range: 1-512
+    },
+    {"UINT16", "usSizeARVendorBlock",   desc="ARVendorBlock storage size", 
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=4096} -- actual Range: 128-4096
+    },
+    {"UINT16", "usSizeApplRpcBuffer",   desc="Size for acyclic application Read/Write requests", 
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=256} -- actual Range: 4-256
+    },
+    {"UINT8",  "abPadding0",           desc="reserved",                mode = "hidden"},
+    {"UINT8",  "abPadding1",           desc="reserved",                mode = "hidden"},
+}, 
+
+
 ----------------------------------------------------------------------------------------------
 -- tags for netX Diagnostics and Remote Access component
 
@@ -980,6 +1023,8 @@ TAG_PROFINET_FEATURES_V2 =
 	{paramtype = 0x30015002, datatype="TAG_PROFINET_FEATURES_V2_DATA_T",                 desc="Profinet Features V2"},
 TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES = 
 	{paramtype = 0x30015003, datatype="TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T",  desc="Profinet SystemRedundancy"},
+TAG_PROFINET_CONTROLLER_QUANTITIES = 
+	{paramtype = 0x30015004, datatype="TAG_PROFINET_CONTROLLER_QUANTITIES_DATA_T",  desc="Profinet ControllerQuantities"},
 	
 TAG_TCP_PORT_NUMBERS =
 	{paramtype = 0x30019000, datatype="TAG_TCP_PORT_NUMBERS_DATA_T",      desc="Ethernet Interface TCP Port Numbers"},
@@ -1082,6 +1127,7 @@ TAG_HELP = {
     TAG_PROFINET_FEATURES                     = {file="TAG_PROFINET_FEATURES_DATA_T.htm"},
     TAG_PROFINET_FEATURES_V2                  = {file="TAG_PROFINET_FEATURES_V2_DATA_T.htm"},
     TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES   = {file="TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T.htm"},
+    TAG_PROFINET_CONTROLLER_QUANTITIES    = {file="TAG_PROFINET_CONTROLLER_QUANTITIES_DATA_T.htm"},
 
     TAG_DIAG_IF_CTRL_UART               = {file="TAG_DIAG_CTRL_DATA_T.htm"},
     TAG_DIAG_IF_CTRL_USB                = {file="TAG_DIAG_CTRL_DATA_T.htm"},
