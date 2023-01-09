@@ -1024,7 +1024,7 @@ TAG_PROFINET_FEATURES_V2 =
 TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES = 
 	{paramtype = 0x30015003, datatype="TAG_PROFINET_SYSTEM_REDUNDANCY_FEATURES_DATA_T",  desc="Profinet SystemRedundancy"},
 TAG_PROFINET_CONTROLLER_QUANTITIES = 
-	{paramtype = 0x30015004, datatype="TAG_PROFINET_CONTROLLER_QUANTITIES_DATA_T",  desc="Profinet ControllerQuantities"},
+	{paramtype = 0x30015004, datatype="TAG_PROFINET_CONTROLLER_QUANTITIES_DATA_T",  desc="Profinet Controller Settings"},
 	
 TAG_TCP_PORT_NUMBERS =
 	{paramtype = 0x30019000, datatype="TAG_TCP_PORT_NUMBERS_DATA_T",      desc="Ethernet Interface TCP Port Numbers"},
