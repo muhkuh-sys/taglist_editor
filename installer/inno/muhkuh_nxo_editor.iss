@@ -11,13 +11,13 @@ AppVersion={#AppVersion}
 AppVerName={#AppVerName}
 AppPublisher=Muhkuh team and Hilscher GmbH
 AppPublisherURL=http://www.hilscher.com
-AppCopyright=(C) 2022, Muhkuh team and Hilscher GmbH
+AppCopyright=(C) 2023, Muhkuh team and Hilscher GmbH
 
 ; works: company, copyright, product name, product version
 ; description goes into properties and version dialogue
 VersionInfoTextVersion={#AppVersion}
 VersionInfoDescription=Installer of the Hilscher Tag List Editor application
-VersionInfoCopyright=(C) 2022 Muhkuh team and Hilscher GmbH
+VersionInfoCopyright=(C) 2023 Muhkuh team and Hilscher GmbH
 VersionInfoCompany=Hilscher GmbH
 VersionInfoProductName=Hilscher Tag List Editor
 VersionInfoVersion={#ProjectVersion}
