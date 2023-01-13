@@ -2,6 +2,7 @@ Change log for Tag List Editor
 
 Tag list editor 1.5.0.2
  * added tag HIL_TAG_PROFINET_CONTROLLER_QUANTITIES  0x30015004
+   (Profinet Controller Settings)
 
 Tag list editor 1.5.0.1
  * bugfix: An error occurred upon loading a firmware file if the file contains
