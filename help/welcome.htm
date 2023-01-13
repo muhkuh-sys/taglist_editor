@@ -23,6 +23,17 @@ Tag lists can be saved separately and loaded into another file.
 In order to load a firmware file, use the "Load" button right to the "NXO/NXF/NXI/MXF/NAI" label.
 </p>
 
+<p></p>
+
+<h3>Notes:</h3>
+<p>This editor can only open firmware files containing a common header with at least version 3.</p>
+
+<p>The input validation for numbers shown as text fields has a limitation: If the minimum value is not 0, you can enter any
+value between 0 and the maximum value.</p>
+
+<p>If the tag list contains an incorrect value, you may be unable to edit the value directly.
+In this case, mark the value and press backspace, then enter a correct value.</p>
+
 <p>
 After start, or after clicking the "Clear" button, the Tag List Editor is set up for constructing
 an option module (NXO) file from components:
@@ -34,16 +45,6 @@ an option module (NXO) file from components:
   A command line script for this process is also included.
   It is possible to load an existing NXO file and replace its components.
 </p>
-<p></p>
-
-<h3>Notes:</h3>
-<p>This editor can only open firmware files containing a common header with at least version 3.</p>
-
-<p>
-The input routines refuse any input outside the allowed range for a field, with one exception: 
-They will not prevent you from entering the value 0, since hex numbers always start with this digit.
-If you have loaded a tag list containing incorrect values and want to edit such a value, mark it and
-press backspace, then enter a correct value.</p>
 
 </BODY>
 </HTML>
