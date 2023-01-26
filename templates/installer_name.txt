@@ -11,4 +11,4 @@
 # PROJECT_VERSION_VCS_VERSION       "${PROJECT_VERSION_VCS_VERSION}"
 
 InstallerName = "tag_list_editor_${PROJECT_VERSION_VCS_VERSION}_setup"
-
+ZipfileName = "tag_list_editor_${PROJECT_VERSION_VCS_VERSION}"
