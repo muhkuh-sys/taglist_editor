@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_HTTP_PORT_CONFIG_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Web server (HTTP) configuration</h2>
+
+<p>
+This tag sets the number of the TCP port that the web server listens on.
+</p>
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Web server (HTTP) Port Number </td>
+	<td>The TCP port number used by the web server for HTTP. <br>
+	<br>
+	The default value is 80. <br>
+	Range: 0 - 65535  <br>
+	<br>
+	If the port number is set to 0, the web server will deactivate the HTTP port.<br>
+	<br>
+	<b>Note:</b> Changing the port to a number that is already used by another component inside the firmware, <br>
+	will lead to undefined firmware behavior and must be avoided (check the firmware's data sheet for already used TCP ports).
+	</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

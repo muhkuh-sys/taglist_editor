@@ -388,6 +388,29 @@ function postprocess_editrecs(atEditRecs)
 			return false, string.format("Line %d: tag/structure name is missing", iLineNo)
 		end
 	
+		-- The tag RCX_TAG_SERVX_PORT_NUMBER (0x10920000) has been renamed to 
+		-- HIL_TAG_HTTP_PORT_CONFIG. 
+		-- The only member, usServXPortNumber, has been renamed to usPort.
+		if strName=="RCX_TAG_SERVX_PORT_NUMBER" then
+			vbs_printf("Renaming tag RCX_TAG_SERVX_PORT_NUMBER (0x10920000) (in patch record) to HIL_TAG_HTTP_PORT_CONFIG.")
+			strName = "HIL_TAG_HTTP_PORT_CONFIG"
+			tEditRec.strName = strName
+			
+			for iMatch, tMatch in pairs(tEditRec.atMatches) do
+				if tMatch.strFieldName=="usServXPortNumber" then
+					vbs_printf("Renaming member usServXPortNumber in RCX_TAG_SERVX_PORT_NUMBER tag to usPort.")
+					tMatch.strFieldName="usPort"
+				end
+			end
+
+			for iEdit, tEdit in pairs(tEditRec.atEdits) do
+				if tEdit.strFieldName=="usServXPortNumber" then
+					vbs_printf("Renaming member usServXPortNumber in RCX_TAG_SERVX_PORT_NUMBER tag to usPort.")
+					tEdit.strFieldName="usPort"
+				end
+			end
+		end
+		
 		if strName=="DEVICE_HEADER_V1_T" then
 			tEditRec.ulTag = nil
 			tEditRec.strType = strName

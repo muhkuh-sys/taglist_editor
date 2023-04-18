@@ -13,6 +13,8 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2023-04-18     SL            renamed RCX_TAG_SERVX_PORT_NUMBER 
+--                              to HIL_TAG_HTTP_PORT_CONFIG
 -- 2022-09-07     SL            added HIL_TAG_PROFINET_CONTROLLER_QUANTITIES 0x30015004
 -- 2021-05-28     SL            added HIL_TAG_NF_SWAP_COM_LEDS  0x10e00005
 -- 2021-04-28     SL            added HIL_TAG_LWIP_QUANTITY_STRUCTURE 0x10e90002
@@ -796,10 +798,9 @@ RCX_TAG_EIF_NDIS_ENABLE_DATA_T = {
 ----------------------------------------------------------------------------------------------
 -- servX facility tags
 
-RCX_TAG_SERVX_PORT_NUMBER_DATA_T = {
-	{"UINT16", "usServXPortNumber",  desc="Webserver TCP Port Number", editor="numedit", editorParam={nBits=16, format="%u"}}
+HIL_TAG_HTTP_PORT_CONFIG_DATA_T = {
+	{"UINT16", "usPort",  desc="Web server (HTTP) Port Number", editor="numedit", editorParam={nBits=16, format="%u"}}
 },
-
 
 
 ----------------------------------------------------------------------------------------------
@@ -1063,9 +1064,8 @@ RCX_TAG_EIF_NDIS_ENABLE =
 	{paramtype = 0x105D0002, datatype="RCX_TAG_EIF_NDIS_ENABLE_DATA_T",  desc="Ethernet NDIS Support"},
 
 -- facility tag: servX web server
-RCX_TAG_SERVX_PORT_NUMBER =
-	{paramtype = 0x10920000, datatype="RCX_TAG_SERVX_PORT_NUMBER_DATA_T", desc="servX TCP Port Number"},
-
+HIL_TAG_HTTP_PORT_CONFIG =
+	{paramtype = 0x10920000, datatype="HIL_TAG_HTTP_PORT_CONFIG_DATA_T", desc="Web Server (HTTP) Configuration"},
 
 HIL_TAG_NF_GEN_DIAG_RESOURCES =
 	{paramtype = 0x10e00001, datatype="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T", desc="Generic Diagnosis Ressources"},
@@ -1143,7 +1143,7 @@ TAG_HELP = {
     RCX_TAG_EIF_EDD_INSTANCE            = {file="RCX_TAG_EIF_EDD_INSTANCE_DATA_T.htm"},
     RCX_TAG_EIF_NDIS_ENABLE             = {file="RCX_TAG_EIF_NDIS_ENABLE_DATA_T.htm"},
 
-    RCX_TAG_SERVX_PORT_NUMBER           = {file="RCX_TAG_SERVX_PORT_NUMBER_DATA_T.htm"},
+    HIL_TAG_HTTP_PORT_CONFIG            = {file="HIL_TAG_HTTP_PORT_CONFIG_DATA_T.htm"},
 
     HIL_TAG_NF_GEN_DIAG_RESOURCES       = {file="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T.htm"},
     HIL_TAG_NF_PROFI_ENERGY_MODES       = {file="HIL_TAG_NF_PROFI_ENERGY_MODES_DATA_T.htm"},
