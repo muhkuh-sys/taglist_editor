@@ -302,6 +302,7 @@ function addDataTypes(l)
 end
 
 
+-- same as addDataType, used by devhdredit
 function registerStructType(structname, structdef)
     structures[structname]=structdef
 end
