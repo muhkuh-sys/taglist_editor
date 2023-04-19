@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2023-04-19     SL            added HIL_TAG_HTTPS_PORT_CONFIG 0x10920001
 -- 2023-04-18     SL            renamed RCX_TAG_SERVX_PORT_NUMBER 
 --                              to HIL_TAG_HTTP_PORT_CONFIG
 -- 2022-09-07     SL            added HIL_TAG_PROFINET_CONTROLLER_QUANTITIES 0x30015004
@@ -802,6 +803,14 @@ HIL_TAG_HTTP_PORT_CONFIG_DATA_T = {
 	{"UINT16", "usPort",  desc="Web server (HTTP) Port Number", editor="numedit", editorParam={nBits=16, format="%u"}}
 },
 
+HIL_TAG_HTTPS_PORT_CONFIG_DATA_T = {
+	{"UINT16", "usPort",                desc="Web server (HTTPS) Port Number", editor="numedit",   editorParam={nBits=16, format="%u"}},
+	{"UINT8",  "bCertificateHandling",  desc="Certificate Handling",           editor="comboedit", editorParam={nBits=8, minValue=0, maxValue=2}},
+    {"UINT8",  "bReserved",             desc="Reserved",     mode = "hidden"},
+},
+
+
+
 
 ----------------------------------------------------------------------------------------------
 -- LWIP Ports for usage with IP 0.0.0.0
@@ -1067,6 +1076,9 @@ RCX_TAG_EIF_NDIS_ENABLE =
 HIL_TAG_HTTP_PORT_CONFIG =
 	{paramtype = 0x10920000, datatype="HIL_TAG_HTTP_PORT_CONFIG_DATA_T", desc="Web Server (HTTP) Configuration"},
 
+HIL_TAG_HTTPS_PORT_CONFIG =
+	{paramtype = 0x10920001, datatype="HIL_TAG_HTTPS_PORT_CONFIG_DATA_T", desc="Web Server (HTTPS) Configuration"},
+
 HIL_TAG_NF_GEN_DIAG_RESOURCES =
 	{paramtype = 0x10e00001, datatype="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T", desc="Generic Diagnosis Ressources"},
 
@@ -1144,6 +1156,7 @@ TAG_HELP = {
     RCX_TAG_EIF_NDIS_ENABLE             = {file="RCX_TAG_EIF_NDIS_ENABLE_DATA_T.htm"},
 
     HIL_TAG_HTTP_PORT_CONFIG            = {file="HIL_TAG_HTTP_PORT_CONFIG_DATA_T.htm"},
+    HIL_TAG_HTTPS_PORT_CONFIG           = {file="HIL_TAG_HTTPS_PORT_CONFIG_DATA_T.htm"},
 
     HIL_TAG_NF_GEN_DIAG_RESOURCES       = {file="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T.htm"},
     HIL_TAG_NF_PROFI_ENERGY_MODES       = {file="HIL_TAG_NF_PROFI_ENERGY_MODES_DATA_T.htm"},
