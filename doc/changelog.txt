@@ -1,5 +1,36 @@
 Change log for Tag List Editor
 
+Tag list editor 1.5.0.3-dev1
+ * Renamed the tag RCX_TAG_SERVX_PORT_NUMBER (0x10920000) to 
+   HIL_TAG_HTTP_PORT_CONFIG.
+   
+   The edit command of the tagtool recognizes both the old and new naming:
+   
+   Old:
+   Tag 3: RCX_TAG_SERVX_PORT_NUMBER (0x10920000)
+       ENABLED
+   SET .usServXPortNumber = 12345
+
+   New:
+   Tag 3: HIL_TAG_HTTP_PORT_CONFIG (0x10920000)
+       ENABLED
+   SET .usPort = 12345
+   
+   However, any error messages will refer to the new name, even if 
+   the old naming was used.
+   
+ * added tag HIL_TAG_HTTPS_PORT_CONFIG           0x10920001
+ * added tag HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS 0x10e00006
+   Included named constants for patch files:
+   -- netFIELD PROFINET IO-Link profile Configuration Flags
+   HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DIO_IN_IOLM_DISABLED =  0,
+   HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DIO_IN_IOLM_ENABLED  =  1,
+   HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DIAG_ENABLED         =  0,
+   HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DIAG_DISABLED        =  1,
+   HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_PA_ENABLED           =  0,
+   HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_PA_DISABLED          =  1,
+ 
+
 Tag list editor 1.5.0.2
  * added tag HIL_TAG_PROFINET_CONTROLLER_QUANTITIES  0x30015004
    (Profinet Controller Settings)
