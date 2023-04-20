@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2023-04-19     SL            added HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS 0x10e00006
 -- 2023-04-19     SL            added HIL_TAG_HTTPS_PORT_CONFIG 0x10920001
 -- 2023-04-18     SL            renamed RCX_TAG_SERVX_PORT_NUMBER 
 --                              to HIL_TAG_HTTP_PORT_CONFIG
@@ -225,7 +226,14 @@ TAG_CONSTANTS = {
 	-- netFIELD PROFINET IO-Link profile DIO in IOLM
 	HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DISABLED  =  0,
 	HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_ENABLED   =  1,
-
+	
+	-- netFIELD PROFINET IO-Link profile Configuration Flags
+	HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DIO_IN_IOLM_DISABLED =  0,
+	HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DIO_IN_IOLM_ENABLED  =  1,
+	HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DIAG_ENABLED         =  0,
+	HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DIAG_DISABLED        =  1,
+	HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_PA_ENABLED           =  0,
+	HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_PA_DISABLED          =  1,
 }
 
 EIP_XC_TYPE = {
@@ -977,6 +985,27 @@ HIL_TAG_NF_SWAP_COM_LEDS_DATA_T = {
 
 
 
+----------------------------------------------------------------------------------------------
+HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DATA_T = {
+    {"UINT8", "bDioInIolm",   desc="Pin4 DIO data in IOLM Submodule", 
+        editor="comboedit", editorParam={nBits=8, values={
+                {name="Disabled",    value=0},
+                {name="Enabled",     value=1},
+    } } },
+    {"UINT8", "bDisableDiag", desc="General mapping of IO-Link events into PROFINET diagnosis", 
+        editor="comboedit", editorParam={nBits=8, values={
+                {name="Enabled",      value=0},
+                {name="Disabled",     value=1},
+    } } },
+    {"UINT8", "bDisablePA",   desc="General mapping of IO-Link events into PROFINET process alarms", 
+        editor="comboedit", editorParam={nBits=8, values={
+                {name="Enabled",      value=0},
+                {name="Disabled",     value=1},
+    } } },
+    {"UINT8", "bReserved",    desc="Reserved", mode = "hidden" },
+},
+
+
 } -- end of structure defintions
 
 ---------------------------------------------------------------------------
@@ -1094,6 +1123,9 @@ HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM =
 HIL_TAG_NF_SWAP_COM_LEDS =
 	{paramtype = 0x10e00005, datatype="HIL_TAG_NF_SWAP_COM_LEDS_DATA_T", desc="Swap COM LEDs"},
 
+HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS = 
+	{paramtype = 0x10e00006, datatype="HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DATA_T", desc="netFIELD PROFINET IO-Link Profile Configuration Flags"},
+
 
 HIL_TAG_LWIP_PORTS_FOR_IP_ZERO = 
 	{paramtype = 0x10e90000, datatype="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T", desc="LWIP Ports for IP 0.0.0.0"},
@@ -1163,6 +1195,7 @@ TAG_HELP = {
     HIL_TAG_NF_PN_IOL_PROFILE_PADDING   = {file="HIL_TAG_NF_PN_IOL_PROFILE_PADDING_DATA_T.htm"},
     HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM   = {file="HIL_TAG_NF_PN_IOL_PROFILE_DIO_IN_IOLM_DATA_T.htm"},
     HIL_TAG_NF_SWAP_COM_LEDS            = {file="HIL_TAG_NF_SWAP_COM_LEDS_DATA_T.htm"},
+    HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS = {file="HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS_DATA_T.htm"},
 
     HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
     HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},

@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS</Title>
+</HEAD>
+<BODY>
+<h2>netFIELD PROFINET IO-Link Profile Configuration Flags</h2>
+
+<p>
+Enable/disable the following special features in the PNSIOLM package.<br>
+Note: This replaces the deprecated tag "PROFINET IO-Link Profile Pin4 DIO in IOLM Submodule"
+</p>
+
+<p>
+<table border=1>
+
+<tr>
+<td>Pin4 DIO data in IOLM Submodule</td>
+<td>
+Disabled: Pin4 DIO data in regular profile DI/DO submodules (default) <br>
+Enabled: Pin4 DIO data in IOLM Submodule. Profile DI/DO Submodules do not have any IO data in this case.
+</td>
+</tr>
+
+<tr>
+<td>General mapping of IO-Link events into PROFINET diagnosis</td>
+<td>
+Enabled: Profile diagnosis mapping is enabled. The mapping can still be deactivated for individual ports via the PortConfiguration record (default)<br>
+Disabled: Profile diagnosis mapping is disabled. The profile still provides the parameter "enable/disable port diagnosis" within the PortConfiguration record. However, the parameter is only stored in the PND to IOLM Proxy - Port Configuration object. The application is responsible for the diagnosis mapping.
+</td>
+</tr>
+
+
+<tr>
+<td>General mapping of IO-Link events into PROFINET process alarms</td>
+<td>
+Enabled: Profile process alarms mapping is enabled. The mapping can still be deactivated for individual ports via the PortConfiguration record (default)<br>
+Disabled: Profile process alarms mapping is disabled. The profile still provides the parameter "enable/disable port process alarms" within the PortConfiguration record. However, the parameter is only stored in the PND to IOLM Proxy - Port Configuration object. The application is responsible for the process alarm mapping.
+</td>
+</tr>
+
+</table>
+</p>
+
+</BODY>
+</HTML>
