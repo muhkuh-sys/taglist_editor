@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2023-08-22     SL            added HIL_TAG_ECS_EOE_MODE      0x30009006
 -- 2023-04-19     SL            added HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS 0x10e00006
 -- 2023-04-19     SL            added HIL_TAG_HTTPS_PORT_CONFIG 0x10920001
 -- 2023-04-18     SL            renamed RCX_TAG_SERVX_PORT_NUMBER 
@@ -200,6 +201,10 @@ TAG_CONSTANTS = {
 	ECS_EOE_MODE_TCPIP    = 1,
 	ECS_EOE_MODE_RAW      = 2,
 
+	-- ECS EoE Config (0x30009006)
+	HIL_TAG_ECS_EOE_MODE_INTERNAL   = 0,
+	HIL_TAG_ECS_EOE_MODE_EXTERNAL   = 1,
+
 	-- ECS Mailbox Size
 	ECS_MBX_SIZE_128_128 = 0,
 	ECS_MBX_SIZE_268_268 = 1,
@@ -274,6 +279,12 @@ ECM_ENI_BUS_STATE = {
 	{name = "Off", value = 0},
 	{name = "On",  value = 1},
 }
+
+ECS_EOE_MODE_2 = {
+	{name = "EoE address is assigned to 1st chassis (LWIP)", value = 0},
+	{name = "EoE address is assigned to NDIS interface",     value = 1},
+}
+
 
 
 -- MMIO pin numbers for netX 50
@@ -402,6 +413,10 @@ TAG_ECS_MBX_SIZE_DATA_T = {
 
 TAG_ECM_ENI_BUS_STATE_DATA_T = {
 	{"UINT32", "ulTargetBusState", desc="Target Bus State", editor="comboedit",  editorParam={nBits=32, values = ECM_ENI_BUS_STATE}}
+},
+
+HIL_TAG_ECS_EOE_MODE_DATA_T = {
+	{"UINT32", "ulEoEMode", desc="EoE Mode", editor="comboedit",  editorParam={nBits=32, values = ECS_EOE_MODE_2}}
 },
 ----------------------------------------------------------------------------------------------
 -- TCP Port Numbers 
@@ -1055,6 +1070,8 @@ TAG_ECS_MBX_SIZE =
 	{paramtype = 0x30009004, datatype="TAG_ECS_MBX_SIZE_DATA_T",          desc="EtherCAT Slave Mailbox Size"},
 TAG_ECM_ENI_BUS_STATE =
 	{paramtype = 0x30009005, datatype="TAG_ECM_ENI_BUS_STATE_DATA_T",     desc="EtherCAT Master bus state for ENI"},
+HIL_TAG_ECS_EOE_MODE =
+	{paramtype = 0x30009006, datatype="HIL_TAG_ECS_EOE_MODE_DATA_T",      desc="EtherCAT Slave EoE Mode"},
 	
 TAG_PROFINET_FEATURES = 
 	{paramtype = 0x30015001, datatype="TAG_PROFINET_FEATURES_DATA_T",                    desc="Profinet Features"},
@@ -1165,6 +1182,7 @@ TAG_HELP = {
     TAG_ECS_CONFIG_EOE                  = {file="TAG_ECS_CONFIG_EOE_DATA_T.htm"},
     TAG_ECS_MBX_SIZE                    = {file="TAG_ECS_MBX_SIZE_DATA_T.htm"},
     TAG_ECM_ENI_BUS_STATE               = {file="TAG_ECM_ENI_BUS_STATE_DATA_T.htm"},
+    HIL_TAG_ECS_EOE_MODE                = {file="HIL_TAG_ECS_EOE_MODE_DATA_T.htm"},
 
     TAG_TCP_PORT_NUMBERS                = {file="TAG_TCP_PORT_NUMBERS_DATA_T.htm"},
 
