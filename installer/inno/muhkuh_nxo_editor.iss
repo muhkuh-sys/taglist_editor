@@ -134,6 +134,8 @@ Source: tagtool.bat; DestDir: {app}\nxo_editor; Components: modulator
 Source: "doc\Tag List Editor - Viewing and Editing Tags OI 08 EN.pdf"; DestDir: {app}\doc; Components: modulator
 Source: doc\changelog.txt; DestDir: {app}\doc; Components: modulator
 Source: doc\licenses.txt; DestDir: {app}\doc; Components: modulator
+Source: doc\readme_zipped_version.txt; DestDir: {app}\doc; Components: modulator
+
 
 [InstallDelete]
 Type: files; Name: "{app}\doc\Tag List Editor - Viewing and Editing Tags OI 07 EN.pdf"
