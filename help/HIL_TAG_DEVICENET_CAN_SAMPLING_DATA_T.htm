@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_DEVICENET_CAN_SAMPLING_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>CAN Sample Point</h2>
+
+<p>
+The sample point location is defined as &geq; 80% of the bit timing.<br>
+With this option it is possible to shift the sample point from the 
+recommended default setting to an alternative setting.<br>
+This may solve timing issue when devices are used, which run out of 
+specification regarding to the clock timings.<br>
+
+Note: Using this setting may make the product non-compliant to the specification!
+</p>
+
+<table border=1>
+<tr><th>Baud rate</th>   <th align="center">Default timing</th>  <th align="center">Alternative timing </th></tr>
+<tr><td>250 kBaud</td>   <td align="center">90,0%</td>           <td align="center">80,0%</td>  </tr>
+<tr><td>125 kBaud</td>   <td align="center">90,0%</td>           <td align="center">80,0%</td>  </tr>
+<tr><td>100 kBaud</td>   <td align="center">90,0%</td>           <td align="center">80,0%</td>  </tr>
+<tr><td>50 kBaud</td>    <td align="center">90,0%</td>           <td align="center">80,0%</td>  </tr>
+<tr><td>20 kBaud</td>    <td align="center">90,0%</td>           <td align="center">80,0%</td>  </tr>
+<tr><td>12,5 kBaud</td>  <td align="center">90,0%</td>           <td align="center">80,0%</td>  </tr>
+<tr><td>10 kBaud</td>    <td align="center">90,0%</td>           <td align="center">80,0%</td>  </tr>
+</table>
+
+<p></p>
+
+<table border=1>
+<tr>
+	<td>Enable alternative sample point</td>
+	<td>
+		<ul>
+			<li>disabled: Default timing</li>
+			<li>enabled: Alternative timing</li>
+		</ul>
+	</td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

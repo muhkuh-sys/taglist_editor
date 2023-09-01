@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2023-09-01     SL            added HIL_TAG_DEVICENET_CAN_SAMPLING 0x30008001
 -- 2023-08-22     SL            added HIL_TAG_ECS_EOE_MODE      0x30009006
 -- 2023-04-19     SL            added HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS 0x10e00006
 -- 2023-04-19     SL            added HIL_TAG_HTTPS_PORT_CONFIG 0x10920001
@@ -360,6 +361,21 @@ TAG_PLS_DEVICEID_DATA_T = {
 	{"UINT32", "ulVendorId",       desc="Vendor ID"},
 	{"UINT32", "ulProductCode",    desc="Product Code"},
 	{"UINT32", "ulRevisionNumber", desc="Revision Number"},
+},
+
+
+----------------------------------------------------------------------------------------------
+-- CAN Sample point
+
+HIL_TAG_DEVICENET_CAN_SAMPLING_DATA_T = {
+    {"UINT8", "bEnableAlternativeSamplePointTimings",
+        desc="Enable Alternative Sample Point Timings",
+        editor="checkboxedit",
+        editorParam={nBits = 8, offValue = 0, onValue = 1, otherValues = true},
+    },
+    {"UINT8", "bReserved1",        desc="Reserved1",     mode = "hidden"},
+    {"UINT8", "bReserved2",        desc="Reserved2",     mode = "hidden"},
+    {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
 },
 
 
@@ -1051,6 +1067,9 @@ TAG_S3S_DEVICEID =
     {paramtype = 0x30018000, datatype="TAG_S3S_DEVICEID_DATA_T",          desc="sercos III Product Information"},
 TAG_PLS_DEVICEID =
     {paramtype = 0x3001a000, datatype="TAG_PLS_DEVICEID_DATA_T",          desc="POWERLINK Product Information"},
+
+HIL_TAG_DEVICENET_CAN_SAMPLING =
+    {paramtype = 0x30008001, datatype="HIL_TAG_DEVICENET_CAN_SAMPLING_DATA_T", desc="CAN Sample point"},
  
 -- protocol tag: EIP EDD Config
 TAG_EIP_EDD_CONFIGURATION =
@@ -1174,6 +1193,8 @@ TAG_HELP = {
     TAG_ECS_DEVICEID                    = {file="TAG_ECS_DEVICEID_DATA_T.htm"},
     TAG_PLS_DEVICEID                    = {file="TAG_PLS_DEVICEID_DATA_T.htm"},
 
+    HIL_TAG_DEVICENET_CAN_SAMPLING      = {file="HIL_TAG_DEVICENET_CAN_SAMPLING_DATA_T.htm"},
+    
     TAG_EIP_EDD_CONFIGURATION           = {file="TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"},
     TAG_EIP_DLR_PROTOCOL                = {file="TAG_EIP_DLR_PROTOCOL.htm"},
     
