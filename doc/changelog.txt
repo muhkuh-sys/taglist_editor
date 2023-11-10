@@ -1,5 +1,8 @@
 Change log for Tag List Editor
 
+Tag list editor 1.5.0.5
+ * added tag HIL_TAG_EIP_RESOURCES          (0x3000A004)
+
 Tag list editor 1.5.0.4
  * added tag HIL_TAG_ECS_EOE_MODE           (0x30009006)
  * added tag HIL_TAG_DEVICENET_CAN_SAMPLING (0x30008001)
