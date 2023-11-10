@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2023-09-20     MBO           added HIL_TAG_EIP_RESOURCES 0x3000A004
 -- 2023-09-01     SL            added HIL_TAG_DEVICENET_CAN_SAMPLING 0x30008001
 -- 2023-08-22     SL            added HIL_TAG_ECS_EOE_MODE      0x30009006
 -- 2023-04-19     SL            added HIL_TAG_NF_PN_IOL_PROFILE_CFG_FLAGS 0x10e00006
@@ -378,6 +379,63 @@ HIL_TAG_DEVICENET_CAN_SAMPLING_DATA_T = {
     {"UINT8", "bReserved3",        desc="Reserved3",     mode = "hidden"},
 },
 
+
+----------------------------------------------------------------------------------------------
+-- Resource dimensioning of EIP stack
+HIL_TAG_EIP_RESOURCES_DATA_T = {
+    {"UINT16", "usMaxUserServices",             desc="Max. supported CIP services the host can register",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1024}
+    },
+    {"UINT16", "usMaxUserObjects",             desc="Max. CIP objects the host can register",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1024}
+    },
+    {"UINT16", "usMaxAdapterAssemblyInstance",       desc="Max. Assembly Instances the host can register",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1024}
+    },
+    {"UINT16", "usAssemblyDataMemPoolSize",  desc="Assembly object data mempool size",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=65535}
+    },
+    {"UINT16", "usAssemblyMetaMemPoolSize",   desc="Assembly object meta mempool size",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=65536}
+    },
+    {"UINT8", "bMaxUdpQueueElements",   desc="UDP Encap receive queue depth",
+       editor="numedit",  editorParam={nBits=8, format="%u", minValue=0, maxValue=255}
+    },
+    {"UINT8", "bMaxIoQueueElements",   desc="UDP I/O receive queue depth",
+       editor="numedit",  editorParam={nBits=8, format="%u", minValue=0, maxValue=255}
+    },
+    {"UINT16",  "usMaxTcpConnections",           desc="Max. TCP connections/sockets.",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1024}
+    },
+    {"UINT8",  "bMaxTcpQueueElements",           desc="Per socket TCP frame queues depth",
+       editor="numedit",  editorParam={nBits=8, format="%u", minValue=0, maxValue=255}
+    },
+    {"UINT8",  "bPad0", desc="Pad byte", mode = "hidden"},
+    {"UINT16",  "usMaxIoConnections",           desc="Overall max. I/O connections",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1024}
+    },
+    {"UINT16",  "usMaxTargetIoConnections",           desc="Max. parallel CL0/1 connections",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1024}
+    },
+    {"UINT16",  "usMaxTargetCl3Connections",           desc="Max. parallel CL3 connections",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1024}
+    },
+    {"UINT16",  "usMaxTargetUcmmConnections",           desc="Max. parallel UCMM requests",
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=1024}
+    },
+    {"UINT8",  "bMaxPdcInstance",           desc="Max. PDC instances",
+       editor="numedit",  editorParam={nBits=8, format="%u", minValue=0, maxValue=255}
+    },
+    {"UINT8",  "bPad1", desc="Pad byte", mode = "hidden"},
+    {"UINT16",  "usPdcMemPoolSize",           desc="PDC object mempool size",
+      editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=65535}
+    },
+
+    {"UINT16",  "usReserved1",           desc="reserved",                mode = "hidden"},
+    {"UINT16",  "usReserved2",           desc="reserved",                mode = "hidden"},
+    {"UINT16",  "usReserved3",           desc="reserved",                mode = "hidden"},
+    {"UINT16",  "usReserved4",           desc="reserved",                mode = "hidden"},
+},
 
 ----------------------------------------------------------------------------------------------
 -- EIP/DLR configuration
@@ -1078,6 +1136,9 @@ TAG_EIP_EDD_CONFIGURATION =
 TAG_EIP_DLR_PROTOCOL =
     {paramtype = 0x3000a002, datatype="TAG_EIP_DLR_PROTOCOL_DATA_T",      desc="DLR Protocol"},
     
+HIL_TAG_EIP_RESOURCES =
+	{paramtype = 0x3000A004, datatype="HIL_TAG_EIP_RESOURCES_DATA_T",       desc="EtherNet/IP Resource Dimensions"},
+
 -- protocol tags: EtherCAT Slave
 TAG_ECS_ENABLE_BOOTSTRAP =
 	{paramtype = 0x30009001, datatype="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T", desc="EtherCAT Slave Enable Bootstrap Mode"},
@@ -1239,6 +1300,7 @@ TAG_HELP = {
     HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
     HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
     HIL_TAG_LWIP_QUANTITY_STRUCTURE     = {file="HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T.htm"},
+    HIL_TAG_EIP_RESOURCES               = {file="HIL_TAG_EIP_RESOURCES_DATA_T.htm"},
 
 }
 
