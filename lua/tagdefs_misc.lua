@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2023-11-15     MBO           added HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE 0x3000A005
 -- 2023-09-20     MBO           added HIL_TAG_EIP_RESOURCES 0x3000A004
 -- 2023-09-01     SL            added HIL_TAG_DEVICENET_CAN_SAMPLING 0x30008001
 -- 2023-08-22     SL            added HIL_TAG_ECS_EOE_MODE      0x30009006
@@ -435,6 +436,15 @@ HIL_TAG_EIP_RESOURCES_DATA_T = {
     {"UINT16",  "usReserved2",           desc="reserved",                mode = "hidden"},
     {"UINT16",  "usReserved3",           desc="reserved",                mode = "hidden"},
     {"UINT16",  "usReserved4",           desc="reserved",                mode = "hidden"},
+},
+
+----------------------------------------------------------------------------------------------
+-- Ethernet/IP Timesync object enabled/disabled (statically)
+HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T = {
+    {"UINT8", "bRegisterTimesyncObject", desc="Enable CIP Sync",
+       editor="checkboxedit",
+       editorParam={nBits=8, offValue=0, onValue=1, otherValues = true}
+    },
 },
 
 ----------------------------------------------------------------------------------------------
@@ -1139,6 +1149,9 @@ TAG_EIP_DLR_PROTOCOL =
 HIL_TAG_EIP_RESOURCES =
 	{paramtype = 0x3000A004, datatype="HIL_TAG_EIP_RESOURCES_DATA_T",       desc="EtherNet/IP Resource Dimensions"},
 
+HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE =
+	{paramtype = 0x3000A005, datatype="HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T", desc="CIP Sync support"},
+
 -- protocol tags: EtherCAT Slave
 TAG_ECS_ENABLE_BOOTSTRAP =
 	{paramtype = 0x30009001, datatype="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T", desc="EtherCAT Slave Enable Bootstrap Mode"},
@@ -1301,6 +1314,7 @@ TAG_HELP = {
     HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
     HIL_TAG_LWIP_QUANTITY_STRUCTURE     = {file="HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T.htm"},
     HIL_TAG_EIP_RESOURCES               = {file="HIL_TAG_EIP_RESOURCES_DATA_T.htm"},
+    HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE = {file="HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T.htm"},
 
 }
 
