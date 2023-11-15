@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>CIP Sync support</h2>
+
+This tag statically enables or disables support of the CIP TimeSync object and the underlying CIP Sync (IEEE1588) subsystem.
+
+<table border=1>
+<tr>
+  <td>Enable CIP Sync</td>
+	<td>The CIP Timesync object will be created during firmware startup. The host application can then dynamically disable and reenable it through the packet API.</td>
+</tr>
+<tr>
+  <td>Disable CIP Sync</td>
+	<td>The CIP Timesync object and the CIP Sync subsystems will be statically disabled in the firmware. This would allow for memory-constrained-platforms to assign more memory to other means.</td>
+</tr>
+</table>
