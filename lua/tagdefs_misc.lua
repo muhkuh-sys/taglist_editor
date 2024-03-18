@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2024-03-18     SL            added HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS   0x10e90003
 -- 2023-11-15     MBO           added HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE 0x3000A005
 -- 2023-09-20     MBO           added HIL_TAG_EIP_RESOURCES 0x3000A004
 -- 2023-09-01     SL            added HIL_TAG_DEVICENET_CAN_SAMPLING 0x30008001
@@ -962,6 +963,16 @@ HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T = {
 },
 
 
+----------------------------------------------------------------------------------------------
+-- Socket API IP Multicast Group configuration
+
+HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS_DATA_T = {
+    {"UINT32", "ulNumberIpMulticastsForSocketServices",
+        desc="Number of IP Multicast groups for socket services",
+        editor="numedit", 
+        editorParam={nBits=32, format="%u", minValue=1, maxValue=65535}
+    },
+}, 
 
 ----------------------------------------------------------------------------------------------
 -- Generic Diagnosis Ressources
@@ -1244,6 +1255,8 @@ HIL_TAG_LWIP_NETIDENT_BEHAVIOUR =
 	{paramtype = 0x10e90001, datatype="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T", desc="LWIP netident behaviour"},
 HIL_TAG_LWIP_QUANTITY_STRUCTURE = 
 	{paramtype = 0x10e90002, datatype="HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T", desc="Socket API Quantity Structure"},
+HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS = 
+	{paramtype = 0x10e90003, datatype="HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS_DATA_T", desc="Socket API IP Multicast Group configuration"},
 
 }
 
@@ -1313,6 +1326,9 @@ TAG_HELP = {
     HIL_TAG_LWIP_PORTS_FOR_IP_ZERO      = {file="HIL_TAG_LWIP_PORTS_FOR_IP_ZERO_DATA_T.htm"},
     HIL_TAG_LWIP_NETIDENT_BEHAVIOUR     = {file="HIL_TAG_LWIP_NETIDENT_BEHAVIOUR_DATA_T.htm"},
     HIL_TAG_LWIP_QUANTITY_STRUCTURE     = {file="HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T.htm"},
+    HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS = 
+                                          {file="HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS_DATA_T.htm"},
+
     HIL_TAG_EIP_RESOURCES               = {file="HIL_TAG_EIP_RESOURCES_DATA_T.htm"},
     HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE = {file="HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T.htm"},
 

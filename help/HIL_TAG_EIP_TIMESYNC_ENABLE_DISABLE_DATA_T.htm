@@ -6,15 +6,23 @@
 <BODY>
 <h2>CIP Sync support</h2>
 
+<p>
 This tag statically enables or disables support of the CIP TimeSync object and the underlying CIP Sync (IEEE1588) subsystem.
+</p>
 
 <table border=1>
 <tr>
   <td>Enable CIP Sync</td>
-	<td>The CIP Timesync object will be created during firmware startup. The host application can then dynamically register and unregister it through the packet API.</td>
-</tr>
-<tr>
-  <td>Disable CIP Sync</td>
-	<td>The CIP Timesync object and the CIP Sync subsystems will be statically disabled in the firmware. This would allow for memory-constrained-platforms to assign more memory to other means.</td>
+  <td>
+    <ul>
+      <li>checked: The CIP Timesync object will be created during firmware startup. <br>
+      The host application can then dynamically register and unregister it through the packet API.</li>
+      <li>unchecked: The CIP Timesync object and the CIP Sync subsystems will be statically disabled in the firmware. <br>
+      This would allow for memory-constrained-platforms to assign more memory to other means.</li>
+    </ul>
+  </td>
 </tr>
 </table>
+
+</BODY>
+</HTML>
