@@ -7,101 +7,82 @@
 <h2>EtherNet/IP Resource Dimensions</h2>
 
 
+<p>
 This tag allows for static tailoring of the EtherNet/IP Stacks' resource limits. The resource limits are constant during the runtime of the netX system and determine the boundaries of certain features and capabilities available to the host application and/or external CIP clients as described subsequently. Please consider carefully the relevant Protocol API Manual, Firmware Datasheets and Examples.
+The default values for the settings listed below are specific to the firmware, and are listed in the Firmware Datasheet.
+</p>
 
-
-<p style="color:red;">Importantly, it has to be disclaimed, that resource dimensioning is a sensitive topic and needs to be addressed with great care. Inconsistent dimensioning of the stack's resource limits or selecting resource limits that are not in accordance with your device's use case will usually lead to startup failure. In some cases however, the possibility of runtime failure technically cannot be prevented, and such a wrongly dimensioned system cannot be identified but through dynamic verification (testing). To mitigate this hazard, we define a set of examples to pick from which have been fully verified by Hilscher as the middleware supplier. For any other resource dimensions, the system integrator and/or application developer is fully responsible for system verification with regards to the risk of startup- and, more importantly, runtime-failure.
+<p style="color:red;">Importantly, it has to be disclaimed, that resource dimensioning is a sensitive topic and needs to be addressed with great care. Inconsistent dimensioning of the stack's resource limits or selecting resource limits that are not in accordance with your device's use case will usually lead to startup failure. In some cases however, the possibility of runtime failure technically cannot be prevented, and such a wrongly dimensioned system cannot be identified but through dynamic verification (testing). To mitigate this hazard, we define a set of examples to pick from which have been fully verified by Hilscher as the middleware supplier. For any other resource dimensions, the system integrator and/or application developer is fully responsible for system verification with regards to the risk of startup- and, more importantly, runtime-failure.</p>
 
 
 
 <table border=1">
-<caption class="title">HIL_TAG_EIP_RESOURCES_DATA_T - Taglist entry: Dimensioning of EtherNet/IP resource limits</caption>
-
 <tr>
-<th>Member Name</th>
-<th>Default Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>usMaxUserServices</code></td>
-<td>EIP_MAX_USER_SERVICES_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Max. supported CIP services the host can register</td>
 <td>Maximum number of supported CIP services the host can register (not bound to any user object)</td>
 </tr>
 <tr>
-<td><code>usMaxUserObjects</code></td>
-<td>EIP_MAX_USER_OBJECTS_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+
+<td>Max. CIP objects the host can register</td>
 <td>Maximum number of CIP objects the host can register through <code>EIP_OBJECT_MR_REGISTER_REQ</code></td>
 </tr>
 <tr>
-<td><code>usMaxAdapterAssemblyInstance</code></td>
-<td>EIP_ADAPTER_MAX_ASSEMBLY_INSTANCE_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Max. Assembly Instances the host can register</td>
 <td>Maximum number of Assembly Instances the host can register</td>
 </tr>
 <tr>
-<td><code>usAssemblyDataMemPoolSize</code></td>
-<td>EIP_AS_DATA_MEMPOOL_SIZE_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
-<td>The Assembly object memory pool will be dynamically used for assembly data on assembly registration/creation. Memory pool sizes are already adjusted carefully according to the firmware specifications given in the firmware datasheet. If you adjust pool sizes, we recommend to proportionally increase or decrease with the other parameters. For instance, you could decrease the maximum number of assemblies to 50% of the original value while also halving the pool sizes.</td>
+<td>Assembly object data mempool siz></td>
+<td>The Assembly object memory pool will be dynamically used for assembly data on assembly registration/creation. <br>
+Memory pool sizes are already adjusted carefully according to the firmware specifications given in the firmware datasheet. If you adjust pool sizes, we recommend to proportionally increase or decrease with the other parameters. For instance, you could decrease the maximum number of assemblies to 50% of the original value while also halving the pool sizes.</td>
 </tr>
 <tr>
-<td><code>usAssemblyMetaMemPoolSize</code></td>
-<td>EIP_AS_META_MEMPOOL_SIZE_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Assembly object meta mempool size</td>
 <td>The Assembly object meta memory pool will be dynamically used for management data on assembly creation and connection establishment. Insufficient pool sizes may result in pool overuse which in case of the Assembly object may cause system runtime failure (e.g. some I/O connections cannot be established).</td>
 </tr>
 <tr>
-<td><code>bMaxUdpQueueElements</code></td>
-<td>EIP_MAX_UDP_QUEUE_ELEMENT_TAGLIST_DEFAULT (8)</td>
+<td>UDP Encap receive queue depth</td>
 <td>Depth of the server's UDP receive pointer queue for encapsulation commands (ListIdentity and friends). There is a single queue of bMaxUdpQueueElements entries.</td>
 </tr>
 <tr>
-<td><code>bMaxIoQueueElements</code></td>
-<td>EIP_MAX_IO_QUEUE_ELEMENT_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>UDP I/O receive queue depth></td>
 <td>Depth of the server's UDP receive pointer queue for I/O frames. There is a single queue of bMaxIoQueueElements entries.  This is scaled to two times the maximum number of I/O connections.</td>
 </tr>
 <tr>
-<td><code>usMaxTcpConnections</code></td>
-<td>EIP_MAX_TCP_CONNECTIONS_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Max. TCP connections/sockets</td>
 <td>Maximum number of TCP connections/sockets.
   The TCP server will open up to (usMaxTcpConnections + 1) sockets, where the (+ 1) is for listening socket and usMaxTcpConnections is the depth of the socket backlog, i.e. the maximum number of parallel TCP sessions. TCP connections are used for UCMM or CL3 explicit messaging, where one TCP session can open multiple Class 3 connections and perform multiple UCCM requests in parallel. These are controlled through parameters usMaxTargetCl3Connections and usMaxTargetUcmmConnections.
   
   This setting is entirely unrelated to the LWIP quantities setting.</td>
 </tr>
 <tr>
-<td><code>bMaxTcpQueueElements</code></td>
-<td>EIP_MAX_TCP_QUEUE_ELEMENT_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Per socket TCP frame queues depth</td>
 <td>For each TCP socket a send and receive pointer queue is allocated. This is the depth of the queue.</td>
 </tr>
 <tr>
-<td><code>usMaxIoConnections</code></td>
-<td>EIP_MAX_IO_CONNECTIONS_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Overall max. I/O connections</td>
 <td>The overall number of target and originator I/O connections. This limits the overall maximum number of producers and consumers in the system. One of each for every I/O connection.</td>
 </tr>
 <tr>
-<td><code>usMaxTargetIoConnections</code></td>
-<td>EIP_ADAPTER_MAX_IO_CONNECTIONS_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Max. parallel CL0/1 connections</td>
 <td>The connection manager object maintains target connections of types Class 0/1 and Class 3. This parameter dimensions the number of CL0/1 connections the CM object can maintain in parallel. If the given number of connections is established, further connection attempts will be rejected.</td>
 </tr>
 <tr>
-<td><code>usMaxTargetCl3Connections</code></td>
-<td>EIP_MAX_CL3_CONNECTIONS_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Max. parallel CL3 connections<br><code>usMaxTargetCl3Connections</code></td>
 <td>The connection manager object maintains target connections of types Class 0/1 and Class 3. This parameter dimensions the number of CL3 connections the CM object can maintain in parallel. If the given number of connections is established, further connection attempts will be rejected.</td>
 </tr>
 <tr>
-<td><code>usMaxTargetUcmmConnections</code></td>
-<td>EIP_MAX_UCMM_CONNECTIONS_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Max. parallel UCMM requests<br><code>usMaxTargetUcmmConnections</code></td>
 <td>The number of UCMM connections determines how many unconnected requests can be handled in parallel. Typically, clients issue a request and wait for the response, which occupies one UCCM entry while the request is being processed. That is why we scale the number of UCCM connections to the number of TCP connections. Anyway, each client is perfectly capable to issue multiple requests at once, thus consuming multiple (all) of these objects.</td>
 </tr>
 <tr>
-<td><code>bMaxPdcInstance</code></td>
-<td>EIP_MAX_PDC_INSTANCE_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
+<td>Max. PDC instances<br><code>bMaxPdcInstance</code></td>
 <td>Maximum number of PDC Instances the host can register. Each PDC instance serves as an endpoint of a CIP implicit connection for which we are the target. Therefore, each PDC instance refers to an input, an output, and optionally a configuration assembly instance. The PDC instance will further maintain connection types, and RPI ranges. PDC instances control how often a connection (e.g. InputOnly) can be opened. Opening of a connection allocates a producer and a consumer transport from the PDC object's global memory pool. PDC instances partition that memory pool.</td>
 </tr>
 <tr>
-<td><code>usPdcMemPoolSize</code></td>
-<td>EIP_PDC_MEMPOOL_SIZE_TAGLIST_DEFAULT (firmware-specific, see firmware datasheet)</td>
-<td>Size of the PDC object's global memory pool in bytes. Producing and consuming transports will be allocated from this pool on connection opening. Especially producing transports maintained by the PDC object instances will require memory buffers according to the size of the producing assembly, plus overhead. This memory is taken from the PDC's memory pool as well. If the PDC's memory pool is exhausted, no more PDC instances can be created.
+<td>PDC object mempool size<br><code>usPdcMemPoolSize</code></td>
+<td>Size of the PDC object's global memory pool in bytes. Producing and consuming transports will be allocated from this pool on connection opening. Especially producing transports maintained by the PDC object instances will require memory buffers according to the size of the producing assembly, plus overhead. This memory is taken from the PDC's memory pool as well. If the PDC's memory pool is exhausted, no more PDC instances can be created.<br>
 Memory pool sizes are already adjusted carefully according to the firmware specifications given in the firmware datasheet. If you adjust pool sizes, we recommend to proportionally increase or decrease with the other parameters. For instance, you could increase the maximum number of PDC instances by 100% of the original value while also doubling the pool size.</td>
 </tr>
-
 </table>
+</BODY>
+</HTML>
