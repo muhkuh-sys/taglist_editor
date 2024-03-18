@@ -970,7 +970,7 @@ HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS_DATA_T = {
     {"UINT32", "ulNumberIpMulticastsForSocketServices",
         desc="Number of IP Multicast groups for socket services",
         editor="numedit", 
-        editorParam={nBits=32, format="%u", minValue=1, maxValue=65535}
+        editorParam={nBits=32, format="%u", minValue=0, maxValue=65535}
     },
 }, 
 
