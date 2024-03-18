@@ -19,69 +19,84 @@ The default values for the settings listed below are specific to the firmware, a
 <table border=1">
 <tr>
 <td>Max. supported CIP services the host can register</td>
-<td>Maximum number of supported CIP services the host can register (not bound to any user object)</td>
+<td>Maximum number of supported CIP services the host can register (not bound to any user object)<br>
+    Range: 0 - 1024</td>
 </tr>
 <tr>
 
 <td>Max. CIP objects the host can register</td>
-<td>Maximum number of CIP objects the host can register through <code>EIP_OBJECT_MR_REGISTER_REQ</code></td>
+<td>Maximum number of CIP objects the host can register through <code>EIP_OBJECT_MR_REGISTER_REQ</code><br>
+    Range: 0 - 1024</td>
 </tr>
 <tr>
 <td>Max. Assembly Instances the host can register</td>
-<td>Maximum number of Assembly Instances the host can register</td>
+<td>Maximum number of Assembly Instances the host can register<br>
+    Range: 0 - 1024</td>
 </tr>
 <tr>
-<td>Assembly object data mempool siz></td>
+<td>Assembly object data mempool size</td>
 <td>The Assembly object memory pool will be dynamically used for assembly data on assembly registration/creation. <br>
-Memory pool sizes are already adjusted carefully according to the firmware specifications given in the firmware datasheet. If you adjust pool sizes, we recommend to proportionally increase or decrease with the other parameters. For instance, you could decrease the maximum number of assemblies to 50% of the original value while also halving the pool sizes.</td>
+Memory pool sizes are already adjusted carefully according to the firmware specifications given in the firmware datasheet. If you adjust pool sizes, we recommend to proportionally increase or decrease with the other parameters. For instance, you could decrease the maximum number of assemblies to 50% of the original value while also halving the pool sizes.<br>
+    Range: 0 - 65535</td>
 </tr>
 <tr>
 <td>Assembly object meta mempool size</td>
-<td>The Assembly object meta memory pool will be dynamically used for management data on assembly creation and connection establishment. Insufficient pool sizes may result in pool overuse which in case of the Assembly object may cause system runtime failure (e.g. some I/O connections cannot be established).</td>
+<td>The Assembly object meta memory pool will be dynamically used for management data on assembly creation and connection establishment. Insufficient pool sizes may result in pool overuse which in case of the Assembly object may cause system runtime failure (e.g. some I/O connections cannot be established).<br>
+    Range: 0 - 65535</td>
 </tr>
 <tr>
 <td>UDP Encap receive queue depth</td>
-<td>Depth of the server's UDP receive pointer queue for encapsulation commands (ListIdentity and friends). There is a single queue of bMaxUdpQueueElements entries.</td>
+<td>Depth of the server's UDP receive pointer queue for encapsulation commands (ListIdentity and friends). There is a single queue of bMaxUdpQueueElements entries.<br>
+    Range: 0 - 255</td>
 </tr>
 <tr>
 <td>UDP I/O receive queue depth></td>
-<td>Depth of the server's UDP receive pointer queue for I/O frames. There is a single queue of bMaxIoQueueElements entries.  This is scaled to two times the maximum number of I/O connections.</td>
+<td>Depth of the server's UDP receive pointer queue for I/O frames. There is a single queue of bMaxIoQueueElements entries.  This is scaled to two times the maximum number of I/O connections.<br>
+    Range: 0 - 255</td>
 </tr>
 <tr>
 <td>Max. TCP connections/sockets</td>
 <td>Maximum number of TCP connections/sockets.
-  The TCP server will open up to (usMaxTcpConnections + 1) sockets, where the (+ 1) is for listening socket and usMaxTcpConnections is the depth of the socket backlog, i.e. the maximum number of parallel TCP sessions. TCP connections are used for UCMM or CL3 explicit messaging, where one TCP session can open multiple Class 3 connections and perform multiple UCCM requests in parallel. These are controlled through parameters usMaxTargetCl3Connections and usMaxTargetUcmmConnections.
+  The TCP server will open up to (usMaxTcpConnections + 1) sockets, where the (+ 1) is for listening socket and usMaxTcpConnections is the depth of the socket backlog, i.e. the maximum number of parallel TCP sessions. TCP connections are used for UCMM or CL3 explicit messaging, where one TCP session can open multiple Class 3 connections and perform multiple UCCM requests in parallel. These are controlled through parameters usMaxTargetCl3Connections and usMaxTargetUcmmConnections.<br>
+    Range: 0 - 1024]
   
   This setting is entirely unrelated to the LWIP quantities setting.</td>
 </tr>
 <tr>
 <td>Per socket TCP frame queues depth</td>
-<td>For each TCP socket a send and receive pointer queue is allocated. This is the depth of the queue.</td>
+<td>For each TCP socket a send and receive pointer queue is allocated. This is the depth of the queue.<br>
+    Range: 0 - 255</td>
 </tr>
 <tr>
 <td>Overall max. I/O connections</td>
-<td>The overall number of target and originator I/O connections. This limits the overall maximum number of producers and consumers in the system. One of each for every I/O connection.</td>
+<td>The overall number of target and originator I/O connections. This limits the overall maximum number of producers and consumers in the system. One of each for every I/O connection.<br>
+    Range: 0 - 1024</td>
 </tr>
 <tr>
 <td>Max. parallel CL0/1 connections</td>
-<td>The connection manager object maintains target connections of types Class 0/1 and Class 3. This parameter dimensions the number of CL0/1 connections the CM object can maintain in parallel. If the given number of connections is established, further connection attempts will be rejected.</td>
+<td>The connection manager object maintains target connections of types Class 0/1 and Class 3. This parameter dimensions the number of CL0/1 connections the CM object can maintain in parallel. If the given number of connections is established, further connection attempts will be rejected.<br>
+    Range: 0 - 1024</td>
 </tr>
 <tr>
 <td>Max. parallel CL3 connections<br><code>usMaxTargetCl3Connections</code></td>
-<td>The connection manager object maintains target connections of types Class 0/1 and Class 3. This parameter dimensions the number of CL3 connections the CM object can maintain in parallel. If the given number of connections is established, further connection attempts will be rejected.</td>
+<td>The connection manager object maintains target connections of types Class 0/1 and Class 3. This parameter dimensions the number of CL3 connections the CM object can maintain in parallel. If the given number of connections is established, further connection attempts will be rejected.<br>
+    Range: 0 - 1024</td>
 </tr>
 <tr>
 <td>Max. parallel UCMM requests<br><code>usMaxTargetUcmmConnections</code></td>
-<td>The number of UCMM connections determines how many unconnected requests can be handled in parallel. Typically, clients issue a request and wait for the response, which occupies one UCCM entry while the request is being processed. That is why we scale the number of UCCM connections to the number of TCP connections. Anyway, each client is perfectly capable to issue multiple requests at once, thus consuming multiple (all) of these objects.</td>
+<td>The number of UCMM connections determines how many unconnected requests can be handled in parallel. Typically, clients issue a request and wait for the response, which occupies one UCCM entry while the request is being processed. That is why we scale the number of UCCM connections to the number of TCP connections. Anyway, each client is perfectly capable to issue multiple requests at once, thus consuming multiple (all) of these objects.<br>
+    Range: 0 - 1024</td>
 </tr>
 <tr>
 <td>Max. PDC instances<br><code>bMaxPdcInstance</code></td>
-<td>Maximum number of PDC Instances the host can register. Each PDC instance serves as an endpoint of a CIP implicit connection for which we are the target. Therefore, each PDC instance refers to an input, an output, and optionally a configuration assembly instance. The PDC instance will further maintain connection types, and RPI ranges. PDC instances control how often a connection (e.g. InputOnly) can be opened. Opening of a connection allocates a producer and a consumer transport from the PDC object's global memory pool. PDC instances partition that memory pool.</td>
+<td>Maximum number of PDC Instances the host can register. Each PDC instance serves as an endpoint of a CIP implicit connection for which we are the target. Therefore, each PDC instance refers to an input, an output, and optionally a configuration assembly instance. The PDC instance will further maintain connection types, and RPI ranges. PDC instances control how often a connection (e.g. InputOnly) can be opened. Opening of a connection allocates a producer and a consumer transport from the PDC object's global memory pool. PDC instances partition that memory pool.<br>
+    Range: 0 - 255</td>
 </tr>
 <tr>
 <td>PDC object mempool size<br><code>usPdcMemPoolSize</code></td>
 <td>Size of the PDC object's global memory pool in bytes. Producing and consuming transports will be allocated from this pool on connection opening. Especially producing transports maintained by the PDC object instances will require memory buffers according to the size of the producing assembly, plus overhead. This memory is taken from the PDC's memory pool as well. If the PDC's memory pool is exhausted, no more PDC instances can be created.<br>
-Memory pool sizes are already adjusted carefully according to the firmware specifications given in the firmware datasheet. If you adjust pool sizes, we recommend to proportionally increase or decrease with the other parameters. For instance, you could increase the maximum number of PDC instances by 100% of the original value while also doubling the pool size.</td>
+Memory pool sizes are already adjusted carefully according to the firmware specifications given in the firmware datasheet. If you adjust pool sizes, we recommend to proportionally increase or decrease with the other parameters. For instance, you could increase the maximum number of PDC instances by 100% of the original value while also doubling the pool size.<br>
+    Range: 0 - 65535</td>
 </tr>
 </table>
 </BODY>
