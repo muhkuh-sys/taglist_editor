@@ -398,7 +398,7 @@ HIL_TAG_EIP_RESOURCES_DATA_T = {
        editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=65535}
     },
     {"UINT16", "usAssemblyMetaMemPoolSize",   desc="Assembly object meta mempool size",
-       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=65536}
+       editor="numedit",  editorParam={nBits=16, format="%u", minValue=0, maxValue=65535}
     },
     {"UINT8", "bMaxUdpQueueElements",   desc="UDP Encap receive queue depth",
        editor="numedit",  editorParam={nBits=8, format="%u", minValue=0, maxValue=255}
