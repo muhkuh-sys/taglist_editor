@@ -13,6 +13,7 @@
 --  Changes:
 --    Date        Author        Description
 ---------------------------------------------------------------------------
+-- 2024-08-28     SL            added HIL_TAG_EIP_FILE_OBJECT_ENABLE_DISABLE 0x3000A006
 -- 2024-03-18     SL            added HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS   0x10e90003
 -- 2023-11-15     MBO           added HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE 0x3000A005
 -- 2023-09-20     MBO           added HIL_TAG_EIP_RESOURCES 0x3000A004
@@ -447,6 +448,17 @@ HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T = {
        editorParam={nBits=8, offValue=0, onValue=1, otherValues = true}
     },
 },
+
+
+----------------------------------------------------------------------------------------------
+-- CIP File Object Enable/Disable
+HIL_TAG_EIP_FILE_OBJECT_ENABLE_DISABLE_DATA_T = {
+    {"UINT32", "ulEnableFileObject", desc="Enable CIP File Object",
+       editor="checkboxedit",
+       editorParam={nBits=32, offValue=0, onValue=1, otherValues = true}
+    },
+},
+
 
 ----------------------------------------------------------------------------------------------
 -- EIP/DLR configuration
@@ -1163,6 +1175,9 @@ HIL_TAG_EIP_RESOURCES =
 HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE =
 	{paramtype = 0x3000A005, datatype="HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T", desc="CIP Sync support"},
 
+HIL_TAG_EIP_FILE_OBJECT_ENABLE_DISABLE =
+	{paramtype = 0x3000A006, datatype="HIL_TAG_EIP_FILE_OBJECT_ENABLE_DISABLE_DATA_T", desc="CIP File Object Support"},
+
 -- protocol tags: EtherCAT Slave
 TAG_ECS_ENABLE_BOOTSTRAP =
 	{paramtype = 0x30009001, datatype="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T", desc="EtherCAT Slave Enable Bootstrap Mode"},
@@ -1284,6 +1299,9 @@ TAG_HELP = {
     
     TAG_EIP_EDD_CONFIGURATION           = {file="TAG_EIP_EDD_CONFIGURATION_DATA_T.htm"},
     TAG_EIP_DLR_PROTOCOL                = {file="TAG_EIP_DLR_PROTOCOL.htm"},
+    HIL_TAG_EIP_RESOURCES               = {file="HIL_TAG_EIP_RESOURCES_DATA_T.htm"},
+    HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE = {file="HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T.htm"},
+    HIL_TAG_EIP_FILE_OBJECT_ENABLE_DISABLE = {file="HIL_TAG_EIP_FILE_OBJECT_ENABLE_DISABLE_DATA_T.htm"},
     
     TAG_ECS_ENABLE_BOOTSTRAP            = {file="TAG_ECS_ENABLE_BOOTSTRAP_DATA_T.htm"},
     TAG_ECS_SELECT_SOE_COE              = {file="TAG_ECS_SELECT_SOE_COE_DATA_T.htm"},
@@ -1328,9 +1346,6 @@ TAG_HELP = {
     HIL_TAG_LWIP_QUANTITY_STRUCTURE     = {file="HIL_TAG_LWIP_QUANTITY_STRUCTURE_DATA_T.htm"},
     HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS = 
                                           {file="HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS_DATA_T.htm"},
-
-    HIL_TAG_EIP_RESOURCES               = {file="HIL_TAG_EIP_RESOURCES_DATA_T.htm"},
-    HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE = {file="HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE_DATA_T.htm"},
 
 }
 
