@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<Title>HIL_TAG_WEBSERVER_ENABLE_DATA_T</Title>
+</HEAD>
+<BODY>
+<h2>Web server enable/disable</h2>
+
+<p>
+This parameter enables or disables the integrated web server.
+</p>
+
+<table border=1>
+<tr>
+  <td>Enable web server</td>
+  <td>
+    <ul>
+      <li>
+        unchecked: Disabled <br>
+        The web server is completely turned off (it is not initialized/started by the firmware) and therefore cannot be dynamically started (e.g. by the host application). <br>
+        Use case: the web server is not needed by the product the firmware is integrated in. Disabling the web server saves memory that can be used for other purposes.
+</li>
+      <li>
+        checked: Enabled  <br>
+        The firmware will start/initialize the web server with the configuration provided by the following taglist entries: <br>
+        Webserver (HTTP) Configuration (HIL_TAG_HTTP_PORT_CONFIG, 0x10920000) <br>
+        Webserver (HTTPS) Configuration (HIL_TAG_HTTPS_PORT_CONFIG, 0x10920001)
+</li>
+    </ul>
+  </td>
+</tr>
+</table>
+
+</BODY>
+</HTML>

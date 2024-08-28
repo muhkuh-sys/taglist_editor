@@ -14,6 +14,7 @@
 --    Date        Author        Description
 ---------------------------------------------------------------------------
 -- 2024-08-28     SL            added HIL_TAG_EIP_FILE_OBJECT_ENABLE_DISABLE 0x3000A006
+--                              added HIL_TAG_WEBSERVER_ENABLE               0x10920002
 -- 2024-03-18     SL            added HIL_TAG_LWIP_AMOUNT_SOCKET_API_MULTICAST_GROUPS   0x10e90003
 -- 2023-11-15     MBO           added HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE 0x3000A005
 -- 2023-09-20     MBO           added HIL_TAG_EIP_RESOURCES 0x3000A004
@@ -929,7 +930,12 @@ HIL_TAG_HTTPS_PORT_CONFIG_DATA_T = {
     {"UINT8",  "bReserved",             desc="Reserved",     mode = "hidden"},
 },
 
-
+HIL_TAG_WEBSERVER_ENABLE_DATA_T = {
+    {"UINT32", "ulEnable", desc="Enable web server",
+       editor="checkboxedit",
+       editorParam={nBits=32, offValue=0, onValue=1, otherValues = true}
+    },
+},
 
 
 ----------------------------------------------------------------------------------------------
@@ -1244,6 +1250,11 @@ HIL_TAG_HTTP_PORT_CONFIG =
 HIL_TAG_HTTPS_PORT_CONFIG =
 	{paramtype = 0x10920001, datatype="HIL_TAG_HTTPS_PORT_CONFIG_DATA_T", desc="Web Server (HTTPS) Configuration"},
 
+HIL_TAG_WEBSERVER_ENABLE =
+	{paramtype = 0x10920002, datatype="HIL_TAG_WEBSERVER_ENABLE_DATA_T", desc="Web Server Support"},
+
+
+
 HIL_TAG_NF_GEN_DIAG_RESOURCES =
 	{paramtype = 0x10e00001, datatype="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T", desc="Generic Diagnosis Ressources"},
 
@@ -1333,6 +1344,7 @@ TAG_HELP = {
 
     HIL_TAG_HTTP_PORT_CONFIG            = {file="HIL_TAG_HTTP_PORT_CONFIG_DATA_T.htm"},
     HIL_TAG_HTTPS_PORT_CONFIG           = {file="HIL_TAG_HTTPS_PORT_CONFIG_DATA_T.htm"},
+    HIL_TAG_WEBSERVER_ENABLE            = {file="HIL_TAG_WEBSERVER_ENABLE_DATA_T.htm"},
 
     HIL_TAG_NF_GEN_DIAG_RESOURCES       = {file="HIL_TAG_NF_GEN_DIAG_RESOURCES_DATA_T.htm"},
     HIL_TAG_NF_PROFI_ENERGY_MODES       = {file="HIL_TAG_NF_PROFI_ENERGY_MODES_DATA_T.htm"},
