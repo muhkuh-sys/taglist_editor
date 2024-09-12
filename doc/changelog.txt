@@ -6,6 +6,7 @@ Tag list editor 1.5.0.5
  * added tag HIL_TAG_EIP_TIMESYNC_ENABLE_DISABLE               (0x3000A005)
  * added tag HIL_TAG_EIP_FILE_OBJECT_ENABLE_DISABLE            (0x3000A006)
  * added tag HIL_TAG_WEBSERVER_ENABLE                          (0x10920002)
+ * Installer signed using SHA256
 
 Tag list editor 1.5.0.4
  * added tag HIL_TAG_ECS_EOE_MODE           (0x30009006)
